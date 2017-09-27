@@ -13,9 +13,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY * /app/
 
-RUN adduser --system datacatalogus
+RUN adduser --system datacatalog
 RUN mkdir -p  /app/data \
-    && chown datacatalogus  /app/data
+    && chown datacatalog  /app/data
 
-USER datacatalogus
-CMD python datacatalogus.py
+USER datacatalog
+CMD python datacatalog.py

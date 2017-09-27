@@ -1,6 +1,6 @@
-# datacatalog
+# datacatalog-core
 
-### City of Amsterdam Data Catalog Project.
+### `catalog-core` Project.
 
 A microservice with API to store, manage and search through meta data of data sets.
 
