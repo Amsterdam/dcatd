@@ -19,6 +19,3 @@ Open a terminal in de root-dir of this project and type:
 	> docker-compose up -d
 	
 Now you can open your browser at http://localhost:8000/ and see content served by the code.
-
-
-test
