@@ -3,4 +3,4 @@ services:
   web:
     build: ./web
     ports:
-      - "8122:8000"
+      - "8000:8000"
