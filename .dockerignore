@@ -1,6 +1,9 @@
+**/.cache/
 .git
 .gitignore
 Dockerfile
 docker-compose.yml
 .idea
 *.iml
+**/__pycache__/
+*.pyc
