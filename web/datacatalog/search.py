@@ -1,6 +1,9 @@
 import os
 import json
 import logging
+import copy
+
+from datacatalog.action_api import SearchParams
 
 log = logging.getLogger(__name__)
 
@@ -25,7 +28,16 @@ class InMemorySearch(AbstractSearch):
         return os.path.exists(self.FILEDATA_PATH)
 
     def search(self, query={}):
-        return self.all_packages
+        results = copy.deepcopy(self.all_packages)
+
+        begin = query[SearchParams.START] if SearchParams.START in query else 0
+        if SearchParams.ROWS in query:
+            end = begin + query[SearchParams.ROWS]
+            results['result']['results'] =  results['result']['results'][begin:end]
+        else:
+            results['result']['results'] =  results['result']['results'][begin:]
+
+        return results
 
 
 def is_healthy():
