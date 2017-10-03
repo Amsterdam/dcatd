@@ -12,12 +12,15 @@ class AbstractDataStore:
     def get_by_id(self, id):
         pass
 
+    def get_list(self):
+        pass
 
 class FileDataStore(AbstractDataStore):
     FILEDATA_PATH = "/app/data"
+    LIST_FILE = "package_list"
 
     def is_healthy(self):
-        return os.path.exists(self.FILEDATA_PATH)
+        return os.path.exists(f"{self.FILEDATA_PATH}/{self.LIST_FILE}.json")
 
     def get_by_id(self, id):
         file_path = f"{self.FILEDATA_PATH}/{id}.json"
@@ -25,6 +28,9 @@ class FileDataStore(AbstractDataStore):
             with open(file_path) as json_data:
                 return json.load(json_data)
         return None
+
+    def get_list(self):
+        return self.get_by_id(self.LIST_FILE)
 
 
 def is_healthy():
@@ -41,5 +47,11 @@ def get_by_id(id):
             return object
     return None
 
+
+def get_list():
+    results = []
+    for datastore in implemented_datastores:
+        results.append(datastore.get_list())
+    return results
 
 implemented_datastores = [FileDataStore()]

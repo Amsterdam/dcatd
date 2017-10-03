@@ -8,6 +8,7 @@ from datacatalog import search
 
 ACTION_PARAM = 'action'
 ACTION_SHOW = "package_show"
+ACTION_LIST = "package_list"
 ACTION_SEARCH = "package_search"
 
 
@@ -30,6 +31,8 @@ async def handle(request):
         return await handle_search(request)
     elif action == ACTION_SHOW:
         return await handle_show(request)
+    elif action == ACTION_LIST:
+        return await handle_list(request)
 
     raise web.HTTPNotFound()
 
@@ -71,3 +74,8 @@ async def handle_show(request):
         raise web.HTTPNotFound()
 
     return web.json_response(object)
+
+
+async def handle_list(request):
+    results = datastore.get_list()
+    return web.json_response(results)
