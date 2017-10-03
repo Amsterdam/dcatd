@@ -1,3 +1,4 @@
+import json
 import logging
 from enum import Enum
 
@@ -12,20 +13,28 @@ ACTION_LIST = "package_list"
 ACTION_SEARCH = "package_search"
 
 
-class SearchParams(Enum):
+class SearchParam(Enum):
     START = "start"
     ROWS = "rows"
-    FACET_FIELD = "facet.field"
+    FACET_FIELDS = "facet.field"
     FACET_QUERY = "fq"
     SORT = "sort"
+    # to implement
+    QUERY = "q"
+
+
+class Facet(Enum):
+    GROUP = "groups"
+    RESOURCE = "res_format"
+    PUBLISHER = "organization"
 
 log = logging.getLogger(__name__)
 
 
-"""
-    Handle the action API calls package_search en package_show
-"""
 async def handle(request):
+    """
+        Handle the action API calls package_search en package_show
+    """
     action = request.match_info[ACTION_PARAM]
     if action == ACTION_SEARCH:
         return await handle_search(request)
@@ -40,15 +49,25 @@ async def handle(request):
 def extract_queryparams(request):
     query = {}
 
-    if SearchParams.START.value in request.query:
-        query[SearchParams.START] = int(request.query[SearchParams.START.value])
-        if query[SearchParams.START] < 0:
+    if SearchParam.START.value in request.query:
+        query[SearchParam.START] = int(request.query[SearchParam.START.value])
+        if query[SearchParam.START] < 0:
             raise ValueError()
 
-    if SearchParams.ROWS.value in request.query:
-        query[SearchParams.ROWS] = int(request.query[SearchParams.ROWS.value])
-        if query[SearchParams.ROWS] < 1:
+    if SearchParam.ROWS.value in request.query:
+        query[SearchParam.ROWS] = int(request.query[SearchParam.ROWS.value])
+        if query[SearchParam.ROWS] < 1:
             raise ValueError()
+
+    if SearchParam.FACET_FIELDS.value in request.query:
+        data = json.loads(request.query[SearchParam.FACET_FIELDS.value])
+        query[SearchParam.FACET_FIELDS] = data
+
+    if SearchParam.FACET_QUERY.value in request.query:
+        facets = str(request.query[SearchParam.FACET_QUERY.value]).split()
+        keys = [facet.split(':')[0] for facet in facets]
+        values = [facet.split(':')[1].strip('"') for facet in facets]
+        query[SearchParam.FACET_QUERY] = {k: v for (k,v) in zip(keys, values)}
 
     return query
 

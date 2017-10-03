@@ -27,6 +27,34 @@ class InMemorySearch(AbstractSearch):
     def is_healthy(self):
         return os.path.exists(self.FILEDATA_PATH)
 
+    def _result_matches_facets(self, result, query):
+        if action_api.SearchParam.FACET_QUERY not in query:
+            return True
+
+        facets = query[action_api.SearchParam.FACET_QUERY]
+        if action_api.Facet.GROUP.value in facets:
+            group_match = False
+            for group in result['groups']:
+                if group['name'] == facets[action_api.Facet.GROUP.value]:
+                    group_match = True
+            if not group_match:
+                return False
+
+        if action_api.Facet.RESOURCE.value in facets:
+            resource_match = False
+            for resource in result['resources']:
+                if resource['format'] == facets[action_api.Facet.RESOURCE.value]:
+                    resource_match = True
+            if not resource_match:
+                return False
+
+        if action_api.Facet.PUBLISHER.value in facets:
+            if result['organization'] is None or \
+               result['organization']['name'] != facets[action_api.Facet.PUBLISHER.value]:
+                return False
+
+        return True
+
     def search(self, query={}):
         results = copy.deepcopy(self.all_packages)
 
@@ -35,7 +63,7 @@ class InMemorySearch(AbstractSearch):
             end = begin + query[action_api.SearchParams.ROWS]
             results['result']['results'] =  results['result']['results'][begin:end]
         else:
-            results['result']['results'] =  results['result']['results'][begin:]
+            results['result']['results'] = results['result']['results'][begin:]
 
         return results
 
