@@ -1,5 +1,6 @@
 from aiohttp import web
 
+
 """
     Handle the index request
 """

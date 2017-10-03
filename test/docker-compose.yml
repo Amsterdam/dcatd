@@ -7,3 +7,5 @@ services:
 
   test:
     build: ../web/tests
+    volumes:
+      - ./fixtures:/app/data
