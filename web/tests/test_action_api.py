@@ -1,3 +1,5 @@
+import json
+
 from aiohttp.test_utils import AioHTTPTestCase, unittest_run_loop
 
 from datacatalog import app
@@ -22,6 +24,15 @@ class TestActionAPI(AioHTTPTestCase):
             assert resp.status == 200
             text = await resp.text()
             assert fixture_id in text
+
+    @unittest_run_loop
+    async def test_show_by_name(self):
+        for name in FIXTURE_NAMES:
+            resp = await self.client.get(f'/datacatalog/api/3/action/package_show?id={name}')
+            assert resp.status == 200
+            text = await resp.text()
+            object = json.loads(text)
+            assert object['result']['id'] in FIXTURE_IDS
 
     @unittest_run_loop
     async def test_show_no_id(self):
