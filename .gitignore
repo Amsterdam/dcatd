@@ -1,5 +1,13 @@
-.idea/**
-*.iml
+# IntelliJ:
+/.idea/**
+/*.iml
+
+# Python ephemerals:
 **/.cache/
 **/__pycache__/
-*.pyc
+**/*.pyc
+
+# Documentation/Sphinx:
+/sphinx/.doctrees/
+/sphinx/*.inv
+/sphinx/*.inv.txt

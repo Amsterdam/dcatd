@@ -3,7 +3,7 @@ import json
 import logging
 import copy
 
-from datacatalog.action_api import SearchParams
+from datacatalog import action_api
 
 log = logging.getLogger(__name__)
 
@@ -30,9 +30,9 @@ class InMemorySearch(AbstractSearch):
     def search(self, query={}):
         results = copy.deepcopy(self.all_packages)
 
-        begin = query[SearchParams.START] if SearchParams.START in query else 0
-        if SearchParams.ROWS in query:
-            end = begin + query[SearchParams.ROWS]
+        begin = query[action_api.SearchParams.START] if action_api.SearchParams.START in query else 0
+        if action_api.SearchParams.ROWS in query:
+            end = begin + query[action_api.SearchParams.ROWS]
             results['result']['results'] =  results['result']['results'][begin:end]
         else:
             results['result']['results'] =  results['result']['results'][begin:]
