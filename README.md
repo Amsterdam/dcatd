@@ -24,7 +24,7 @@ Now you can open your browser at http://localhost:8000/ and see content served b
 
 Either run the script in the `test` folder (that utilizes the `docker-compose.yml` in `/test`):
 
-	test/test.sh
+	./test.sh
 	
 or build the Web docker and then build and run the Test docker (the root-dir of this project):
 
@@ -32,4 +32,4 @@ or build the Web docker and then build and run the Test docker (the root-dir of 
 	docker build -t datacatalog-core-test:latest web/tests
 	docker run datacatalog-core-test:latest
 
-
+To do: make locally testing possible

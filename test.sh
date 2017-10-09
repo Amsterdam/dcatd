@@ -6,5 +6,5 @@ set -e # stop on any error
 # Run from this dir
 cd "$(dirname "$0")"
 
-docker-compose build web
-docker-compose up --build test
+docker-compose -f docker-compose-for-tests.yml build web
+docker-compose -f docker-compose-for-tests.yml up --build test
