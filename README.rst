@@ -31,14 +31,10 @@ Now you can point your browser at `http://localhost:8000/
 How to run tests
 ----------------
 
-Either run the script in the :file:`test` folder (that utilizes the
-:file:`docker-compose.yml` in :file:`/test`)::
+Run the script in the :file:`test` folder (that utilizes the
+:file:`docker-compose-for-tests.yml`)::
 
-    test/test.sh
+    ./test.sh
 
-or build the Web docker and then build and run the Test docker (the root-dir of this project)::
-
-    docker build -t datacatalog-core:latest web
-    docker build -t datacatalog-core-test:latest web/tests
-    docker run datacatalog-core-test:latest
+To do: make locally testing possible
 

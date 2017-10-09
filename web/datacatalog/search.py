@@ -27,15 +27,58 @@ class InMemorySearch(AbstractSearch):
     def is_healthy(self):
         return os.path.exists(self.FILEDATA_PATH)
 
+    def _result_matches_facets(self, result, query):
+        if action_api.SearchParam.FACET_QUERY not in query:
+            return True
+
+        facets = query[action_api.SearchParam.FACET_QUERY]
+        if action_api.Facet.GROUP.value in facets:
+            group_match = False
+            for group in result['groups']:
+                if group['name'] == facets[action_api.Facet.GROUP.value]:
+                    group_match = True
+            if not group_match:
+                return False
+
+        if action_api.Facet.RESOURCE.value in facets:
+            resource_match = False
+            for resource in result['resources']:
+                if resource['format'] == facets[action_api.Facet.RESOURCE.value]:
+                    resource_match = True
+            if not resource_match:
+                return False
+
+        if action_api.Facet.PUBLISHER.value in facets:
+            if result['organization'] is None or \
+               result['organization']['name'] != facets[action_api.Facet.PUBLISHER.value]:
+                return False
+
+        return True
+
     def search(self, query={}):
         results = copy.deepcopy(self.all_packages)
 
-        begin = query[action_api.SearchParams.START] if action_api.SearchParams.START in query else 0
-        if action_api.SearchParams.ROWS in query:
-            end = begin + query[action_api.SearchParams.ROWS]
+        filtered_results = []
+        for possible_result in results['result']['results']:
+            if self._result_matches_facets(possible_result, query):
+                filtered_results.append(possible_result)
+        results['result']['results'] = filtered_results
+
+        if action_api.SearchParam.FACET_FIELDS in query:
+            output_facets = {}
+            output_searchfacets = {}
+            for requested_facet in query[action_api.SearchParam.FACET_FIELDS]:
+                output_facets[requested_facet] = results['result']['facets'][requested_facet]
+                output_searchfacets[requested_facet] = results['result']['search_facets'][requested_facet]
+            results['result']['facets'] = output_facets
+            results['result']['search_facets'] = output_searchfacets
+
+        begin = query[action_api.SearchParam.START] if action_api.SearchParam.START in query else 0
+        if action_api.SearchParam.ROWS in query:
+            end = begin + query[action_api.SearchParam.ROWS]
             results['result']['results'] =  results['result']['results'][begin:end]
         else:
-            results['result']['results'] =  results['result']['results'][begin:]
+            results['result']['results'] = results['result']['results'][begin:]
 
         return results
 
