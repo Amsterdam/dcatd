@@ -15,6 +15,7 @@ class AbstractDataStore:
     def get_list(self):
         pass
 
+
 class FileDataStore(AbstractDataStore):
     FILEDATA_PATH = "/app/data"
     LIST_FILE = "package_list"

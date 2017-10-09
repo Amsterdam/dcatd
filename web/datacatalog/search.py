@@ -58,9 +58,24 @@ class InMemorySearch(AbstractSearch):
     def search(self, query={}):
         results = copy.deepcopy(self.all_packages)
 
-        begin = query[action_api.SearchParams.START] if action_api.SearchParams.START in query else 0
-        if action_api.SearchParams.ROWS in query:
-            end = begin + query[action_api.SearchParams.ROWS]
+        filtered_results = []
+        for possible_result in results['result']['results']:
+            if self._result_matches_facets(possible_result, query):
+                filtered_results.append(possible_result)
+        results['result']['results'] = filtered_results
+
+        if action_api.SearchParam.FACET_FIELDS in query:
+            output_facets = {}
+            output_searchfacets = {}
+            for requested_facet in query[action_api.SearchParam.FACET_FIELDS]:
+                output_facets[requested_facet] = results['result']['facets'][requested_facet]
+                output_searchfacets[requested_facet] = results['result']['search_facets'][requested_facet]
+            results['result']['facets'] = output_facets
+            results['result']['search_facets'] = output_searchfacets
+
+        begin = query[action_api.SearchParam.START] if action_api.SearchParam.START in query else 0
+        if action_api.SearchParam.ROWS in query:
+            end = begin + query[action_api.SearchParam.ROWS]
             results['result']['results'] =  results['result']['results'][begin:end]
         else:
             results['result']['results'] = results['result']['results'][begin:]
