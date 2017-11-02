@@ -22,7 +22,7 @@ Now you can open your browser at http://localhost:8000/ and see content served b
 
 ### How to run tests
 
-Run the script in the `test` folder (that utilizes the `docker-compose-for-tests.yml`):
+Run the test script (that utilizes the `docker-compose-for-tests.yml`):
 
 	./test.sh
 	

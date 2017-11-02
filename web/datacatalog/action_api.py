@@ -72,14 +72,13 @@ def extract_queryparams(request):
     return query
 
 
-
 async def handle_search(request):
     try:
         query = extract_queryparams(request)
     except ValueError:
         raise web.HTTPBadRequest()
 
-    results = search.search(query)
+    results = await search.search(query)
     return web.json_response(results)
 
 
@@ -88,7 +87,7 @@ async def handle_show(request):
         raise web.HTTPBadRequest()
 
     id = request.query['id']
-    object = datastore.get_by_id(id)
+    object = await datastore.get_by_id(id)
     if not object:
         raise web.HTTPNotFound()
 
@@ -96,5 +95,5 @@ async def handle_show(request):
 
 
 async def handle_list(request):
-    results = datastore.get_list()
+    results = await datastore.get_list()
     return web.json_response(results)

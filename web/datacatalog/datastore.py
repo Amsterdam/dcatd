@@ -6,13 +6,13 @@ log = logging.getLogger(__name__)
 
 
 class AbstractDataStore:
-    def is_healthy(self):
+    async def is_healthy(self):
         pass
 
-    def get_by_id(self, id):
+    async def get_by_id(self, id):
         pass
 
-    def get_list(self):
+    async def get_list(self):
         pass
 
 
@@ -27,10 +27,10 @@ class FileDataStore(AbstractDataStore):
             objects = all_packages['result']['results']
             self.packages_by_name = {obj['name']: obj['id'] for obj in objects}
 
-    def is_healthy(self):
+    async def is_healthy(self):
         return os.path.exists(f"{self.FILEDATA_PATH}/{self.LIST_FILE}.json")
 
-    def get_by_id(self, id):
+    async def get_by_id(self, id):
         if id in self.packages_by_name:
             id = self.packages_by_name[id]
 
@@ -40,29 +40,31 @@ class FileDataStore(AbstractDataStore):
                 return json.load(json_data)
         return None
 
-    def get_list(self):
-        return self.get_by_id(self.LIST_FILE)
+    async def get_list(self):
+        return await self.get_by_id(self.LIST_FILE)
 
 
-def is_healthy():
+async def is_healthy():
     for datastore in implemented_datastores:
-        if not datastore.is_healthy():
+        is_healthy = await datastore.is_healthy()
+        if not is_healthy:
             return False
     return True
 
 
-def get_by_id(id):
+async def get_by_id(id):
     for datastore in implemented_datastores:
-        object = datastore.get_by_id(id)
+        object = await datastore.get_by_id(id)
         if object:
             return object
     return None
 
 
-def get_list():
+async def get_list():
     results = []
     for datastore in implemented_datastores:
-        results.append(datastore.get_list())
+        list = await datastore.get_list()
+        results.append(list)
     return results
 
 implemented_datastores = [FileDataStore()]
