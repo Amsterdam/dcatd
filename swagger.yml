@@ -1,0 +1,265 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://localhost:8000/datacatalog-core'
+    description: an example data catalog
+    variables: {}
+  - url: 'https://api.datapunt.amsterdam.nl/dcat/'
+    description: Amsterdams data catalog
+info:
+  title: Datacatalog-Core
+  contact:
+    name: Datapunt Amsterdam
+    url: 'https://data.amsterdam.nl/'
+    email: datapunt@amsterdam.nl
+  version: 0.0.1
+  license:
+    name: Mozilla Public License 2.0
+    url: 'https://www.mozilla.org/en-US/MPL/2.0/'
+  description: First attempt at creating an openapi 3.0 spec for the new data catalog.
+paths:
+  '/action/{action}':
+    get:
+      summary: ''
+      description: ''
+      parameters:
+        - name: action
+          in: path
+          required: true
+          schema:
+            type: string
+          enum:
+            - package_show
+            - package_list
+            - package_search
+      operationId: someOperationId
+      responses:
+        '200':
+          description: Description
+          content:
+            'application/ld+json':
+              schema:
+                $ref: '#/components/schemas/dcat:Distribution'
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/dcat:Distribution'
+components:
+  schemas:
+    'ams:ContactPoint':
+      description:
+        Moet in de toekomst vervangen worden door een "echt" vcard:Kind object.
+      type: object
+      properties:
+        contact_name:
+          type: string
+        contact_email:
+          type: string
+          format: email
+        contact_uri:
+          type: string
+          format: uri
+    'dctype:Dataset':
+      type: object
+      properties: {}
+      # TODO: verder gaan met dit.
+    'dcat:Dataset':
+      type: object
+      additionalProperties: false
+      properties:
+        "dct:title":
+          type: string
+          format: line
+        "dct:description":
+          type: string
+          format: markdown
+        "dct:issued":
+          type: string
+          format: 'date-time'
+          title: Publicatiedatum
+          description: >-
+            Geef de datum waarop deze beschrijving van de gegevensset
+            beschikbaar is gesteld.
+        "dct:modified":
+          type: string
+          format: 'date-time'
+        "dct:identifier":
+          type: string
+          # TODO: datatype uitzoeken.
+        "dcat:keyword":
+          type: string
+          # TODO: datatype uitzoeken.
+        "dct:language":
+          type: string
+          enum: [
+            'nl_NL',
+            'en_US'
+          ]
+          # TODO: datatype uitzoeken.
+        "ams:contactPoint":
+          $ref: '#/components/schemas/ams:ContactPoint'
+        "dct:temporal":
+          type: string
+          # TODO: datatype uitzoeken.
+        "dct:spatial":
+          type: string
+          # TODO: datatype uitzoeken.
+        "dct:accrualPeriodicity":
+          type: string
+          # TODO: datatype uitzoeken.
+        "dcat:landingPage":
+          type: string
+          format: uri
+          # TODO: datatype uitzoeken.
+        "dcat:distribution":
+          type: array
+          items:
+            $ref: '#/components/schemas/dcat:Distribution'
+    'dcat:CatalogRecord':
+      type: object
+      additionalProperties: false
+      properties:
+        "dct:title":
+          type: string
+        "dct:description":
+          type: string
+        "dct:issued":
+          type: string
+          format: 'date-time'
+          # TODO: datatype uitzoeken.
+        "dct:modified":
+          type: string
+          format: 'date-time'
+          # TODO: datatype uitzoeken.
+        "foaf:primaryTopic":
+          $ref: '#/components/schemas/dcat:Dataset'
+    'dcat:Distribution':
+      type: object
+      additionalProperties: false
+      properties:
+        "dct:title":
+          type: string
+        "dct:description":
+          type: string
+        "dct:issued":
+          type: string
+          format: 'date-time'
+        "dct:modified":
+          type: string
+          format: 'date-time'
+        "dct:license":
+          type: string
+        "dct:rights":
+          type: string
+        "dcat:accessURL":
+          type: string
+          format: uri
+        "dcat:downloadURL":
+          type: string
+          format: uri
+        "dcat:mediaType":
+          type: string
+          format: 'media-type'
+        "dct:format":
+          type: string
+        "dcat:byteSize":
+          type: integer
+          format: int64
+  parameters:
+    page:
+      name: page
+      in: query
+      description: >-
+        The page number to return. Requires the `items` parameter. The first
+        page has number 1.
+      required: false
+      schema:
+        type: string
+        pattern: '^[1-9]\\d*$'
+    items:
+      name: page_items
+      in: query
+      description: The maximum number of items to return in one response.
+      required: false
+      schema:
+        type: string
+        pattern: '^(?:0|[1-9]\\d*)$'
+    embed:
+      name: embed
+      in: query
+      description: >-
+        Linked resources to embed.  For example: `foo(bar,baz())`.  This would
+        embed all resources with link relation `foo`.
+
+        * In these `foo`-resources, all resources of link types `bar` and `baz`
+          will be embedded.
+
+        * In the `bar` resource(s), the default embedding will occur.
+
+        * In the `baz` resource(s), no embedding will occur.
+      required: false
+      schema:
+        type: string
+        pattern: '^(?:,?[a-z_]\\w*|,?\\)|\\()+$'
+    if-match-OPTIONAL:
+      name: If-Match
+      description: >-
+        This request header is required if the client intends to *update* an
+        existing `account` resource.  The value *must* be the current `ETag` of
+        the account resource, as last seen by the client.  This prevents lost
+        updates if multiple clients are concurrently editing the same resource.
+      in: header
+      required: false
+      schema:
+        type: string
+        pattern: '^(?:W/)?"[^"]+"$'
+    if-match-REQUIRED:
+      name: If-Match
+      description: >-
+        This request header is required if the client intends to *update* an
+        existing `account` resource.  The value *must* be the current `ETag` of
+        the account resource, as last seen by the client.  This prevents lost
+        updates if multiple clients are concurrently editing the same resource.
+      in: header
+      required: true
+      schema:
+        type: string
+        pattern: '^(?:W/)?"[^"]+"$'
+    if-none-match-GET:
+      name: If-None-Match
+      description: >-
+        This request header can make the request conditional. You'll get a `304
+        Not Modified` if you're cached version is still up-to-date.
+      in: header
+      required: false
+      schema:
+        type: string
+        pattern: '^(?:W/)?"[^"]+"(?:\\s,\\s(?:W/)?"[^"]+")*$'
+    if-none-match-PUT:
+      name: If-None-Match
+      description: >-
+        This request header is required if the client intends to *create* a new
+        `account` resource.  This prevents lost updates if multiple clients are
+        concurrently creating the same resource.
+      in: header
+      required: false
+      schema:
+        type: string
+        enum:
+          - '*'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: >-
+        Authorization through our own Authorization Service.  Scope names all
+        start with `AUR`, which stands for **ADW User Roles**.
+      flows:
+        implicit:
+          authorizationUrl: 'http://localhost:8000/authz_admin/authorization'
+          scopes:
+            AUR/R: Read account roles.
+            AUR/W: Create and edit account roles.
+  links: {}
+  callbacks: {}
+externalDocs:
+  description: ''
+  url: 'https://amsterdam.github.io/datacatalog-core/'
+security: []
