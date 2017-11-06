@@ -31,7 +31,7 @@ Now you can point your browser at `http://localhost:8000/
 How to run tests
 ----------------
 
-Run the script in the :file:`test` folder (that utilizes the
+Run the script script (that utilizes the
 :file:`docker-compose-for-tests.yml`)::
 
     ./test.sh
