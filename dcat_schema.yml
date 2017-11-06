@@ -1,0 +1,30 @@
+---
+"$schema": "http://json-schema.org/draft-04/schema#"
+type: object
+definitions:
+  dcat:Dataset:
+    type: object
+    properties: {}
+  dct:title:
+    type: string
+    format: line
+  dct:description:
+    type: string
+    format: rst
+  dct:issued:
+    description: >-
+      rdfs:Literal encoded using the relevant `ISO 8601 Date and Time compliant
+      string <http://www.w3.org/TR/NOTE-datetime>`_ and typed using the
+      appropriate `XML Schema datatype
+      <https://www.w3.org/TR/vocab-dcat/#bib-xmlschema-2>`_
+    type: string
+    format: date-time
+  dct:modified: {}
+  dct:identifier: {}
+  dcat:keyword: {}
+  dct:language: {}
+  dcat:contactPoint: {}
+  dct:temporal: {}
+  dct:spatial: {}
+  dct:accrualPeriodicity: {}
+  dcat:landingPage: {}

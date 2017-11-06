@@ -16,21 +16,15 @@ info:
     name: Mozilla Public License 2.0
     url: 'https://www.mozilla.org/en-US/MPL/2.0/'
   description: First attempt at creating an openapi 3.0 spec for the new data catalog.
+
+
 paths:
-  '/action/{action}':
+
+
+  '/action/package_list':
     get:
       summary: ''
       description: ''
-      parameters:
-        - name: action
-          in: path
-          required: true
-          schema:
-            type: string
-          enum:
-            - package_show
-            - package_list
-            - package_search
       operationId: someOperationId
       responses:
         '200':
@@ -42,8 +36,173 @@ paths:
             'application/json':
               schema:
                 $ref: '#/components/schemas/dcat:Distribution'
+
+
+  '/action/package_search':
+    get:
+      summary: ''
+      description: ''
+      operationId: someOperationId
+      responses:
+        '200':
+          description: Description
+          content:
+            'application/ld+json':
+              schema:
+                $ref: '#/components/schemas/dcat:Distribution'
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/dcat:Distribution'
+
+
+  '/action/package_show':
+    get:
+      summary: ''
+      description: ''
+      operationId: someOperationId
+      responses:
+        '200':
+          description: Description
+          content:
+            'application/ld+json':
+              schema:
+                $ref: '#/components/schemas/dcat:Distribution'
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/dcat:Distribution'
+
+
 components:
+
+  x-namespaces:
+    dcat: 'http://www.w3.org/ns/dcat#'
+    dct: 'http://purl.org/dc/terms/'
+    dctype: 'http://purl.org/dc/dcmitype/'
+    foaf: 'http://xmlns.com/foaf/0.1/'
+    rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+    rdfs: 'http://www.w3.org/2000/01/rdf-schema#'
+    skos: 'http://www.w3.org/2004/02/skos/core#'
+    vcard: 'http://www.w3.org/2006/vcard/ns#'
+    xsd: 'http://www.w3.org/2001/XMLSchema#'
+
   schemas:
+
+    'dct:LinguisticSystem':
+      type: string
+      pattern: '^[a-zA-Z]{2,3}$'
+
+    'dcat:Dataset':
+      type: object
+      properties:
+
+        'dct:title':
+          description: >-
+            A name given to the dataset.
+          type: string
+
+        'dct:description':
+          description: >-
+            free-text account of the dataset.
+          type: string
+
+        'dct:issued':
+          description: >-
+            rdfs:Literal encoded using the relevant `ISO 8601 Date and Time compliant string
+            <http://www.w3.org/TR/NOTE-datetime>`_ and typed using the appropriate `XML Schema datatype
+            <https://www.w3.org/TR/vocab-dcat/#bib-xmlschema-2>`_
+          type: string
+          format: date-time
+
+        'dct:modified':
+          description: >-
+            Most recent date on which the dataset was changed, updated or modified.
+
+            rdfs:Literal encoded using the relevant `ISO 8601 Date and Time compliant string
+            <http://www.w3.org/TR/NOTE-datetime>`_ and typed using the appropriate `XML Schema datatype
+            <https://www.w3.org/TR/vocab-dcat/#bib-xmlschema-2>`_
+          type: string
+          format: date-time
+
+        'dct:identifier':
+          description: >-
+            A unique identifier of the dataset.
+
+            The identifier might be used as part of the URI of the dataset, but still having it represented explicitly
+            is useful.
+          type: string
+
+        'dcat:keyword':
+          description: A keyword or tag describing the dataset.
+          type: array
+          items:
+            type: string
+
+        'dcat:contactPoint':
+          description: >-
+            Link a dataset to relevant contact information which is provided
+            using VCard [vcard-rdf].
+          $ref: '#/components/schemas/vcard:Kind'
+
+        'dct:language':
+          description: >-
+            The language of the dataset.
+
+            Range
+            =====
+            `dct:LinguisticSystem <http://purl.org/dc/terms/LinguisticSystem>`_
+            Resources defined by the Library of Congress (<http://id.loc.gov/vocabulary/iso639-1.html>,
+            <http://id.loc.gov/vocabulary/iso639-2.html>) should be used.
+            If a ISO 639-1 (two-letter) code is defined for language, then its corresponding IRI should be used; if no ISO 639-1 code is defined, then IRI corresponding to the ISO 639-2 (three-letter) code should be used.
+          type:
+            - string
+            - array
+          items:
+            type: string
+
+        'dct:temporal': {}
+
+        'dct:spatial': {}
+
+        'dct:accrualPeriodicity': {}
+
+        'dcat:landingPage': {}
+
+        'dcat:distribution':
+          type: array
+          items:
+            $ref: '#/components/schemas/dcat:Distribution'
+
+        'dct:publisher':
+          description: >-
+            The entity responsible for making the catalog online.
+
+            Resources of type `foaf:Agent <http://xmlns.com/foaf/0.1/Agent>`_ are recommended as values for this
+            property.
+          type:
+            - object
+            - string
+
+
+    'vcard:Kind':
+      type: object
+      x-comment: Way to complex to model here.
+
+
+    'ams:Dataset':
+      allOf:
+        - $ref: '#/components/schemas/dcat:Dataset'
+      properties:
+        'dct:issued':
+          type: string
+          format: 'date-time'
+          title: Publicatiedatum
+          description: >-
+            Geef de datum waarop deze beschrijving van de gegevensset
+            beschikbaar is gesteld.
+        'ams:contactPoint':
+          $ref: '#/components/schemas/ams:ContactPoint'
+
+
     'ams:ContactPoint':
       description:
         Moet in de toekomst vervangen worden door een "echt" vcard:Kind object.
@@ -57,112 +216,60 @@ components:
         contact_uri:
           type: string
           format: uri
-    'dctype:Dataset':
-      type: object
-      properties: {}
-      # TODO: verder gaan met dit.
-    'dcat:Dataset':
-      type: object
-      additionalProperties: false
-      properties:
-        "dct:title":
-          type: string
-          format: line
-        "dct:description":
-          type: string
-          format: markdown
-        "dct:issued":
-          type: string
-          format: 'date-time'
-          title: Publicatiedatum
-          description: >-
-            Geef de datum waarop deze beschrijving van de gegevensset
-            beschikbaar is gesteld.
-        "dct:modified":
-          type: string
-          format: 'date-time'
-        "dct:identifier":
-          type: string
-          # TODO: datatype uitzoeken.
-        "dcat:keyword":
-          type: string
-          # TODO: datatype uitzoeken.
-        "dct:language":
-          type: string
-          enum: [
-            'nl_NL',
-            'en_US'
-          ]
-          # TODO: datatype uitzoeken.
-        "ams:contactPoint":
-          $ref: '#/components/schemas/ams:ContactPoint'
-        "dct:temporal":
-          type: string
-          # TODO: datatype uitzoeken.
-        "dct:spatial":
-          type: string
-          # TODO: datatype uitzoeken.
-        "dct:accrualPeriodicity":
-          type: string
-          # TODO: datatype uitzoeken.
-        "dcat:landingPage":
-          type: string
-          format: uri
-          # TODO: datatype uitzoeken.
-        "dcat:distribution":
-          type: array
-          items:
-            $ref: '#/components/schemas/dcat:Distribution'
+
     'dcat:CatalogRecord':
       type: object
       additionalProperties: false
       properties:
-        "dct:title":
+        'dct:title':
           type: string
-        "dct:description":
+        'dct:description':
           type: string
-        "dct:issued":
-          type: string
-          format: 'date-time'
-          # TODO: datatype uitzoeken.
-        "dct:modified":
+        'dct:issued':
           type: string
           format: 'date-time'
           # TODO: datatype uitzoeken.
-        "foaf:primaryTopic":
+        'dct:modified':
+          type: string
+          format: 'date-time'
+          # TODO: datatype uitzoeken.
+        'foaf:primaryTopic':
           $ref: '#/components/schemas/dcat:Dataset'
+
     'dcat:Distribution':
       type: object
       additionalProperties: false
       properties:
-        "dct:title":
+        'dct:title':
           type: string
-        "dct:description":
+        'dct:description':
           type: string
-        "dct:issued":
-          type: string
-          format: 'date-time'
-        "dct:modified":
+        'dct:issued':
           type: string
           format: 'date-time'
-        "dct:license":
+        'dct:modified':
           type: string
-        "dct:rights":
+          format: 'date-time'
+        'dct:license':
           type: string
-        "dcat:accessURL":
+        'dct:rights':
+          type: string
+        'dcat:accessURL':
           type: string
           format: uri
-        "dcat:downloadURL":
+        'dcat:downloadURL':
           type: string
           format: uri
-        "dcat:mediaType":
+        'dcat:mediaType':
           type: string
           format: 'media-type'
-        "dct:format":
+        'dct:format':
           type: string
-        "dcat:byteSize":
+        'dcat:byteSize':
           type: integer
           format: int64
+
+
   parameters:
     page:
       name: page
@@ -245,18 +352,6 @@ components:
         type: string
         enum:
           - '*'
-  securitySchemes:
-    OAuth2:
-      type: oauth2
-      description: >-
-        Authorization through our own Authorization Service.  Scope names all
-        start with `AUR`, which stands for **ADW User Roles**.
-      flows:
-        implicit:
-          authorizationUrl: 'http://localhost:8000/authz_admin/authorization'
-          scopes:
-            AUR/R: Read account roles.
-            AUR/W: Create and edit account roles.
   links: {}
   callbacks: {}
 externalDocs:
