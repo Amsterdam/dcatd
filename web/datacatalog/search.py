@@ -113,8 +113,8 @@ class InMemorySearch(AbstractSearch):
         return search_facets
 
     async def search(self, query={}):
-        """
-        Method to search packages (datasets) that match the query.
+        """Search packages (datasets) that match the query.
+
         Query can contain freetext search, drilldown on facets and can specify which facets to return
 
         This specific implemantation doesn't seperate searching, and constructing the resulting object.
@@ -122,6 +122,7 @@ class InMemorySearch(AbstractSearch):
 
         :param query:
         :return:
+
         """
         results = copy.deepcopy(self.all_packages)
 
@@ -165,11 +166,11 @@ class InMemorySearch(AbstractSearch):
 
 
 async def is_healthy():
-    return await implemented_serach.is_healthy()
+    return await implemented_search.is_healthy()
 
 
 async def search(query={}):
-    return await implemented_serach.search(query)
+    return await implemented_search.search(query)
 
 
-implemented_serach = InMemorySearch()
+implemented_search = InMemorySearch()

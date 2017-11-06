@@ -225,7 +225,6 @@ class TestSearchAPI(AioHTTPTestCase):
         self.assertEqual(results['result']['search_facets']['res_format']['items'][0]['count'], 1)
         self.assertEqual(results['result']['search_facets']['res_format']['items'][0]['name'], "PDF")
 
-
     @unittest_run_loop
     async def test_facets_field_query1(self):
         params = {

@@ -46,17 +46,16 @@ class FileDataStore(AbstractDataStore):
 
 async def is_healthy():
     for datastore in implemented_datastores:
-        is_healthy = await datastore.is_healthy()
-        if not is_healthy:
+        if not await datastore.is_healthy():
             return False
     return True
 
 
 async def get_by_id(id):
     for datastore in implemented_datastores:
-        object = await datastore.get_by_id(id)
-        if object:
-            return object
+        data_object = await datastore.get_by_id(id)
+        if data_object:
+            return data_object
     return None
 
 
