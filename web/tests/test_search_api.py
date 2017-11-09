@@ -250,3 +250,39 @@ class TestSearchAPI(AioHTTPTestCase):
         self.assertEqual(results['result']['facets']['res_format']['CSV'], 1)
         self.assertEqual(results['result']['search_facets']['res_format']['items'][0]['count'], 1)
         self.assertEqual(results['result']['search_facets']['res_format']['items'][0]['name'], "CSV")
+
+    @unittest_run_loop
+    async def test_fulltext_query1(self):
+        resp = await self._get_response(SearchParam.QUERY.value, "oceania")
+        await self._assert_number_of_results(resp, 1)
+
+        text = await resp.text()
+        results = json.loads(text)
+        self.assertEqual(results['result']['results'][0]['id'], '17be64bb-da74-4195-9bb8-565c39846af2')
+
+    @unittest_run_loop
+    async def test_fulltext_query2(self):
+        resp = await self._get_response(SearchParam.QUERY.value, "machine learning")
+        await self._assert_number_of_results(resp, 1)
+
+        text = await resp.text()
+        results = json.loads(text)
+        self.assertEqual(results['result']['results'][0]['id'], '62513382-3b26-4bc8-9096-40b6ce8383c0')
+
+    @unittest_run_loop
+    async def test_fulltext_query_variations(self):
+        resp = await self._get_response(SearchParam.QUERY.value, "machines") # find 'machine'
+        await self._assert_number_of_results(resp, 1)
+
+        text = await resp.text()
+        results = json.loads(text)
+        self.assertEqual(results['result']['results'][0]['id'], '62513382-3b26-4bc8-9096-40b6ce8383c0')
+
+    @unittest_run_loop
+    async def test_fulltext_query_index_stemming(self):
+        resp = await self._get_response(SearchParam.QUERY.value, "plant") # find 'plants'
+        await self._assert_number_of_results(resp, 1)
+
+        text = await resp.text()
+        results = json.loads(text)
+        self.assertEqual(results['result']['results'][0]['id'], '62513382-3b26-4bc8-9096-40b6ce8383c0')

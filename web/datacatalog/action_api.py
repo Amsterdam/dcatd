@@ -69,6 +69,9 @@ def extract_queryparams(request):
         values = [facet.split(':')[1].strip('"') for facet in facets]
         query[SearchParam.FACET_QUERY] = {k: v for (k, v) in zip(keys, values)}
 
+    if SearchParam.QUERY.value in request.query:
+        query[SearchParam.QUERY] = request.query[SearchParam.QUERY.value]
+
     return query
 
 

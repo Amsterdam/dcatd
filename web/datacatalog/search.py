@@ -4,6 +4,12 @@ import logging
 import copy
 from functools import reduce
 
+from whoosh.index import create_in
+from whoosh.fields import Schema, ID, TEXT
+from whoosh.analysis import StemmingAnalyzer
+from whoosh.qparser import QueryParser
+from whoosh.query import Variations
+
 from datacatalog import action_api
 
 log = logging.getLogger(__name__)
@@ -32,14 +38,43 @@ def _matcher(key, value):
 
 class InMemorySearch(AbstractSearch):
     FILEDATA_PATH = "/app/data/packages.json"
+    FILEDATA_DIRECTORY = "/app/data/"
 
     def __init__(self):
         if self.is_healthy():
             with open(self.FILEDATA_PATH) as json_data:
                 self.all_packages = json.load(json_data)
 
+            """
+                REMARK: This bit for freetext search is orthogonal, can be factored out in the future
+            """
+            stemming_analyzer = StemmingAnalyzer()
+            schema = Schema(nid=ID(stored=True),
+                            title=TEXT(analyzer=stemming_analyzer),
+                            notes=TEXT(analyzer=stemming_analyzer))
+            index_path = os.path.join(self.FILEDATA_DIRECTORY, "whoosh_index")
+            if not os.path.exists(index_path):
+                os.mkdir(index_path)
+            self.index = create_in(index_path, schema)
+
+            writer = self.index.writer()
+            for document in self.all_packages['result']['results']:
+                writer.add_document(nid=document['id'], title=document['title'], notes=document['notes'])
+            writer.commit()
+
     async def is_healthy(self):
         return os.path.exists(self.FILEDATA_PATH)
+
+    def _fulltext_search_ids(self, query):
+        qp = QueryParser("notes", termclass=Variations, schema=self.index.schema)
+        q = qp.parse(query[action_api.SearchParam.QUERY])
+        qp = QueryParser("title", termclass=Variations, schema=self.index.schema)
+        q1 = qp.parse(query[action_api.SearchParam.QUERY])
+        with self.index.searcher() as searcher:
+            results = searcher.search(q, limit=None)
+            results1 = searcher.search(q1, limit=None)
+            return [result['nid'] for result in results] \
+                   + [result['nid'] for result in results1]
 
     def _result_matches_facets(self, result, query):
         if action_api.SearchParam.FACET_QUERY not in query:
@@ -127,13 +162,18 @@ class InMemorySearch(AbstractSearch):
         results = copy.deepcopy(self.all_packages)
 
         # filter results for freetext query
-        #   needs to be implemented
+        if action_api.SearchParam.QUERY in query:
+            matching_ids = self._fulltext_search_ids(query)
+            filtered_results = [
+                result for result in results['result']['results'] if result['id'] in matching_ids
+            ]
+        else:
+            filtered_results = results['result']['results']
 
         # filter results for faceted search
-        filtered_results = []
-        for possible_result in results['result']['results']:
-            if self._result_matches_facets(possible_result, query):
-                filtered_results.append(possible_result)
+        filtered_results = [
+            result for result in filtered_results if self._result_matches_facets(result, query)
+        ]
 
         # update metadata
         results['result']['results'] = filtered_results
