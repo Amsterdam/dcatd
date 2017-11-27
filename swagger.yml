@@ -89,7 +89,9 @@ components:
 
     'dct:LinguisticSystem':
       type: string
+      enum: ['nl', 'en']
       pattern: '^[a-zA-Z]{2,3}$'
+      x-interface: pull-down
 
     'dcat:Dataset':
       type: object
@@ -99,26 +101,31 @@ components:
           description: >-
             A name given to the dataset.
           type: string
+          x-interface: text-line
 
         'dct:description':
           description: >-
             free-text account of the dataset.
           type: string
+          x-interface: rst
 
         'dct:issued':
           description: >-
-            rdfs:Literal encoded using the relevant `ISO 8601 Date and Time compliant string
-            <http://www.w3.org/TR/NOTE-datetime>`_ and typed using the appropriate `XML Schema datatype
+            rdfs:Literal encoded using the relevant `ISO 8601 Date and Time
+            compliant string <http://www.w3.org/TR/NOTE-datetime>`_ and typed
+            using the appropriate `XML Schema datatype
             <https://www.w3.org/TR/vocab-dcat/#bib-xmlschema-2>`_
           type: string
           format: date-time
+          x-interface: date-picker
 
         'dct:modified':
           description: >-
             Most recent date on which the dataset was changed, updated or modified.
 
-            rdfs:Literal encoded using the relevant `ISO 8601 Date and Time compliant string
-            <http://www.w3.org/TR/NOTE-datetime>`_ and typed using the appropriate `XML Schema datatype
+            rdfs:Literal encoded using the relevant `ISO 8601 Date and Time
+            compliant string <http://www.w3.org/TR/NOTE-datetime>`_ and typed
+            using the appropriate `XML Schema datatype
             <https://www.w3.org/TR/vocab-dcat/#bib-xmlschema-2>`_
           type: string
           format: date-time
@@ -127,8 +134,8 @@ components:
           description: >-
             A unique identifier of the dataset.
 
-            The identifier might be used as part of the URI of the dataset, but still having it represented explicitly
-            is useful.
+            The identifier might be used as part of the URI of the dataset, but
+            still having it represented explicitly is useful.
           type: string
 
         'dcat:keyword':
@@ -150,9 +157,13 @@ components:
             Range
             =====
             `dct:LinguisticSystem <http://purl.org/dc/terms/LinguisticSystem>`_
-            Resources defined by the Library of Congress (<http://id.loc.gov/vocabulary/iso639-1.html>,
-            <http://id.loc.gov/vocabulary/iso639-2.html>) should be used.
-            If a ISO 639-1 (two-letter) code is defined for language, then its corresponding IRI should be used; if no ISO 639-1 code is defined, then IRI corresponding to the ISO 639-2 (three-letter) code should be used.
+            Resources defined by the Library of Congress
+            (<http://id.loc.gov/vocabulary/iso639-1.html>,
+            <http://id.loc.gov/vocabulary/iso639-2.html>) should be used. If a
+            ISO 639-1 (two-letter) code is defined for language, then its
+            corresponding IRI should be used; if no ISO 639-1 code is defined,
+            then IRI corresponding to the ISO 639-2 (three-letter) code should
+            be used.
           type:
             - string
             - array
