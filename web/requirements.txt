@@ -1,2 +1,5 @@
 aiohttp
 cchardet
+
+# for implementations:
+whoosh

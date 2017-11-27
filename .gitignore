@@ -11,3 +11,5 @@
 /sphinx/.doctrees/
 /sphinx/*.inv
 /sphinx/*.inv.txt
+
+/web/tests/fixtures/whoosh_index/

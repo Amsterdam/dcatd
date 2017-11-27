@@ -2,6 +2,13 @@ import os
 import json
 import logging
 import copy
+from functools import reduce
+
+from whoosh.index import create_in
+from whoosh.fields import Schema, ID, TEXT
+from whoosh.analysis import StemmingAnalyzer
+from whoosh.qparser import QueryParser
+from whoosh.query import Variations
 
 from datacatalog import action_api
 
@@ -9,42 +16,81 @@ log = logging.getLogger(__name__)
 
 
 class AbstractSearch:
-    def is_healthy(self):
+    async def is_healthy(self):
         pass
 
-    def search(self, query={}):
+    async def search(self, query={}):
         pass
+
+
+def _init_or_increment(dictionary, key):
+    if key in dictionary:
+        dictionary[key] += 1
+    else:
+        dictionary[key] = 1
+
+
+def _matcher(key, value):
+    def _reduce_function(seed, dictionary):
+        return seed or value is None or dictionary[key] == value
+    return _reduce_function
 
 
 class InMemorySearch(AbstractSearch):
     FILEDATA_PATH = "/app/data/packages.json"
+    FILEDATA_DIRECTORY = "/app/data/"
 
     def __init__(self):
         if self.is_healthy():
             with open(self.FILEDATA_PATH) as json_data:
                 self.all_packages = json.load(json_data)
 
-    def is_healthy(self):
+            """
+                REMARK: This bit for freetext search is orthogonal, can be factored out in the future
+            """
+            stemming_analyzer = StemmingAnalyzer()
+            schema = Schema(nid=ID(stored=True),
+                            title=TEXT(analyzer=stemming_analyzer),
+                            notes=TEXT(analyzer=stemming_analyzer))
+            index_path = os.path.join(self.FILEDATA_DIRECTORY, "whoosh_index")
+            if not os.path.exists(index_path):
+                os.mkdir(index_path)
+            self.index = create_in(index_path, schema)
+
+            writer = self.index.writer()
+            for document in self.all_packages['result']['results']:
+                writer.add_document(nid=document['id'], title=document['title'], notes=document['notes'])
+            writer.commit()
+
+    async def is_healthy(self):
         return os.path.exists(self.FILEDATA_PATH)
+
+    def _fulltext_search_ids(self, query):
+        qp = QueryParser("notes", termclass=Variations, schema=self.index.schema)
+        q = qp.parse(query[action_api.SearchParam.QUERY])
+        qp = QueryParser("title", termclass=Variations, schema=self.index.schema)
+        q1 = qp.parse(query[action_api.SearchParam.QUERY])
+        with self.index.searcher() as searcher:
+            results = searcher.search(q, limit=None)
+            results1 = searcher.search(q1, limit=None)
+            return [result['nid'] for result in results] \
+                   + [result['nid'] for result in results1]
 
     def _result_matches_facets(self, result, query):
         if action_api.SearchParam.FACET_QUERY not in query:
             return True
 
         facets = query[action_api.SearchParam.FACET_QUERY]
+
         if action_api.Facet.GROUP.value in facets:
-            group_match = False
-            for group in result['groups']:
-                if group['name'] == facets[action_api.Facet.GROUP.value]:
-                    group_match = True
+            match_function = _matcher('name', facets[action_api.Facet.GROUP.value])
+            group_match = reduce(match_function, result['groups'], False)
             if not group_match:
                 return False
 
         if action_api.Facet.RESOURCE.value in facets:
-            resource_match = False
-            for resource in result['resources']:
-                if resource['format'] == facets[action_api.Facet.RESOURCE.value]:
-                    resource_match = True
+            match_function = _matcher('format', facets[action_api.Facet.RESOURCE.value])
+            resource_match = reduce(match_function, result['resources'], False)
             if not resource_match:
                 return False
 
@@ -55,24 +101,100 @@ class InMemorySearch(AbstractSearch):
 
         return True
 
-    def search(self, query={}):
+    def _get_empty_facets(self):
+        return {facet.value: {} for facet in action_api.Facet}
+
+    def _get_empty_search_facets(self):
+        return {
+            facet.value: {"items": [], "title": facet.value}
+            for facet in action_api.Facet
+        }
+
+    def _get_facets(self, facets, result):
+        if result['organization'] is not None:
+            _init_or_increment(facets['organization'], result['organization']['name'])
+
+        for resource in result['resources']:
+            _init_or_increment(facets['res_format'], resource['format'])
+
+        for group in result['groups']:
+            _init_or_increment(facets['groups'], group['name'])
+
+        return facets
+
+    def _add_to_items_or_increment(self, items, candidate_item, name_key, title_key):
+        for item in items["items"]:
+            if item["name"] == candidate_item[name_key]:
+                item["count"] += 1
+                return
+
+        items["items"].append({
+            "count": 1,
+            "display_name": candidate_item[title_key],
+            "name": candidate_item[name_key]
+        })
+
+    def _get_search_facets(self, search_facets, result):
+        if result['organization'] is not None:
+            self._add_to_items_or_increment(search_facets['organization'],
+                                            result['organization'], "name", "title")
+
+        for resource in result['resources']:
+            self._add_to_items_or_increment(search_facets['res_format'], resource, "format", "format")
+
+        for group in result['groups']:
+            self._add_to_items_or_increment(search_facets['groups'], group, "name", "name")
+
+        return search_facets
+
+    async def search(self, query={}):
+        """Search packages (datasets) that match the query.
+
+        Query can contain freetext search, drilldown on facets and can specify which facets to return
+
+        This specific implemantation doesn't seperate searching, and constructing the resulting object.
+        In the future these need to be seperated, and made pluggable.
+
+        :param query:
+        :return:
+
+        """
         results = copy.deepcopy(self.all_packages)
 
-        filtered_results = []
-        for possible_result in results['result']['results']:
-            if self._result_matches_facets(possible_result, query):
-                filtered_results.append(possible_result)
+        # filter results for freetext query
+        if action_api.SearchParam.QUERY in query:
+            matching_ids = self._fulltext_search_ids(query)
+            filtered_results = [
+                result for result in results['result']['results'] if result['id'] in matching_ids
+            ]
+        else:
+            filtered_results = results['result']['results']
+
+        # filter results for faceted search
+        filtered_results = [
+            result for result in filtered_results if self._result_matches_facets(result, query)
+        ]
+
+        # update metadata
         results['result']['results'] = filtered_results
+        results['result']['count'] = len(filtered_results)
 
+        # update facets
+        results['result']['facets'] = reduce(self._get_facets,
+                                             filtered_results,
+                                             self._get_empty_facets())
+        results['result']['search_facets'] = reduce(self._get_search_facets,
+                                                    filtered_results,
+                                                    self._get_empty_search_facets())
+
+        # filter facets based on requested facets
         if action_api.SearchParam.FACET_FIELDS in query:
-            output_facets = {}
-            output_searchfacets = {}
-            for requested_facet in query[action_api.SearchParam.FACET_FIELDS]:
-                output_facets[requested_facet] = results['result']['facets'][requested_facet]
-                output_searchfacets[requested_facet] = results['result']['search_facets'][requested_facet]
-            results['result']['facets'] = output_facets
-            results['result']['search_facets'] = output_searchfacets
+            results['result']['facets'] = {k: v for k, v in results['result']['facets'].items()
+                                           if k in query[action_api.SearchParam.FACET_FIELDS] }
+            results['result']['search_facets'] = {k: v for k, v in results['result']['search_facets'].items()
+                                                  if k in query[action_api.SearchParam.FACET_FIELDS] }
 
+        # apply paging
         begin = query[action_api.SearchParam.START] if action_api.SearchParam.START in query else 0
         if action_api.SearchParam.ROWS in query:
             end = begin + query[action_api.SearchParam.ROWS]
@@ -83,12 +205,12 @@ class InMemorySearch(AbstractSearch):
         return results
 
 
-def is_healthy():
-    return implemented_serach.is_healthy()
+async def is_healthy():
+    return await implemented_search.is_healthy()
 
 
-def search(query={}):
-    return implemented_serach.search(query)
+async def search(query={}):
+    return await implemented_search.search(query)
 
 
-implemented_serach = InMemorySearch()
+implemented_search = InMemorySearch()
