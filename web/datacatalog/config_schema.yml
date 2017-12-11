@@ -1,29 +1,20 @@
-$schema: http://json-schema.org/draft-04/schema#
+$schema: 'http://json-schema.org/draft-04/schema#'
 additionalProperties: false
 definitions:
-  postgres:
-    additionalProperties: false
-    properties:
-      dbname: {type: string}
-      host: {type: string}
-      password: {type: string}
-      port: {type: integer}
-      user: {type: string}
-    required: [host, port, user, password, dbname]
+  datacatalog:
     type: object
-
   logging.dictconfig:
-    required: [version]
-    type: object
     additionalProperties: false
     properties:
-      disable_existing_loggers: {type: boolean}
+      disable_existing_loggers:
+        type: boolean
       filters:
         patternProperties:
           ^[a-zA-Z0-9._-]+$:
             additionalProperties: false
             properties:
-              name: {type: string}
+              name:
+                type: string
             type: object
         type: object
       formatters:
@@ -31,68 +22,110 @@ definitions:
           ^[a-zA-Z0-9._-]+$:
             additionalProperties: false
             properties:
-              datefmt: {type: string}
-              format: {type: string}
+              datefmt:
+                type: string
+              format:
+                type: string
             type: object
         type: object
       handlers:
         patternProperties:
           ^[a-zA-Z0-9._-]+$:
             properties:
-              class: {type: string}
+              class:
+                type: string
               filters:
-                items: {type: string}
+                items:
+                  type: string
                 type: array
                 uniqueItems: true
-              formatter: {type: string}
-              level: {type: string}
-            required: [class]
+              formatter:
+                type: string
+              level:
+                type: string
+            required:
+            - class
             type: object
         type: object
-      incremental: {type: boolean}
+      incremental:
+        type: boolean
       loggers:
         patternProperties:
           ^[a-zA-Z0-9._-]+$:
             properties:
               filters:
-                items: {type: string}
+                items:
+                  type: string
                 type: array
                 uniqueItems: true
               handlers:
-                items: {type: string}
+                items:
+                  type: string
                 type: array
                 uniqueItems: true
-              level: {type: string}
-              propagate: {type: boolean}
+              level:
+                type: string
+              propagate:
+                type: boolean
             type: object
         type: object
       root:
         properties:
           filters:
-            items: {type: string}
+            items:
+              type: string
             type: array
             uniqueItems: true
           handlers:
-            items: {type: string}
+            items:
+              type: string
             type: array
             uniqueItems: true
           level:
-            enum: [CRITICAL, ERROR, WARNING, INFO, DEBUG]
+            enum:
+            - CRITICAL
+            - ERROR
+            - WARNING
+            - INFO
+            - DEBUG
             type: string
         type: object
       version:
-        enum: [1]
+        enum:
+        - 1
         type: integer
-
-  datacatalog:
+    required:
+    - version
     type: object
-
+  postgres:
+    additionalProperties: false
+    properties:
+      dbname:
+        type: string
+      host:
+        type: string
+      password:
+        type: string
+      port:
+        type: integer
+      user:
+        type: string
+    required:
+    - host
+    - port
+    - user
+    - password
+    - dbname
+    type: object
 properties:
-  logging: {$ref: '#/definitions/logging.dictconfig'}
-  postgres: {$ref: '#/definitions/postgres'}
-  postgres: {$ref: '#/definitions/datacatalog'}
+  logging:
+    $ref: '#/definitions/logging.dictconfig'
+  datacatalog:
+    $ref: '#/definitions/datacatalog'
+  postgres:
+    $ref: '#/definitions/postgres'
 required:
-  - datacatalog
-  - postgres
-  - logging
+- datacatalog
+- postgres
+- logging
 type: object

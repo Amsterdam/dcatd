@@ -1,13 +1,14 @@
+# language=rst
 """
 Module that loads the configuration settings for all our services.
 
-.. envvar:: CONFIG_PATH
+..  envvar:: CONFIG_PATH
 
     If set, the configuration is loaded from this path.
 
 See also :mod:`config_loader`.
 
-**Example usage**::
+Example usage::
 
     from authz_admin import config
     os.chdir(config.get()['working_directory'])
@@ -37,8 +38,6 @@ import types
 
 # extra imports:
 import config_loader
-
-from .frozen import frozen
 
 _logger = logging.getLogger(__name__)
 
@@ -99,5 +98,5 @@ def load() -> types.MappingProxyType:
 
     # Procedure logging.config.dictConfig() (called above) requires a
     # MutableMapping as its input, so we only freeze config *after* that call:
-    config = frozen(config)
+    config = config_loader.freeze(config)
     return config
