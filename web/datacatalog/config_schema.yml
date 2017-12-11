@@ -1,17 +1,20 @@
 $schema: http://json-schema.org/draft-04/schema#
 additionalProperties: false
 definitions:
-  jwtconfig:
+  postgres:
     additionalProperties: false
     properties:
-      algorithm:
-        enum: [HS256]
-        type: string
-      lifetime: {exclusiveMinimum: true, minimum: 0, type: integer}
-      secret: {type: string}
-    required: [secret, lifetime, algorithm]
+      dbname: {type: string}
+      host: {type: string}
+      password: {type: string}
+      port: {type: integer}
+      user: {type: string}
+    required: [host, port, user, password, dbname]
     type: object
+
   logging.dictconfig:
+    required: [version]
+    type: object
     additionalProperties: false
     properties:
       disable_existing_loggers: {type: boolean}
@@ -80,84 +83,15 @@ definitions:
       version:
         enum: [1]
         type: integer
-    required: [version]
+
+  datacatalog:
     type: object
+
 properties:
-  authz_admin:
-    additionalProperties: false
-    properties:
-      api_key: {type: string}
-      bind_port: {type: integer}
-      datasets:
-        additionalProperties: false
-        patternProperties:
-          ^\w{1,4}$:
-            additionalProperties: false
-            properties:
-              described_by: {format: url, type: string}
-              name: {maxLength: 80, minLength: 1, type: string}
-              scopes:
-                additionalProperties: false
-                patternProperties:
-                  ^\w{1,4}$:
-                    additionalProperties: false
-                    properties:
-                      description: {format: rst, type: string}
-                      included_by: {pattern: '^\w{1,4}$', type: string}
-                      includes: {pattern: '^\w{1,4}$', type: string}
-                      name: {maxLength: 80, minLength: 1, type: string}
-                    required: [name]
-                    type: object
-                type: object
-            required: [name, scopes]
-            type: object
-        type: object
-      jwks: {type: string}
-      profiles:
-        additionalProperties: false
-        patternProperties:
-          ^\w{1,32}$:
-            additionalProperties: false
-            properties:
-              description: {format: rst, type: string}
-              name: {maxlength: 120, type: string}
-              scopes:
-                items: {pattern: '^\w{1,4}/\w{1,4}$', type: string}
-                type: array
-            required: [name, scopes]
-            type: object
-        type: object
-      required_accounts:
-        additionalProperties:
-          items: {pattern: '^\w{1,32}$', type: string}
-          type: array
-        type: object
-      roles:
-        additionalProperties: false
-        patternProperties:
-          ^\w{1,32}$:
-            additionalProperties: false
-            properties:
-              description: {format: rst, type: string}
-              name: {maxlength: 120, type: string}
-              profiles:
-                items: {pattern: '^\w{1,32}$', type: string}
-                type: array
-            required: [name, profiles]
-            type: object
-        type: object
-    required: [api_key, jwks, bind_port, datasets, roles, profiles]
-    type: object
   logging: {$ref: '#/definitions/logging.dictconfig'}
-  postgres:
-    additionalProperties: false
-    properties:
-      dbname: {type: string}
-      host: {type: string}
-      password: {type: string}
-      port: {type: integer}
-      user: {type: string}
-    required: [host, port, user, password, dbname]
-    type: object
-required: [authz_admin, postgres, logging]
+  postgres: {$ref: '#/definitions/postgres'}
+required:
+  - datacatalog
+  - postgres
+  - logging
 type: object
