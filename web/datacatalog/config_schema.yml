@@ -90,6 +90,7 @@ definitions:
 properties:
   logging: {$ref: '#/definitions/logging.dictconfig'}
   postgres: {$ref: '#/definitions/postgres'}
+  postgres: {$ref: '#/definitions/datacatalog'}
 required:
   - datacatalog
   - postgres
