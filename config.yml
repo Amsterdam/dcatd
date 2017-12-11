@@ -1,0 +1,42 @@
+postgres:
+  host: ${DB_HOST:-localhost}
+  port: ${DB_PORT:-5432}
+  user: ${DB_USER:-datacatalog}
+  password: ${DB_PASS:-datacatalog}
+  dbname: ${DB_DATABASE:-datacatalog}
+
+logging:
+  version: 1
+  formatters:
+    default:
+      format: '%(asctime)s authz_admin %(levelname)-8s %(module)s:%(lineno)d: %(message)s'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: default
+    aiohttp.access:
+      class: logging.StreamHandler
+  loggers:
+    datacatalog:
+      level: ${LOGLEVEL:-DEBUG}
+      handlers: [console]
+      propagate: false
+    aiohttp.access:
+      level: ${LOGLEVEL:-DEBUG}
+      handlers: [aiohttp.access]
+      propagate: false
+    aiohttp:
+      propagate: true
+#    aiohttp.*:
+#      propagate: true
+    aiohttp_extras:
+      level: ${LOGLEVEL:-DEBUG}
+      handlers: [console]
+      propagate: false
+    config_loader:
+      level: ${LOGLEVEL:-DEBUG}
+      handlers: [console]
+      propagate: false
+  root:
+    level: ${LOGLEVEL:-WARNING}
+    handlers: [console]

@@ -1,5 +1,6 @@
 aiohttp
 cchardet
+datapunt_config_loader
 
 # for implementations:
 whoosh
