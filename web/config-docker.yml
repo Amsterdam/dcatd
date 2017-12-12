@@ -52,12 +52,12 @@ web:
 datastore:
   implementation: "datacatalog.plugins.file_datastore.FileDataStore"
   config:
-    filedata_path: "./web/tests/fixtures"
+    filedata_path: "/app/data"
     list_file: "package_list"
     all_packages: "packages.json"
 
 search:
   implementation: "datacatalog.plugins.search.InMemorySearch"
   config:
-    filedata_path: "./web/tests/fixtures"
+    filedata_path: "/app/data"
     all_packages: "packages.json"

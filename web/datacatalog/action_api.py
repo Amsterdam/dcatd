@@ -4,9 +4,6 @@ from enum import Enum
 
 from aiohttp import web
 
-from datacatalog import datastore
-from datacatalog import search
-
 ACTION_PARAM = 'action'
 ACTION_SHOW = "package_show"
 ACTION_LIST = "package_list"
@@ -81,6 +78,8 @@ async def handle_search(request):
     except ValueError:
         raise web.HTTPBadRequest()
 
+    search = request.app['search']
+
     results = await search.search(query)
     return web.json_response(results)
 
@@ -90,7 +89,9 @@ async def handle_show(request):
         raise web.HTTPBadRequest()
 
     id = request.query['id']
+    datastore = request.app['datastore']
     object = await datastore.get_by_id(id)
+
     if not object:
         raise web.HTTPNotFound()
 
@@ -98,5 +99,7 @@ async def handle_show(request):
 
 
 async def handle_list(request):
+    datastore = request.app['datastore']
+
     results = await datastore.get_list()
     return web.json_response(results)

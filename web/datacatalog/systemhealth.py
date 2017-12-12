@@ -1,8 +1,5 @@
 from aiohttp import web
 
-from datacatalog import datastore
-from datacatalog import search
-
 
 async def handle(request):
     """Handle the system health check
@@ -11,9 +8,11 @@ async def handle(request):
     status 500. If all systems are go status 200 is returned
 
     """
+    datastore = request.app['datastore']
     if not await datastore.is_healthy():
         raise web.HTTPServerError(text="datastore not healthy")
 
+    search = request.app['search']
     if not await search.is_healthy():
         raise web.HTTPServerError(text="search is not healthy")
 

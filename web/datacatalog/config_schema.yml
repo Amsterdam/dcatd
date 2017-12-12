@@ -3,6 +3,26 @@ additionalProperties: false
 definitions:
   datacatalog:
     type: object
+  web:
+    additionalProperties: false
+    properties:
+      port: {type: integer}
+    required: [port]
+    type: object
+  datastore:
+    additionalProperties: false
+    properties:
+      implementation: {type: string}
+      config: {type: object}
+    required: [implementation, config]
+    type: object
+  search:
+    additionalProperties: false
+    properties:
+      implementation: {type: string}
+      config: {type: object}
+    required: [implementation, config]
+    type: object
   logging.dictconfig:
     additionalProperties: false
     properties:
@@ -124,6 +144,12 @@ properties:
     $ref: '#/definitions/datacatalog'
   postgres:
     $ref: '#/definitions/postgres'
+  web:
+    $ref: '#/definitions/web'
+  search:
+    $ref: '#/definitions/search'
+  datastore:
+    $ref: '#/definitions/datastore'
 required:
 - datacatalog
 - postgres

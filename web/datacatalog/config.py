@@ -24,8 +24,8 @@ Example usage::
 
     By default, this variable is initialized with:
 
-        -   :file:`/etc/datapunt-oauth2.yml`
-        -   :file:`./datapunt-oauth2.yml`
+        -   :file:`/etc/datacatalog.yml`
+        -   :file:`./datacatalog.yml`
 
 """
 

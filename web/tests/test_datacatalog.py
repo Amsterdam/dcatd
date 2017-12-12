@@ -23,13 +23,13 @@ class TestDatacatalog(AioHTTPTestCase):
         text = await resp.text()
         assert 'systemhealth is OK' in text
 
-    @mock.patch('datacatalog.datastore.is_healthy', side_effect=lambda:False)
+    @mock.patch('datacatalog.plugins.filedatastore.FileDataStore.is_healthy', side_effect=lambda:False)
     @unittest_run_loop
     async def test_health_not_ok_datastore(self, mock):
         resp = await self.client.get('/system/health')
         assert resp.status == 500
 
-    @mock.patch('datacatalog.search.is_healthy', side_effect=lambda:False)
+    @mock.patch('datacatalog.plugins.search.InMemorySearch.is_healthy', side_effect=lambda:False)
     @unittest_run_loop
     async def test_health_not_ok_datastore(self, mock):
         resp = await self.client.get('/system/health')

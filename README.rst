@@ -17,8 +17,8 @@ If you want to roll your own runtime environment, the :file:`Dockerfile`(s) and
 :file:`docker-compose.yml` should provide you with sufficient information to
 create an environment in which to run the service.
 
-How to run
-----------
+How to run in Docker
+--------------------
 
 Open a terminal in the root-dir of this project and type::
 
@@ -28,13 +28,34 @@ Now you can point your browser at `http://localhost:8000/
 <http://localhost:8000/>`_ and see content served by the code.
 
 
-How to run tests
-----------------
+How to run tests in Docker
+--------------------------
 
-Run the script script (that utilizes the
+Run the script (that utilizes the
 :file:`docker-compose-for-tests.yml`)::
 
     ./test.sh
 
-To do: make locally testing possible
+How to run locally
+------------------
+
+The source requires Python 3.6, make sure have that installed.
+Create and activate a virtualenv and then run the following commands from the root-directory of the project::
+
+    pip install -r web/requirements.txt
+    PYTHONPATH=./web python3 -m datacatalog.web
+
+Now you can point your browser at `http://localhost:8000/
+<http://localhost:8000/>`_ and see content served by the code.
+
+How to run tests locally
+------------------------
+
+The following instructions asume you have a virtualenv activated
+in which the project successfully runs (see previous section).
+
+Then run the script::
+
+    ./test-local.sh
+
 

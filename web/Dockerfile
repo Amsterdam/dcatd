@@ -14,6 +14,8 @@ RUN mkdir -p  /app/data \
     && chown datacatalog  /app/data
 
 COPY requirements.txt /app/
+COPY config-docker.yml /etc/datacatalog.yml
+
 RUN pip install --no-cache-dir -r requirements.txt
 RUN rm requirements.txt
 

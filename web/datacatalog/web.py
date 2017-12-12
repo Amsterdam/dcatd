@@ -2,4 +2,5 @@ from aiohttp import web
 
 from datacatalog import app
 
-web.run_app(app.get_app(), port=8000)
+aio_app = app.get_app()
+web.run_app(aio_app, port=aio_app['config']['web']['port'])
