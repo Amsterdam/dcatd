@@ -4,6 +4,7 @@ from datacatalog import systemhealth, index, action_api, config
 from datacatalog.search import Search
 from datacatalog.datastore import DataStore
 
+
 def get_app():
     """
         Construct the the application

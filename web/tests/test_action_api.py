@@ -5,13 +5,6 @@ from aiohttp.test_utils import AioHTTPTestCase, unittest_run_loop
 from datacatalog import app
 from . import fixtures
 
-FIXTURE_IDS = ['62513382-3b26-4bc8-9096-40b6ce8383c0',
-               '17be64bb-da74-4195-9bb8-565c39846af2',
-               '9c3036b8-f6ac-4a4e-9036-5a3cc90c3900']
-FIXTURE_NAMES = ["100-validated-species-of-plants",
-                 "1617in10-regulation-of-sale-of-overseas-properties-20170426-c",
-                 "2016-regione-asia-est-oceania-classi-di-eta"]
-
 
 class TestActionAPI(AioHTTPTestCase):
     async def get_application(self):
@@ -19,7 +12,7 @@ class TestActionAPI(AioHTTPTestCase):
 
     @unittest_run_loop
     async def test_show(self):
-        for fixture_id in FIXTURE_IDS:
+        for fixture_id in fixtures.FIXTURE_IDS:
             resp = await self.client.get(f'/datacatalog/api/3/action/package_show?id={fixture_id}')
             assert resp.status == 200
             text = await resp.text()
@@ -27,12 +20,12 @@ class TestActionAPI(AioHTTPTestCase):
 
     @unittest_run_loop
     async def test_show_by_name(self):
-        for name in FIXTURE_NAMES:
+        for name in fixtures.FIXTURE_NAMES:
             resp = await self.client.get(f'/datacatalog/api/3/action/package_show?id={name}')
             assert resp.status == 200
             text = await resp.text()
             object = json.loads(text)
-            assert object['result']['id'] in FIXTURE_IDS
+            assert object['result']['id'] in fixtures.FIXTURE_IDS
 
     @unittest_run_loop
     async def test_show_no_id(self):
@@ -44,7 +37,7 @@ class TestActionAPI(AioHTTPTestCase):
         resp = await self.client.get('/datacatalog/api/3/action/package_search')
         assert resp.status == 200
         text = await resp.text()
-        for fixture_id in FIXTURE_IDS:
+        for fixture_id in fixtures.FIXTURE_IDS:
             assert fixture_id in text
 
     @unittest_run_loop
@@ -53,7 +46,7 @@ class TestActionAPI(AioHTTPTestCase):
         assert resp.status == 200
         text = await resp.text()
 
-        for name in FIXTURE_NAMES:
+        for name in fixtures.FIXTURE_NAMES:
             assert name in text
 
     @unittest_run_loop

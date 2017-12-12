@@ -1,6 +1,13 @@
 import string, random, json
 from datacatalog.action_api import Facet
 
+FIXTURE_IDS = ['62513382-3b26-4bc8-9096-40b6ce8383c0',
+               '17be64bb-da74-4195-9bb8-565c39846af2',
+               '9c3036b8-f6ac-4a4e-9036-5a3cc90c3900']
+FIXTURE_NAMES = ["100-validated-species-of-plants",
+                 "1617in10-regulation-of-sale-of-overseas-properties-20170426-c",
+                 "2016-regione-asia-est-oceania-classi-di-eta"]
+
 
 def random_int(max, zero_based=False):
     start = 0 if zero_based else 1
