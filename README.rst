@@ -6,6 +6,8 @@ Core of the Data Catalog Project
 A microservice with API to store, manage and search through meta data of data
 sets.
 
+The latest documentation can always be found `here <https://amsterdam.github.io/datacatalog-core/>`_.
+
 
 Requirements
 ------------
@@ -13,7 +15,7 @@ Requirements
 All requirements have been abstracted away using `Docker
 <https://www.docker.com/>`_.
 
-If you want to roll your own runtime environment, the :file:`Dockerfile`(s) and
+If you want to roll your own runtime environment, the :file:`Dockerfile`\(s) and
 :file:`docker-compose.yml` should provide you with sufficient information to
 create an environment in which to run the service.
 
