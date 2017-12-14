@@ -1,6 +1,12 @@
-.PHONY: schema test cov testclean distclean clean
+.PHONY: _test_requirements test cov install dist upload clean
 
 RM = rm -rf
+PYTHON = python3
+PIP_UPGRADE = pip install --upgrade --upgrade-strategy eager --force-reinstall
+
+# ┏━━━━━━━━━┓
+# ┃ Testing ┃
+# ┗━━━━━━━━━┛
 
 # `pytest` and `python -m pytest` are equivalent, except that the latter will
 # add the current working directory to sys.path. We don't want that; we want
@@ -12,7 +18,7 @@ PYTEST = pytest --loop uvloop --verbose -p no:cacheprovider --exitfirst
 # The ?= operator below assigns only if the variable isn't defined yet. This
 # allows the caller to override them:
 #
-#     TESTS_DIR=other_tests make test
+# TESTS_DIR=other_tests make test
 #
 PYTEST_COV ?= $(PYTEST_OPTS) --cov=src --cov-report=term --no-cov-on-fail
 TESTS_DIR ?= tests
@@ -23,43 +29,46 @@ TESTS_DIR ?= tests
 #	$(MAKE) -C alembic $@
 
 
-test:
-	$(PYTEST) $(PYTEST_OPTS)     $(TESTS_DIR)
+_test_requirements:
+	pip install --upgrade --upgrade-strategy eager -e .[test]
+
+test: _test_requirements
+	$(PYTEST)               $(TESTS_DIR)
+
+cov: _test_requirements
+	$(PYTEST) $(PYTEST_COV) $(TESTS_DIR)
 
 
-cov:
-	$(PYTEST) $(PYTEST_COV_OPTS) $(TESTS_DIR)
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+# ┃ Installing, building, running ┃
+# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+install:
+	pip install --upgrade --upgrade-strategy eager -e .[dev]
+
+dist:
+	$(PYTHON) setup.py sdist
+
+upload:
+	$(PYTHON) setup.py sdist upload
+
+example:
+	@echo -n Installing dependencies...
+	@pip install --upgrade --upgrade-strategy eager -e . >/dev/null 2>&1 && echo ' OK' || echo ' FAILED'
+	@echo Starting example server:
+	@./examples/run.sh
 
 
-testclean:
-	@$(RM) .cache .coverage
+# ┏━━━━━━━━━━━━━┓
+# ┃ Cleaning up ┃
+# ┗━━━━━━━━━━━━━┛
 
+clean:
+	@# From running pytest with coverage:
+	$(RM) .coverage
 
-# @evert waar komt dit eigenlijk vandaan? [--PvB]
-distclean:
-	@$(RM) \
-		dist/ \
-		bin/ \
-		develop-eggs/ \
-		eggs/ \
-		parts/ \
-		MANIFEST \
-		htmlcov/ \
-		.installed.cfg
+	@# From `pip install -e .`:
+	-pip uninstall -y datacatalog-core && $(RM) src/datacatalog_core.egg-info
 
-clean: testclean distclean
-	@$(RM) build *.egg-info .eggs dist
-	@find . -not -path "./.venv/*" -and \( \
-		-name "*.pyc" -or \
-		-name "__pycache__" -or \
-		-name "*.pyo" -or \
-		-name "*.so" -or \
-		-name "*.o" -or \
-		-name "*~" -or \
-		-name "._*" -or \
-		-name "*.swp" -or \
-		-name "Desktop.ini" -or \
-		-name "Thumbs.db" -or \
-		-name "__MACOSX__" -or \
-		-name ".DS_Store" \
-	\) -delete
+	@# From `setup.py sdist`:
+	$(RM) dist

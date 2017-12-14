@@ -28,7 +28,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-
+            'datacatalog-core=datacatalog.main:main'
         ]
     },
 
@@ -38,9 +38,9 @@ setup(
     # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
     package_dir={'': 'src'},
     packages=find_packages('src'),
-    # package_data={
-    #     'authz_admin': ['config_schema*.json', 'openapi.yml']
-    # },
+    package_data={
+        'datacatalog': ['config_schema.yml']
+    },
 
 
     # ┏━━━━━━━━━━━━━━┓

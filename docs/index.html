@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Core of the Data Catalog Project &mdash; aiohttp_openapi_haljson 0.1 documentation</title>
+  <title>Core of the Data Catalog Project &mdash; datacatalog-core 0.1 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="aiohttp_openapi_haljson 0.1 documentation" href="#"/>
+    <link rel="top" title="datacatalog-core 0.1 documentation" href="#"/>
         <link rel="next" title="API Docs" href="api_docs.html"/> 
 
   
@@ -59,7 +59,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> aiohttp_openapi_haljson
+            <a href="#" class="icon icon-home"> datacatalog-core
           
 
           
@@ -91,6 +91,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api/handlers.html">Handlers</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">JSON Schemas and OpenAPI definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphinx_101.html">Sphinx 101</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="sphinx_101.html#rest-formatting">ReST formatting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sphinx_101.html#roles-added-by-sphinx">Roles added by Sphinx</a></li>
@@ -168,7 +169,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">aiohttp_openapi_haljson</a>
+          <a href="#">datacatalog-core</a>
         
       </nav>
 
@@ -221,32 +222,10 @@
 <h1>Core of the Data Catalog Project<a class="headerlink" href="#core-of-the-data-catalog-project" title="Permalink to this headline">¶</a></h1>
 <p>A microservice with API to store, manage and search through meta data of data
 sets.</p>
-<div class="section" id="requirements">
-<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>All requirements have been abstracted away using <a class="reference external" href="https://www.docker.com/">Docker</a>.</p>
-<p>If you want to roll your own runtime environment, the <code class="file docutils literal"><span class="pre">Dockerfile`(s)</span> <span class="pre">and</span>
-<span class="pre">:file:`docker-compose.yml</span></code> should provide you with sufficient information to
-create an environment in which to run the service.</p>
-</div>
-<div class="section" id="how-to-run">
-<h2>How to run<a class="headerlink" href="#how-to-run" title="Permalink to this headline">¶</a></h2>
-<p>Open a terminal in the root-dir of this project and type:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>docker-compose up -d
-</pre></div>
-</div>
-<p>Now you can point your browser at <a class="reference external" href="http://localhost:8000/">http://localhost:8000/</a> and see content served by the code.</p>
-</div>
-<div class="section" id="how-to-run-tests">
-<h2>How to run tests<a class="headerlink" href="#how-to-run-tests" title="Permalink to this headline">¶</a></h2>
-<p>Either run the script in the <code class="file docutils literal"><span class="pre">test</span></code> folder (that utilizes the
-<code class="file docutils literal"><span class="pre">docker-compose.yml</span></code> in <code class="file docutils literal"><span class="pre">/test</span></code>):</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>test/test.sh
-</pre></div>
-</div>
-<p>or build the Web docker and then build and run the Test docker (the root-dir of this project):</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span>docker build -t datacatalog-core:latest web
-docker build -t datacatalog-core-test:latest web/tests
-docker run datacatalog-core-test:latest
+<p>The latest documentation can always be found <a class="reference external" href="https://amsterdam.github.io/datacatalog-core/">here</a>.</p>
+<div class="section" id="how-to-run-locally">
+<h2>How to run locally<a class="headerlink" href="#how-to-run-locally" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>make example
 </pre></div>
 </div>
 <div class="toctree-wrapper compound">

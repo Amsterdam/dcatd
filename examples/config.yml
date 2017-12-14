@@ -10,6 +10,7 @@ logging:
       class: logging.StreamHandler
       formatter: default
   loggers:
+    # See also: <http://aiohttp.readthedocs.io/en/stable/logging.html>
     aiohttp:
       propagate: true
     aiohttp.*:
@@ -24,6 +25,7 @@ logging:
       - console
       level: ${LOGLEVEL:-DEBUG}
       propagate: false
+
     config_loader:
       handlers:
       - console
@@ -52,12 +54,12 @@ web:
 datastore:
   implementation: "datacatalog.plugins.file_datastore.FileDataStore"
   config:
-    filedata_path: "./web/tests/fixtures"
+    filedata_path: "./example_data"
     list_file: "package_list"
     all_packages: "packages.json"
 
 search:
   implementation: "datacatalog.plugins.search.InMemorySearch"
   config:
-    filedata_path: "./web/tests/fixtures"
+    filedata_path: "./example_data"
     all_packages: "packages.json"

@@ -3,9 +3,9 @@ services:
   web:
     image: datacatalog-core:latest
     build:
-      context: ./web
+      context: ./src
 
   test:
-    build: ./web/tests
+    build: ./tests
     volumes:
-      - ./web/tests/fixtures:/app/data
+      - ./tests/fixtures:/app/data

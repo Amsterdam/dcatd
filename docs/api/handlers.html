@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Handlers &mdash; aiohttp_openapi_haljson 0.1 documentation</title>
+  <title>Handlers &mdash; datacatalog-core 0.1 documentation</title>
   
 
   
@@ -39,9 +39,9 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="aiohttp_openapi_haljson 0.1 documentation" href="../index.html"/>
+    <link rel="top" title="datacatalog-core 0.1 documentation" href="../index.html"/>
         <link rel="up" title="API Docs" href="../api_docs.html"/>
-        <link rel="next" title="Sphinx 101" href="../sphinx_101.html"/>
+        <link rel="next" title="JSON Schemas and OpenAPI definitions" href="../schemas.html"/>
         <link rel="prev" title="API Docs" href="../api_docs.html"/> 
 
   
@@ -61,7 +61,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> aiohttp_openapi_haljson
+            <a href="../index.html" class="icon icon-home"> datacatalog-core
           
 
           
@@ -93,6 +93,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Handlers</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../schemas.html">JSON Schemas and OpenAPI definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sphinx_101.html">Sphinx 101</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../sphinx_101.html#rest-formatting">ReST formatting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../sphinx_101.html#roles-added-by-sphinx">Roles added by Sphinx</a></li>
@@ -170,7 +171,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">aiohttp_openapi_haljson</a>
+          <a href="../index.html">datacatalog-core</a>
         
       </nav>
 
@@ -224,21 +225,34 @@
   <div class="section" id="module-datacatalog.action_api">
 <span id="handlers"></span><span id="best-content-types"></span><h1>Handlers<a class="headerlink" href="#module-datacatalog.action_api" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="datacatalog.action_api.SearchParams">
-<em class="property">class </em><code class="descname">SearchParams</code><a class="reference internal" href="../_modules/datacatalog/action_api.html#SearchParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.action_api.SearchParams" title="Permalink to this definition">¶</a></dt>
+<dt id="datacatalog.action_api.Facet">
+<em class="property">class </em><code class="descname">Facet</code><a class="reference internal" href="../_modules/datacatalog/action_api.html#Facet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.action_api.Facet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/enum.html#enum.Enum" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></a></p>
 <p>An enumeration.</p>
 <dl class="attribute">
-<dt id="datacatalog.action_api.SearchParams._member_type_">
-<code class="descname">_member_type_</code><a class="headerlink" href="#datacatalog.action_api.SearchParams._member_type_" title="Permalink to this definition">¶</a></dt>
+<dt id="datacatalog.action_api.Facet._member_type_">
+<code class="descname">_member_type_</code><a class="headerlink" href="#datacatalog.action_api.Facet._member_type_" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <a class="reference external" href="https://docs.python.org/3.6/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="data">
-<dt id="datacatalog.action_api.log">
-<code class="descname">log</code><em class="property"> = &lt;Logger datacatalog.action_api (NOTSET)&gt;</em><a class="reference internal" href="../_modules/logging.html#log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.action_api.log" title="Permalink to this definition">¶</a></dt>
+<dl class="class">
+<dt id="datacatalog.action_api.SearchParam">
+<em class="property">class </em><code class="descname">SearchParam</code><a class="reference internal" href="../_modules/datacatalog/action_api.html#SearchParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.action_api.SearchParam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/enum.html#enum.Enum" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="attribute">
+<dt id="datacatalog.action_api.SearchParam._member_type_">
+<code class="descname">_member_type_</code><a class="headerlink" href="#datacatalog.action_api.SearchParam._member_type_" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3.6/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.action_api.handle">
+<code class="descname">handle</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/action_api.html#handle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.action_api.handle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle the action API calls package_search en package_show</p>
 </dd></dl>
 
@@ -254,7 +268,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../sphinx_101.html" class="btn btn-neutral float-right" title="Sphinx 101" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../schemas.html" class="btn btn-neutral float-right" title="JSON Schemas and OpenAPI definitions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../api_docs.html" class="btn btn-neutral" title="API Docs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
