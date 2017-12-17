@@ -10,11 +10,11 @@ async def handle(request):
     """
     datastore = request.app['datastore']
     if not await datastore.is_healthy():
-        raise web.HTTPServerError(text="datastore not healthy")
+        raise web.HTTPServiceUnavailable(text="datastore not healthy")
 
     search = request.app['search']
     if not await search.is_healthy():
-        raise web.HTTPServerError(text="search is not healthy")
+        raise web.HTTPServiceUnavailable(text="search is not healthy")
 
     text = "Datacatalog-core systemhealth is OK"
     return web.Response(text=text)

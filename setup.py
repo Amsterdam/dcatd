@@ -78,4 +78,9 @@ setup(
             'pytest-aiohttp',
         ],
     },
+    # To keep PyCharm from complaining about missing requirements:
+    tests_require=[
+        'pytest',
+        'pytest-aiohttp',
+    ],
 )
