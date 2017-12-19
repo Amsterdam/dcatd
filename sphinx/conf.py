@@ -44,7 +44,7 @@ source_suffix = '.rst'
 master_doc='index'
 
 # General information about the project.
-project = 'aiohttp_openapi_haljson'
+project = 'datacatalog-core'
 # noinspection PyShadowingBuiltins
 copyright = '2017, Gemeente Amsterdam'
 author = 'Amsterdam City Data'

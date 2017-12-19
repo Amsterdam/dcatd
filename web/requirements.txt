@@ -1,6 +1,0 @@
-aiohttp
-cchardet
-datapunt_config_loader~=1.0.1
-
-# for implementations:
-whoosh

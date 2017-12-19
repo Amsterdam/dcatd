@@ -12,4 +12,5 @@
 /sphinx/*.inv
 /sphinx/*.inv.txt
 
-/web/tests/fixtures/whoosh_index/
+/tests/fixtures/whoosh_index/
+/examples/example_data/whoosh_index/

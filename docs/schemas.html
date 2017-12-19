@@ -8,14 +8,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API Docs &mdash; datacatalog-core 0.1 documentation</title>
+  <title>JSON Schemas and OpenAPI definitions &mdash; datacatalog-core 0.1 documentation</title>
   
 
   
   
   
   
-    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/api_docs.html"/>
+    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/schemas.html"/>
   
 
   
@@ -40,8 +40,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="datacatalog-core 0.1 documentation" href="index.html"/>
-        <link rel="next" title="Handlers" href="api/handlers.html"/>
-        <link rel="prev" title="Core of the Data Catalog Project" href="index.html"/> 
+        <link rel="next" title="Sphinx 101" href="sphinx_101.html"/>
+        <link rel="prev" title="Handlers" href="api/handlers.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -88,11 +88,11 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API Docs</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="api_docs.html">API Docs</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/handlers.html">Handlers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="schemas.html">JSON Schemas and OpenAPI definitions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">JSON Schemas and OpenAPI definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sphinx_101.html">Sphinx 101</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="sphinx_101.html#rest-formatting">ReST formatting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sphinx_101.html#roles-added-by-sphinx">Roles added by Sphinx</a></li>
@@ -200,13 +200,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>API Docs</li>
+      <li>JSON Schemas and OpenAPI definitions</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/api_docs.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/schemas.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -219,10 +219,23 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="api-docs">
-<span id="id1"></span><h1>API Docs<a class="headerlink" href="#api-docs" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-</div>
+  <div class="section" id="json-schemas-and-openapi-definitions">
+<span id="schemas"></span><h1>JSON Schemas and OpenAPI definitions<a class="headerlink" href="#json-schemas-and-openapi-definitions" title="Permalink to this headline">¶</a></h1>
+<p>JSON Schema Validation v04 has the following built-in formats for strings:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">&quot;date-time&quot;</span></code>: Date representation, as defined by <span class="target" id="index-0"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3339.html"><strong>RFC 3339</strong></a>, section 5.6.</li>
+<li><code class="docutils literal"><span class="pre">&quot;email&quot;</span></code>: Internet email address, see <span class="target" id="index-1"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc5322.html"><strong>RFC 5322</strong></a>, section 3.4.1.</li>
+<li><code class="docutils literal"><span class="pre">&quot;hostname&quot;</span></code>: Internet host name, see <span class="target" id="index-2"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc1034.html"><strong>RFC 1034</strong></a>, section 3.1.</li>
+<li><code class="docutils literal"><span class="pre">&quot;ipv4&quot;</span></code>: IPv4 address, according to dotted-quad ABNF syntax as
+defined in <span class="target" id="index-3"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2673.html"><strong>RFC 2673</strong></a>, section 3.2.</li>
+<li><code class="docutils literal"><span class="pre">&quot;ipv6&quot;</span></code>: IPv6 address, as defined in <span class="target" id="index-4"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc2373.html"><strong>RFC 2373</strong></a>, section 2.2.</li>
+<li><code class="docutils literal"><span class="pre">&quot;uri&quot;</span></code>: A universal resource identifier (URI), according to <span class="target" id="index-5"></span><a class="rfc reference external" href="https://tools.ietf.org/html/rfc3986.html"><strong>RFC 3986</strong></a>.</li>
+</ul>
+<p>Additionally, we use the following format identifiers:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">&quot;line&quot;</span></code>: A single line of text, ie. not including any new-line characters.</li>
+<li><code class="docutils literal"><span class="pre">&quot;rst&quot;</span></code>: reStructuredText</li>
+</ul>
 </div>
 
 
@@ -235,10 +248,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="api/handlers.html" class="btn btn-neutral float-right" title="Handlers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="sphinx_101.html" class="btn btn-neutral float-right" title="Sphinx 101" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Core of the Data Catalog Project" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="api/handlers.html" class="btn btn-neutral" title="Handlers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
