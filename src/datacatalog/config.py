@@ -10,7 +10,7 @@ See also :mod:`config_loader`.
 
 Example usage::
 
-    from authz_admin import config
+    from . import config
     os.chdir(config.get()['working_directory'])
 
 

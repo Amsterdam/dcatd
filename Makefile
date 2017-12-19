@@ -1,8 +1,8 @@
-.PHONY: _test_requirements test cov install dist upload clean
+.PHONY: .test_requirements test cov install dist upload clean
 
 RM = rm -rf
 PYTHON = python3
-PIP_UPGRADE = pip install --upgrade --upgrade-strategy eager --force-reinstall
+PIP_UPGRADE = pip3 install --upgrade --upgrade-strategy eager --force-reinstall
 
 # ┏━━━━━━━━━┓
 # ┃ Testing ┃
@@ -29,14 +29,14 @@ TESTS_DIR ?= tests
 #	$(MAKE) -C alembic $@
 
 
-_test_requirements:
-	pip install --upgrade --upgrade-strategy eager -e .[test]
+testdep:
+	pip3 install --quiet --upgrade --upgrade-strategy eager -e .[test] && echo 'OK' || echo 'FAILED'
 
-test: _test_requirements
-	$(PYTEST)               $(TESTS_DIR)
+test:
+	CONFIG_PATH=$(TESTS_DIR)/config.yml $(PYTEST)               $(TESTS_DIR)
 
-cov: _test_requirements
-	$(PYTEST) $(PYTEST_COV) $(TESTS_DIR)
+testcov:
+	CONFIG_PATH=$(TESTS_DIR)/config.yml $(PYTEST) $(PYTEST_COV) $(TESTS_DIR)
 
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -44,7 +44,8 @@ cov: _test_requirements
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 install:
-	pip install --upgrade --upgrade-strategy eager -e .[dev]
+	@echo -n 'Installing... '
+	@pip3 install --quiet --upgrade --upgrade-strategy eager -e . && echo 'OK' || echo 'FAILED'
 
 dist:
 	$(PYTHON) setup.py sdist
@@ -52,9 +53,7 @@ dist:
 upload:
 	$(PYTHON) setup.py sdist upload
 
-example:
-	@echo -n Installing dependencies...
-	@pip install --upgrade --upgrade-strategy eager -e . >/dev/null 2>&1 && echo ' OK' || echo ' FAILED'
+example: install
 	@echo Starting example server:
 	@./examples/run.sh
 
@@ -67,8 +66,8 @@ clean:
 	@# From running pytest with coverage:
 	$(RM) .coverage
 
-	@# From `pip install -e .`:
-	-pip uninstall -y datacatalog-core && $(RM) src/datacatalog_core.egg-info
+	@# From `pip3 install -e .`:
+	-pip3 uninstall -y datacatalog-core && $(RM) src/datacatalog_core.egg-info
 
 	@# From `setup.py sdist`:
 	$(RM) dist

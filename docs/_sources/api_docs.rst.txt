@@ -4,6 +4,5 @@ API Docs
 ========
 
 .. toctree::
-    :hidden:
 
     api/handlers

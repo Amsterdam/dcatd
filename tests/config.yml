@@ -2,7 +2,7 @@ datacatalog: {}
 logging:
   formatters:
     default:
-      format: '%(asctime)s dcat-core %(levelname)-8s %(module)s:%(lineno)d: %(message)s'
+      format: '%(asctime)s dcat_core %(levelname)-8s %(module)s:%(lineno)d: %(message)s'
   handlers:
     aiohttp.access:
       class: logging.StreamHandler
@@ -54,12 +54,12 @@ web:
 datastore:
   implementation: "datacatalog.plugins.file_datastore.FileDataStore"
   config:
-    filedata_path: "./example_data"
+    filedata_path: "tests/data"
     list_file: "package_list"
     all_packages: "packages.json"
 
 search:
   implementation: "datacatalog.plugins.search.InMemorySearch"
   config:
-    filedata_path: "./example_data"
+    filedata_path: "tests/data"
     all_packages: "packages.json"

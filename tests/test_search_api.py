@@ -1,288 +1,221 @@
 import json
 import logging
-import urllib
+import urllib.parse
+import random
 
-from aiohttp.test_utils import AioHTTPTestCase, unittest_run_loop
+import pytest
 
 from datacatalog import app
 from datacatalog.action_api import Facet, SearchParam
 
-from . import fixtures
-
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
-class TestSearchAPI(AioHTTPTestCase):
-    async def get_application(self):
-        return app.get_app()
+async def get_application(dcat_client):
+    return app.get_app()
 
-    @unittest_run_loop
-    async def test_search(self):
-        resp = await self.client.get('/datacatalog/api/3/action/package_search')
-        assert resp.status == 200
-        text = await resp.text()
-        results = json.loads(text)
-        assert len(results['result']['results']) == 3
 
-    @unittest_run_loop
-    async def test_search_start(self):
-        resp = await self.client.get('/datacatalog/api/3/action/package_search?start=1')
-        assert resp.status == 200
-        text = await resp.text()
-        results = json.loads(text)
-        assert len(results['result']['results']) == 2
+async def _get_response(dcat_client, queryfield, queryvalue):
+    params = {queryfield: queryvalue}
+    return await _get_response_params(dcat_client, params)
 
-        resp = await self.client.get('/datacatalog/api/3/action/package_search?start=2')
-        assert resp.status == 200
-        text = await resp.text()
-        results = json.loads(text)
-        assert len(results['result']['results']) == 1
 
-        resp = await self.client.get('/datacatalog/api/3/action/package_search?start=100')
-        assert resp.status == 200
-        text = await resp.text()
-        results = json.loads(text)
-        assert len(results['result']['results']) == 0
+async def _get_response_params(dcat_client, params):
+    query = urllib.parse.urlencode(params)
+    resp = await dcat_client.get(f'/datacatalog/api/3/action/package_search?{query}')
+    return resp
 
-        # 400 or 200 OK with error?
-        resp = await self.client.get('/datacatalog/api/3/action/package_search?start=-1')
-        assert resp.status == 400
 
-        resp = await self.client.get('/datacatalog/api/3/action/package_search?start=a')
-        assert resp.status == 400
+async def _assert_number_of_results(resp, amount):
+    assert resp.status == 200
+    text = await resp.text()
+    results = json.loads(text)
+    assert len(results['result']['results']) == amount
 
-    @unittest_run_loop
-    async def test_search_rows(self):
-        resp = await self.client.get('/datacatalog/api/3/action/package_search?rows=1')
-        assert resp.status == 200
-        text = await resp.text()
-        results = json.loads(text)
-        assert len(results['result']['results']) == 1
 
-        random_length = fixtures.random_int(3)
-        resp = await self.client.get(f'/datacatalog/api/3/action/package_search?rows={random_length}')
-        assert resp.status == 200
-        text = await resp.text()
-        results = json.loads(text)
-        assert len(results['result']['results']) == random_length
+async def test_search(dcat_client, all_packages):
+    resp = await dcat_client.get('/datacatalog/api/3/action/package_search')
+    assert resp.status == 200
+    text = await resp.text()
+    results = json.loads(text)
+    assert len(results['result']['results']) == len(all_packages)
 
-        resp = await self.client.get('/datacatalog/api/3/action/package_search?rows=100')
-        assert resp.status == 200
-        text = await resp.text()
-        results = json.loads(text)
-        assert len(results['result']['results']) == 3
 
-        # 400 or 200 OK with error?
-        resp = await self.client.get('/datacatalog/api/3/action/package_search?rows=a')
-        assert resp.status == 400
+@pytest.mark.parametrize("start,expected", [
+    ('1', 2),
+    ('2', 1),
+    ('100', 0),
+])
+async def test_search_start(dcat_client, start, expected):
+    resp = await dcat_client.get(f'/datacatalog/api/3/action/package_search?start={start}')
+    assert resp.status == 200
+    text = await resp.text()
+    results = json.loads(text)
 
-        resp = await self.client.get('/datacatalog/api/3/action/package_search?rows=0')
-        assert resp.status == 400
 
-    @unittest_run_loop
-    async def test_select_facets(self):
-        facets, json_data = fixtures.random_facets()
-        resp = await self._get_response(SearchParam.FACET_FIELDS.value, json_data)
+@pytest.mark.parametrize("start", ['-1', 'a'])
+async def test_search_start_invalid(dcat_client, start):
+    resp = await dcat_client.get(f'/datacatalog/api/3/action/package_search?start={start}')
+    assert resp.status == 400
 
-        assert resp.status == 200
-        text = await resp.text()
-        results = json.loads(text)
-        assert len(results['result']['facets']) == len(facets)
-        for facet in Facet:
-            if facet.value in facets:
-                assert facet.value in results['result']['facets']
-            else:
-                assert facet.value not in results['result']['facets']
 
-    async def _get_response(self, queryfield, queryvalue):
-        params = {queryfield: queryvalue}
-        return await self._get_response_params(params)
+@pytest.mark.parametrize("rows,expected", [
+    ('1', 1),
+    ('3', 3),
+    ('100', 3),
+])
+async def test_search_rows(dcat_client, rows, expected):
+    resp = await dcat_client.get(f'/datacatalog/api/3/action/package_search?rows={rows}')
+    assert resp.status == 200
+    text = await resp.text()
+    results = json.loads(text)
+    assert len(results['result']['results']) == expected
 
-    async def _get_response_params(self, params):
-        queryparams = urllib.parse.urlencode(params)
-        resp = await self.client.get(f'/datacatalog/api/3/action/package_search?{queryparams}')
-        return resp
 
-    @unittest_run_loop
-    async def test_filter_facets1(self):
-        querystring1 = 'res_format:"PDF"'
-        querystring2 = 'organization:"sdb"'
-        querystring3 = 'organization:"sdb" res_format:"CSV"'
+@pytest.mark.parametrize("rows", ['a', '0'])
+async def test_search_rows_invalid(dcat_client, rows):
+    # 400 or 200 OK with error?
+    resp = await dcat_client.get(f'/datacatalog/api/3/action/package_search?rows={rows}')
+    assert resp.status == 400
 
-        resp = await self._get_response(SearchParam.FACET_QUERY.value, querystring1)
-        await self._assert_number_of_results(resp, 1)
 
-        resp = await self._get_response(SearchParam.FACET_QUERY.value, querystring2)
-        await self._assert_number_of_results(resp, 1)
+async def test_select_facets(dcat_client, random_facets):
+    resp = await _get_response(dcat_client, SearchParam.FACET_FIELDS.value, json.dumps(random_facets))
 
-        resp = await self._get_response(SearchParam.FACET_QUERY.value, querystring3)
-        await self._assert_number_of_results(resp, 1)
+    assert resp.status == 200
+    text = await resp.text()
+    results = json.loads(text)
+    assert len(results['result']['facets']) == len(random_facets)
+    for facet in Facet:
+        if facet.value in random_facets:
+            assert facet.value in results['result']['facets']
+        else:
+            assert facet.value not in results['result']['facets']
 
-    async def _assert_number_of_results(self, resp, amount):
-        assert resp.status == 200
-        text = await resp.text()
-        results = json.loads(text)
-        assert len(results['result']['results']) == amount
 
-    @unittest_run_loop
-    async def test_filter_facets2(self):
-        querystring = 'res_format:"CSV"'
-        resp = await self._get_response(SearchParam.FACET_QUERY.value, querystring)
-        await self._assert_number_of_results(resp, 2)
+@pytest.mark.parametrize('query,results', [
+    ('res_format:"PDF"', 1),
+    ('organization:"sdb"', 1),
+    ('organization:"sdb" res_format:"CSV"', 1),
+    ('res_format:"CSV"', 2),
+    ('organization:"non-existent"', 0),
+    ('res_format:"non-existent"', 0),
+])
+async def test_filter_facets(dcat_client, query, results):
+    resp = await _get_response(dcat_client, SearchParam.FACET_QUERY.value, query)
+    await _assert_number_of_results(resp, results)
 
-    @unittest_run_loop
-    async def test_filter_facets0(self):
-        querystring = 'organization:"non-existent"'
-        resp = await self._get_response(SearchParam.FACET_QUERY.value, querystring)
-        await self._assert_number_of_results(resp, 0)
 
-        querystring = 'res_format:"non-existent"'
-        resp = await self._get_response(SearchParam.FACET_QUERY.value, querystring)
-        await self._assert_number_of_results(resp, 0)
+@pytest.mark.parametrize('facets', [
+    {'groups', 'res_format', 'organization'},
+    {'groups'}
+])
+async def test_facet_fields(dcat_client, facets: set):
+    query = '[' + ','.join(f'"{x}"' for x in facets) + ']'
+    resp = await _get_response(dcat_client, SearchParam.FACET_FIELDS.value, query)
+    await _assert_number_of_results(resp, 3)
 
-    @unittest_run_loop
-    async def test_facet_fields0(self):
-        querystring = '["groups","res_format","organization"]'
-        resp = await self._get_response(SearchParam.FACET_FIELDS.value, querystring)
-        await self._assert_number_of_results(resp, 3)
+    text = await resp.text()
+    results = json.loads(text)
 
-        text = await resp.text()
-        results = json.loads(text)
+    assert len(results['result']['facets']) == len(facets)
+    assert set(results['result']['facets']) == facets
 
-        self.assertEqual(len(results['result']['facets']), 3)
 
-        self.assertIn('groups', results['result']['facets'])
-        self.assertIn('res_format', results['result']['facets'])
-        self.assertIn('organization', results['result']['facets'])
+@pytest.mark.parametrize('facets', [
+    {'groups', 'res_format', 'organization'},
+    {'res_format'}
+])
+async def test_searchfacet_fields(dcat_client, facets):
+    query = '[' + ','.join(f'"{x}"' for x in facets) + ']'
+    resp = await _get_response(dcat_client, SearchParam.FACET_FIELDS.value, query)
+    await _assert_number_of_results(resp, 3)
 
-    @unittest_run_loop
-    async def test_facet_fields1(self):
-        querystring = '["groups"]'
-        resp = await self._get_response(SearchParam.FACET_FIELDS.value, querystring)
-        await self._assert_number_of_results(resp, 3)
+    text = await resp.text()
+    results = json.loads(text)
 
-        text = await resp.text()
-        results = json.loads(text)
+    assert len(results['result']['search_facets']) == len(facets)
+    assert set(results['result']['search_facets']) == facets
 
-        self.assertEqual(len(results['result']['facets']), 1)
 
-        self.assertIn('groups', results['result']['facets'])
-        self.assertNotIn('res_format', results['result']['facets'])
-        self.assertNotIn('organization', results['result']['facets'])
+async def test_facets_field_query0(dcat_client):
+    params = {
+        SearchParam.FACET_FIELDS.value: '["res_format","organization"]',
+        SearchParam.FACET_QUERY.value: 'res_format:"PDF"'
+    }
+    resp = await _get_response_params(dcat_client, params)
+    await _assert_number_of_results(resp, 1)
 
-    @unittest_run_loop
-    async def test_searchfacet_fields0(self):
-        querystring = '["groups","res_format","organization"]'
-        resp = await self._get_response(SearchParam.FACET_FIELDS.value, querystring)
-        await self._assert_number_of_results(resp, 3)
+    text = await resp.text()
+    results = json.loads(text)
 
-        text = await resp.text()
-        results = json.loads(text)
+    assert len(results['result']['facets']) == 2
+    assert len(results['result']['search_facets']) == 2
 
-        self.assertEqual(len(results['result']['search_facets']), 3)
+    assert len(results['result']['facets']['organization']) == 0
+    assert len(results['result']['search_facets']['organization']['items']) == 0
 
-        self.assertIn('groups', results['result']['search_facets'])
-        self.assertIn('res_format', results['result']['search_facets'])
-        self.assertIn('organization', results['result']['search_facets'])
+    assert len(results['result']['facets']['res_format']) == 1
+    assert len(results['result']['search_facets']['res_format']['items']) == 1
 
-    @unittest_run_loop
-    async def test_searchfacet_fields1(self):
-        querystring = '["res_format"]'
-        resp = await self._get_response(SearchParam.FACET_FIELDS.value, querystring)
-        await self._assert_number_of_results(resp, 3)
+    assert results['result']['facets']['res_format']['PDF'] == 1
+    assert results['result']['search_facets']['res_format']['items'][0]['count'] == 1
+    assert results['result']['search_facets']['res_format']['items'][0]['name'] == 'PDF'
 
-        text = await resp.text()
-        results = json.loads(text)
 
-        self.assertEqual(len(results['result']['search_facets']), 1)
+async def test_facets_field_query1(dcat_client):
+    params = {
+        SearchParam.FACET_FIELDS.value: '["res_format","organization"]',
+        SearchParam.FACET_QUERY.value: 'organization:"sdb" res_format:"CSV"'
+    }
+    resp = await _get_response_params(dcat_client, params)
+    await _assert_number_of_results(resp, 1)
 
-        self.assertNotIn('groups', results['result']['search_facets'])
-        self.assertIn('res_format', results['result']['search_facets'])
-        self.assertNotIn('organization', results['result']['search_facets'])
+    text = await resp.text()
+    results = json.loads(text)
 
-    @unittest_run_loop
-    async def test_facets_field_query0(self):
-        params = {
-            SearchParam.FACET_FIELDS.value: '["res_format","organization"]',
-            SearchParam.FACET_QUERY.value: 'res_format:"PDF"'
-        }
-        resp = await self._get_response_params(params)
-        await self._assert_number_of_results(resp, 1)
+    assert len(results['result']['facets']) == 2
+    assert len(results['result']['search_facets']) == 2
 
-        text = await resp.text()
-        results = json.loads(text)
+    assert len(results['result']['facets']['organization']) == 1
+    assert len(results['result']['search_facets']['organization']['items']) == 1
 
-        self.assertEqual(len(results['result']['facets']), 2)
-        self.assertEqual(len(results['result']['search_facets']), 2)
+    assert results['result']['facets']['organization']['sdb'] == 1
+    assert results['result']['search_facets']['organization']['items'][0]['count'] == 1
+    assert results['result']['search_facets']['organization']['items'][0]['name'] == 'sdb'
 
-        self.assertEqual(len(results['result']['facets']['organization']), 0)
-        self.assertEqual(len(results['result']['search_facets']['organization']['items']), 0)
+    assert results['result']['facets']['res_format']['CSV'] == 1
+    assert results['result']['search_facets']['res_format']['items'][0]['count'] == 1
+    assert results['result']['search_facets']['res_format']['items'][0]['name'] == 'CSV'
 
-        self.assertEqual(len(results['result']['facets']['res_format']), 1)
-        self.assertEqual(len(results['result']['search_facets']['res_format']['items']), 1)
 
-        self.assertEqual(results['result']['facets']['res_format']['PDF'], 1)
-        self.assertEqual(results['result']['search_facets']['res_format']['items'][0]['count'], 1)
-        self.assertEqual(results['result']['search_facets']['res_format']['items'][0]['name'], "PDF")
+@pytest.mark.parametrize(
+    'query,id', [
+        ("oceania", '17be64bb-da74-4195-9bb8-565c39846af2'),
+        ("machine learning", '62513382-3b26-4bc8-9096-40b6ce8383c0')
+    ],
+    ids=lambda x: x[0]
+)
+async def test_fulltext_query1(dcat_client, query, id):
+    resp = await _get_response(dcat_client, SearchParam.QUERY.value, query)
+    await _assert_number_of_results(resp, 1)
 
-    @unittest_run_loop
-    async def test_facets_field_query1(self):
-        params = {
-            SearchParam.FACET_FIELDS.value: '["res_format","organization"]',
-            SearchParam.FACET_QUERY.value: 'organization:"sdb" res_format:"CSV"'
-        }
-        resp = await self._get_response_params(params)
-        await self._assert_number_of_results(resp, 1)
+    text = await resp.text()
+    results = json.loads(text)
+    assert results['result']['results'][0]['id'] == id
 
-        text = await resp.text()
-        results = json.loads(text)
 
-        self.assertEqual(len(results['result']['facets']), 2)
-        self.assertEqual(len(results['result']['search_facets']), 2)
+@pytest.mark.parametrize(
+    'query,id', [
+        ("machines", '62513382-3b26-4bc8-9096-40b6ce8383c0'),  # find 'machine'
+        ("plant",    '62513382-3b26-4bc8-9096-40b6ce8383c0')   # find 'plants'
+    ],
+    ids=lambda x: x[0]
+)
+async def test_fulltext_query_variations(dcat_client, query, id):
+    resp = await _get_response(dcat_client, SearchParam.QUERY.value, query)  # find 'machine'
+    await _assert_number_of_results(resp, 1)
 
-        self.assertEqual(len(results['result']['facets']['organization']), 1)
-        self.assertEqual(len(results['result']['search_facets']['organization']['items']), 1)
-
-        self.assertEqual(results['result']['facets']['organization']['sdb'], 1)
-        self.assertEqual(results['result']['search_facets']['organization']['items'][0]['count'], 1)
-        self.assertEqual(results['result']['search_facets']['organization']['items'][0]['name'], "sdb")
-
-        self.assertEqual(results['result']['facets']['res_format']['CSV'], 1)
-        self.assertEqual(results['result']['search_facets']['res_format']['items'][0]['count'], 1)
-        self.assertEqual(results['result']['search_facets']['res_format']['items'][0]['name'], "CSV")
-
-    @unittest_run_loop
-    async def test_fulltext_query1(self):
-        resp = await self._get_response(SearchParam.QUERY.value, "oceania")
-        await self._assert_number_of_results(resp, 1)
-
-        text = await resp.text()
-        results = json.loads(text)
-        self.assertEqual(results['result']['results'][0]['id'], '17be64bb-da74-4195-9bb8-565c39846af2')
-
-    @unittest_run_loop
-    async def test_fulltext_query2(self):
-        resp = await self._get_response(SearchParam.QUERY.value, "machine learning")
-        await self._assert_number_of_results(resp, 1)
-
-        text = await resp.text()
-        results = json.loads(text)
-        self.assertEqual(results['result']['results'][0]['id'], '62513382-3b26-4bc8-9096-40b6ce8383c0')
-
-    @unittest_run_loop
-    async def test_fulltext_query_variations(self):
-        resp = await self._get_response(SearchParam.QUERY.value, "machines") # find 'machine'
-        await self._assert_number_of_results(resp, 1)
-
-        text = await resp.text()
-        results = json.loads(text)
-        self.assertEqual(results['result']['results'][0]['id'], '62513382-3b26-4bc8-9096-40b6ce8383c0')
-
-    @unittest_run_loop
-    async def test_fulltext_query_index_stemming(self):
-        resp = await self._get_response(SearchParam.QUERY.value, "plant") # find 'plants'
-        await self._assert_number_of_results(resp, 1)
-
-        text = await resp.text()
-        results = json.loads(text)
-        self.assertEqual(results['result']['results'][0]['id'], '62513382-3b26-4bc8-9096-40b6ce8383c0')
+    text = await resp.text()
+    results = json.loads(text)
+    assert results['result']['results'][0]['id'] == id

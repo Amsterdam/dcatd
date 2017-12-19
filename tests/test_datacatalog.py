@@ -1,36 +1,34 @@
-from unittest import mock
+from aiohttp.test_utils import make_mocked_coro
 
-from aiohttp.test_utils import AioHTTPTestCase, unittest_run_loop
+async def test_index(dcat_client):
+    resp = await dcat_client.get('/')
+    assert resp.status == 200
+    text = await resp.text()
+    assert 'Hello, World' in text
 
-from datacatalog import app
+
+async def test_health_ok(dcat_client):
+    resp = await dcat_client.get('/system/health')
+    assert resp.status == 200
+    text = await resp.text()
+    assert 'systemhealth is OK' in text
 
 
-class TestDatacatalog(AioHTTPTestCase):
-    async def get_application(self):
-        return app.get_app()
+async def test_health_not_ok_datastore(dcat_client, monkeypatch):
+    monkeypatch.setattr(
+        'datacatalog.plugins.file_datastore.FileDataStore.is_healthy',
+        make_mocked_coro(False)
+    )
+    resp = await dcat_client.get('/system/health')
+    assert resp.status == 503
 
-    @unittest_run_loop
-    async def test_index(self):
-        resp = await self.client.get('/')
-        assert resp.status == 200
-        text = await resp.text()
-        assert 'Hello, World' in text
 
-    @unittest_run_loop
-    async def test_health_ok(self):
-        resp = await self.client.get('/system/health')
-        assert resp.status == 200
-        text = await resp.text()
-        assert 'systemhealth is OK' in text
-
-    @mock.patch('datacatalog.plugins.filedatastore.FileDataStore.is_healthy', side_effect=lambda:False)
-    @unittest_run_loop
-    async def test_health_not_ok_datastore(self, mock):
-        resp = await self.client.get('/system/health')
-        assert resp.status == 500
-
-    @mock.patch('datacatalog.plugins.search.InMemorySearch.is_healthy', side_effect=lambda:False)
-    @unittest_run_loop
-    async def test_health_not_ok_datastore(self, mock):
-        resp = await self.client.get('/system/health')
-        assert resp.status == 500
+async def test_health_not_ok_search(dcat_client, monkeypatch):
+    async def is_healthy(_):
+        return False
+    monkeypatch.setattr(
+        'datacatalog.plugins.search.InMemorySearch.is_healthy',
+        make_mocked_coro(False)
+    )
+    resp = await dcat_client.get('/system/health')
+    assert resp.status == 503

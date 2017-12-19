@@ -1,7 +1,5 @@
 .. _index:
 
-.. include:: ../README.rst
-
 .. toctree::
     :hidden:
 
@@ -11,3 +9,5 @@
     todo_list
     License <license>
     Index <genindex>
+
+.. include:: ../README.rst
