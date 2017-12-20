@@ -52,9 +52,10 @@ setup(
     # ],
     install_requires=[
         'aiohttp',
+        'datapunt_config_loader',
+        'pluggy',
         'PyYaml',
         'swagger-parser',
-        'datapunt_config_loader',
         'whoosh',
         # Recommended by aiohttp docs:
         'aiodns',    # optional asynchronous DNS client
