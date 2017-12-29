@@ -15,7 +15,7 @@ def get_app():
     app.router.add_get('/system/health', systemhealth.handle)
     app.router.add_get('/datacatalog/api/3/action/{action}', action_api.handle)
 
-    catalog_config = config.load()
+    catalog_config = config.freeze(config.load())
     app['config'] = catalog_config
 
     # Initialize plugins

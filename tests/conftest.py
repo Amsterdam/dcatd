@@ -4,7 +4,7 @@ import collections
 
 import pytest
 
-from datacatalog.app import get_app
+import datacatalog.app
 from datacatalog.action_api import Facet
 
 PackageInfo = collections.namedtuple('PackageInfo', field_names=('id', 'name'))
@@ -79,5 +79,6 @@ def random_facet_query():
 
 
 @pytest.fixture()
-def dcat_client(loop, test_client):
-    return loop.run_until_complete(test_client(get_app()))
+def dcat_client(loop, test_client, monkeypatch):
+    monkeypatch.setenv('CONFIG_PATH', 'tests/config.yml')
+    return loop.run_until_complete(test_client(datacatalog.app.get_app()))

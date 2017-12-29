@@ -39,7 +39,7 @@ setup(
     package_dir={'': 'src'},
     packages=find_packages('src'),
     package_data={
-        'datacatalog': ['config_schema.yml']
+        'datacatalog': ['*.yml']
     },
 
 
@@ -47,16 +47,18 @@ setup(
     # ┃ Requirements ┃
     # ┗━━━━━━━━━━━━━━┛
     python_requires='~=3.5',
-    # setup_requires=[
-    #     'pytest-runner'
-    # ],
+    setup_requires=[
+        'pytest-runner'
+    ],
     install_requires=[
         'aiohttp',
         'datapunt_config_loader',
+        'jsonschema',
         'pluggy',
         'PyYaml',
         'swagger-parser',
         'whoosh',
+
         # Recommended by aiohttp docs:
         'aiodns',    # optional asynchronous DNS client
         'cchardet',  # optional fast character handling in C

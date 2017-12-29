@@ -1,13 +1,38 @@
 $schema: 'http://json-schema.org/draft-04/schema#'
-definitions:
+
+type: object
+
+properties:
+  logging:
+    $ref: '#/definitions/logging.dictconfig'
   datacatalog:
+    $ref: '#/definitions/datacatalog'
+  postgres:
+    $ref: '#/definitions/postgres'
+  web:
+    $ref: '#/definitions/web'
+  search:
+    $ref: '#/definitions/search'
+  datastore:
+    $ref: '#/definitions/datastore'
+
+required:
+- main
+- logging
+
+
+definitions:
+
+  main:
     type: object
+
   web:
     additionalProperties: false
     properties:
       port: {type: integer}
     required: [port]
     type: object
+
   datastore:
     additionalProperties: false
     properties:
@@ -15,6 +40,7 @@ definitions:
       config: {type: object}
     required: [implementation, config]
     type: object
+
   search:
     additionalProperties: false
     properties:
@@ -22,6 +48,7 @@ definitions:
       config: {type: object}
     required: [implementation, config]
     type: object
+
   logging.dictconfig:
     additionalProperties: false
     properties:
@@ -116,6 +143,7 @@ definitions:
     required:
     - version
     type: object
+
   postgres:
     additionalProperties: false
     properties:
@@ -136,21 +164,4 @@ definitions:
     - password
     - dbname
     type: object
-properties:
-  logging:
-    $ref: '#/definitions/logging.dictconfig'
-  datacatalog:
-    $ref: '#/definitions/datacatalog'
-  postgres:
-    $ref: '#/definitions/postgres'
-  web:
-    $ref: '#/definitions/web'
-  search:
-    $ref: '#/definitions/search'
-  datastore:
-    $ref: '#/definitions/datastore'
-required:
-- datacatalog
-- postgres
-- logging
-type: object
+

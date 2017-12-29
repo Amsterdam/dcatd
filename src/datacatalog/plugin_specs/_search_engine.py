@@ -3,12 +3,12 @@ import typing as T
 from ._markers import hookspecmarker
 
 
-class FullTextSearch(object):
+class SearchEngine(object):
     # language=rst
-    """Fuzzy full text search interface."""
+    """Fuzzy full text search engine interface."""
 
     @hookspecmarker(firstresult=True)
-    def fts_index(self, identifier: str, texts: T.Iterable[str]):
+    async def fts_index(self, identifier: str, texts: T.Iterable[str]):
         # language=rst
         """Build a full-text search index for a document.
 
@@ -21,12 +21,13 @@ class FullTextSearch(object):
         pass
 
     @hookspecmarker
-    def fts_search(self, query: str, max_length: int) -> T.List[T.Tuple[str, T.Iterable[str]]]:
+    async def fts_search(self, query: str, max_length: int) -> T.List[T.Tuple[str, T.Iterable[str]]]:
         # language=rst
         """Retrieve documents satisfying some text query.
 
         Args:
             query: a full text query string. Format may be plugin-specific.
+
 
         Returns:
             a list of tuples, ordered by relevance, with each tuple containing:
@@ -39,7 +40,7 @@ class FullTextSearch(object):
         """
 
     @hookspecmarker
-    def fts_search_filtered(self,
+    async def fts_search_filtered(self,
                             query: str,
                             max_preview_len: int,
                             facet_filter) \

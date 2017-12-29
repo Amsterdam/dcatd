@@ -1,4 +1,4 @@
-datacatalog: {}
+main: {}
 logging:
   formatters:
     default:
