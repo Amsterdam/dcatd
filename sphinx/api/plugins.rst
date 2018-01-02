@@ -4,4 +4,4 @@
 Plugins
 =======
 
-.. automodule:: datacatalog.plugins
+.. automodule:: datacatalog.default_plugins

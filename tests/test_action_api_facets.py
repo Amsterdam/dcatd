@@ -3,7 +3,7 @@ import json
 
 from aiohttp.test_utils import make_mocked_request
 
-from datacatalog.action_api import SearchParam, Facet, extract_queryparams
+from datacatalog.handlers.action_api import SearchParam, Facet, extract_queryparams
 
 
 # Unit tests for datacatalog.action_api.extract_queryparams

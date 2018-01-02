@@ -1,0 +1,19 @@
+$schema: 'http://json-schema.org/draft-07/schema#'
+
+type: object
+
+properties:
+  inmemorysearch:
+    type: object
+    additionalProperties: false
+    properties:
+      path:
+        type: string
+      all_packages:
+        type: string
+    required:
+      - path
+      - all_packages
+
+required:
+  - inmemorysearch

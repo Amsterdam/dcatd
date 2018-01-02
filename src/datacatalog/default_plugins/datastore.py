@@ -1,12 +1,16 @@
-import os
 import json
+import os
 
-from datacatalog.datastore import AbstractDataStore
+from pkg_resources import resource_stream
+import yaml
+
+from datacatalog.plugin_specs import AbstractDatastore
 
 
-class FileDataStore(AbstractDataStore):
-    def __init__(self, datastore_config):
-        self.FILEDATA_PATH = datastore_config['filedata_path']
+class FileDatastore(object):
+    def __init__(self, app):
+        datastore_config = app.config['filedatastore']
+        self.FILEDATA_PATH = datastore_config['path']
         self.LIST_FILE = datastore_config['list_file']
         self.ALL_PACKAGES = datastore_config['all_packages']
 
@@ -15,10 +19,10 @@ class FileDataStore(AbstractDataStore):
             objects = all_packages['result']['results']
             self.packages_by_name = {obj['name']: obj['id'] for obj in objects}
 
-    async def is_healthy(self):
+    async def datastore_is_healthy(self):
         return os.path.exists(f"{self.FILEDATA_PATH}/{self.LIST_FILE}.json")
 
-    async def get_by_id(self, package_id):
+    async def datastore_get_by_id(self, package_id):
         if package_id in self.packages_by_name:
             package_id = self.packages_by_name[package_id]
 
@@ -28,7 +32,11 @@ class FileDataStore(AbstractDataStore):
                 return json.load(json_data)
         return None
 
-    async def get_list(self):
-        return await self.get_by_id(self.LIST_FILE)
+    async def datastore_get_list(self):
+        return await self.datastore_get_by_id(self.LIST_FILE)
 
+    @staticmethod
+    def plugin_config_schema():
+        with resource_stream(__name__, 'datastore_config_schema.yml') as s:
+            return yaml.load(s)
 

@@ -1,13 +1,11 @@
 import typing as T
-
-from ._markers import hookspecmarker
+import abc
 
 
 class SearchEngine(object):
     # language=rst
     """Fuzzy full text search engine interface."""
 
-    @hookspecmarker(firstresult=True)
     async def fts_index(self, identifier: str, texts: T.Iterable[str]):
         # language=rst
         """Build a full-text search index for a document.
@@ -20,7 +18,6 @@ class SearchEngine(object):
         """
         pass
 
-    @hookspecmarker
     async def fts_search(self, query: str, max_length: int) -> T.List[T.Tuple[str, T.Iterable[str]]]:
         # language=rst
         """Retrieve documents satisfying some text query.
@@ -39,7 +36,6 @@ class SearchEngine(object):
 
         """
 
-    @hookspecmarker
     async def fts_search_filtered(self,
                             query: str,
                             max_preview_len: int,

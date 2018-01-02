@@ -32,17 +32,18 @@ Example usage::
 # stdlib imports:
 import logging
 import logging.config
+import numbers
+import os
 import os.path
 import pathlib
+import string
+import types
 import typing as T
 from collections import abc, ChainMap
-import types
-import numbers
-import string
+
+# external dependencies:
 import jsonschema
-import os
 import yaml
-import functools
 from pkg_resources import resource_stream
 
 logger = logging.getLogger('datacatalog')
@@ -51,43 +52,29 @@ logger = logging.getLogger('datacatalog')
 _CONFIG_SCHEMA_RESOURCE = 'config_schema.yml'
 
 
-DEFAULT_CONFIG_PATHS: T.List[pathlib.Path] = [
+DEFAULT_CONFIG_PATHS = [
     pathlib.Path('/etc') / 'datacatalog.yml',
     pathlib.Path('config.yml')
 ]
 """List of locations to look for a configuration file."""
 
 
-def freeze(thing):
-    # language=rst
-    """Creates a frozen copy of ``thing``.
+class ConfigDict(dict):
+    def validate(self, schema: T.Mapping):
+        # language=rst
+        """
+        Validate this config dict using the JSON schema given in ``schema``.
 
-    :param thing:
-    :type thing: bool or None or str or numbers.Number or dict or list or set
-    :returns: a frozen copy of ``thing``, using the following transformations:
+        Raises:
+            ConfigError: if schema validation failed
 
-        -   `dict` → `types.MappingProxyType`
-        -   `set` → `frozenset`
-        -   `list` → `tuple`
-
-    """
-    # ¡¡¡ Ordering matters in the following if-chain !!!
-    # abc.Set inherits abc.Collection, so it must be matched first.
-    if (
-            thing is None or
-            isinstance(thing, bool) or
-            isinstance(thing, numbers.Number) or
-            isinstance(thing, str)
-    ):
-        return thing
-    if isinstance(thing, abc.Mapping):
-        return types.MappingProxyType({key: freeze(thing[key]) for key in thing})
-    if isinstance(thing, abc.Set):
-        return frozenset({freeze(value) for value in thing})
-    if isinstance(thing, abc.Collection):
-        return tuple([freeze(value) for value in thing])
-    raise TypeError("Can't freeze object of type %s: %s" %
-                    (type(thing), thing))
+        """
+        try:
+            jsonschema.validate(self, schema)
+        except jsonschema.exceptions.SchemaError as e:
+            raise ConfigError("Invalid JSON schema definition.") from e
+        except jsonschema.exceptions.ValidationError as e:
+            raise ConfigError("Schema validation failed.") from e
 
 
 class ConfigError(Exception):
@@ -239,11 +226,10 @@ class _TemplateWithDefaults(string.Template):
 
 def _config_path() -> pathlib.Path:
     # language=rst
-    """
-    Determines which path to use for the configuration file.
+    """Determines which path to use for the configuration file.
 
-    :rtype: pathlib.Path
-    :raises: FileNotFoundError
+    Raises:
+        FileNotFoundError: if no config file could be found at any location.
 
     """
     config_paths = [pathlib.Path(os.getenv('CONFIG_PATH'))] \
@@ -262,25 +248,17 @@ def _config_path() -> pathlib.Path:
     return filtered_config_paths[0]
 
 
-def load() -> dict:
+def load() -> ConfigDict:
     # language=rst
-    """
-    Load and validate the configuration.
-
-    :rtype: types.MappingProxyType
-
-    .. todo:: Log the chosen path with proper log level.
-
+    """ Load and validate the configuration.
     """
     config_path = _config_path()
-    config = _load_yaml(config_path)
+    config = ConfigDict(_load_yaml(config_path))
     if 'logging' not in config:
         raise ConfigError(
             "No 'logging' entry in config file {}".format(config_path)
         )
-    # FYI: dictConfig() can't take a frozen dict, so never freeze the config
-    # before calling it.
     logging.config.dictConfig(config['logging'])
     logger.info("Loaded configuration from '%s'", os.path.abspath(config_path))
-    validate(config, _config_schema())
+    config.validate(_config_schema())
     return config
