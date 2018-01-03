@@ -46,7 +46,7 @@ master_doc='index'
 # General information about the project.
 project = 'datacatalog-core'
 # noinspection PyShadowingBuiltins
-copyright = '2017, Gemeente Amsterdam'
+copyright = '2018, Gemeente Amsterdam'
 author = 'Amsterdam City Data'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -76,6 +76,9 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
 
+# A boolean that decides whether module names are prepended to all object names
+# (for object types where a “module” of some kind is defined), e.g. for
+# py:function directives. Default is True.
 add_module_names = False
 
 default_role = 'py:obj'

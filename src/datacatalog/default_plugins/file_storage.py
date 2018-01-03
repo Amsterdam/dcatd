@@ -4,11 +4,18 @@ import os
 from pkg_resources import resource_stream
 import yaml
 
-from datacatalog.plugin_specs import AbstractDatastore
+from datacatalog.plugin_interfaces import AbstractStoragePlugin
 
 
-class FileDatastore(object):
+class FileStoragePlugin(AbstractStoragePlugin):
+    # language=rst
+    """ Default Datastore implementation.
+
+    This implementation stores all data in files on the local filesystem.
+
+    """
     def __init__(self, app):
+        super().__init__(app)
         datastore_config = app.config['filedatastore']
         self.FILEDATA_PATH = datastore_config['path']
         self.LIST_FILE = datastore_config['list_file']
@@ -37,6 +44,6 @@ class FileDatastore(object):
 
     @staticmethod
     def plugin_config_schema():
-        with resource_stream(__name__, 'datastore_config_schema.yml') as s:
+        with resource_stream(__name__, 'file_storage_config_schema.yml') as s:
             return yaml.load(s)
 

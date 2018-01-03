@@ -1,3 +1,9 @@
+# language=rst
+"""
+
+.. warning:: Unused, work in progress.
+
+"""
 from enum import Enum
 import typing as T
 

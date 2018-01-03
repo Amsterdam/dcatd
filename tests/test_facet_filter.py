@@ -1,3 +1,5 @@
+import pytest
+
 from datacatalog.facet_filter import *
 
 
@@ -15,6 +17,7 @@ def test_comparators():
         assert isinstance(p, Premise)
 
 
+@pytest.mark.skip
 def test_combinator():
     path = JSONPath('/path')
     premise1 = path > 0 and path < 10

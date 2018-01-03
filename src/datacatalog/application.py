@@ -3,7 +3,7 @@ import inspect
 
 from aiohttp import web
 
-from . import config, plugin_specs
+from . import config, plugin_interfaces
 from .handlers import index, action_api, systemhealth
 
 
@@ -29,7 +29,7 @@ class Application(web.Application):
         return self._config
 
     @property
-    def plugins(self) -> plugin_specs.Plugins:
+    def plugins(self) -> plugin_interfaces.Plugins:
         return self._plugins
 
     def load(self):
@@ -42,11 +42,11 @@ class Application(web.Application):
             # Instantiate and register the plugin:
             plugin = plugin_class(self)
             self['loaded_plugins'].append((fq_name, plugin))
-            for interface in plugin_specs.implemented_interfaces(plugin):
+            for interface in plugin_interfaces.implemented_interfaces(plugin):
                 implementations[interface] = plugin
 
         # Assert that all required interfaces are implemented:
-        for name in plugin_specs.Plugins._fields:
+        for name in plugin_interfaces.Plugins._fields:
             if name not in implementations:
                 raise Exception(
                     "No plugin configured for '{}' feature.".format(name)
@@ -59,22 +59,7 @@ class Application(web.Application):
             ):
                 config.logger.warning("Plugin {} unused.".format(fq_name))
 
-        return plugin_specs.Plugins(**implementations)
-
-    async def unload(app):
-        global _instances
-        for fq_class_name, plugin in reversed(_instances):
-            if hasattr(plugin, 'plugin_stop'):
-                try:
-                    await plugin.plugin_stop()
-                except Exception as e:
-                    config.logger.warning(
-                        "Caught exception while unloading plugin {}".format(fq_class_name),
-                        exc_info=e
-                    )
-                else:
-                    config.logger.info("Unloaded plugin {}".format(fq_class_name))
-        _instances = []
+        return plugin_interfaces.Plugins(**implementations)
 
 
 def _load_plugin_class(fq_class_name):
@@ -111,7 +96,6 @@ def _validate_config_for_plugin(config, plugin_class, fq_name):
 
 
 async def _start_plugins(app):
-    app['started_plugins'] = []
     for fq_name, plugin in app['loaded_plugins']:
         if hasattr(plugin, 'plugin_start'):
             try:
@@ -122,11 +106,10 @@ async def _start_plugins(app):
                 ) from e
             else:
                 config.logger.info("Initialized plugin {}".format(fq_name))
-                app['started_plugins'].append(plugin)
 
 
 async def _stop_plugins(app):
-    for fq_name, plugin in reversed(app['started_plugins']):
+    for fq_name, plugin in reversed(app['loaded_plugins']):
         if hasattr(plugin, 'plugin_stop'):
             try:
                 await plugin.plugin_stop(app)
@@ -137,4 +120,3 @@ async def _stop_plugins(app):
                 )
             else:
                 config.logger.info("Stopped plugin {}".format(fq_name))
-

@@ -13,7 +13,7 @@ from whoosh.qparser import QueryParser
 from whoosh.query import Variations
 
 from datacatalog.handlers import action_api
-from datacatalog.plugin_specs import AbstractSearch
+from datacatalog.plugin_interfaces import AbstractSearchPlugin
 
 log = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ def _matcher(key, value):
     return _reduce_function
 
 
-class InMemorySearch(AbstractSearch):
+class InMemorySearchPlugin(AbstractSearchPlugin):
 
     def __init__(self, app):
         search_config = app.config['inmemorysearch']
@@ -61,7 +61,7 @@ class InMemorySearch(AbstractSearch):
 
     @staticmethod
     def plugin_config_schema():
-        with resource_stream(__name__, 'search_config_schema.yml') as s:
+        with resource_stream(__name__, 'in_memory_search_config_schema.yml') as s:
             return yaml.load(s)
 
     async def search_is_healthy(self):

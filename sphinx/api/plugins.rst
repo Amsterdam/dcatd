@@ -1,7 +1,20 @@
-.. _plugins:
+.. _api_plugins:
 
 
 Plugins
 =======
 
-.. automodule:: datacatalog.default_plugins
+
+Interfaces
+----------
+
+..  autoclass:: datacatalog.plugin_interfaces.AbstractPlugin
+..  autoclass:: datacatalog.plugin_interfaces.AbstractStoragePlugin
+..  autoclass:: datacatalog.plugin_interfaces.AbstractSearchPlugin
+
+
+Default Plugins
+---------------
+
+..  autoclass:: datacatalog.default_plugins.file_storage.FileStoragePlugin
+..  autoclass:: datacatalog.default_plugins.in_memory_search.InMemorySearchPlugin

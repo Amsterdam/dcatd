@@ -50,14 +50,14 @@ web:
   port: 8000
 
 datastore:
-  implementation: "datacatalog.default_plugins.file_datastore.FileDatastore"
+  implementation: "datacatalog.default_plugins.file_datastore.FileStoragePlugin"
   config:
     filedata_path: "/app/data"
     list_file: "package_list"
     all_packages: "packages.json"
 
 search:
-  implementation: "datacatalog.default_plugins.search.InMemorySearch"
+  implementation: "datacatalog.default_plugins.search.InMemorySearchPlugin"
   config:
     filedata_path: "/app/data"
     all_packages: "packages.json"

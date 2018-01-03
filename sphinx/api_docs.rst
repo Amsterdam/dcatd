@@ -3,8 +3,8 @@
 API Docs
 ========
 
-.. toctree::
+..  toctree::
 
+    api/application
     api/handlers
-    api/plugin_specs
     api/plugins

@@ -1,6 +1,7 @@
 plugins:
-  - datacatalog.default_plugins.datastore.FileDatastore
-  - datacatalog.default_plugins.search.InMemorySearch
+  - datacatalog.default_plugins.file_storage.FileStoragePlugin
+  - datacatalog.default_plugins.in_memory_search.InMemorySearchPlugin
+
 logging:
   formatters:
     default:
