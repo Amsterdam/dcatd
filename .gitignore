@@ -11,6 +11,7 @@
 /sphinx/.doctrees/
 /sphinx/*.inv
 /sphinx/*.inv.txt
+/docs/
 
 /tests/data/whoosh_index/
 /examples/example_data/whoosh_index/

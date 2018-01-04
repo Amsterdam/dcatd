@@ -1,4 +1,0 @@
-.. _genindex:
-
-General Index
-=============
