@@ -1,8 +1,11 @@
-datacatalog: {}
+plugins:
+  - datacatalog.default_plugins.file_storage.FileStoragePlugin
+  - datacatalog.default_plugins.in_memory_search.InMemorySearchPlugin
+
 logging:
   formatters:
     default:
-      format: '%(asctime)s dcat-core %(levelname)-8s %(module)s:%(lineno)d: %(message)s'
+      format: '%(asctime)s dcat_core %(levelname)-8s %(module)s:%(lineno)d: %(message)s'
   handlers:
     aiohttp.access:
       class: logging.StreamHandler
@@ -10,6 +13,7 @@ logging:
       class: logging.StreamHandler
       formatter: default
   loggers:
+    # See also: <http://aiohttp.readthedocs.io/en/stable/logging.html>
     aiohttp:
       propagate: true
     aiohttp.*:
@@ -24,6 +28,7 @@ logging:
       - console
       level: ${LOGLEVEL:-DEBUG}
       propagate: false
+
     config_loader:
       handlers:
       - console
@@ -39,6 +44,7 @@ logging:
     - console
     level: ${LOGLEVEL:-WARNING}
   version: 1
+
 postgres:
   dbname: ${DB_DATABASE:-datacatalog}
   host: ${DB_HOST:-localhost}
@@ -49,15 +55,11 @@ postgres:
 web:
   port: 8000
 
-datastore:
-  implementation: "datacatalog.default_plugins.file_datastore.FileStoragePlugin"
-  config:
-    filedata_path: "/app/data"
-    list_file: "package_list"
-    all_packages: "packages.json"
+filedatastore:
+  path: "/app/data"
+  list_file: "package_list"
+  all_packages: "packages.json"
 
-search:
-  implementation: "datacatalog.default_plugins.search.InMemorySearchPlugin"
-  config:
-    filedata_path: "/app/data"
-    all_packages: "packages.json"
+inmemorysearch:
+  path: "/app/data"
+  all_packages: "packages.json"
