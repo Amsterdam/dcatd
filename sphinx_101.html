@@ -1,0 +1,521 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Sphinx 101 &mdash; datacatalog-core 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/sphinx_101.html"/>
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="datacatalog-core 0.1 documentation" href="index.html"/>
+        <link rel="next" title="Todo list" href="todo_list.html"/>
+        <link rel="prev" title="JSON Schemas and OpenAPI definitions" href="schemas.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> datacatalog-core
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="api_docs.html">API Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/handlers.html">Handlers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="schemas.html">JSON Schemas and OpenAPI definitions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Sphinx 101</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#rest-formatting">ReST formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#roles-added-by-sphinx">Roles added by Sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#directives">Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#google-style-docstrings">Google-style docstrings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autodoc">Autodoc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#intersphinx">Intersphinx</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="todo_list.html">Todo list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="license.html#definitions">1. Definitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#contributor">1.1. “Contributor”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#contributor-version">1.2. “Contributor Version”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#contribution">1.3. “Contribution”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#covered-software">1.4. “Covered Software”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#incompatible-with-secondary-licenses">1.5. “Incompatible With Secondary Licenses”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#executable-form">1.6. “Executable Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#id1">1.8. “License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#licensable">1.9. “Licensable”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#modifications">1.10. “Modifications”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#patent-claims-of-a-contributor">1.11. “Patent Claims” of a Contributor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#secondary-license">1.12. “Secondary License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#source-code-form">1.13. “Source Code Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#you-or-your">1.14. “You” (or “Your”)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#license-grants-and-conditions">2. License Grants and Conditions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#grants">2.1. Grants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#effective-date">2.2. Effective Date</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#limitations-on-grant-scope">2.3. Limitations on Grant Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#subsequent-licenses">2.4. Subsequent Licenses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#representation">2.5. Representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#fair-use">2.6. Fair Use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#conditions">2.7. Conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#responsibilities">3. Responsibilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#distribution-of-source-form">3.1. Distribution of Source Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#distribution-of-executable-form">3.2. Distribution of Executable Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#distribution-of-a-larger-work">3.3. Distribution of a Larger Work</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#notices">3.4. Notices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#application-of-additional-terms">3.5. Application of Additional Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#inability-to-comply-due-to-statute-or-regulation">4. Inability to Comply Due to Statute or Regulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#termination">5. Termination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#disclaimer-of-warranty">6. Disclaimer of Warranty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#limitation-of-liability">7. Limitation of Liability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#litigation">8. Litigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#miscellaneous">9. Miscellaneous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#versions-of-the-license">10. Versions of the License</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="license.html#new-versions">10.1. New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#effect-of-new-versions">10.2. Effect of New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#modified-versions">10.3. Modified Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="license.html#distributing-source-code-form-that-is-incompatible-with-secondary-licenses">10.4. Distributing Source Code Form that is Incompatible With Secondary Licenses</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#exhibit-a-source-code-form-license-notice">Exhibit A - Source Code Form License Notice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="license.html#exhibit-b-incompatible-with-secondary-licenses-notice">Exhibit B - “Incompatible With Secondary Licenses” Notice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">datacatalog-core</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Sphinx 101</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/sphinx_101.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sphinx-101">
+<span id="id1"></span><h1>Sphinx 101<a class="headerlink" href="#sphinx-101" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="rest-formatting">
+<h2>ReST formatting<a class="headerlink" href="#rest-formatting" title="Permalink to this headline">¶</a></h2>
+<p>For details on basic rST formatting, see the <a class="reference external" href="http://www.sphinx-doc.org/en/stable/rest.html#rst-primer" title="(in Sphinx v1.6.6+)"><span>reStructuredText Primer</span></a></p>
+<ul>
+<li><p class="first"><em>emphasis</em>, <strong>strong empasis</strong>, <code class="docutils literal"><span class="pre">code</span></code></p>
+</li>
+<li><p class="first"><em>``nesting``</em> <code class="docutils literal"><span class="pre">*won’t*</span></code> <code class="docutils literal"><span class="pre">``work``</span></code></p>
+</li>
+<li><p class="first"><em>roles</em> are formatted as <code class="docutils literal"><span class="pre">:rolename:`some</span> <span class="pre">text`</span></code>. RST predefines
+<em>emphasis</em>, <strong>strong</strong>, <code class="docutils literal"><span class="pre">literal</span></code>,
+<sub>subscript</sub>, <sup>superscript</sup>, and
+<cite>title-reference</cite>.</p>
+<ol class="arabic simple">
+<li>Numbered lists look like this<ol class="arabic">
+<li>or like this, and can be nested,</li>
+<li>as long as there is</li>
+</ol>
+</li>
+<li>an empty line between the lists.</li>
+</ol>
+</li>
+<li><dl class="first docutils">
+<dt>Definition lists</dt>
+<dd><p class="first">have one line for the <em>term</em>, followed by one or more indented
+multiline paragraphs.</p>
+<p class="last">Like this.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">There must be a space between the link text and the url in <a class="reference external" href="http://example.com/">hyperlinks</a>.</p>
+</li>
+<li><p class="first">Conventions for header markup:</p>
+<ol class="arabic simple">
+<li><code class="docutils literal"><span class="pre">#</span></code> with overline</li>
+<li><code class="docutils literal"><span class="pre">*</span></code> with overline</li>
+<li><code class="docutils literal"><span class="pre">=</span></code></li>
+<li><code class="docutils literal"><span class="pre">-</span></code></li>
+<li><code class="docutils literal"><span class="pre">^</span></code></li>
+<li><code class="docutils literal"><span class="pre">&quot;</span></code></li>
+</ol>
+</li>
+</ul>
+</div>
+<div class="section" id="roles-added-by-sphinx">
+<h2>Roles added by Sphinx<a class="headerlink" href="#roles-added-by-sphinx" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference external" href="http://www.sphinx-doc.org/en/stable/markup/inline.html" title="(in Sphinx v1.6.6+)"><span>Inline markup</span></a>.</p>
+<dl class="docutils">
+<dt>Inline markup:</dt>
+<dd><div class="first last highlight-rst"><div class="highlight"><pre><span></span><span class="nc">:abbr:</span>
+<span class="nc">:command:</span>
+<span class="nc">:dfn:</span>
+<span class="nc">:file:</span>
+<span class="nc">:kbd:</span>
+<span class="nc">:mimetype:</span>
+<span class="nc">:program:</span>
+<span class="nc">:regexp:</span>
+</pre></div>
+</div>
+</dd>
+<dt>Generic cross-referencing:</dt>
+<dd><div class="first last highlight-rst"><div class="highlight"><pre><span></span><span class="nc">:any:</span>
+<span class="nc">:ref:</span>
+<span class="nc">:doc:</span>
+<span class="nc">:envvar:</span>
+<span class="nc">:term:</span>
+<span class="nc">:pep:</span>
+<span class="nc">:rfc:</span>
+</pre></div>
+</div>
+</dd>
+<dt>Python cross-referencing:</dt>
+<dd><div class="first last highlight-rst"><div class="highlight"><pre><span></span><span class="nc">:mod:</span>
+<span class="nc">:func:</span>
+<span class="nc">:data:</span>
+<span class="nc">:const:</span>
+<span class="nc">:class:</span>
+<span class="nc">:meth:</span>
+<span class="nc">:attr:</span>
+<span class="nc">:exc:</span>
+<span class="nc">:obj:</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="directives">
+<h2>Directives<a class="headerlink" href="#directives" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Explicit Markup Block</dt>
+<dd>begins with a line starting with <code class="docutils literal"><span class="pre">..</span></code> followed by whitespace and is
+terminated by the next paragraph at the same level of indentation.</dd>
+<dt>Directives</dt>
+<dd><p class="first">are Explicit Markup with special semantics. Directives and roles form the
+extension mechanism of rST. Basically, a directive consists of a <strong>name</strong>,
+<strong>arguments</strong>, <strong>options</strong> and <strong>content</strong>:</p>
+<div class="highlight-rst"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">name</span><span class="p">::</span> arg1
+          arg2
+    <span class="nc">:option1:</span> <span class="nf">arg, arg</span>
+    :option2:
+
+    Content
+</pre></div>
+</div>
+<p>Directives are defined by</p>
+<ul class="last simple">
+<li><a class="reference external" href="http://www.sphinx-doc.org/en/stable/rest.html#directives" title="(in Sphinx v1.6.6+)"><span class="xref std std-ref">Docutils</span></a></li>
+<li><a class="reference external" href="http://www.sphinx-doc.org/en/stable/markup/index.html" title="(in Sphinx v1.6.6+)"><span class="xref std std-doc">Sphinx</span></a>, and Sphinx Extensions.</li>
+</ul>
+</dd>
+</dl>
+<p>See <a class="reference external" href="http://www.sphinx-doc.org/en/stable/domains.html" title="(in Sphinx v1.6.6+)"><span>Sphinx Domains</span></a> for ia. the <strong>Python</strong> and <strong>Standard</strong> domains with
+their special directives.</p>
+<p>See <a class="reference external" href="http://www.sphinx-doc.org/en/stable/markup/para.html" title="(in Sphinx v1.6.6+)"><span>Paragraph-level markup</span></a> for documentation of many handy directives, such as:</p>
+<div class="highlight-rst"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">note</span><span class="p">::</span>
+<span class="p">..</span> <span class="ow">warning</span><span class="p">::</span>
+<span class="p">..</span> <span class="ow">versionadded</span><span class="p">::</span> version
+<span class="p">..</span> <span class="ow">versionchanged</span><span class="p">::</span> version
+<span class="p">..</span> <span class="ow">deprecated</span><span class="p">::</span> version
+<span class="p">..</span> <span class="ow">seealso</span><span class="p">::</span>
+<span class="p">..</span> <span class="ow">hlist</span><span class="p">::</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="google-style-docstrings">
+<h2>Google-style docstrings<a class="headerlink" href="#google-style-docstrings" title="Permalink to this headline">¶</a></h2>
+<p>Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>Args:
+    path (str): The path of the file to wrap
+    field_storage (FileStorage): The :class:`FileStorage` instance to wrap
+    temporary (bool): Whether or not to delete the file when the File
+       instance is destructed
+
+Returns:
+    BufferedFileStorage: A buffered writable file descriptor
+</pre></div>
+</div>
+<p>The following section headers are supported:</p>
+<ul class="simple">
+<li><strong>Args</strong> (alias of <strong>Parameters</strong>)</li>
+<li><strong>Arguments</strong> (alias of <strong>Parameters</strong>)</li>
+<li><strong>Attributes</strong></li>
+<li><strong>Example</strong></li>
+<li><strong>Examples</strong></li>
+<li><strong>Keyword Args</strong> (alias of <strong>Keyword Arguments</strong>)</li>
+<li><strong>Keyword Arguments</strong></li>
+<li><strong>Methods</strong></li>
+<li><strong>Note</strong></li>
+<li><strong>Notes</strong></li>
+<li><strong>Other Parameters</strong></li>
+<li><strong>Parameters</strong></li>
+<li><strong>Return</strong> (alias of <strong>Returns</strong>)</li>
+<li><strong>Returns</strong></li>
+<li><strong>Raises</strong></li>
+<li><strong>References</strong></li>
+<li><strong>See Also</strong></li>
+<li><strong>Todo</strong> (doesn’t work together with <a class="reference external" href="http://www.sphinx-doc.org/en/stable/ext/todo.html">sphinx.ext.todo</a>: items won’t show up
+in the <code class="docutils literal"><span class="pre">..</span> <span class="pre">todolist::</span></code>)</li>
+<li><strong>Warning</strong></li>
+<li><strong>Warnings</strong> (alias of <strong>Warning</strong>)</li>
+<li><strong>Warns</strong></li>
+<li><strong>Yield</strong> (alias of <strong>Yields</strong>)</li>
+<li><strong>Yields</strong></li>
+</ul>
+</div>
+<div class="section" id="autodoc">
+<h2>Autodoc<a class="headerlink" href="#autodoc" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference external" href="http://www.sphinx-doc.org/en/stable/ext/autodoc.html" title="(in Sphinx v1.6.6+)"><span>sphinx.ext.autodoc – Include documentation from docstrings</span></a>.</p>
+<div class="highlight-rst"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">automodule</span><span class="p">::</span> my_module
+    <span class="nc">:members:</span>
+    <span class="nc">:members:</span> <span class="nf">member1, member2</span>
+    <span class="nc">:undoc-members:</span>
+    <span class="nc">:private-members:</span>
+    <span class="nc">:special-members:</span>
+    <span class="nc">:synopsis:</span> <span class="nf">Short description</span>
+    <span class="nc">:platform:</span> <span class="nf">Linux, OS-X, other platform</span>
+    <span class="nc">:deprecated:</span>
+    <span class="nc">:show-inheritance:</span>
+    <span class="nc">:inherited-members:</span>
+
+<span class="p">..</span> <span class="ow">autoclass</span><span class="p">::</span> MyClass
+<span class="p">..</span> <span class="ow">autoexception</span><span class="p">::</span> MyException
+    <span class="nc">:members:</span>
+    <span class="nc">:members:</span> <span class="nf">member1, member2</span>
+    <span class="nc">:undoc-members:</span>
+    <span class="nc">:private-members:</span>
+    <span class="nc">:special-members:</span>
+    <span class="nc">:show-inheritance:</span>
+    <span class="nc">:inherited-members:</span>
+
+<span class="p">..</span> <span class="ow">autofunction</span><span class="p">::</span> my_function
+<span class="p">..</span> <span class="ow">autofunction</span><span class="p">::</span> my_function(arg1, arg2)
+<span class="p">..</span> <span class="ow">automethod</span><span class="p">::</span> my_method
+<span class="p">..</span> <span class="ow">automethod</span><span class="p">::</span> my_method(arg1, arg2)
+
+<span class="p">..</span> <span class="ow">autodata</span><span class="p">::</span>
+<span class="p">..</span> <span class="ow">autoattribute</span><span class="p">::</span>
+    <span class="nc">:annotation:</span> <span class="nf">Short description</span>
+</pre></div>
+</div>
+<p>Three ways of documenting <em>module data members</em> and <em>class attributes</em>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">#: Single- or multi-line comment before the definition,</span>
+<span class="c1">#: starting with ``#:``.</span>
+<span class="n">foo</span> <span class="o">=</span> <span class="s2">&quot;bar&quot;</span>  <span class="c1">#: Single line comment *after* the definition.</span>
+<span class="sd">&quot;&quot;&quot;Docstring below the definition.&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="intersphinx">
+<h2>Intersphinx<a class="headerlink" href="#intersphinx" title="Permalink to this headline">¶</a></h2>
+<p>Intersphinx is configured with the following mappings:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">intersphinx_mapping</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;python&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;https://docs.python.org/3.6/&#39;</span><span class="p">,</span> <span class="s1">&#39;python.inv&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;sphinx&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;http://www.sphinx-doc.org/en/stable/&#39;</span><span class="p">,</span> <span class="s1">&#39;sphinx.inv&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;aiohttp&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;http://aiohttp.readthedocs.io/en/stable/&#39;</span><span class="p">,</span> <span class="s1">&#39;aiohttp.inv&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;aiopg&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;https://aiopg.readthedocs.io/en/stable/&#39;</span><span class="p">,</span> <span class="s1">&#39;aiopg.inv&#39;</span><span class="p">),</span>
+    <span class="s1">&#39;jwt&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;https://pyjwt.readthedocs.io/en/latest/&#39;</span><span class="p">,</span> <span class="s1">&#39;jwt.inv&#39;</span><span class="p">),</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>For each of these external packages, a full list of available reference targets
+can be found in the corresponding <code class="file docutils literal"><span class="pre">*.inv.txt</span></code> files in the <code class="file docutils literal"><span class="pre">sphinx/</span></code>
+directory (after the first build).</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="todo_list.html" class="btn btn-neutral float-right" title="Todo list" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="schemas.html" class="btn btn-neutral" title="JSON Schemas and OpenAPI definitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Gemeente Amsterdam.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
