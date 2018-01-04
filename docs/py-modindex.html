@@ -90,7 +90,22 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="api_docs.html">API Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/application.html">Application</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/handlers.html">Handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/plugins.html">Plugins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/plugins.html#interfaces">Interfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/plugins.html#default-plugins">Default Plugins</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">Writing Plugins</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="plugins.html#plugin-initialization-and-tear-down">Plugin initialization and tear-down</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins.html#default-plugins">Default Plugins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="plugins.html#filestorageplugin">FileStoragePlugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins.html#inmemorysearchplugin">InMemorySearchPlugin</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="schemas.html">JSON Schemas and OpenAPI definitions</a></li>
@@ -238,17 +253,22 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/handlers.html#module-datacatalog.action_api"><code class="xref">datacatalog.action_api</code></a></td><td>
+       <a href="api/application.html#module-datacatalog.application"><code class="xref">datacatalog.application</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/handlers.html#module-datacatalog.index"><code class="xref">datacatalog.index</code></a></td><td>
+       <a href="api/handlers.html#module-datacatalog.handlers.action_api"><code class="xref">datacatalog.handlers.action_api</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/handlers.html#module-datacatalog.search"><code class="xref">datacatalog.search</code></a></td><td>
+       <a href="api/handlers.html#module-datacatalog.handlers.index"><code class="xref">datacatalog.handlers.index</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="api/handlers.html#module-datacatalog.handlers.systemhealth"><code class="xref">datacatalog.handlers.systemhealth</code></a></td><td>
        <em></em></td></tr>
    </table>
 
@@ -265,7 +285,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Gemeente Amsterdam.
+        &copy; Copyright 2018, Gemeente Amsterdam.
 
     </p>
   </div>
