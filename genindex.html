@@ -88,7 +88,22 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="api_docs.html">API Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/application.html">Application</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/handlers.html">Handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/plugins.html">Plugins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/plugins.html#interfaces">Interfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/plugins.html#default-plugins">Default Plugins</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">Writing Plugins</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="plugins.html#plugin-initialization-and-tear-down">Plugin initialization and tear-down</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins.html#default-plugins">Default Plugins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="plugins.html#filestorageplugin">FileStoragePlugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plugins.html#inmemorysearchplugin">InMemorySearchPlugin</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="schemas.html">JSON Schemas and OpenAPI definitions</a></li>
@@ -221,9 +236,12 @@
 
 <div class="genindex-jumpbox">
  <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  
@@ -231,25 +249,51 @@
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/handlers.html#datacatalog.action_api.Facet._member_type_">_member_type_ (Facet attribute)</a>
+      <li><a href="api/plugins.html#datacatalog.plugin_interfaces.AbstractPlugin.__init__">__init__() (AbstractPlugin method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/handlers.html#datacatalog.handlers.action_api.Facet._member_type_">_member_type_ (Facet attribute)</a>
 
       <ul>
-        <li><a href="api/handlers.html#datacatalog.action_api.SearchParam._member_type_">(SearchParam attribute)</a>
+        <li><a href="api/handlers.html#datacatalog.handlers.action_api.SearchParam._member_type_">(SearchParam attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/plugins.html#datacatalog.plugin_interfaces.AbstractPlugin">AbstractPlugin (class in datacatalog.plugin_interfaces)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/plugins.html#datacatalog.plugin_interfaces.AbstractSearchPlugin">AbstractSearchPlugin (class in datacatalog.plugin_interfaces)</a>
+</li>
+      <li><a href="api/plugins.html#datacatalog.plugin_interfaces.AbstractStoragePlugin">AbstractStoragePlugin (class in datacatalog.plugin_interfaces)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/handlers.html#module-datacatalog.action_api">datacatalog.action_api (module)</a>
+      <li><a href="api/application.html#module-datacatalog.application">datacatalog.application (module)</a>
+</li>
+      <li><a href="api/handlers.html#module-datacatalog.handlers.action_api">datacatalog.handlers.action_api (module)</a>
+</li>
+      <li><a href="api/handlers.html#module-datacatalog.handlers.index">datacatalog.handlers.index (module)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/handlers.html#module-datacatalog.index">datacatalog.index (module)</a>
+      <li><a href="api/handlers.html#module-datacatalog.handlers.systemhealth">datacatalog.handlers.systemhealth (module)</a>
 </li>
-      <li><a href="api/handlers.html#module-datacatalog.search">datacatalog.search (module)</a>
+      <li><a href="api/plugins.html#datacatalog.plugin_interfaces.AbstractStoragePlugin.datastore_get_by_id">datastore_get_by_id() (AbstractStoragePlugin method)</a>
+</li>
+      <li><a href="api/plugins.html#datacatalog.plugin_interfaces.AbstractStoragePlugin.datastore_get_list">datastore_get_list() (AbstractStoragePlugin method)</a>
+</li>
+      <li><a href="api/plugins.html#datacatalog.plugin_interfaces.AbstractStoragePlugin.datastore_is_healthy">datastore_is_healthy() (AbstractStoragePlugin method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -257,7 +301,11 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/handlers.html#datacatalog.action_api.Facet">Facet (class in datacatalog.action_api)</a>
+      <li><a href="api/handlers.html#datacatalog.handlers.action_api.Facet">Facet (class in datacatalog.handlers.action_api)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/plugins.html#datacatalog.default_plugins.file_storage.FileStoragePlugin">FileStoragePlugin (class in datacatalog.default_plugins.file_storage)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -265,7 +313,37 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/handlers.html#datacatalog.action_api.handle">handle() (in module datacatalog.action_api)</a>
+      <li><a href="api/handlers.html#datacatalog.handlers.action_api.handle">handle() (in module datacatalog.handlers.action_api)</a>
+
+      <ul>
+        <li><a href="api/handlers.html#datacatalog.handlers.index.handle">(in module datacatalog.handlers.index)</a>
+</li>
+        <li><a href="api/handlers.html#datacatalog.handlers.systemhealth.handle">(in module datacatalog.handlers.systemhealth)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/plugins.html#datacatalog.plugin_interfaces.AbstractPlugin.implemented_by">implemented_by() (datacatalog.plugin_interfaces.AbstractPlugin class method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/plugins.html#datacatalog.default_plugins.in_memory_search.InMemorySearchPlugin">InMemorySearchPlugin (class in datacatalog.default_plugins.in_memory_search)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/plugins.html#datacatalog.plugin_interfaces.AbstractPlugin.plugin_start">plugin_start() (AbstractPlugin method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/plugins.html#datacatalog.plugin_interfaces.AbstractPlugin.plugin_stop">plugin_stop() (AbstractPlugin method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -296,7 +374,17 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/handlers.html#datacatalog.action_api.SearchParam">SearchParam (class in datacatalog.action_api)</a>
+      <li><a href="api/plugins.html#datacatalog.plugin_interfaces.AbstractSearchPlugin.search">search() (AbstractSearchPlugin method)</a>
+
+      <ul>
+        <li><a href="api/plugins.html#datacatalog.default_plugins.in_memory_search.InMemorySearchPlugin.search">(InMemorySearchPlugin method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/plugins.html#datacatalog.plugin_interfaces.AbstractSearchPlugin.search_is_healthy">search_is_healthy() (AbstractSearchPlugin method)</a>
+</li>
+      <li><a href="api/handlers.html#datacatalog.handlers.action_api.SearchParam">SearchParam (class in datacatalog.handlers.action_api)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -315,7 +403,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, Gemeente Amsterdam.
+        &copy; Copyright 2018, Gemeente Amsterdam.
 
     </p>
   </div>

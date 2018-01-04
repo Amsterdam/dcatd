@@ -1,11 +1,11 @@
-.. _best_content_types:
+.. _handlers:
 
 
 Handlers
 ========
 
-.. automodule:: datacatalog.action_api
+.. automodule:: datacatalog.handlers.action_api
 
-.. automodule:: datacatalog.index
+.. automodule:: datacatalog.handlers.index
 
-.. automodule:: datacatalog.search
+.. automodule:: datacatalog.handlers.systemhealth

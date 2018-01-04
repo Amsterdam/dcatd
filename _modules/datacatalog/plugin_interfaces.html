@@ -1,0 +1,588 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>datacatalog.plugin_interfaces &mdash; datacatalog-core 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/_modules/datacatalog/plugin_interfaces.html"/>
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="datacatalog-core 0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> datacatalog-core
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_docs.html">API Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/application.html">Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/handlers.html">Handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/plugins.html">Plugins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api/plugins.html#interfaces">Interfaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api/plugins.html#default-plugins">Default Plugins</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">Writing Plugins</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../plugins.html#plugin-initialization-and-tear-down">Plugin initialization and tear-down</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../plugins.html#default-plugins">Default Plugins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../plugins.html#filestorageplugin">FileStoragePlugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../plugins.html#inmemorysearchplugin">InMemorySearchPlugin</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../schemas.html">JSON Schemas and OpenAPI definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sphinx_101.html">Sphinx 101</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#rest-formatting">ReST formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#roles-added-by-sphinx">Roles added by Sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#directives">Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#google-style-docstrings">Google-style docstrings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#autodoc">Autodoc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#intersphinx">Intersphinx</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../todo_list.html">Todo list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#definitions">1. Definitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#contributor">1.1. “Contributor”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#contributor-version">1.2. “Contributor Version”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#contribution">1.3. “Contribution”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#covered-software">1.4. “Covered Software”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#incompatible-with-secondary-licenses">1.5. “Incompatible With Secondary Licenses”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#executable-form">1.6. “Executable Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#id1">1.8. “License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#licensable">1.9. “Licensable”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#modifications">1.10. “Modifications”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#patent-claims-of-a-contributor">1.11. “Patent Claims” of a Contributor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#secondary-license">1.12. “Secondary License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#source-code-form">1.13. “Source Code Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#you-or-your">1.14. “You” (or “Your”)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#license-grants-and-conditions">2. License Grants and Conditions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#grants">2.1. Grants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#effective-date">2.2. Effective Date</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#limitations-on-grant-scope">2.3. Limitations on Grant Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#subsequent-licenses">2.4. Subsequent Licenses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#representation">2.5. Representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#fair-use">2.6. Fair Use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#conditions">2.7. Conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#responsibilities">3. Responsibilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distribution-of-source-form">3.1. Distribution of Source Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distribution-of-executable-form">3.2. Distribution of Executable Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distribution-of-a-larger-work">3.3. Distribution of a Larger Work</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#notices">3.4. Notices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#application-of-additional-terms">3.5. Application of Additional Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#inability-to-comply-due-to-statute-or-regulation">4. Inability to Comply Due to Statute or Regulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#termination">5. Termination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#disclaimer-of-warranty">6. Disclaimer of Warranty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#limitation-of-liability">7. Limitation of Liability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#litigation">8. Litigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#miscellaneous">9. Miscellaneous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#versions-of-the-license">10. Versions of the License</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#new-versions">10.1. New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#effect-of-new-versions">10.2. Effect of New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#modified-versions">10.3. Modified Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distributing-source-code-form-that-is-incompatible-with-secondary-licenses">10.4. Distributing Source Code Form that is Incompatible With Secondary Licenses</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#exhibit-a-source-code-form-license-notice">Exhibit A - Source Code Form License Notice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#exhibit-b-incompatible-with-secondary-licenses-notice">Exhibit B - “Incompatible With Secondary Licenses” Notice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">datacatalog-core</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>datacatalog.plugin_interfaces</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for datacatalog.plugin_interfaces</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">T</span>
+<span class="kn">import</span> <span class="nn">abc</span>
+
+<span class="c1"># from ._storage import *</span>
+<span class="c1"># from ._search_engine import *</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+
+
+<div class="viewcode-block" id="AbstractPlugin"><a class="viewcode-back" href="../../api/plugins.html#datacatalog.plugin_interfaces.AbstractPlugin">[docs]</a><span class="k">class</span> <span class="nc">AbstractPlugin</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parent of all plugin interface classes.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AbstractPlugin.implemented_by"><a class="viewcode-back" href="../../api/plugins.html#datacatalog.plugin_interfaces.AbstractPlugin.implemented_by">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">implemented_by</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">,</span> <span class="n">plugin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ``True`` if ``plugin`` implements all abstact methods in ``cls``.</span>
+<span class="sd">            Otherwise, the normal algorithm for subclass detection is invoked,</span>
+<span class="sd">            which will probably return ``False``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="nb">hasattr</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="n">abstract_method_name</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="n">abstract_method_name</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">abstract_method_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__abstractmethods__</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AbstractPlugin.__init__"><a class="viewcode-back" href="../../api/plugins.html#datacatalog.plugin_interfaces.AbstractPlugin.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;Default constructor.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            app (datacatalog.application.Application): the application</span>
+
+<span class="sd">        Does nothing.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AbstractPlugin.plugin_start"><a class="viewcode-back" href="../../api/plugins.html#datacatalog.plugin_interfaces.AbstractPlugin.plugin_start">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">plugin_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;Called before application start.</span>
+
+<span class="sd">        If your plugin needs to perform some asynchronous initialization, you can do it in this method.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: if initialization failed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AbstractPlugin.plugin_stop"><a class="viewcode-back" href="../../api/plugins.html#datacatalog.plugin_interfaces.AbstractPlugin.plugin_stop">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">plugin_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">):</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;Called before application start.</span>
+
+<span class="sd">        If your plugin needs to perform some asynchronous initialization, you can do it in this method.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: if teardown failed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span></div></div>
+
+
+<div class="viewcode-block" id="AbstractSearchPlugin"><a class="viewcode-back" href="../../api/plugins.html#datacatalog.plugin_interfaces.AbstractSearchPlugin">[docs]</a><span class="k">class</span> <span class="nc">AbstractSearchPlugin</span><span class="p">(</span><span class="n">AbstractPlugin</span><span class="p">):</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot; Search plugin definition.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AbstractSearchPlugin.search_is_healthy"><a class="viewcode-back" href="../../api/plugins.html#datacatalog.plugin_interfaces.AbstractSearchPlugin.search_is_healthy">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">search_is_healthy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot; Health check.</span>
+
+<span class="sd">        .. todo:: documentation, signature types</span>
+
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AbstractSearchPlugin.search"><a class="viewcode-back" href="../../api/plugins.html#datacatalog.plugin_interfaces.AbstractSearchPlugin.search">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Mapping</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot; Search.</span>
+
+<span class="sd">        .. todo:: documentation, return value type</span>
+
+<span class="sd">        &quot;&quot;&quot;</span></div></div>
+
+
+<div class="viewcode-block" id="AbstractStoragePlugin"><a class="viewcode-back" href="../../api/plugins.html#datacatalog.plugin_interfaces.AbstractStoragePlugin">[docs]</a><span class="k">class</span> <span class="nc">AbstractStoragePlugin</span><span class="p">(</span><span class="n">AbstractPlugin</span><span class="p">):</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot; Datastore plugin definition.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AbstractStoragePlugin.datastore_is_healthy"><a class="viewcode-back" href="../../api/plugins.html#datacatalog.plugin_interfaces.AbstractStoragePlugin.datastore_is_healthy">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">datastore_is_healthy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot; Health check.</span>
+
+<span class="sd">        .. todo:: documentation, signature types</span>
+
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AbstractStoragePlugin.datastore_get_by_id"><a class="viewcode-back" href="../../api/plugins.html#datacatalog.plugin_interfaces.AbstractStoragePlugin.datastore_get_by_id">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">datastore_get_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot; get by id.</span>
+
+<span class="sd">        .. todo:: documentation, return value type</span>
+
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="AbstractStoragePlugin.datastore_get_list"><a class="viewcode-back" href="../../api/plugins.html#datacatalog.plugin_interfaces.AbstractStoragePlugin.datastore_get_list">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">datastore_get_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot; get list.</span>
+
+<span class="sd">        .. todo:: documentation, return value type</span>
+
+<span class="sd">        &quot;&quot;&quot;</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">AbstractFullTextSearchPlugin</span><span class="p">(</span><span class="n">AbstractPlugin</span><span class="p">):</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot;Fuzzy full text search engine interface.</span>
+
+<span class="sd">    .. warning:: Unused. Work in progress.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">fts_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;Build a full-text search index for a document.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            identifier: the identifier of the document from which the texts have</span>
+<span class="sd">                been extracted.</span>
+<span class="sd">            texts: the texts extracted from the document.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">fts_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]:</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve documents satisfying some text query.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: a full text query string. Format may be plugin-specific.</span>
+
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a list of tuples, ordered by relevance, with each tuple containing:</span>
+
+<span class="sd">            -   the document identifier</span>
+<span class="sd">            -   a list of pieces of text matching the query. If the search</span>
+<span class="sd">                engine doesn&#39;t support such a preview feature, the list may be</span>
+<span class="sd">                empty.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">fts_search_filtered</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                  <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                  <span class="n">max_preview_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                  <span class="n">facet_filter</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]:</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve documents satisfying some text query.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: a full text query string. Format may be plugin-specific.</span>
+<span class="sd">            max_preview_len: the maximum length (in characters) of a text</span>
+<span class="sd">                preview in the results.</span>
+<span class="sd">            facet_filter</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a list of tuples, ordered by relevance, with each tuple containing:</span>
+
+<span class="sd">            -   the document identifier</span>
+<span class="sd">            -   a preview of the found texts. If the search engine doesn&#39;t</span>
+<span class="sd">                support this, the list may be empty.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">AbstractBetterStoragePlugin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot;Specifies the storage API.</span>
+
+<span class="sd">    .. warning:: Unused. Work in progress.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">storage_store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+                      <span class="n">identifier</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="n">version</span><span class="p">:</span>    <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;Store a document.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: the document to store.</span>
+<span class="sd">            identifier: an identifier by which to reference this document in the</span>
+<span class="sd">                future.</span>
+<span class="sd">            version: the last seen version of this document.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A `tuple` of</span>
+
+<span class="sd">                #.  the identifier of the stored document</span>
+<span class="sd">                #.  the new version number</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: a document with ``identifier`` exists, but doesn&#39;t have</span>
+<span class="sd">                version ``version``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">storage_retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve a document by identifier.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            identifier: identifier of the document to retrieve.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A `tuple` of</span>
+
+<span class="sd">                #.  the data that was retrieved</span>
+<span class="sd">                #.  the current version of the document</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: no document found with ``identifier``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">storage_all_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve all document ids.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">storage_all_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve all documents, indexed by ids.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">storage_facet_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">facet</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;All used values of ``facet`` in all documents with ``schema``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            facet: a json path.</span>
+<span class="sd">            schema: identifier (ie. module name?) of a schema plugin.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of all values found.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">storage_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve a document by identifier.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            identifier: identifier of the document to remove.</span>
+<span class="sd">            version: the last seen version of this document.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ``True`` if the document was found, otherwise ``False``.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: document&#39;s current version isn&#39;t ``version``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+<span class="n">Plugins</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Plugins&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datastore&#39;</span><span class="p">,</span> <span class="s1">&#39;search&#39;</span><span class="p">])</span>
+<span class="n">ALL_INTERFACES</span> <span class="o">=</span> <span class="n">Plugins</span><span class="p">(</span><span class="n">AbstractStoragePlugin</span><span class="p">,</span> <span class="n">AbstractSearchPlugin</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">implemented_interfaces</span><span class="p">(</span><span class="n">plugin</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">Plugins</span><span class="o">.</span><span class="n">_fields</span><span class="p">:</span>
+        <span class="n">klass</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ALL_INTERFACES</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="n">klass</span><span class="p">)</span> <span class="ow">or</span> <span class="n">klass</span><span class="o">.</span><span class="n">implemented_by</span><span class="p">(</span><span class="n">plugin</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">name</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Gemeente Amsterdam.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
