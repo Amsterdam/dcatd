@@ -11,6 +11,9 @@ Interfaces
 ..  autoclass:: datacatalog.plugin_interfaces.AbstractPlugin
 ..  autoclass:: datacatalog.plugin_interfaces.AbstractStoragePlugin
 ..  autoclass:: datacatalog.plugin_interfaces.AbstractSearchPlugin
+..  autoclass:: datacatalog.plugin_interfaces.AbstractBetterStoragePlugin
+..  autoclass:: datacatalog.plugin_interfaces.AbstractFullTextSearchPlugin
+
 
 
 Default Plugins
