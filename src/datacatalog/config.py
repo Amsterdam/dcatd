@@ -32,7 +32,6 @@ Example usage::
 # stdlib imports:
 import logging
 import logging.config
-import numbers
 import os
 import os.path
 import pathlib
