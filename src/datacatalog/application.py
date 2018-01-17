@@ -1,7 +1,7 @@
 import importlib
-import inspect
 
 from aiohttp import web
+from aiopluggy import PluginManager
 
 from . import config, plugin_interfaces
 from .handlers import index, action_api, systemhealth
@@ -19,104 +19,64 @@ class Application(web.Application):
         self._config = config.load()
 
         # Load and initialize plugins:
-        self._plugins = self.load()
+        self._pm = PluginManager('datacatalog')
+        self._pm.register_specs(plugin_interfaces)
 
-        self.on_startup.append(_start_plugins)
-        self.on_cleanup.append(_stop_plugins)
+        async def on_cleanup(app):
+            await app.hooks.deinitialize(app=app)
+        self.on_cleanup.append(on_cleanup)
+
+        async def on_startup(app):
+            await app.hooks.initialize(app=app)
+        self.on_startup.append(on_startup)
+        self._load_plugins()
+        self.hooks.initialize_sync(app=self)
 
     @property
     def config(self) -> config.ConfigDict:
         return self._config
 
     @property
-    def plugins(self) -> plugin_interfaces.Plugins:
-        return self._plugins
+    def pm(self) -> PluginManager:
+        return self._pm
 
-    def load(self):
-        self['loaded_plugins'] = []
-        implementations = {}
+    @property
+    def hooks(self):
+        return self._pm.hooks
+
+    def _load_plugins(self):
         for fq_name in self.config['plugins']:
-            plugin_class = _load_plugin_class(fq_name)
-            _validate_config_for_plugin(self.config, plugin_class, fq_name)
-
-            # Instantiate and register the plugin:
-            plugin = plugin_class(self)
-            self['loaded_plugins'].append((fq_name, plugin))
-            for interface in plugin_interfaces.implemented_interfaces(plugin):
-                implementations[interface] = plugin
-
-        # Assert that all required interfaces are implemented:
-        for name in plugin_interfaces.Plugins._fields:
-            if name not in implementations:
-                raise Exception(
-                    "No plugin configured for '{}' feature.".format(name)
-                )
-
-        # Warn about unused plugins:
-        for fq_name, plugin in self['loaded_plugins']:
-            if not any(
-                plugin is i for i in implementations.values()
-            ):
-                config.logger.warning("Plugin {} unused.".format(fq_name))
-
-        return plugin_interfaces.Plugins(**implementations)
-
-
-def _load_plugin_class(fq_class_name):
-    segments = fq_class_name.split('.')
-    module_name = '.'.join(segments[:-1])
-    class_name = segments[-1]
-    try:
-        module = importlib.import_module(module_name)
-    except Exception as e:
-        raise Exception("Couldn't load module {}".format(module_name)) from e
-    try:
-        plugin_class = getattr(module, class_name)
-    except AttributeError:
-        raise Exception(
-            "Class {} not found in module {}".format(class_name, module_name)
-        ) from None
-    if not inspect.isclass(plugin_class):
-        raise Exception("Couldn't load plugin: {} is not a class".format(fq_class_name))
-    return plugin_class
-
-
-# noinspection PyPep8Naming
-def _validate_config_for_plugin(config, plugin_class, fq_name):
-    if hasattr(plugin_class, 'plugin_config_schema'):
-        plugin_config_schema = plugin_class.plugin_config_schema
-        if callable(plugin_config_schema):
-            plugin_config_schema = plugin_config_schema()
-        try:
-            config.validate(plugin_config_schema)
-        except Exception as e:
+            plugin = _resolve_plugin_path(fq_name)
+            self.pm.register(plugin)
+        missing = self.pm.missing()
+        if len(missing) > 0:
             raise Exception(
-                "Config validation failed for plugin {}".format(fq_name)
-            ) from e
+                "There are no implementations for the following required hooks: %s" % missing
+            )
 
 
-async def _start_plugins(app):
-    for fq_name, plugin in app['loaded_plugins']:
-        if hasattr(plugin, 'plugin_start'):
-            try:
-                await plugin.plugin_start(app)
-            except Exception as e:
-                raise Exception(
-                    "Caught exception while initializing plugin {}".format(fq_name)
-                ) from e
-            else:
-                config.logger.info("Initialized plugin {}".format(fq_name))
+def _resolve_plugin_path(fq_name: str):
+    """ Resolve the path to a plugin (module, class, or instance).
 
+    :param fq_name:
+    :raises ModuleNotFoundError: if the module could not be found
+    :raises AttributeError: if the plugin could not be found in the module
 
-async def _stop_plugins(app):
-    for fq_name, plugin in reversed(app['loaded_plugins']):
-        if hasattr(plugin, 'plugin_stop'):
-            try:
-                await plugin.plugin_stop(app)
-            except Exception as e:
-                config.logger.warning(
-                    "Caught exception while stopping plugin {}".format(fq_name),
-                    exc_info=e
-                )
-            else:
-                config.logger.info("Stopped plugin {}".format(fq_name))
+    """
+    segments = fq_name.split('.')
+    nseg = len(segments)
+    module = None
+    while nseg > 0:
+        module_name = '.'.join(segments[:nseg])
+        try:
+            module = importlib.import_module(module_name)
+            break
+        except ModuleNotFoundError:
+            pass
+        nseg = nseg - 1
+    if module is None:
+        raise ModuleNotFoundError(fq_name)
+    result = module
+    for segment in segments[nseg:]:
+        result = getattr(result, segment)
+    return result

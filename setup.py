@@ -52,6 +52,7 @@ setup(
     ],
     install_requires=[
         'aiohttp',
+        'aiopluggy',
         'datapunt_config_loader',
         'jsonschema',
         'pluggy',

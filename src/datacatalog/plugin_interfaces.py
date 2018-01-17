@@ -1,9 +1,120 @@
 import typing as T
 import abc
 
-# from ._storage import *
-# from ._search_engine import *
-from collections import namedtuple
+from aiopluggy import HookspecMarker
+
+
+hookspec = HookspecMarker('datacatalog')
+
+
+#################
+# Generic Hooks #
+#################
+
+
+# noinspection PyUnusedLocal
+@hookspec.replay.sync
+def initialize_sync(app) -> T.Optional[T.Coroutine]:
+    # language=rst
+    """ The first method to be called by the plugin-manager.
+
+    If your plugin needs to do some *asynchronous* initialization, try
+    :func:`initialize`
+
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.replay
+def initialize(app) -> T.Optional[T.Coroutine]:
+    # language=rst
+    """ Called by the plugin-manager when event loop starts.
+
+    If your plugin needs to do some initialization even before the event loop
+    starts, you'll need to do this in :func:`initialize_sync`.
+
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec
+def deinitialize(app):
+    # language=rst
+    """ Called when the application shuts down."""
+
+
+# noinspection PyUnusedLocal
+@hookspec
+def health_check() -> T.Optional[str]:
+    # language=rst
+    """ Health check.
+
+    :returns: If unhealthy, a string describing the problem, otherwise ``None``.
+    :raises Exception: if that's easier than returning a string.
+
+    """
+
+
+#################
+# Storage Hooks #
+#################
+
+# noinspection PyUnusedLocal
+@hookspec.first_result.required
+def storage_retrieve(id: str) -> dict:
+    # language=rst
+    """ Get document by id.
+
+    :returns: a "JSON dictionary"
+    :raises KeyError: if not found
+
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.required
+def storage_retrieve_list():
+    # language=rst
+    """ Unknown signature.
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_result
+def storage_store(id: str, doc: dict, etag: T.Optional[str]) -> str:
+    # language=rst
+    """ Store document.
+
+    :param id: the ID under which to store this document. May or may not
+        already exist in the data store.
+    :param doc: the document to store; a "JSON dictionary".
+    :param etag: the last known ETag of this document, or ``None`` if no
+        document with this ``id`` should exist yet.
+    :returns: new ETag
+
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_result
+def storage_id() -> str:
+    # language=rst
+    """New unique identifier."""
+
+
+################
+# Search Hooks #
+################
+
+# noinspection PyUnusedLocal
+@hookspec
+def search_search(query: T.Optional[T.Mapping]=None):
+    # language=rst
+    """ Search.
+
+    .. todo:: documentation, return value type
+
+    """
 
 
 class AbstractPlugin(abc.ABC):
@@ -56,61 +167,6 @@ class AbstractPlugin(abc.ABC):
 
         Raises:
             Exception: if teardown failed.
-
-        """
-
-
-class AbstractSearchPlugin(AbstractPlugin):
-    # language=rst
-    """ Search plugin definition."""
-
-    @abc.abstractmethod
-    async def search_is_healthy(self):
-        # language=rst
-        """ Health check.
-
-        .. todo:: documentation, signature types
-
-        """
-
-    @abc.abstractmethod
-    async def search(self, query: T.Optional[T.Mapping]=None):
-        # language=rst
-        """ Search.
-
-        .. todo:: documentation, return value type
-
-        """
-
-
-class AbstractStoragePlugin(AbstractPlugin):
-    # language=rst
-    """ Datastore plugin definition."""
-
-    @abc.abstractmethod
-    async def datastore_is_healthy(self):
-        # language=rst
-        """ Health check.
-
-        .. todo:: documentation, signature types
-
-        """
-
-    @abc.abstractmethod
-    async def datastore_get_by_id(self, id):
-        # language=rst
-        """ get by id.
-
-        .. todo:: documentation, return value type
-
-        """
-
-    @abc.abstractmethod
-    async def datastore_get_list(self):
-        # language=rst
-        """ get list.
-
-        .. todo:: documentation, return value type
 
         """
 
@@ -274,14 +330,3 @@ class AbstractBetterStoragePlugin(object):
             KeyError: document's current version isn't ``version``.
 
         """
-
-
-Plugins = namedtuple('Plugins', ['datastore', 'search'])
-ALL_INTERFACES = Plugins(AbstractStoragePlugin, AbstractSearchPlugin)
-
-
-def implemented_interfaces(plugin):
-    for name in Plugins._fields:
-        klass = getattr(ALL_INTERFACES, name)
-        if isinstance(plugin, klass) or klass.implemented_by(plugin):
-            yield name

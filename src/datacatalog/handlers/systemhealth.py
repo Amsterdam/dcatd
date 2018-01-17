@@ -10,13 +10,18 @@ async def handle(request):
     status 200 is returned
 
     """
-    datastore = request.app.plugins.datastore
-    if not await datastore.datastore_is_healthy():
-        raise web.HTTPServiceUnavailable(text="datastore not healthy")
-
-    search = request.app.plugins.search
-    if not await search.search_is_healthy():
-        raise web.HTTPServiceUnavailable(text="search is not healthy")
+    errors = []
+    for result in await request.app.hooks.health_check():
+        try:
+            value = result.value
+            if value is not None:
+                errors.append(str(value))
+        except Exception as e:
+            errors.append(str(e))
+    if len(errors) > 0:
+        raise web.HTTPServiceUnavailable(
+            text="\n".join(errors)
+        )
 
     text = "Datacatalog-core systemhealth is OK"
     return web.Response(text=text)

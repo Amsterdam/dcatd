@@ -5,6 +5,7 @@ import os
 from functools import reduce
 
 import yaml
+from aiopluggy import HookimplMarker
 from pkg_resources import resource_stream
 from whoosh.analysis import StemmingAnalyzer
 from whoosh.fields import Schema, ID, TEXT
@@ -13,9 +14,9 @@ from whoosh.qparser import QueryParser
 from whoosh.query import Variations
 
 from datacatalog.handlers import action_api
-from datacatalog.plugin_interfaces import AbstractSearchPlugin
 
 log = logging.getLogger(__name__)
+hook = HookimplMarker('datacatalog')
 
 
 def _init_or_increment(dictionary, key):
@@ -31,9 +32,20 @@ def _matcher(key, value):
     return _reduce_function
 
 
-class InMemorySearchPlugin(AbstractSearchPlugin):
+class InMemorySearchPlugin(object):
 
-    def __init__(self, app):
+    def __init__(self):
+        self.FILEDATA_DIRECTORY = None
+        self.FILEDATA = None
+        self.all_packages = None
+        self.index = None
+
+    @hook
+    def initialize(self, app):
+        with resource_stream(__name__, 'in_memory_search_config_schema.yml') as s:
+            schema = yaml.load(s)
+        app.config.validate(schema)
+
         search_config = app.config['inmemorysearch']
         self.FILEDATA_DIRECTORY = search_config['path']
         self.FILEDATA = os.path.join(self.FILEDATA_DIRECTORY, search_config['all_packages'])
@@ -59,13 +71,13 @@ class InMemorySearchPlugin(AbstractSearchPlugin):
                 writer.add_document(nid=document['id'], title=document['title'], notes=document['notes'])
             writer.commit()
 
-    @staticmethod
-    def plugin_config_schema():
-        with resource_stream(__name__, 'in_memory_search_config_schema.yml') as s:
-            return yaml.load(s)
+    @hook
+    def health_check(self):
+        return self._health_check()
 
-    async def search_is_healthy(self):
-        return os.path.exists(self.FILEDATA)
+    def _health_check(self):
+        if not os.path.exists(self.FILEDATA):
+            return self.__class__
 
     def _fulltext_search_ids(self, query):
         qp = QueryParser("notes", termclass=Variations, schema=self.index.schema)
@@ -155,7 +167,8 @@ class InMemorySearchPlugin(AbstractSearchPlugin):
 
         return search_facets
 
-    async def search(self, query=None):
+    @hook
+    def search_search(self, query=None):
         """Search packages (datasets) that match the query.
 
         Query can contain freetext search, drilldown on facets and can specify which facets to return
@@ -207,12 +220,15 @@ class InMemorySearchPlugin(AbstractSearchPlugin):
                                                       action_api.SearchParam.FACET_FIELDS]}
 
         # apply paging
-        begin = query[
-            action_api.SearchParam.START] if action_api.SearchParam.START in query else 0
+        begin = query[action_api.SearchParam.START] \
+            if action_api.SearchParam.START in query else 0
         if action_api.SearchParam.ROWS in query:
             end = begin + query[action_api.SearchParam.ROWS]
-            results['result']['results'] =  results['result']['results'][begin:end]
+            results['result']['results'] = results['result']['results'][begin:end]
         else:
             results['result']['results'] = results['result']['results'][begin:]
 
         return results
+
+
+plugin = InMemorySearchPlugin()

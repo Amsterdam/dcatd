@@ -78,10 +78,8 @@ async def handle_search(request):
     except ValueError:
         raise web.HTTPBadRequest()
 
-    search = request.app.plugins.search
-
-    results = await search.search(query)
-    return web.json_response(results)
+    for result in await request.app.hooks.search_search(query=query):
+        return web.json_response(result.value)
 
 
 async def handle_show(request):
@@ -89,17 +87,14 @@ async def handle_show(request):
         raise web.HTTPBadRequest()
 
     id_ = request.query['id']
-    datastore = request.app.plugins.datastore
-    document = await datastore.datastore_get_by_id(id_)
+    document = await request.app.hooks.storage_retrieve(id=id_)
 
-    if not document:
+    if document is None:
         raise web.HTTPNotFound()
 
     return web.json_response(document)
 
 
 async def handle_list(request):
-    datastore = request.app.plugins.datastore
-
-    results = await datastore.datastore_get_list()
-    return web.json_response(results)
+    for id_list in await request.app.hooks.storage_retrieve_list():
+        return web.json_response(id_list.value)

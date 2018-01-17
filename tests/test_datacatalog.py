@@ -16,8 +16,8 @@ async def test_health_ok(dcat_client):
 
 async def test_health_not_ok_datastore(dcat_client, monkeypatch):
     monkeypatch.setattr(
-        'datacatalog.default_plugins.file_storage.FileStoragePlugin.datastore_is_healthy',
-        make_mocked_coro(False)
+        'datacatalog.default_plugins.file_storage.plugin._health_check',
+        make_mocked_coro('Oops')
     )
     resp = await dcat_client.get('/system/health')
     assert resp.status == 503
@@ -27,8 +27,8 @@ async def test_health_not_ok_search(dcat_client, monkeypatch):
     async def is_healthy(_):
         return False
     monkeypatch.setattr(
-        'datacatalog.default_plugins.in_memory_search.InMemorySearchPlugin.search_is_healthy',
-        make_mocked_coro(False)
+        'datacatalog.default_plugins.in_memory_search.plugin._health_check',
+        make_mocked_coro('Oops')
     )
     resp = await dcat_client.get('/system/health')
     assert resp.status == 503
