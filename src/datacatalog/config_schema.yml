@@ -1,27 +1,39 @@
-$schema: 'http://json-schema.org/draft-04/schema#'
+$schema: 'http://json-schema.org/draft-07/schema#'
+
+type: object
+
+properties:
+  logging:
+    $ref: '#/definitions/logging.dictconfig'
+  plugins:
+    $ref: '#/definitions/plugins'
+  postgres:
+    $ref: '#/definitions/postgres'
+  web:
+    $ref: '#/definitions/web'
+
+required:
+  - logging
+  - plugins
+
+
 definitions:
-  datacatalog:
-    type: object
+
+  plugins:
+    type: array
+    items:
+      type: string
+      pattern: '^((?:[_a-zA-Z][\w]*\.)+)([_a-zA-Z][\w]*)$'
+
   web:
     additionalProperties: false
     properties:
-      port: {type: integer}
-    required: [port]
+      port:
+        type: integer
+    required:
+      - port
     type: object
-  datastore:
-    additionalProperties: false
-    properties:
-      implementation: {type: string}
-      config: {type: object}
-    required: [implementation, config]
-    type: object
-  search:
-    additionalProperties: false
-    properties:
-      implementation: {type: string}
-      config: {type: object}
-    required: [implementation, config]
-    type: object
+
   logging.dictconfig:
     additionalProperties: false
     properties:
@@ -38,7 +50,7 @@ definitions:
         type: object
       formatters:
         patternProperties:
-          ^[a-zA-Z0-9._-]+$:
+          '^[a-zA-Z0-9._-]+$':
             additionalProperties: false
             properties:
               datefmt:
@@ -49,7 +61,7 @@ definitions:
         type: object
       handlers:
         patternProperties:
-          ^[a-zA-Z0-9._-]+$:
+          '^[a-zA-Z0-9._-]+$':
             properties:
               class:
                 type: string
@@ -63,7 +75,7 @@ definitions:
               level:
                 type: string
             required:
-            - class
+              - class
             type: object
         type: object
       incremental:
@@ -102,20 +114,21 @@ definitions:
             uniqueItems: true
           level:
             enum:
-            - CRITICAL
-            - ERROR
-            - WARNING
-            - INFO
-            - DEBUG
+              - CRITICAL
+              - ERROR
+              - WARNING
+              - INFO
+              - DEBUG
             type: string
         type: object
       version:
         enum:
-        - 1
+          - 1
         type: integer
     required:
-    - version
+      - version
     type: object
+
   postgres:
     additionalProperties: false
     properties:
@@ -130,27 +143,10 @@ definitions:
       user:
         type: string
     required:
-    - host
-    - port
-    - user
-    - password
-    - dbname
+      - host
+      - port
+      - user
+      - password
+      - dbname
     type: object
-properties:
-  logging:
-    $ref: '#/definitions/logging.dictconfig'
-  datacatalog:
-    $ref: '#/definitions/datacatalog'
-  postgres:
-    $ref: '#/definitions/postgres'
-  web:
-    $ref: '#/definitions/web'
-  search:
-    $ref: '#/definitions/search'
-  datastore:
-    $ref: '#/definitions/datastore'
-required:
-- datacatalog
-- postgres
-- logging
-type: object
+

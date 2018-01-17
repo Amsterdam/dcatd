@@ -25,13 +25,13 @@ class Facet(Enum):
     RESOURCE = "res_format"
     PUBLISHER = "organization"
 
+
 log = logging.getLogger(__name__)
 
 
 async def handle(request):
-    """
-        Handle the action API calls package_search en package_show
-    """
+    # language=rst
+    """Handle the action API calls package_search en package_show."""
     action = request.match_info[ACTION_PARAM]
     if action == ACTION_SEARCH:
         return await handle_search(request)
@@ -78,28 +78,28 @@ async def handle_search(request):
     except ValueError:
         raise web.HTTPBadRequest()
 
-    search = request.app['search']
+    search = request.app.plugins.search
 
     results = await search.search(query)
     return web.json_response(results)
 
 
 async def handle_show(request):
-    if not 'id' in request.query:
+    if 'id' not in request.query:
         raise web.HTTPBadRequest()
 
-    id = request.query['id']
-    datastore = request.app['datastore']
-    object = await datastore.get_by_id(id)
+    id_ = request.query['id']
+    datastore = request.app.plugins.datastore
+    document = await datastore.datastore_get_by_id(id_)
 
-    if not object:
+    if not document:
         raise web.HTTPNotFound()
 
-    return web.json_response(object)
+    return web.json_response(document)
 
 
 async def handle_list(request):
-    datastore = request.app['datastore']
+    datastore = request.app.plugins.datastore
 
-    results = await datastore.get_list()
+    results = await datastore.datastore_get_list()
     return web.json_response(results)

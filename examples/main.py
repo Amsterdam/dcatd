@@ -1,11 +1,11 @@
 from aiohttp import web
 
-from datacatalog import app
+from datacatalog import application
 
 
 def main() -> int:
-    aio_app = app.get_app()
-    web.run_app(aio_app, port=aio_app['config']['web']['port'])
+    aio_app = application.Application()
+    web.run_app(aio_app, port=aio_app.config['web']['port'])
     return 0
 
 

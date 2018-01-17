@@ -1,4 +1,7 @@
-datacatalog: {}
+plugins:
+  - datacatalog.default_plugins.file_storage.FileStoragePlugin
+  - datacatalog.default_plugins.in_memory_search.InMemorySearchPlugin
+
 logging:
   formatters:
     default:
@@ -41,6 +44,7 @@ logging:
     - console
     level: ${LOGLEVEL:-WARNING}
   version: 1
+
 postgres:
   dbname: ${DB_DATABASE:-datacatalog}
   host: ${DB_HOST:-localhost}
@@ -51,15 +55,11 @@ postgres:
 web:
   port: 8000
 
-datastore:
-  implementation: "datacatalog.plugins.file_datastore.FileDataStore"
-  config:
-    filedata_path: "tests/data"
-    list_file: "package_list"
-    all_packages: "packages.json"
+filedatastore:
+  path: "tests/data"
+  list_file: "package_list"
+  all_packages: "packages.json"
 
-search:
-  implementation: "datacatalog.plugins.search.InMemorySearch"
-  config:
-    filedata_path: "tests/data"
-    all_packages: "packages.json"
+inmemorysearch:
+  path: "tests/data"
+  all_packages: "packages.json"

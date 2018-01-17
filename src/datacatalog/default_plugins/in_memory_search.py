@@ -1,18 +1,19 @@
-import os
+import copy
 import json
 import logging
-import copy
+import os
 from functools import reduce
 
-from datacatalog.search import AbstractSearch
-
-from whoosh.index import create_in
-from whoosh.fields import Schema, ID, TEXT
+import yaml
+from pkg_resources import resource_stream
 from whoosh.analysis import StemmingAnalyzer
+from whoosh.fields import Schema, ID, TEXT
+from whoosh.index import create_in
 from whoosh.qparser import QueryParser
 from whoosh.query import Variations
 
-from datacatalog import action_api
+from datacatalog.handlers import action_api
+from datacatalog.plugin_interfaces import AbstractSearchPlugin
 
 log = logging.getLogger(__name__)
 
@@ -30,9 +31,11 @@ def _matcher(key, value):
     return _reduce_function
 
 
-class InMemorySearch(AbstractSearch):
-    def __init__(self, search_config):
-        self.FILEDATA_DIRECTORY = search_config['filedata_path']
+class InMemorySearchPlugin(AbstractSearchPlugin):
+
+    def __init__(self, app):
+        search_config = app.config['inmemorysearch']
+        self.FILEDATA_DIRECTORY = search_config['path']
         self.FILEDATA = os.path.join(self.FILEDATA_DIRECTORY, search_config['all_packages'])
 
         if os.path.exists(self.FILEDATA):
@@ -56,7 +59,12 @@ class InMemorySearch(AbstractSearch):
                 writer.add_document(nid=document['id'], title=document['title'], notes=document['notes'])
             writer.commit()
 
-    async def is_healthy(self):
+    @staticmethod
+    def plugin_config_schema():
+        with resource_stream(__name__, 'in_memory_search_config_schema.yml') as s:
+            return yaml.load(s)
+
+    async def search_is_healthy(self):
         return os.path.exists(self.FILEDATA)
 
     def _fulltext_search_ids(self, query):
@@ -67,8 +75,8 @@ class InMemorySearch(AbstractSearch):
         with self.index.searcher() as searcher:
             results = searcher.search(q, limit=None)
             results1 = searcher.search(q1, limit=None)
-            return [result['nid'] for result in results] \
-                   + [result['nid'] for result in results1]
+            return [result['nid'] for result in results] + \
+                   [result['nid'] for result in results1]
 
     def _result_matches_facets(self, result, query):
         if action_api.SearchParam.FACET_QUERY not in query:
@@ -77,20 +85,26 @@ class InMemorySearch(AbstractSearch):
         facets = query[action_api.SearchParam.FACET_QUERY]
 
         if action_api.Facet.GROUP.value in facets:
-            match_function = _matcher('name', facets[action_api.Facet.GROUP.value])
+            match_function = _matcher('name', facets[
+                action_api.Facet.GROUP.value])
             group_match = reduce(match_function, result['groups'], False)
             if not group_match:
                 return False
 
         if action_api.Facet.RESOURCE.value in facets:
-            match_function = _matcher('format', facets[action_api.Facet.RESOURCE.value])
+            match_function = _matcher('format', facets[
+                action_api.Facet.RESOURCE.value])
             resource_match = reduce(match_function, result['resources'], False)
             if not resource_match:
                 return False
 
         if action_api.Facet.PUBLISHER.value in facets:
-            if result['organization'] is None or \
-                            result['organization']['name'] != facets[action_api.Facet.PUBLISHER.value]:
+            if (
+                    result['organization'] is None or
+                    result['organization']['name'] != facets[
+                        action_api.Facet.PUBLISHER.value
+                    ]
+            ):
                 return False
 
         return True
@@ -141,7 +155,7 @@ class InMemorySearch(AbstractSearch):
 
         return search_facets
 
-    async def search(self, query={}):
+    async def search(self, query=None):
         """Search packages (datasets) that match the query.
 
         Query can contain freetext search, drilldown on facets and can specify which facets to return
@@ -153,6 +167,8 @@ class InMemorySearch(AbstractSearch):
         :return:
 
         """
+        if query is None:
+            query = {}
         results = copy.deepcopy(self.all_packages)
 
         # filter results for freetext query
@@ -184,12 +200,15 @@ class InMemorySearch(AbstractSearch):
         # filter facets based on requested facets
         if action_api.SearchParam.FACET_FIELDS in query:
             results['result']['facets'] = {k: v for k, v in results['result']['facets'].items()
-                                           if k in query[action_api.SearchParam.FACET_FIELDS] }
+                                           if k in query[
+                                               action_api.SearchParam.FACET_FIELDS]}
             results['result']['search_facets'] = {k: v for k, v in results['result']['search_facets'].items()
-                                                  if k in query[action_api.SearchParam.FACET_FIELDS] }
+                                                  if k in query[
+                                                      action_api.SearchParam.FACET_FIELDS]}
 
         # apply paging
-        begin = query[action_api.SearchParam.START] if action_api.SearchParam.START in query else 0
+        begin = query[
+            action_api.SearchParam.START] if action_api.SearchParam.START in query else 0
         if action_api.SearchParam.ROWS in query:
             end = begin + query[action_api.SearchParam.ROWS]
             results['result']['results'] =  results['result']['results'][begin:end]

@@ -1,18 +1,17 @@
 import json
 import logging
 import urllib.parse
-import random
 
 import pytest
 
-from datacatalog import app
-from datacatalog.action_api import Facet, SearchParam
+from datacatalog import application
+from datacatalog.handlers.action_api import Facet, SearchParam
 
 logger = logging.getLogger(__name__)
 
 
 async def get_application(dcat_client):
-    return app.get_app()
+    return application.Application()
 
 
 async def _get_response(dcat_client, queryfield, queryvalue):

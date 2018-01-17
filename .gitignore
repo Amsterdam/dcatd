@@ -3,7 +3,6 @@
 /*.iml
 
 # Python ephemerals:
-**/.cache/
 **/__pycache__/
 **/*.pyc
 
@@ -13,5 +12,7 @@
 /sphinx/*.inv.txt
 /docs/
 
+# Test and Example side-effects:
+/.cache/
 /tests/data/whoosh_index/
 /examples/example_data/whoosh_index/
