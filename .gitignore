@@ -5,6 +5,7 @@
 # Python ephemerals:
 **/__pycache__/
 **/*.pyc
+*.egg-info
 
 # Documentation/Sphinx:
 /sphinx/.doctrees/
