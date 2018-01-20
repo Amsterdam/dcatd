@@ -60,7 +60,7 @@ def health_check() -> T.Optional[str]:
 #################
 
 # noinspection PyUnusedLocal
-@hookspec.first_result.required
+@hookspec.first_notnone.required
 def storage_retrieve(id: str) -> dict:
     # language=rst
     """ Get document by id.
@@ -80,7 +80,7 @@ def storage_retrieve_list():
 
 
 # noinspection PyUnusedLocal
-@hookspec.first_result
+@hookspec.first_notnone
 def storage_store(id: str, doc: dict, etag: T.Optional[str]) -> str:
     # language=rst
     """ Store document.
@@ -96,7 +96,7 @@ def storage_store(id: str, doc: dict, etag: T.Optional[str]) -> str:
 
 
 # noinspection PyUnusedLocal
-@hookspec.first_result
+@hookspec.first_notnone
 def storage_id() -> str:
     # language=rst
     """New unique identifier."""
@@ -115,6 +115,10 @@ def search_search(query: T.Optional[T.Mapping]=None):
     .. todo:: documentation, return value type
 
     """
+
+###############################
+# End of aiopluggy hook specs #
+###############################
 
 
 class AbstractPlugin(abc.ABC):

@@ -52,11 +52,14 @@ setup(
     ],
     install_requires=[
         'aiohttp',
+        'aiopg',
         'aiopluggy',
+        'alembic',
         'datapunt_config_loader',
         'jsonschema',
         'pluggy',
         'PyYaml',
+        'sqlalchemy',
         'swagger-parser',
         'whoosh',
 
