@@ -96,5 +96,4 @@ async def handle_show(request):
 
 
 async def handle_list(request):
-    for id_list in await request.app.hooks.storage_retrieve_list():
-        return web.json_response(id_list.value)
+    return web.json_response(await request.app.hooks.storage_retrieve_list())

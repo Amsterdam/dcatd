@@ -22,13 +22,14 @@ class Application(web.Application):
         self._pm = PluginManager('datacatalog')
         self._pm.register_specs(plugin_interfaces)
 
+        async def on_startup(app):
+            await app.hooks.initialize(app=app)
+        self.on_startup.append(on_startup)
+
         async def on_cleanup(app):
             await app.hooks.deinitialize(app=app)
         self.on_cleanup.append(on_cleanup)
 
-        async def on_startup(app):
-            await app.hooks.initialize(app=app)
-        self.on_startup.append(on_startup)
         self._load_plugins()
         self.hooks.initialize_sync(app=self)
 

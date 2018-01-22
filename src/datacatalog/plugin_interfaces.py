@@ -28,7 +28,7 @@ def initialize_sync(app) -> T.Optional[T.Coroutine]:
 @hookspec.replay
 def initialize(app) -> T.Optional[T.Coroutine]:
     # language=rst
-    """ Called by the plugin-manager when event loop starts.
+    """ Called by the plugin-manager when the event loop starts.
 
     If your plugin needs to do some initialization even before the event loop
     starts, you'll need to do this in :func:`initialize_sync`.
@@ -60,7 +60,7 @@ def health_check() -> T.Optional[str]:
 #################
 
 # noinspection PyUnusedLocal
-@hookspec.first_notnone.required
+@hookspec.first_only.required
 def storage_retrieve(id: str) -> dict:
     # language=rst
     """ Get document by id.
@@ -72,15 +72,15 @@ def storage_retrieve(id: str) -> dict:
 
 
 # noinspection PyUnusedLocal
-@hookspec.required
-def storage_retrieve_list():
+@hookspec.first_only.required
+def storage_retrieve_ids() -> T.Generator[int]:
     # language=rst
-    """ Unknown signature.
+    """ Get a list containing all document identifiers.
     """
 
 
 # noinspection PyUnusedLocal
-@hookspec.first_notnone
+@hookspec.first_only
 def storage_store(id: str, doc: dict, etag: T.Optional[str]) -> str:
     # language=rst
     """ Store document.
@@ -91,12 +91,13 @@ def storage_store(id: str, doc: dict, etag: T.Optional[str]) -> str:
     :param etag: the last known ETag of this document, or ``None`` if no
         document with this ``id`` should exist yet.
     :returns: new ETag
+    :raises:
 
     """
 
 
 # noinspection PyUnusedLocal
-@hookspec.first_notnone
+@hookspec.first_only
 def storage_id() -> str:
     # language=rst
     """New unique identifier."""
