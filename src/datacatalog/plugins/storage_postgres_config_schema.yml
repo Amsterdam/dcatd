@@ -1,0 +1,28 @@
+$schema: 'http://json-schema.org/draft-07/schema#'
+
+type: object
+
+properties:
+  postgres_storage_plugin:
+    type: object
+    additionalProperties: false
+    properties:
+      host:
+        type: string
+      port:
+        type: int
+      databasename:
+        type: string
+      username:
+        type: string
+      password:
+        type: string
+    required:
+      - host
+      - port
+      - databasename
+      - username
+      - password
+
+required:
+  - postgres_storage_plugin

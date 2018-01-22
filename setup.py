@@ -52,14 +52,14 @@ setup(
     ],
     install_requires=[
         'aiohttp',
-        'aiopg',
+        'aiopg', # postgres plugin
         'aiopluggy',
-        'alembic',
+        'alembic', # postgres plugin
         'datapunt_config_loader',
         'jsonschema',
         'pluggy',
         'PyYaml',
-        'sqlalchemy',
+        'sqlalchemy', # postgres plugin
         'swagger-parser',
         'whoosh',
 
