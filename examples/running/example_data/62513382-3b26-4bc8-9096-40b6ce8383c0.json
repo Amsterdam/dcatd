@@ -1,0 +1,81 @@
+{
+  "help": "https://demo.ckan.org/api/3/action/help_show?name=package_show",
+  "success": true,
+  "result": {
+    "license_title": "Other (Open)",
+    "maintainer": "TKKIM",
+    "relationships_as_object": [],
+    "private": false,
+    "maintainer_email": "misoh049@gmail.com",
+    "num_tags": 3,
+    "id": "62513382-3b26-4bc8-9096-40b6ce8383c0",
+    "metadata_created": "2017-08-05T03:16:52.857800",
+    "metadata_modified": "2017-08-05T03:19:33.886925",
+    "author": "TKKIM",
+    "author_email": "misoh049@gmail.com",
+    "state": "active",
+    "version": "",
+    "creator_user_id": "bb970558-8d48-4874-9794-bd4740099474",
+    "type": "dataset",
+    "resources": [
+      {
+        "mimetype": null,
+        "cache_url": null,
+        "hash": "",
+        "description": "This file includes 100 species list for machine learning test.",
+        "name": "validated_100_species.csv",
+        "format": "CSV",
+        "url": "https://demo.ckan.org/dataset/62513382-3b26-4bc8-9096-40b6ce8383c0/resource/bf4d5116-634e-43f2-a41c-9ae22d362083/download/validated_100_species.csv",
+        "datastore_active": false,
+        "cache_last_updated": null,
+        "package_id": "62513382-3b26-4bc8-9096-40b6ce8383c0",
+        "created": "2017-08-05T03:17:44.192463",
+        "state": "active",
+        "mimetype_inner": null,
+        "last_modified": null,
+        "position": 0,
+        "revision_id": "9d6a7ee2-022e-4018-8de0-b9b628476b26",
+        "url_type": "upload",
+        "id": "bf4d5116-634e-43f2-a41c-9ae22d362083",
+        "resource_type": null,
+        "size": null
+      }
+    ],
+    "num_resources": 1,
+    "tags": [
+      {
+        "vocabulary_id": null,
+        "state": "active",
+        "display_name": "flower",
+        "id": "806b0369-bc31-4cc2-8147-861885f4e762",
+        "name": "flower"
+      },
+      {
+        "vocabulary_id": null,
+        "state": "active",
+        "display_name": "image recognition",
+        "id": "2e583787-08a5-4e28-a9d4-ec5ae94e19c5",
+        "name": "image recognition"
+      },
+      {
+        "vocabulary_id": null,
+        "state": "active",
+        "display_name": "machine learning",
+        "id": "7cfc3a49-2999-4aba-bf49-93678a30e62f",
+        "name": "machine learning"
+      }
+    ],
+    "groups": [],
+    "license_id": "other-open",
+    "relationships_as_subject": [],
+    "organization": null,
+    "name": "100-validated-species-of-plants",
+    "isopen": true,
+    "url": "",
+    "notes": "This data includes the typical plants for machine learning test.",
+    "owner_org": null,
+    "extras": [],
+    "title": "100 Validated Species of Plants",
+    "revision_id": "3bbdcb05-6394-4285-8cc4-237ef77d1f15"
+  }
+}

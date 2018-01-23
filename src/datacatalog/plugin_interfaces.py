@@ -117,6 +117,34 @@ def search_search(query: T.Optional[T.Mapping]=None):
 
     """
 
+
+#######################
+# Metadata Convertors #
+#######################
+
+# noinspection PyUnusedLocal
+@hookspec
+def mdc_convert(from_profile, to_profile, data):
+    # language=rst
+    """ Convert metadata from one profile to another.
+    """
+
+
+####################
+# Metadata Profile #
+####################
+
+# noinspection PyUnusedLocal
+@hookspec
+def mdp_something():
+    # language=rst
+    """
+
+    .. todo:: define
+
+    """
+
+
 ###############################
 # End of aiopluggy hook specs #
 ###############################
@@ -136,6 +164,7 @@ class AbstractPlugin(abc.ABC):
             which will probably return ``False``.
 
         """
+        # noinspection PyUnresolvedReferences
         return all(
             hasattr(plugin, abstract_method_name) and
             callable(getattr(plugin, abstract_method_name))

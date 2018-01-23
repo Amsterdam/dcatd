@@ -57,6 +57,7 @@ setup(
         'alembic',
         'datapunt_config_loader',
         'jsonschema',
+        'jsonpointer',
         'pluggy',
         'PyYaml',
         'sqlalchemy',
