@@ -25,6 +25,7 @@ _Q_CREATE_TABLE = """
     );
     CREATE INDEX ON documents (id, etag);
 """
+_Q_HEALTHCHECK = 'SELECT 1;'
 _Q_RETRIEVE_DOC = 'SELECT doc FROM documents WHERE id = $1'
 _Q_RETRIEVE_IDS = 'SELECT id FROM documents'
 _Q_INSERT_DOC = 'INSERT INTO documents VALUES ($1, $2, $3)'
@@ -41,7 +42,7 @@ async def initialize(app):
     table doesn't exist it is created.
 
     """
-    nonlocal _pool
+    global _pool
 
     if _pool is not None:
         # Not failing hard because not sure whether initializing twice is allowed
@@ -70,6 +71,20 @@ async def initialize(app):
 
 
 @_hookimpl
+async def health_check() -> T.Optional[str]:
+    # language=rst
+    """ Health check.
+
+    :returns: If unhealthy, a string describing the problem, otherwise ``None``.
+    :raises Exception: if that's easier than returning a string.
+
+    """
+    if (await _pool.fetchval(_Q_HEALTHCHECK)) != 1:
+        return 'Postgres connection problem'
+    return None
+
+
+@_hookimpl
 async def storage_retrieve(id: str) -> dict:
     # language=rst
     """ Get document by id.
@@ -85,7 +100,7 @@ async def storage_retrieve(id: str) -> dict:
 
 
 @_hookimpl
-async def storage_retrieve_ids() -> T.Generator[int]:
+async def storage_retrieve_ids() -> T.Generator[int, None, None]:
     # language=rst
     """ Get a list containing all document identifiers.
     """

@@ -73,7 +73,7 @@ def storage_retrieve(id: str) -> dict:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_retrieve_ids() -> T.Generator[int]:
+def storage_retrieve_ids() -> T.Generator[int, None, None]:
     # language=rst
     """ Get a list containing all document identifiers.
     """

@@ -1,6 +1,5 @@
 plugins:
-  - datacatalog.plugins.file_storage.FileStoragePlugin
-  - datacatalog.plugins.in_memory_search.InMemorySearchPlugin
+  - datacatalog.plugins.storage_postgres
 
 logging:
   formatters:
