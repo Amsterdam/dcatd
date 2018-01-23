@@ -1,3 +1,5 @@
+"""Postgres storage plugin.
+"""
 import base64
 import hashlib
 import json
@@ -15,10 +17,18 @@ _pool: asyncpg.pool.Pool = None
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger('plugin.storage.postgres')
 
-_q_retrieve_doc = 'SELECT doc FROM documents WHERE id = $1'
-_q_retrieve_ids = 'SELECT id FROM documents'
-_q_insert_doc = 'INSERT INTO documents VALUES ($1, $2, $3)'
-_q_update_doc = 'UPDATE documents SET doc=$1, etag=$2 WHERE id=$3 AND etag=$4) RETURNING id'
+_Q_CREATE_TABLE = """
+    CREATE TABLE IF NOT EXISTS documents(
+        id CHARACTER VARYING(254) PRIMARY KEY,
+        doc JSONB NOT NULL,
+        etag CHARACTER VARYING(254) NOT NULL
+    );
+    CREATE INDEX ON documents (id, etag);
+"""
+_Q_RETRIEVE_DOC = 'SELECT doc FROM documents WHERE id = $1'
+_Q_RETRIEVE_IDS = 'SELECT id FROM documents'
+_Q_INSERT_DOC = 'INSERT INTO documents VALUES ($1, $2, $3)'
+_Q_UPDATE_DOC = 'UPDATE documents SET doc=$1, etag=$2 WHERE id=$3 AND etag=$4) RETURNING id'
 
 
 @_hookimpl
@@ -27,7 +37,8 @@ async def initialize(app):
     """ Initialize the plugin.
 
     This function validates the configuration and creates a connection pool.
-    The pool is stored as a module-scoped singleton in _pool.
+    The pool is stored as a module-scoped singleton in _pool. If the documents
+    table doesn't exist it is created.
 
     """
     nonlocal _pool
@@ -54,6 +65,9 @@ async def initialize(app):
         password=dbconf['password']
     )
 
+    # creaqte table
+    await _pool.execute(_Q_CREATE_TABLE)
+
 
 @_hookimpl
 async def storage_retrieve(id: str) -> dict:
@@ -64,7 +78,7 @@ async def storage_retrieve(id: str) -> dict:
     :raises KeyError: if not found
 
     """
-    doc = await _pool.fetchval(_q_retrieve_doc, id)
+    doc = await _pool.fetchval(_Q_RETRIEVE_DOC, id)
     if doc is None:
         raise KeyError()
     return json.loads(doc)
@@ -77,12 +91,12 @@ async def storage_retrieve_ids() -> T.Generator[int]:
     """
     async with _pool.acquire() as con:
         # use a cursor so we can stream
-        async for row in con.cursor(_q_retrieve_ids):
+        async for row in con.cursor(_Q_RETRIEVE_IDS):
             yield row['id']
 
 
 @_hookimpl
-async def storage_store(id: str, doc: dict, etag: T.Optional[str]=None) -> str:
+async def storage_store(id: str, doc: dict, etag: T.Optional[str]) -> str:
     # language=rst
     """ Store document.
 
@@ -97,16 +111,25 @@ async def storage_store(id: str, doc: dict, etag: T.Optional[str]=None) -> str:
 
     """
     new_doc = json.dumps(doc, ensure_ascii=False, sort_keys=True)
+    # the etag is a hash of the document
     hash = hashlib.sha3_224()
     hash.update(new_doc.encode())
     new_etag = '"' + base64.urlsafe_b64encode(hash.digest()).decode() + '"'
     if etag is None:
         try:
-            await _pool.execute(_q_insert_doc, id, new_doc, new_etag)
+            await _pool.execute(_Q_INSERT_DOC, id, new_doc, new_etag)
         except asyncpg.exceptions.UniqueViolationError:
             raise aiohttp.web.HTTPExpectationFailed()
     else:
-        if (await _pool.fetchval(_q_update_doc, new_doc, new_etag, id, etag)) is None:
+        if (await _pool.fetchval(_Q_UPDATE_DOC, new_doc, new_etag, id, etag)) is None:
+            # there's no nice way to see whether an UPDATE failed. I'm using
+            # the RETURNING clause. If the returned value is None, the doc
+            # isn't updated. We then check if a doc with the same ID exists. If
+            # it doesn't then we raise a 404, otherwise 412. This isn't atomic
+            # but we don't need to be completely correct in reporting the
+            # error - in a world of fast concurrent inserts, updates and
+            # deletes results may be outdated before they're communicated
+            # anyway. This way we stay lock free at least.
             try:
                 await storage_retrieve(id)
             except KeyError:
