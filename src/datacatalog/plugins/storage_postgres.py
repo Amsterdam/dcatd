@@ -17,19 +17,11 @@ _pool: asyncpg.pool.Pool = None
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger('plugin.storage.postgres')
 
-_Q_CREATE_TABLE = """
-    CREATE TABLE IF NOT EXISTS documents(
-        id CHARACTER VARYING(254) PRIMARY KEY,
-        doc JSONB NOT NULL,
-        etag CHARACTER VARYING(254) NOT NULL
-    );
-    CREATE INDEX ON documents (id, etag);
-"""
 _Q_HEALTHCHECK = 'SELECT 1'
-_Q_RETRIEVE_DOC = 'SELECT doc FROM documents WHERE id = $1'
-_Q_RETRIEVE_IDS = 'SELECT id FROM documents'
-_Q_INSERT_DOC = 'INSERT INTO documents VALUES ($1, $2, $3)'
-_Q_UPDATE_DOC = 'UPDATE documents SET doc=$1, etag=$2 WHERE id=$3 AND etag=$4 RETURNING id'
+_Q_RETRIEVE_DOC = 'SELECT doc FROM Dataset WHERE id = $1'
+_Q_RETRIEVE_IDS = 'SELECT id FROM Dataset'
+_Q_INSERT_DOC = 'INSERT INTO Dataset VALUES ($1, $2, $3)'
+_Q_UPDATE_DOC = 'UPDATE Dataset SET doc=$1, etag=$2 WHERE id=$3 AND etag=$4 RETURNING id'
 
 
 @_hookimpl
@@ -38,8 +30,7 @@ async def initialize(app):
     """ Initialize the plugin.
 
     This function validates the configuration and creates a connection pool.
-    The pool is stored as a module-scoped singleton in _pool. If the documents
-    table doesn't exist it is created.
+    The pool is stored as a module-scoped singleton in _pool.
 
     """
     global _pool
@@ -65,9 +56,6 @@ async def initialize(app):
         port=dbconf['port'],
         password=dbconf['pass']
     )
-
-    # creaqte table
-    await _pool.execute(_Q_CREATE_TABLE)
 
 
 @_hookimpl

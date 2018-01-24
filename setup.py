@@ -63,6 +63,7 @@ setup(
         # for postgres storage plugin
         'asyncpg', # postgres plugin
         'alembic', # postgres plugin
+        'psycopg2', # alembic
 
         # Recommended by aiohttp docs:
         'aiodns',    # optional asynchronous DNS client

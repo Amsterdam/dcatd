@@ -8,7 +8,6 @@ Create Date: 2017-10-23 17:38:22.980295
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
-import sqlalchemy.sql.functions as sa_functions
 
 
 # revision identifiers, used by Alembic.
@@ -22,11 +21,10 @@ def upgrade():
 
     op.create_table(
         'Dataset',
-        sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('dcat', postgresql.JSONB(), nullable=False),
-        sa.Index('idx_dcat_jsonb_path_ops',
-                 sa.text("dcat jsonb_path_ops"),
-                 postgresql_using='gin')
+        sa.Column('id', sa.String, index=True, nullable=False, primary_key=True),
+        sa.Column('doc', postgresql.JSONB(), nullable=False),
+        sa.Column('etag', sa.String, nullable=False),
+        sa.Index('idx_id_etag', 'id', 'etag')
     )
 
 
