@@ -1,4 +1,5 @@
 plugins:
+  #- datacatalog.plugins.storage_postgres
   - datacatalog.plugins.file_storage.plugin
   - datacatalog.plugins.in_memory_search.plugin
 
@@ -45,10 +46,10 @@ logging:
     level: ${LOGLEVEL:-WARNING}
   version: 1
 
-postgres:
-  dbname: ${DB_DATABASE:-datacatalog}
+storage_postgres:
+  name: ${DB_DATABASE:-datacatalog}
   host: ${DB_HOST:-localhost}
-  password: ${DB_PASS:-datacatalog}
+  pass: ${DB_PASS:-datacatalog}
   port: ${DB_PORT:-5432}
   user: ${DB_USER:-datacatalog}
 

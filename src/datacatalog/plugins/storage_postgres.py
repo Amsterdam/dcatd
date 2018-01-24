@@ -25,7 +25,7 @@ _Q_CREATE_TABLE = """
     );
     CREATE INDEX ON documents (id, etag);
 """
-_Q_HEALTHCHECK = 'SELECT 1;'
+_Q_HEALTHCHECK = 'SELECT 1'
 _Q_RETRIEVE_DOC = 'SELECT doc FROM documents WHERE id = $1'
 _Q_RETRIEVE_IDS = 'SELECT id FROM documents'
 _Q_INSERT_DOC = 'INSERT INTO documents VALUES ($1, $2, $3)'
