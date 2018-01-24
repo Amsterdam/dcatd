@@ -23,7 +23,10 @@ class Application(web.Application):
         self._pm.register_specs(plugin_interfaces)
 
         async def on_startup(app):
-            await app.hooks.initialize(app=app)
+            results = await app.hooks.initialize(app=app)
+            for r in results:
+                if r.exception is not None:
+                    raise r.exception
         self.on_startup.append(on_startup)
 
         async def on_cleanup(app):

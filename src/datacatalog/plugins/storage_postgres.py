@@ -29,7 +29,7 @@ _Q_HEALTHCHECK = 'SELECT 1;'
 _Q_RETRIEVE_DOC = 'SELECT doc FROM documents WHERE id = $1'
 _Q_RETRIEVE_IDS = 'SELECT id FROM documents'
 _Q_INSERT_DOC = 'INSERT INTO documents VALUES ($1, $2, $3)'
-_Q_UPDATE_DOC = 'UPDATE documents SET doc=$1, etag=$2 WHERE id=$3 AND etag=$4) RETURNING id'
+_Q_UPDATE_DOC = 'UPDATE documents SET doc=$1, etag=$2 WHERE id=$3 AND etag=$4 RETURNING id'
 
 
 @_hookimpl
@@ -55,15 +55,15 @@ async def initialize(app):
     app.config.validate(schema)
 
     # create asyncpg engine
-    dbconf = app.config['postgres_storage_plugin']
+    dbconf = app.config['storage_postgres']
     _logger.info("Connecting to database: postgres://%s:%i/%s",
-                 dbconf['host'], dbconf['port'], dbconf['dbname'])
+                 dbconf['host'], dbconf['port'], dbconf['name'])
     _pool = await asyncpg.create_pool(
         user=dbconf['user'],
-        database=dbconf['dbname'],
+        database=dbconf['name'],
         host=dbconf['host'],
         port=dbconf['port'],
-        password=dbconf['password']
+        password=dbconf['pass']
     )
 
     # creaqte table
