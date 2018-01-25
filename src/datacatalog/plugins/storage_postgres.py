@@ -9,7 +9,6 @@ import secrets
 import typing as T
 import yaml
 
-import aiohttp.web
 import aiopluggy
 import asyncpg.pool
 
@@ -20,8 +19,9 @@ _logger = logging.getLogger('plugin.storage.postgres')
 _Q_HEALTHCHECK = 'SELECT 1'
 _Q_RETRIEVE_DOC = 'SELECT doc FROM Dataset WHERE id = $1'
 _Q_RETRIEVE_IDS = 'SELECT id FROM Dataset'
-_Q_INSERT_DOC = 'INSERT INTO Dataset VALUES ($1, $2, $3)'
-_Q_UPDATE_DOC = 'UPDATE Dataset SET doc=$1, etag=$2 WHERE id=$3 AND etag=$4 RETURNING id'
+_Q_INSERT_DOC = 'INSERT INTO Dataset VALUES ($1, $2, to_tsvector($3, $4), $5)'
+_Q_UPDATE_DOC = 'UPDATE Dataset SET doc=$1, searchable_text=to_tsvector($2, $3), etag=$4 WHERE id=$5 AND etag=$6 RETURNING id'
+_Q_DELETE_DOC = 'DELETE FROM Dataset WHERE id=$1 AND etag=$2 RETURNING id'
 
 
 @_hookimpl
@@ -99,18 +99,20 @@ async def storage_retrieve_ids() -> T.Generator[int, None, None]:
 
 
 @_hookimpl
-async def storage_store(id: str, doc: dict, etag: T.Optional[str]) -> str:
+async def storage_store(id: str, doc: dict, searchable_text: str, doc_language: str, etag: T.Optional[str]) -> str:
     # language=rst
     """ Store document.
 
     :param id: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
+    :param searchable_text: this will be indexed for free-text search.
+    :param doc_language: the language of the document. Will be used for free-text search indexing.
     :param etag: the last known ETag of this document, or ``None`` if no
         document with this ``id`` should exist yet.
     :returns: new ETag
-    :raises: aiohttp.web.HTTPPreconditionFailed
-    :raises: aiohttp.web.HTTPNotFound
+    :raises: ValueError if the given etag doesn't match the stored etag, or if
+             no etag is given while the doc identifier already exists.
 
     """
     new_doc = json.dumps(doc, ensure_ascii=False, sort_keys=True)
@@ -120,24 +122,12 @@ async def storage_store(id: str, doc: dict, etag: T.Optional[str]) -> str:
     new_etag = '"' + base64.urlsafe_b64encode(hash.digest()).decode() + '"'
     if etag is None:
         try:
-            await _pool.execute(_Q_INSERT_DOC, id, new_doc, new_etag)
+            await _pool.execute(_Q_INSERT_DOC, id, new_doc, searchable_text, doc_language, new_etag)
         except asyncpg.exceptions.UniqueViolationError:
-            raise aiohttp.web.HTTPExpectationFailed()
-    else:
-        if (await _pool.fetchval(_Q_UPDATE_DOC, new_doc, new_etag, id, etag)) is None:
-            # there's no nice way to see whether an UPDATE failed. I'm using
-            # the RETURNING clause. If the returned value is None, the doc
-            # isn't updated. We then check if a doc with the same ID exists. If
-            # it doesn't then we raise a 404, otherwise 412. This isn't atomic
-            # but we don't need to be completely correct in reporting the
-            # error - in a world of fast concurrent inserts, updates and
-            # deletes results may be outdated before they're communicated
-            # anyway. This way we stay lock free at least.
-            try:
-                await storage_retrieve(id)
-            except KeyError:
-                raise aiohttp.web.HTTPNotFound()
-            raise aiohttp.web.HTTPExpectationFailed
+            _logger.debug('Document {} exists but no etag provided'.format(id))
+            raise ValueError
+    elif (await _pool.fetchval(_Q_UPDATE_DOC, new_doc, searchable_text, doc_language, new_etag, id, etag)) is None:
+            raise ValueError
     return new_etag
 
 
@@ -153,3 +143,29 @@ async def storage_id() -> str:
 
     """
     return secrets.token_urlsafe(nbytes=10)
+
+
+@_hookimpl
+async def storage_delete(id: str, etag: str) -> None:
+    # language=rst
+    """ Delete document.
+
+    :param id: the ID of the document to delete.
+    :param etag: the last known ETag of this document.
+    :raises: ValueError if the given etag doesn't match the stored etag.
+    :raises: KeyError if a document with the given id doesn't exist.
+
+    """
+    if (await _pool.fetchval(_Q_DELETE_DOC, id, etag)) is None:
+        # the delete may fail because either the id doesn't exist or the given
+        # etag doesn't match. There's no way to atomically check for both
+        # conditions at the same time, apart from a full table lock. However,
+        # all scenario's in which the below, not threat-safe way of identifying
+        # the cause of failure is not correct, are trivial.
+        try:
+            await storage_retrieve(id)
+        except KeyError:
+            _logger.debug('Document {} not found'.format(id))
+            raise
+        _logger.debug('Etag ({}) mismatch for {}'.format(etag, id))
+        raise ValueError

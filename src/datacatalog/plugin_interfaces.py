@@ -81,17 +81,36 @@ def storage_retrieve_ids() -> T.Generator[int, None, None]:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only
-def storage_store(id: str, doc: dict, etag: T.Optional[str]) -> str:
+def storage_store(id: str, doc: dict, searchable_text: str, doc_language: str, etag: T.Optional[str]) -> str:
     # language=rst
     """ Store document.
 
     :param id: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
+    :param searchable_text: this will be indexed for free-text search.
+    :param doc_language: the language of the document. Will be used for free-text search indexing.
     :param etag: the last known ETag of this document, or ``None`` if no
         document with this ``id`` should exist yet.
     :returns: new ETag
-    :raises:
+    :raises: ValueError if the given etag doesn't match the stored etag, or if
+             no etag is given while the doc identifier already exists.
+    :raises: KeyError if the call is an update (i.e. an etag is given) but the
+             identifier doesn't exist.
+
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_only
+def storage_delete(id: str, etag: str) -> None:
+    # language=rst
+    """ Delete document.
+
+    :param id: the ID of the document to delete.
+    :param etag: the last known ETag of this document.
+    :raises: ValueError if the given etag doesn't match the stored etag.
+    :raises: KeyError if a document with the given id doesn't exist.
 
     """
 

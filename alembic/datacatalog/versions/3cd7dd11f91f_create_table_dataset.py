@@ -21,10 +21,12 @@ def upgrade():
 
     op.create_table(
         'Dataset',
-        sa.Column('id', sa.String, index=True, nullable=False, primary_key=True),
+        sa.Column('id', sa.String, nullable=False, primary_key=True),
         sa.Column('doc', postgresql.JSONB(), nullable=False),
         sa.Column('etag', sa.String, nullable=False),
-        sa.Index('idx_id_etag', 'id', 'etag')
+        sa.Column('searchable_text', postgresql.TSVECTOR, nullable=False),
+        sa.Index('idx_id_etag', 'id', 'etag'),
+        sa.Index('idx_full_text_search', 'searchable_text', postgresql_using='gin')
     )
 
 
