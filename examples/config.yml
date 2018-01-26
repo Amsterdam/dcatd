@@ -1,5 +1,5 @@
 plugins:
-  - datacatalog.plugins.storage_postgres
+  - datacatalog.plugins.postgres
 
 logging:
   formatters:

@@ -51,7 +51,7 @@ async def initialize(app):
         return
 
     # validate configuration
-    with pkg_resources.resource_stream(__name__, 'storage_postgres_config_schema.yml') as s:
+    with pkg_resources.resource_stream(__name__, 'postgres_config_schema.yml') as s:
         schema = yaml.load(s)
     app.config.validate(schema)
 
