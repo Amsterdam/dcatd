@@ -19,9 +19,19 @@ _logger = logging.getLogger('plugin.storage.postgres')
 _Q_HEALTHCHECK = 'SELECT 1'
 _Q_RETRIEVE_DOC = 'SELECT doc FROM Dataset WHERE id = $1'
 _Q_RETRIEVE_IDS = 'SELECT id FROM Dataset'
-_Q_INSERT_DOC = 'INSERT INTO Dataset VALUES ($1, $2, to_tsvector($3, $4), $5)'
-_Q_UPDATE_DOC = 'UPDATE Dataset SET doc=$1, searchable_text=to_tsvector($2, $3), etag=$4 WHERE id=$5 AND etag=$6 RETURNING id'
+_Q_INSERT_DOC = 'INSERT INTO Dataset VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
+_Q_UPDATE_DOC = 'UPDATE Dataset SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=$6 RETURNING id'
 _Q_DELETE_DOC = 'DELETE FROM Dataset WHERE id=$1 AND etag=$2 RETURNING id'
+_Q_SEARCH_DOCS = """
+SELECT doc, ts_rank_cd(searchable_text, query) AS rank 
+  FROM Dataset, to_tsquery($1, $2) query
+ WHERE searchable_text @@ query
+   AND lang=$1,
+ ORDER BY rank DESC
+ LIMIT $3
+OFFSET $4;
+"""
+# TODO: This search query uses one a default ranking algorihm.
 
 
 @_hookimpl
@@ -99,7 +109,7 @@ async def storage_retrieve_ids() -> T.Generator[int, None, None]:
 
 
 @_hookimpl
-async def storage_store(id: str, doc: dict, searchable_text: str, doc_language: str, etag: T.Optional[str]) -> str:
+async def storage_store(id: str, doc: dict, searchable_text: str, iso_639_1_code: str, etag: T.Optional[str]) -> str:
     # language=rst
     """ Store document.
 
@@ -120,13 +130,19 @@ async def storage_store(id: str, doc: dict, searchable_text: str, doc_language: 
     hash = hashlib.sha3_224()
     hash.update(new_doc.encode())
     new_etag = '"' + base64.urlsafe_b64encode(hash.digest()).decode() + '"'
+    # we use the simple dictionary for ISO 639-1 language codes we don't know
+    if iso_639_1_code not in _iso_639_1_to_pg_dictionaries:
+        _logger.warning('invalid ISO 639-1 language code: ' + iso_639_1_code)
+        lang = 'simple'
+    else:
+        lang = _iso_639_1_to_pg_dictionaries[iso_639_1_code]
     if etag is None:
         try:
-            await _pool.execute(_Q_INSERT_DOC, id, new_doc, searchable_text, doc_language, new_etag)
+            await _pool.execute(_Q_INSERT_DOC, id, new_doc, lang, searchable_text, new_etag)
         except asyncpg.exceptions.UniqueViolationError:
             _logger.debug('Document {} exists but no etag provided'.format(id))
             raise ValueError
-    elif (await _pool.fetchval(_Q_UPDATE_DOC, new_doc, searchable_text, doc_language, new_etag, id, etag)) is None:
+    elif (await _pool.fetchval(_Q_UPDATE_DOC, new_doc, lang, searchable_text, new_etag, id, etag)) is None:
             raise ValueError
     return new_etag
 
@@ -169,3 +185,185 @@ async def storage_delete(id: str, etag: str) -> None:
             raise
         _logger.debug('Etag ({}) mismatch for {}'.format(etag, id))
         raise ValueError
+
+
+@_hookimpl
+async def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_code: T.Optional[str]) -> T.Generator[dict, None, None]:
+    # language=rst
+    """ Search.
+
+    :param q: the query.
+    :param size: maximum hits to be returned.
+    :param offset: offset from first result to return.
+    :param iso_639_1_code: the language of the query.
+    :returns: A generator with the search results
+
+    """
+    if iso_639_1_code is None:
+        lang = 'simple'
+    elif iso_639_1_code not in _iso_639_1_to_pg_dictionaries:
+        _logger.warning('invalid ISO 639-1 language code: ' + iso_639_1_code)
+        lang = 'simple'
+    if offset is None:
+        offset = 0
+    else:
+        lang = _iso_639_1_to_pg_dictionaries[iso_639_1_code]
+    async with _pool.acquire() as con:
+        # use a cursor so we can stream
+        async for row in con.cursor(_Q_SEARCH_DOCS, lang, q, size, offset):
+            yield row['doc']
+
+
+# The below maps ISO 639-1 language codes (as used in dcat) to pg dictionaries.
+# Note that a default postgres installation comes with a limited set of
+# dictionaries; on my system, danish, dutch, english, finnish, french,
+# german, hungarian, italian, norwegian, portuguese, romanian, russian, simple,
+# spanish, swedish and turkish. If you need support for a different language
+# you will need to install that dictionary and register it under the name
+# listed in the below mapping. You may also want to experiment with Ispell or
+# Snowball dictionaries. See more info at
+# https://www.postgresql.org/docs/current/static/textsearch-dictionaries.html
+_iso_639_1_to_pg_dictionaries = {
+    'aa': 'afar',
+    'ab': 'abkhazian',
+    'af': 'afrikaans',
+    'am': 'amharic',
+    'ar': 'arabic',
+    'as': 'assamese',
+    'ay': 'aymara',
+    'az': 'azerbaijani',
+    'ba': 'bashkir',
+    'be': 'byelorussian',
+    'bg': 'bulgarian',
+    'bh': 'bihari',
+    'bi': 'bislama',
+    'bn': 'bengali',
+    'bo': 'tibetan',
+    'br': 'breton',
+    'ca': 'catalan',
+    'co': 'corsican',
+    'cs': 'czech',
+    'cy': 'welch',
+    'da': 'danish',
+    'de': 'german',
+    'dz': 'bhutani',
+    'el': 'greek',
+    'en': 'english',
+    'eo': 'esperanto',
+    'es': 'spanish',
+    'et': 'estonian',
+    'eu': 'basque',
+    'fa': 'persian',
+    'fi': 'finnish',
+    'fj': 'fiji',
+    'fo': 'faeroese',
+    'fr': 'french',
+    'fy': 'frisian',
+    'ga': 'irish',
+    'gd': 'scots gaelic',
+    'gl': 'galician',
+    'gn': 'guarani',
+    'gu': 'gujarati',
+    'ha': 'hausa',
+    'he': 'hebrew',
+    'hi': 'hindi',
+    'hr': 'croatian',
+    'hu': 'hungarian',
+    'hy': 'armenian',
+    'ia': 'interlingua',
+    'id': 'indonesian',
+    'ie': 'interlingue',
+    'ik': 'inupiak',
+    'in': 'indonesian',
+    'is': 'icelandic',
+    'it': 'italian',
+    'iu': 'inuktitut',
+    'iw': 'hebrew',
+    'ja': 'japanese',
+    'ji': 'yiddish',
+    'jw': 'javanese',
+    'ka': 'georgian',
+    'kk': 'kazakh',
+    'kl': 'greenlandic',
+    'km': 'cambodian',
+    'kn': 'kannada',
+    'ko': 'korean',
+    'ks': 'kashmiri',
+    'ku': 'kurdish',
+    'ky': 'kirghiz',
+    'la': 'latin',
+    'ln': 'lingala',
+    'lo': 'laothian',
+    'lt': 'lithuanian',
+    'lv': 'latvian',
+    'mg': 'malagasy',
+    'mi': 'maori',
+    'mk': 'macedonian',
+    'ml': 'malayalam',
+    'mn': 'mongolian',
+    'mo': 'moldavian',
+    'mr': 'marathi',
+    'ms': 'malay',
+    'mt': 'maltese',
+    'my': 'burmese',
+    'na': 'nauru',
+    'ne': 'nepali',
+    'nl': 'dutch',
+    'no': 'norwegian',
+    'oc': 'occitan',
+    'om': 'oromo',
+    'or': 'oriya',
+    'pa': 'punjabi',
+    'pl': 'polish',
+    'ps': 'pashto',
+    'pt': 'portuguese',
+    'qu': 'quechua',
+    'rm': 'rhaeto-romance',
+    'rn': 'kirundi',
+    'ro': 'romanian',
+    'ru': 'russian',
+    'rw': 'kinyarwanda',
+    'sa': 'sanskrit',
+    'sd': 'sindhi',
+    'sg': 'sangro',
+    'sh': 'serbo-croatian',
+    'si': 'singhalese',
+    'sk': 'slovak',
+    'sl': 'slovenian',
+    'sm': 'samoan',
+    'sn': 'shona',
+    'so': 'somali',
+    'sq': 'albanian',
+    'sr': 'serbian',
+    'ss': 'siswati',
+    'st': 'sesotho',
+    'su': 'sudanese',
+    'sv': 'swedish',
+    'sw': 'swahili',
+    'ta': 'tamil',
+    'te': 'tegulu',
+    'tg': 'tajik',
+    'th': 'thai',
+    'ti': 'tigrinya',
+    'tk': 'turkmen',
+    'tl': 'tagalog',
+    'tn': 'setswana',
+    'to': 'tonga',
+    'tr': 'turkish',
+    'ts': 'tsonga',
+    'tt': 'tatar',
+    'tw': 'twi',
+    'ug': 'uigur',
+    'uk': 'ukrainian',
+    'ur': 'urdu',
+    'uz': 'uzbek',
+    'vi': 'vietnamese',
+    'vo': 'volapuk',
+    'wo': 'wolof',
+    'xh': 'xhosa',
+    'yi': 'yiddish',
+    'yo': 'yoruba',
+    'za': 'zhuang',
+    'zh': 'chinese',
+    'zu': 'zulu'
+}

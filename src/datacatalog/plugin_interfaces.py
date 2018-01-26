@@ -81,7 +81,7 @@ def storage_retrieve_ids() -> T.Generator[int, None, None]:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only
-def storage_store(id: str, doc: dict, searchable_text: str, doc_language: str, etag: T.Optional[str]) -> str:
+def storage_store(id: str, doc: dict, searchable_text: str, iso_639_1_code: str, etag: T.Optional[str]) -> str:
     # language=rst
     """ Store document.
 
@@ -128,11 +128,15 @@ def storage_id() -> str:
 
 # noinspection PyUnusedLocal
 @hookspec
-def search_search(query: T.Optional[T.Mapping]=None):
+def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_code: T.Optional[str]) -> T.Generator[dict, None, None]:
     # language=rst
     """ Search.
 
-    .. todo:: documentation, return value type
+    :param q: the query.
+    :param size: maximum hits to be returned.
+    :param offset: offset from first result to return.
+    :param qlang: the language of the query.
+    :returns: A generator with the search results
 
     """
 
