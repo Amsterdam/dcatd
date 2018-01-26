@@ -87,7 +87,10 @@ async def handle_show(request):
         raise web.HTTPBadRequest()
 
     id_ = request.query['id']
-    document = await request.app.hooks.storage_retrieve(id=id_)
+    try:
+        document = await request.app.hooks.storage_retrieve(id=id_)
+    except KeyError:
+        raise web.HTTPNotFound()
 
     if document is None:
         raise web.HTTPNotFound()

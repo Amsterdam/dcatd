@@ -17,14 +17,14 @@ _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger('plugin.storage.postgres')
 
 _Q_HEALTHCHECK = 'SELECT 1'
-_Q_RETRIEVE_DOC = 'SELECT doc FROM Dataset WHERE id = $1'
-_Q_RETRIEVE_IDS = 'SELECT id FROM Dataset'
-_Q_INSERT_DOC = 'INSERT INTO Dataset VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
-_Q_UPDATE_DOC = 'UPDATE Dataset SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=$6 RETURNING id'
-_Q_DELETE_DOC = 'DELETE FROM Dataset WHERE id=$1 AND etag=$2 RETURNING id'
+_Q_RETRIEVE_DOC = 'SELECT doc FROM "Dataset" WHERE id = $1'
+_Q_RETRIEVE_IDS = 'SELECT id FROM "Dataset"'
+_Q_INSERT_DOC = 'INSERT INTO "Dataset" VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
+_Q_UPDATE_DOC = 'UPDATE "Dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=$6 RETURNING id'
+_Q_DELETE_DOC = 'DELETE FROM "Dataset" WHERE id=$1 AND etag=$2 RETURNING id'
 _Q_SEARCH_DOCS = """
 SELECT doc, ts_rank_cd(searchable_text, query) AS rank 
-  FROM Dataset, to_tsquery($1, $2) query
+  FROM "Dataset", to_tsquery($1, $2) query
  WHERE searchable_text @@ query
    AND lang=$1,
  ORDER BY rank DESC

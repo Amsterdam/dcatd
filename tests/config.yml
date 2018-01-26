@@ -1,5 +1,5 @@
 plugins:
-  #- datacatalog.plugins.storage_postgres
+  #- datacatalog.plugins.postgres
   - datacatalog.plugins.file_storage.plugin
   - datacatalog.plugins.in_memory_search.plugin
 
