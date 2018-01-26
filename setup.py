@@ -81,6 +81,7 @@ setup(
             'aiohttp-devtools',
         ],
         'test': [
+            'pyld',
             'pytest',
             'pytest-cov',
             'pytest-aiohttp',
