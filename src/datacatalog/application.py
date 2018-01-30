@@ -1,7 +1,7 @@
 import importlib
 
 from aiohttp import web
-from aiopluggy import PluginManager
+import aiopluggy
 
 from . import config, plugin_interfaces
 from .handlers import index, systemhealth
@@ -18,7 +18,7 @@ class Application(web.Application):
         self._config = config.load()
 
         # Load and initialize plugins:
-        self._pm = PluginManager('datacatalog')
+        self._pm = aiopluggy.PluginManager('datacatalog')
         self._pm.register_specs(plugin_interfaces)
 
         async def on_startup(app):

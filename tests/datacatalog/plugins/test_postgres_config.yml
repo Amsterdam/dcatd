@@ -1,0 +1,57 @@
+storage_postgres:
+  name: ${DB_DATABASE:-datacatalog}
+  host: ${DB_HOST:-localhost}
+  pass: ${DB_PASS:-datacatalog}
+  port: ${DB_PORT:-5432}
+  user: ${DB_USER:-datacatalog}
+
+
+
+##############################################
+# Unused by tests, required by config schema #
+##############################################
+
+plugins: []
+
+logging:
+  formatters:
+    default:
+      format: '%(asctime)s dcat_core %(levelname)-8s %(module)s:%(lineno)d: %(message)s'
+  handlers:
+    aiohttp.access:
+      class: logging.StreamHandler
+    console:
+      class: logging.StreamHandler
+      formatter: default
+  loggers:
+    # See also: <http://aiohttp.readthedocs.io/en/stable/logging.html>
+    aiohttp:
+      propagate: true
+    aiohttp.*:
+      propagate: true
+    aiohttp.access:
+      handlers:
+      - aiohttp.access
+      level: ${LOGLEVEL:-DEBUG}
+      propagate: false
+    aiohttp_extras:
+      handlers:
+      - console
+      level: ${LOGLEVEL:-DEBUG}
+      propagate: false
+
+    config_loader:
+      handlers:
+      - console
+      level: ${LOGLEVEL:-DEBUG}
+      propagate: false
+    datacatalog:
+      handlers:
+      - console
+      level: ${LOGLEVEL:-DEBUG}
+      propagate: false
+  root:
+    handlers:
+    - console
+    level: ${LOGLEVEL:-WARNING}
+  version: 1

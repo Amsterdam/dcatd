@@ -38,7 +38,7 @@ def initialize(app) -> T.Optional[T.Coroutine]:
 
 # noinspection PyUnusedLocal
 @hookspec
-def deinitialize(app):
+def deinitialize(app) -> None:
     # language=rst
     """ Called when the application shuts down."""
 
@@ -61,9 +61,9 @@ def health_check() -> T.Optional[str]:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_retrieve(id: str) -> dict:
+def storage_retrieve(id: str) -> T.Tuple[dict, str]:
     # language=rst
-    """ Get document by id.
+    """ Get document and corresponsing etag by id.
 
     :returns: a "JSON dictionary"
     :raises KeyError: if not found
@@ -128,7 +128,7 @@ def storage_id() -> str:
 
 # noinspection PyUnusedLocal
 @hookspec
-def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_code: T.Optional[str]) -> T.Generator[dict, None, None]:
+def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_code: T.Optional[str]) -> T.Generator[T.Tuple[dict, str], None, None]:
     # language=rst
     """ Search.
 
@@ -136,7 +136,7 @@ def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_code: T.
     :param size: maximum hits to be returned.
     :param offset: offset from first result to return.
     :param qlang: the language of the query.
-    :returns: A generator with the search results
+    :returns: A generator with the search results (documents with corresponding etags)
 
     """
 

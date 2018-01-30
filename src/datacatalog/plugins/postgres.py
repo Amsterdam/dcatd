@@ -17,16 +17,16 @@ _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger('plugin.storage.postgres')
 
 _Q_HEALTHCHECK = 'SELECT 1'
-_Q_RETRIEVE_DOC = 'SELECT doc FROM "Dataset" WHERE id = $1'
+_Q_RETRIEVE_DOC = 'SELECT doc, etag FROM "Dataset" WHERE id = $1'
 _Q_RETRIEVE_IDS = 'SELECT id FROM "Dataset"'
-_Q_INSERT_DOC = 'INSERT INTO "Dataset" VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
+_Q_INSERT_DOC = 'INSERT INTO "Dataset" (id, doc, searchable_text, lang, etag) VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
 _Q_UPDATE_DOC = 'UPDATE "Dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=$6 RETURNING id'
 _Q_DELETE_DOC = 'DELETE FROM "Dataset" WHERE id=$1 AND etag=$2 RETURNING id'
 _Q_SEARCH_DOCS = """
-SELECT doc, ts_rank_cd(searchable_text, query) AS rank 
+SELECT doc, etag, ts_rank_cd(searchable_text, query) AS rank 
   FROM "Dataset", to_tsquery($1, $2) query
  WHERE searchable_text @@ query
-   AND ($1="simple" OR lang=$1),
+   AND ('simple'=$1 OR lang=$1)
  ORDER BY rank DESC
  LIMIT $3
 OFFSET $4;
@@ -35,7 +35,7 @@ OFFSET $4;
 
 
 @_hookimpl
-async def initialize(app):
+async def initialize(app) -> T.Optional[T.Coroutine]:
     # language=rst
     """ Initialize the plugin.
 
@@ -64,7 +64,8 @@ async def initialize(app):
         database=dbconf['name'],
         host=dbconf['host'],
         port=dbconf['port'],
-        password=dbconf['pass']
+        password=dbconf['pass'],
+        loop=app.loop
     )
 
 
@@ -79,22 +80,21 @@ async def health_check() -> T.Optional[str]:
     """
     if (await _pool.fetchval(_Q_HEALTHCHECK)) != 1:
         return 'Postgres connection problem'
-    return None
 
 
 @_hookimpl
-async def storage_retrieve(id: str) -> dict:
+async def storage_retrieve(id: str) -> T.Tuple[dict, str]:
     # language=rst
-    """ Get document by id.
+    """ Get document and corresponsing etag by id.
 
     :returns: a "JSON dictionary"
     :raises KeyError: if not found
 
     """
-    doc = await _pool.fetchval(_Q_RETRIEVE_DOC, id)
-    if doc is None:
+    record = await _pool.fetchrow(_Q_RETRIEVE_DOC, id)
+    if record is None:
         raise KeyError()
-    return json.loads(doc)
+    return json.loads(record['doc']), record['etag']
 
 
 @_hookimpl
@@ -103,9 +103,10 @@ async def storage_retrieve_ids() -> T.Generator[int, None, None]:
     """ Get a list containing all document identifiers.
     """
     async with _pool.acquire() as con:
-        # use a cursor so we can stream
-        async for row in con.cursor(_Q_RETRIEVE_IDS):
-            yield row['id']
+        async with con.transaction():
+            # use a cursor so we can stream
+            async for row in con.cursor(_Q_RETRIEVE_IDS):
+                yield row['id']
 
 
 @_hookimpl
@@ -132,7 +133,8 @@ async def storage_store(id: str, doc: dict, searchable_text: str, iso_639_1_code
     new_etag = '"' + base64.urlsafe_b64encode(hash.digest()).decode() + '"'
     # we use the simple dictionary for ISO 639-1 language codes we don't know
     if iso_639_1_code not in _iso_639_1_to_pg_dictionaries:
-        _logger.warning('invalid ISO 639-1 language code: ' + iso_639_1_code)
+        if iso_639_1_code is not None:
+            _logger.warning('invalid ISO 639-1 language code: ' + iso_639_1_code)
         lang = 'simple'
     else:
         lang = _iso_639_1_to_pg_dictionaries[iso_639_1_code]
@@ -188,7 +190,7 @@ async def storage_delete(id: str, etag: str) -> None:
 
 
 @_hookimpl
-async def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_code: T.Optional[str]) -> T.Generator[dict, None, None]:
+async def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_code: T.Optional[str]) -> T.Generator[T.Tuple[dict, str], None, None]:
     # language=rst
     """ Search.
 
@@ -196,7 +198,7 @@ async def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_co
     :param size: maximum hits to be returned.
     :param offset: offset from first result to return.
     :param iso_639_1_code: the language of the query.
-    :returns: A generator with the search results
+    :returns: A generator with the search results (documents with corresponding etags)
 
     """
     if iso_639_1_code is None:
@@ -204,14 +206,15 @@ async def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_co
     elif iso_639_1_code not in _iso_639_1_to_pg_dictionaries:
         _logger.warning('invalid ISO 639-1 language code: ' + iso_639_1_code)
         lang = 'simple'
-    if offset is None:
-        offset = 0
     else:
         lang = _iso_639_1_to_pg_dictionaries[iso_639_1_code]
+    if offset is None:
+        offset = 0
     async with _pool.acquire() as con:
-        # use a cursor so we can stream
-        async for row in con.cursor(_Q_SEARCH_DOCS, lang, q, size, offset):
-            yield row['doc']
+        async with con.transaction():
+            # use a cursor so we can stream
+            async for row in con.cursor(_Q_SEARCH_DOCS, lang, q, size, offset):
+                yield row['doc'], row['etag']
 
 
 # The below maps ISO 639-1 language codes (as used in dcat) to pg dictionaries.
