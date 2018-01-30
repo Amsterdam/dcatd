@@ -40,7 +40,7 @@ class Application(web.Application):
         return self._config
 
     @property
-    def pm(self) -> PluginManager:
+    def pm(self) -> aiopluggy.PluginManager:
         return self._pm
 
     @property
