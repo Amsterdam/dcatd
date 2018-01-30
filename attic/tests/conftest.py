@@ -1,11 +1,11 @@
-import string
-import random
 import collections
+import random
+import string
 
 import pytest
 
 import datacatalog.application
-from datacatalog.handlers.action_api import Facet
+from attic.src.datacatalog.handlers.action_api import Facet
 
 PackageInfo = collections.namedtuple('PackageInfo', field_names=('id', 'name'))
 _PACKAGES = [

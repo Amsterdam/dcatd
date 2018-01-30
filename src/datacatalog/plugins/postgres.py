@@ -26,7 +26,7 @@ _Q_SEARCH_DOCS = """
 SELECT doc, ts_rank_cd(searchable_text, query) AS rank 
   FROM "Dataset", to_tsquery($1, $2) query
  WHERE searchable_text @@ query
-   AND lang=$1,
+   AND ($1="simple" OR lang=$1),
  ORDER BY rank DESC
  LIMIT $3
 OFFSET $4;
@@ -109,7 +109,7 @@ async def storage_retrieve_ids() -> T.Generator[int, None, None]:
 
 
 @_hookimpl
-async def storage_store(id: str, doc: dict, searchable_text: str, iso_639_1_code: str, etag: T.Optional[str]) -> str:
+async def storage_store(id: str, doc: dict, searchable_text: str, iso_639_1_code: T.Optional[str], etag: T.Optional[str]) -> str:
     # language=rst
     """ Store document.
 
@@ -117,7 +117,7 @@ async def storage_store(id: str, doc: dict, searchable_text: str, iso_639_1_code
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
     :param searchable_text: this will be indexed for free-text search.
-    :param doc_language: the language of the document. Will be used for free-text search indexing.
+    :param iso_639_1_code: the language of the document. Will be used for free-text search indexing.
     :param etag: the last known ETag of this document, or ``None`` if no
         document with this ``id`` should exist yet.
     :returns: new ETag

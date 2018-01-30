@@ -4,8 +4,8 @@ import urllib.parse
 
 import pytest
 
+from attic.src.datacatalog.handlers.action_api import Facet, SearchParam
 from datacatalog import application
-from datacatalog.handlers.action_api import Facet, SearchParam
 
 logger = logging.getLogger(__name__)
 

@@ -13,7 +13,7 @@ from whoosh.index import create_in
 from whoosh.qparser import QueryParser
 from whoosh.query import Variations
 
-from datacatalog.handlers import action_api
+from attic.src.datacatalog.handlers import action_api
 
 log = logging.getLogger(__name__)
 hook = HookimplMarker('datacatalog')

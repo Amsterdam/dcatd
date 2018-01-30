@@ -4,7 +4,7 @@ from aiohttp import web
 from aiopluggy import PluginManager
 
 from . import config, plugin_interfaces
-from .handlers import index, action_api, systemhealth
+from .handlers import index, systemhealth
 
 
 class Application(web.Application):
@@ -13,7 +13,6 @@ class Application(web.Application):
 
         self.router.add_get('/', index.handle)
         self.router.add_get('/system/health', systemhealth.handle)
-        self.router.add_get('/datacatalog/api/3/action/{action}', action_api.handle)
 
         # Initialize config:
         self._config = config.load()
@@ -69,18 +68,18 @@ def _resolve_plugin_path(fq_name: str):
     """
     segments = fq_name.split('.')
     nseg = len(segments)
-    module = None
+    mod = None
     while nseg > 0:
         module_name = '.'.join(segments[:nseg])
         try:
-            module = importlib.import_module(module_name)
+            mod = importlib.import_module(module_name)
             break
         except ModuleNotFoundError:
             pass
         nseg = nseg - 1
-    if module is None:
+    if mod is None:
         raise ModuleNotFoundError(fq_name)
-    result = module
+    result = mod
     for segment in segments[nseg:]:
         result = getattr(result, segment)
     return result

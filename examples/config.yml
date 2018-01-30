@@ -53,12 +53,3 @@ storage_postgres:
 
 web:
   port: 8000
-
-filedatastore:
-  path: "./example_data"
-  list_file: "package_list"
-  all_packages: "packages.json"
-
-inmemorysearch:
-  path: "./example_data"
-  all_packages: "packages.json"

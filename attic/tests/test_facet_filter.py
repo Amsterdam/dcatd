@@ -1,6 +1,6 @@
 import pytest
 
-from datacatalog.facet_filter import *
+from attic.src.datacatalog.facet_filter import *
 
 
 def test_comparators():
