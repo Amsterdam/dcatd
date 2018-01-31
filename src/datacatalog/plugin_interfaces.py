@@ -38,7 +38,7 @@ def initialize(app) -> T.Optional[T.Coroutine]:
 
 # noinspection PyUnusedLocal
 @hookspec
-def deinitialize(app):
+def deinitialize(app) -> None:
     # language=rst
     """ Called when the application shuts down."""
 
@@ -61,9 +61,9 @@ def health_check() -> T.Optional[str]:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_retrieve(id: str) -> dict:
+def storage_retrieve(id: str) -> T.Tuple[dict, str]:
     # language=rst
-    """ Get document by id.
+    """ Get document and corresponsing etag by id.
 
     :returns: a "JSON dictionary"
     :raises KeyError: if not found
@@ -73,7 +73,7 @@ def storage_retrieve(id: str) -> dict:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_retrieve_ids() -> T.Generator[int]:
+def storage_retrieve_ids() -> T.Generator[int, None, None]:
     # language=rst
     """ Get a list containing all document identifiers.
     """
@@ -81,17 +81,36 @@ def storage_retrieve_ids() -> T.Generator[int]:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only
-def storage_store(id: str, doc: dict, etag: T.Optional[str]) -> str:
+def storage_store(id: str, doc: dict, searchable_text: str, iso_639_1_code: T.Optional[str], etag: T.Optional[str]) -> str:
     # language=rst
     """ Store document.
 
     :param id: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
+    :param searchable_text: this will be indexed for free-text search.
+    :param iso_639_1_code: the language of the document. Will be used for free-text search indexing.
     :param etag: the last known ETag of this document, or ``None`` if no
         document with this ``id`` should exist yet.
     :returns: new ETag
-    :raises:
+    :raises: ValueError if the given etag doesn't match the stored etag, or if
+             no etag is given while the doc identifier already exists.
+    :raises: KeyError if the call is an update (i.e. an etag is given) but the
+             identifier doesn't exist.
+
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_only
+def storage_delete(id: str, etag: str) -> None:
+    # language=rst
+    """ Delete document.
+
+    :param id: the ID of the document to delete.
+    :param etag: the last known ETag of this document.
+    :raises: ValueError if the given etag doesn't match the stored etag.
+    :raises: KeyError if a document with the given id doesn't exist.
 
     """
 
@@ -109,11 +128,15 @@ def storage_id() -> str:
 
 # noinspection PyUnusedLocal
 @hookspec
-def search_search(query: T.Optional[T.Mapping]=None):
+def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_code: T.Optional[str]) -> T.Generator[T.Tuple[dict, str], None, None]:
     # language=rst
     """ Search.
 
-    .. todo:: documentation, return value type
+    :param q: the query.
+    :param size: maximum hits to be returned.
+    :param offset: offset from first result to return.
+    :param qlang: the language of the query.
+    :returns: A generator with the search results (documents with corresponding etags)
 
     """
 

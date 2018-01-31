@@ -15,5 +15,5 @@
 
 # Test and Example side-effects:
 /.cache/
-/tests/data/whoosh_index/
+/attic/tests/data/whoosh_index/
 /examples/example_data/whoosh_index/

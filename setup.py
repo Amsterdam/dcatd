@@ -52,16 +52,18 @@ setup(
     ],
     install_requires=[
         'aiohttp',
-        'aiopg',
         'aiopluggy',
-        'alembic',
         'datapunt_config_loader',
         'jsonschema',
         'pluggy',
         'PyYaml',
-        'sqlalchemy',
         'swagger-parser',
         'whoosh',
+
+        # for postgres storage plugin
+        'asyncpg', # postgres plugin
+        'alembic', # postgres plugin
+        'psycopg2', # alembic
 
         # Recommended by aiohttp docs:
         'aiodns',    # optional asynchronous DNS client

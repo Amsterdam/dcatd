@@ -1,6 +1,5 @@
 plugins:
-  - datacatalog.default_plugins.file_storage.FileStoragePlugin
-  - datacatalog.default_plugins.in_memory_search.InMemorySearchPlugin
+  - datacatalog.plugins.postgres
 
 logging:
   formatters:
@@ -45,21 +44,12 @@ logging:
     level: ${LOGLEVEL:-WARNING}
   version: 1
 
-postgres:
-  dbname: ${DB_DATABASE:-datacatalog}
+storage_postgres:
+  name: ${DB_DATABASE:-datacatalog}
   host: ${DB_HOST:-localhost}
-  password: ${DB_PASS:-datacatalog}
+  pass: ${DB_PASS:-datacatalog}
   port: ${DB_PORT:-5432}
   user: ${DB_USER:-datacatalog}
 
 web:
   port: 8000
-
-filedatastore:
-  path: "./example_data"
-  list_file: "package_list"
-  all_packages: "packages.json"
-
-inmemorysearch:
-  path: "./example_data"
-  all_packages: "packages.json"

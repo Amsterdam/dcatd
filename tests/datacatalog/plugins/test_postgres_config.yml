@@ -1,6 +1,17 @@
-plugins:
-  - datacatalog.default_plugins.file_storage.plugin
-  - datacatalog.default_plugins.in_memory_search.plugin
+storage_postgres:
+  name: ${DB_DATABASE:-datacatalog}
+  host: ${DB_HOST:-localhost}
+  pass: ${DB_PASS:-datacatalog}
+  port: ${DB_PORT:-5432}
+  user: ${DB_USER:-datacatalog}
+
+
+
+##############################################
+# Unused by tests, required by config schema #
+##############################################
+
+plugins: []
 
 logging:
   formatters:
@@ -44,22 +55,3 @@ logging:
     - console
     level: ${LOGLEVEL:-WARNING}
   version: 1
-
-postgres:
-  dbname: ${DB_DATABASE:-datacatalog}
-  host: ${DB_HOST:-localhost}
-  password: ${DB_PASS:-datacatalog}
-  port: ${DB_PORT:-5432}
-  user: ${DB_USER:-datacatalog}
-
-web:
-  port: 8000
-
-filedatastore:
-  path: "tests/data"
-  list_file: "package_list"
-  all_packages: "packages.json"
-
-inmemorysearch:
-  path: "tests/data"
-  all_packages: "packages.json"

@@ -2,35 +2,40 @@
 
 RM = rm -rf
 PYTHON = python3
-PIP_UPGRADE = pip3 install --upgrade --upgrade-strategy eager --force-reinstall
+
+
+# ┏━━━━━━━━━━━┓
+# ┃ DB schema ┃
+# ┗━━━━━━━━━━━┛
+
+schema schema_jenkins schema_acc:
+	$(MAKE) -C alembic $@
+
 
 # ┏━━━━━━━━━┓
 # ┃ Testing ┃
 # ┗━━━━━━━━━┛
 
 PYTEST = pytest
-
-# The ?= operator below assigns only if the variable isn't defined yet. This
-# allows the caller to override them:
-#
-# PYTEST='./setup.py test' make test
-#
-PYTEST_COV ?= --cov=src --cov-report=term --no-cov-on-fail
+PYTEST_OPTS ?= --loop uvloop -p no:cacheprovider --verbose --exitfirst
+PYTEST_COV_OPTS ?= --loop uvloop -p no:cacheprovider --verbose --cov=src --cov-report=term --no-cov-on-fail
+TESTS ?= tests
 
 
-# Probably needed again in the future:
-#schema:
-#	$(MAKE) -C alembic $@
+test: schema
+	$(PYTEST) $(PYTEST_OPTS) $(TESTS)
+
+
+cov: schema
+	$(PYTEST) $(PYTEST_COV_OPTS) $(TESTS)
 
 
 testdep:
 	pip3 install --quiet --upgrade --upgrade-strategy eager -e .[test] && echo 'OK' || echo 'FAILED'
 
-test:
-	$(PYTEST)
 
-testcov:
-	$(PYTEST) $(PYTEST_COV)
+testclean:
+	@$(RM) .cache .coverage
 
 
 # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
