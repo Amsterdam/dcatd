@@ -1,0 +1,9 @@
+{
+  "help": "https://demo.ckan.org/api/3/action/help_show?name=package_list",
+  "success": true,
+  "result": [
+    "100-validated-species-of-plants",
+    "1617in10-regulation-of-sale-of-overseas-properties-20170426-c",
+    "2016-regione-asia-est-oceania-classi-di-eta"
+  ]
+}

@@ -55,6 +55,7 @@ setup(
         'aiopluggy',
         'datapunt_config_loader',
         'jsonschema',
+        'jsonpointer',
         'pluggy',
         'PyYaml',
         'swagger-parser',
@@ -80,6 +81,7 @@ setup(
         ],
         'dev': [
             'aiohttp-devtools',
+            'pyld'
         ],
         'test': [
             'pytest',

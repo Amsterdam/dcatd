@@ -140,6 +140,34 @@ def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_code: T.
 
     """
 
+
+#######################
+# Metadata Convertors #
+#######################
+
+# noinspection PyUnusedLocal
+@hookspec
+def mdc_convert(from_profile, to_profile, data):
+    # language=rst
+    """ Convert metadata from one profile to another.
+    """
+
+
+####################
+# Metadata Profile #
+####################
+
+# noinspection PyUnusedLocal
+@hookspec
+def mdp_something():
+    # language=rst
+    """
+
+    .. todo:: define
+
+    """
+
+
 ###############################
 # End of aiopluggy hook specs #
 ###############################
@@ -159,6 +187,7 @@ class AbstractPlugin(abc.ABC):
             which will probably return ``False``.
 
         """
+        # noinspection PyUnresolvedReferences
         return all(
             hasattr(plugin, abstract_method_name) and
             callable(getattr(plugin, abstract_method_name))
