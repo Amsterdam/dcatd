@@ -1,29 +1,28 @@
 import json
 import os
 import subprocess
+import re
 from urllib.parse import urlparse
-import yarl
-
-import jsonpointer
 import pathlib
 
-import re
+import jsonpointer
 from pyld import jsonld
 
+from datacatalog import terms
 
 CKANDIR = 'ckandata'
 DCATDIR = 'dcatdata'
 
 
 _CONTEXT = {
-    'ams': 'http://amsterdam.nl/dcat-ap-ams/',
+    'ams': 'http://datacatalogus.amsterdam.nl/',
     'ckan': 'https://ckan.org/terms/',
-    'class': 'http://amsterdam.nl/dcat-ap-ams/class/',
+    'class': 'http://datacatalogus.amsterdam.nl/term/classification/',
     'dc': 'http://purl.org/dc/elements/1.1/',
     'dct': 'http://purl.org/dc/terms/',
     'foaf': 'http://xmlns.com/foaf/0.1/',
     'lang2': 'http://id.loc.gov/vocabulary/iso639-1/',
-    'org': 'http://amsterdam.nl/dcat-ap-ams/organization/',
+    'org': 'http://datacatalogus.amsterdam.nl/term/organization/',
     # Volgens dcat-ap-nl '.../term', maar dat kan niet. Zucht...
     # Volgens allerlei andere overheidsdocumenten:
     'overheid': 'http://standaarden.overheid.nl/owms/terms/',
@@ -32,7 +31,7 @@ _CONTEXT = {
     'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
     'skos': 'http://www.w3.org/2004/02/skos/core#',
-    'theme': 'http://amsterdam.nl/dcat-ap-ams/theme/',
+    'theme': 'http://datacatalogus.amsterdam.nl/term/theme/',
     'vcard': 'http://www.w3.org/2006/vcard/ns#',
     'dcat:keyword': {'@container': '@set'},
     'dcat:landingpage': {'@type': '@id'},
@@ -52,7 +51,7 @@ def pandoc(input_, from_, to):
     # TODO remove this line:
     return input_
 
-    print(f"input: {input_}")
+    #print(f"input: {input_}")
     return subprocess.run(
         ['pandoc', '-f', from_, '-t', to],
         input=input_.encode(), stdout=subprocess.PIPE, check=True
@@ -162,22 +161,31 @@ class License(FieldType):
         raise AttributeError(f"Unknown license: {value}")
 
 
-class Organization(FieldType):
-    @staticmethod
-    def fulltext(value):
-        return value
-
-
-class ReStructeredText(FieldType):
+class Markdown(FieldType):
     def __init__(self, from_):
         self.from_ = from_
 
     @staticmethod
     def fulltext(value):
-        return pandoc(value, 'rst', 'plain')
+        return pandoc(value, 'markdown', 'plain')
 
     def from_ckan(self, value):
-        return pandoc(value, self.from_, 'rst')
+        return pandoc(value, self.from_, 'markdown')
+
+
+class Organization(FieldType):
+    @staticmethod
+    def fulltext(value):
+        # TODO: enrich with known organizational info.
+        return value
+
+    @staticmethod
+    def from_ckan(value):
+        id = f"org:{value['name']}"
+        org = list(
+            org for org in terms.TERMS['org'] if org['@id'] == id
+        )
+        return org[0]
 
 
 class TemporalUnit(FieldType):
@@ -262,6 +270,13 @@ class Theme(FieldType):
     @staticmethod
     def from_ckan(groups):
         retval = ['theme:' + g['name'] for g in groups]
+        all_themes = set(
+            theme['@id'] for theme in terms.TERMS['theme']
+        )
+        assert all(
+            theme in all_themes
+            for theme in retval
+        )
         return retval or None
 
 
@@ -347,7 +362,7 @@ class VCardPublisher(VCard):
 
 _SCHEMA = {
     'ams:owner': {
-        'type': VCardOwner(),
+        'type': Organization(),
         'ckan': '/organization'
     },
     'ams:publisher': {
@@ -383,7 +398,7 @@ _SCHEMA = {
         'ckan': '/groups'
     },
     'dct:description': {
-        'type': ReStructeredText('html'),
+        'type': Markdown('html'),
         'ckan': '/notes'
     },
     'dct:identifier': {
@@ -480,11 +495,12 @@ def ckan2dcat(ckan):
                 print(repr(data))
                 raise
             retval[fieldname] = data
-    for k, v in ckan.items():
-        if k not in _SCHEMA_KEYS:
-            retval[k] = v
+    # for k, v in ckan.items():
+    #     if k not in _SCHEMA_KEYS:
+    #         retval[k] = v
     retval['dcat:distribution'] = ckan2dcat_distribution(ckan['resources'])
-    retval['@id'] = f"http://amsterdam.nl/dcat/{retval['dct:identifier']}"
+    retval['@id'] = f"ams:{retval['dct:identifier']}"
+    retval['ckan:name'] = ckan['name']
     return retval
 
 

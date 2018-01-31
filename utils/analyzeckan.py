@@ -1,6 +1,9 @@
 import json
 import pathlib
 import pprint
+import re
+
+import jsonpointer
 
 PACKAGE_DIR = 'ckandata'
 
@@ -15,6 +18,8 @@ resource_attributes = {}
 licenses = {}
 frequencies = set()
 gebiedseenheid = set()
+organizations = {}
+themes = {}
 temporal = set()
 tijdseenheid = set()
 for p in packages:
@@ -44,6 +49,29 @@ for p in packages:
     if v is not None:
         frequencies.add(v)
 
+    for v in p.get('groups'):
+        if v['name'] not in themes:
+            assert v['title'] == v['display_name']
+            o = {
+                '@id': f"theme:{v['name']}",
+                '@type': 'skos:Concept',
+                'skos:prefLabel': v['title']
+            }
+            themes[v['name']] = o
+
+    v = p.get('organization')
+    if v is not None and v['name'] not in organizations:
+        o = {
+            '@id': f"org:{v['name']}",
+            'foaf:name': v['title'],
+            'foaf:depiction': v['image_url'],
+            'skos:note': v['description']
+        }
+        match = re.search(r"href='([^']+)'", v['description'])
+        if match:
+            o['foaf:homepage'] = match[1]
+        organizations[v['name']] = o
+
     v = p.get('temporal')
     if v is not None:
         temporal.add(v)
@@ -63,6 +91,12 @@ pprint.pprint(licenses)
 
 print("\nFrequencies:")
 pprint.pprint(frequencies)
+
+print("\nThemes:")
+pprint.pprint(themes)
+
+print("\nOrganizations:")
+print(repr(organizations))
 
 print("\nGebiedseenheid:")
 pprint.pprint(gebiedseenheid)
