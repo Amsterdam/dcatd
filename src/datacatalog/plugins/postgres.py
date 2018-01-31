@@ -1,4 +1,4 @@
-"""Postgres storage plugin.
+"""Postgres storage and search plugin.
 """
 import base64
 import hashlib
@@ -24,9 +24,9 @@ _Q_UPDATE_DOC = 'UPDATE "Dataset" SET doc=$1, searchable_text=to_tsvector($2, $3
 _Q_DELETE_DOC = 'DELETE FROM "Dataset" WHERE id=$1 AND etag=$2 RETURNING id'
 _Q_SEARCH_DOCS = """
 SELECT doc, etag, ts_rank_cd(searchable_text, query) AS rank 
-  FROM "Dataset", to_tsquery($1, $2) query
+  FROM "Dataset", plainto_tsquery($1, $2) query
  WHERE searchable_text @@ query
-   AND ('simple'=$1 OR lang=$1)
+   AND ('simple'=$1::varchar OR lang=$1::varchar)
  ORDER BY rank DESC
  LIMIT $3
 OFFSET $4;
@@ -213,6 +213,7 @@ async def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_co
     async with _pool.acquire() as con:
         async with con.transaction():
             # use a cursor so we can stream
+
             async for row in con.cursor(_Q_SEARCH_DOCS, lang, q, size, offset):
                 yield row['doc'], row['etag']
 
