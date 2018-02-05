@@ -1,6 +1,7 @@
 """Postgres storage and search plugin.
 """
 import base64
+import collections
 import hashlib
 import json
 import logging
@@ -11,6 +12,7 @@ import yaml
 
 import aiopluggy
 import asyncpg.pool
+import jsonpointer
 
 _pool: asyncpg.pool.Pool = None
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
@@ -25,7 +27,7 @@ _Q_DELETE_DOC = 'DELETE FROM "Dataset" WHERE id=$1 AND etag=$2 RETURNING id'
 _Q_SEARCH_DOCS = """
 SELECT doc, etag, ts_rank_cd(searchable_text, query) AS rank 
   FROM "Dataset", plainto_tsquery($1, $2) query
- WHERE searchable_text @@ query
+ WHERE (''=$2::varchar OR searchable_text @@ query) {}
    AND ('simple'=$1::varchar OR lang=$1::varchar)
  ORDER BY rank DESC
  LIMIT $3
@@ -110,7 +112,9 @@ async def storage_retrieve_ids() -> T.Generator[int, None, None]:
 
 
 @_hookimpl
-async def storage_store(id: str, doc: dict, searchable_text: str, iso_639_1_code: T.Optional[str], etag: T.Optional[str]) -> str:
+async def storage_store(
+        id: str, doc: dict, searchable_text: str,
+        iso_639_1_code: T.Optional[str], etag: T.Optional[str]) -> str:
     # language=rst
     """ Store document.
 
@@ -190,32 +194,96 @@ async def storage_delete(id: str, etag: str) -> None:
 
 
 @_hookimpl
-async def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_code: T.Optional[str]) -> T.Generator[T.Tuple[dict, str], None, None]:
+async def search_search(q: str, limit: T.Optional[int],
+                        offset: T.Optional[int],
+                        filters: T.Optional[T.Mapping[str, str]],
+                        iso_639_1_code: T.Optional[str]
+                        ) -> T.Tuple[T.Generator[T.Tuple[dict, str], None, None], str]:
     # language=rst
     """ Search.
 
     :param q: the query.
-    :param size: maximum hits to be returned.
-    :param offset: offset from first result to return.
+    :param limit: maximum hits to be returned.
+    :param offset: starting offset.
+    :param filters: mapping of JSON pointer -> value, used to filter on some value.
     :param iso_639_1_code: the language of the query.
-    :returns: A generator with the search results (documents with corresponding etags)
+    :returns: A tuple with a generator over the search results (documents with corresponding etags), and the cursor.
+    :raises: ValueError if filter syntax is invalid, or if the ISO 639-1 code is not recognized.
 
     """
-    if iso_639_1_code is None:
-        lang = 'simple'
-    elif iso_639_1_code not in _iso_639_1_to_pg_dictionaries:
-        _logger.warning('invalid ISO 639-1 language code: ' + iso_639_1_code)
-        lang = 'simple'
-    else:
-        lang = _iso_639_1_to_pg_dictionaries[iso_639_1_code]
+
+    def to_expr(ptr: str, value: T.Any) -> str:
+        """Create a filterexpression from a json pointer and value."""
+        try:
+            p = jsonpointer.JsonPointer(ptr)
+        except jsonpointer.JsonPointerException:
+            raise ValueError('Cannot parse pointer')
+        parts = collections.deque(p.parts)
+        value = json.dumps(value)
+
+        def parse_complex_type():
+            nxt = parts.popleft()
+            if nxt == 'properties':
+                return parse_obj()
+            elif nxt == 'items':
+                return parse_list()
+            raise ValueError('Child must be either list, object or end of pointer, not: ' + nxt)
+
+        def parse_obj() -> str:
+            if len(parts) == 0:
+                raise ValueError('Properties must be followed by property name')
+            name = json.dumps(parts.popleft())
+            # either end-of-pointer primitive...
+            if len(parts) == 0:
+                return '{' + name + ': ' + value + '}'
+            # or a complex type
+            return '{' + name + ': ' + parse_complex_type() + '}'
+
+        def parse_list() -> str:
+            # either end-of-pointer primitive...
+            if len(parts) == 0:
+                return '[' + value + ']'
+            # or a complex type
+            return '[' + parse_complex_type() + ']'
+
+        # base case: query json document with solely a single primitive
+        # (string, int, bool, ...)
+        if len(parts) == 0:
+            return value
+
+        # anything else must be a complex type (object or list)
+        return parse_complex_type()
+
+    # Interpret the language
+    lang = 'simple'
+    if iso_639_1_code is not None:
+        if iso_639_1_code not in _iso_639_1_to_pg_dictionaries:
+            raise ValueError('invalid ISO 639-1 language code: ' + iso_639_1_code)
+        else:
+            lang = _iso_639_1_to_pg_dictionaries[iso_639_1_code]
+
+    # Interpret the filters (to_expr calls json.dumps on both the json pointers
+    # and corresponding values, so we don't escape separately and use a format
+    # string).
+    filterexpr = ''
+    if filters:
+        filterexpr = ''.join(" AND doc @> '" + to_expr(pointer, val) + "'" for pointer, val in filters.items())
+
+    # Interpret paging
     if offset is None:
         offset = 0
+    if limit is None:
+        limit = -1
+
     async with _pool.acquire() as con:
         async with con.transaction():
             # use a cursor so we can stream
-
-            async for row in con.cursor(_Q_SEARCH_DOCS, lang, q, size, offset):
+            sql = _Q_SEARCH_DOCS.format(filterexpr)
+            async for row in con.cursor(sql, lang, q, limit, offset):
                 yield row['doc'], row['etag']
+
+
+
 
 
 # The below maps ISO 639-1 language codes (as used in dcat) to pg dictionaries.
