@@ -117,12 +117,18 @@ def test_storage_retrieve(event_loop, corpus):
         assert etag == record['etag']
 
 
-def test_storage_retrieve_ids(event_loop, corpus):
+def test_storage_get_distinct_values(event_loop, corpus):
+    # test ids
     async def retrieve_ids():
-        return [doc_id async for doc_id in postgres_plugin.storage_retrieve_ids()]
+        return [doc_id async for doc_id in postgres_plugin.storage_get_distinct_values('/properties/id')]
     ids = event_loop.run_until_complete(retrieve_ids())
     assert len(ids) == len(corpus)
     assert len(set(corpus.keys()) - set(ids)) == 0
+    # test nonexisting
+    async def retrieve_nothing():
+        return [doc_id async for doc_id in postgres_plugin.storage_get_distinct_values('/items')]
+    empty = event_loop.run_until_complete(retrieve_nothing())
+    assert len(empty) == 0
 
 
 def test_search_search(event_loop, corpus):
