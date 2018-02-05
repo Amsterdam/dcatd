@@ -73,9 +73,15 @@ def storage_retrieve(id: str) -> T.Tuple[dict, str]:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_retrieve_ids() -> T.Generator[int, None, None]:
+def storage_get_distinct_values(ptr: str) -> T.Generator[str, None, None]:
     # language=rst
-    """ Get a list containing all document identifiers.
+    """ Get a list of all distinct values, coerced to string, under the given
+    JSON pointer in all stored documents.
+
+    Used to, for example, get a list of all tags or ids in the system.
+
+    :param ptr: Fully qualified JSON pointer to the element.
+    :raises: ValueError if filter syntax is invalid.
     """
 
 

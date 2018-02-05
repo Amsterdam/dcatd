@@ -2,6 +2,7 @@
 """
 import base64
 import collections
+import functools
 import hashlib
 import json
 import logging
@@ -20,6 +21,7 @@ _logger = logging.getLogger('plugin.storage.postgres')
 
 _Q_HEALTHCHECK = 'SELECT 1'
 _Q_RETRIEVE_DOC = 'SELECT doc, etag FROM "Dataset" WHERE id = $1'
+_Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "Dataset"'
 _Q_RETRIEVE_IDS = 'SELECT id FROM "Dataset"'
 _Q_INSERT_DOC = 'INSERT INTO "Dataset" (id, doc, searchable_text, lang, etag) VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
 _Q_UPDATE_DOC = 'UPDATE "Dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=$6 RETURNING id'
@@ -100,15 +102,74 @@ async def storage_retrieve(id: str) -> T.Tuple[dict, str]:
 
 
 @_hookimpl
-async def storage_retrieve_ids() -> T.Generator[int, None, None]:
+async def storage_get_distinct_values(ptr: str) -> T.Generator[str, None, None]:
     # language=rst
-    """ Get a list containing all document identifiers.
+    """ Get a list of all distinct values, coerced to string, under the given
+    JSON pointer in all stored documents.
+
+    Used to, for example, get a list of all tags or ids in the system. Note
+    that although this function returns a generator, it caches all values it
+    emits to ensure distinctness, so all distinct values need ot fit into
+    memory.
+
+    :param ptr: JSON pointer to the element.
+    :raises: ValueError if filter syntax is invalid.
     """
+
+    def ptr_to_extractor():
+        """Turns a json pointer into a pipeline that extracts the required
+        values from a document. This way we only parse the pointer once and can
+        use the extractor to extract values from all documents."""
+        pipeline = []
+
+        def extract_all_from(doc):
+            def recurse(pi, d):
+                if pi < len(pipeline):
+                    res = set()
+                    for elm in pipeline[pi](d):
+                        res.update(recurse(pi+1, elm))
+                    return res
+                return {d}
+            return recurse(0, doc)
+
+        # parse the pointer
+        try:
+            p = jsonpointer.JsonPointer(ptr)
+        except jsonpointer.JsonPointerException:
+            raise ValueError('Cannot parse pointer')
+        parts = collections.deque(p.parts)
+
+        # create the pipeline of functions
+        while len(parts) > 0:
+            nxt = parts.popleft()
+            if nxt == 'properties':
+                if len(parts) == 0:
+                    raise ValueError('Properties must be followed by property name')
+                name = parts.popleft()
+                pipeline.append(lambda x, n=name: (type(x) is dict and (x[n],)) or {})
+            elif nxt == 'items':
+                pipeline.append(lambda x: (type(x) is list and x) or [])
+            else:
+                raise ValueError('Child must be either list, object or end of pointer, not: ' + nxt)
+
+        # return the extractor
+        return extract_all_from
+
+    cache = set()
+    extractor = ptr_to_extractor()
     async with _pool.acquire() as con:
         async with con.transaction():
             # use a cursor so we can stream
-            async for row in con.cursor(_Q_RETRIEVE_IDS):
-                yield row['id']
+            async for row in con.cursor(_Q_RETRIEVE_ALL_DOCS):
+                doc = json.loads(row['doc'])
+                try:
+                    for elm in extractor(doc):
+                        if elm not in cache:
+                            yield elm
+                            cache.add(elm)
+                except KeyError as e:
+                    # keyerror means we can't find a specified object or list index
+                    _logger.warning('Error while extracting values from documents', e)
 
 
 @_hookimpl
