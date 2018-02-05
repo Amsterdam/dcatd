@@ -61,7 +61,7 @@ class Application(web.Application):
 def _resolve_plugin_path(fq_name: str):
     """ Resolve the path to a plugin (module, class, or instance).
 
-    :param fq_name:
+    :param str fq_name: The fully qualified name of a module, class or instance.
     :raises ModuleNotFoundError: if the module could not be found
     :raises AttributeError: if the plugin could not be found in the module
 

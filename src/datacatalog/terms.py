@@ -1,6 +1,3 @@
-import pprint
-import subprocess
-
 from pyld import jsonld
 
 _CONTEXT = {
@@ -509,5 +506,5 @@ TERMS = {
 }
 
 TERMS = jsonld.compact(jsonld.expand(TERMS), _CONTEXT)
-pprint.pprint(TERMS, width=160)
-print(len(TERMS['org']))
+#pprint.pprint(TERMS, width=160)
+#print(len(TERMS['org']))

@@ -25,3 +25,5 @@ Additionally, we use the following format identifiers:
 - ``"line"``: A single line of text, ie. not including any new-line characters.
 
 - ``"rst"``: reStructuredText
+
+- ``"full-date"``: as defined by :rfc:`3339`, section 5.6.

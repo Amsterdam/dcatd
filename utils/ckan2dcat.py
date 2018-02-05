@@ -27,11 +27,12 @@ _CONTEXT = {
     # Volgens allerlei andere overheidsdocumenten:
     'overheid': 'http://standaarden.overheid.nl/owms/terms/',
     # Zelf verzonnen; juiste waarde nog opzoeken [--PvB]
-    'overheidds': 'http://standaarden.overheid.nl/owms/term/ds',
+    'overheidds': 'http://standaarden.overheid.nl/owms/terms/ds#',
     'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
     'skos': 'http://www.w3.org/2004/02/skos/core#',
     'theme': 'http://datacatalogus.amsterdam.nl/term/theme/',
+    'time': 'http://www.w3.org/2006/time#',
     'vcard': 'http://www.w3.org/2006/vcard/ns#',
     'dcat:keyword': {'@container': '@set'},
     'dcat:landingpage': {'@type': '@id'},
