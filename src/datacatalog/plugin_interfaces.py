@@ -81,7 +81,9 @@ def storage_retrieve_ids() -> T.Generator[int, None, None]:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only
-def storage_store(id: str, doc: dict, searchable_text: str, iso_639_1_code: T.Optional[str], etag: T.Optional[str]) -> str:
+def storage_store(
+        id: str, doc: dict, searchable_text: str,
+        iso_639_1_code: T.Optional[str], etag: T.Optional[str]) -> str:
     # language=rst
     """ Store document.
 
@@ -89,7 +91,8 @@ def storage_store(id: str, doc: dict, searchable_text: str, iso_639_1_code: T.Op
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
     :param searchable_text: this will be indexed for free-text search.
-    :param iso_639_1_code: the language of the document. Will be used for free-text search indexing.
+    :param iso_639_1_code: the language of the document. Will be used for
+        free-text search indexing.
     :param etag: the last known ETag of this document, or ``None`` if no
         document with this ``id`` should exist yet.
     :returns: new ETag
@@ -128,15 +131,21 @@ def storage_id() -> str:
 
 # noinspection PyUnusedLocal
 @hookspec
-def search_search(q: str, size: int, offset: T.Optional[int], iso_639_1_code: T.Optional[str]) -> T.Generator[T.Tuple[dict, str], None, None]:
+def search_search(q: str, limit: T.Optional[int],
+                  offset: T.Optional[int],
+                  filters: T.Optional[T.Mapping[str, str]],
+                  iso_639_1_code: T.Optional[str]
+                  ) -> T.Tuple[T.Generator[T.Tuple[dict, str], None, None], str]:
     # language=rst
     """ Search.
 
     :param q: the query.
-    :param size: maximum hits to be returned.
-    :param offset: offset from first result to return.
-    :param qlang: the language of the query.
-    :returns: A generator with the search results (documents with corresponding etags)
+    :param limit: maximum hits to be returned.
+    :param offset: starting offset.
+    :param filters: mapping of JSON pointer -> value, used to filter on some value.
+    :param iso_639_1_code: the language of the query.
+    :returns: A tuple with a generator over the search results (documents with corresponding etags), and the cursor.
+    :raises: ValueError if filter syntax is invalid, or if the ISO 639-1 code is not recognized.
 
     """
 

@@ -126,11 +126,20 @@ def test_storage_retrieve_ids(event_loop, corpus):
 
 
 def test_search_search(event_loop, corpus):
-    async def search_records(record):
+    # search on query
+    async def search(record):
         q = record['searchable_text']
-        return [r async for r in postgres_plugin.search_search(q, 1, None, record['iso_639_1_code'])]
+        return [r async for r in postgres_plugin.search_search(q, 1, None, None, record['iso_639_1_code'])]
     for doc_id, record in corpus.items():
-        for doc, etag in event_loop.run_until_complete(search_records(record)):
+        for doc, etag in event_loop.run_until_complete(search(record)):
+            assert json.loads(doc) == record['doc']
+            assert etag == record['etag']
+    # filtered search
+    async def search(record):
+        filters = {'/properties/id': record['doc']['id']}
+        return [r async for r in postgres_plugin.search_search('', 1, None, filters, record['iso_639_1_code'])]
+    for doc_id, record in corpus.items():
+        for doc, etag in event_loop.run_until_complete(search(record)):
             assert json.loads(doc) == record['doc']
             assert etag == record['etag']
 
