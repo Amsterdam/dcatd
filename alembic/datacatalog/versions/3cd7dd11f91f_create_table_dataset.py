@@ -27,7 +27,8 @@ def upgrade():
         sa.Column('searchable_text', postgresql.TSVECTOR, nullable=False),
         sa.Column('lang', sa.String, nullable=False, index=True),
         sa.Index('idx_id_etag', 'id', 'etag'),
-        sa.Index('idx_full_text_search', 'searchable_text', postgresql_using='gin')
+        sa.Index('idx_full_text_search', 'searchable_text', postgresql_using='gin'),
+        sa.Index('idx_json_docs', sa.text("doc jsonb_path_ops"), postgresql_using='gin')
     )
 
 

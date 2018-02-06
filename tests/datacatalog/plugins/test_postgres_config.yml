@@ -50,6 +50,11 @@ logging:
       - console
       level: ${LOGLEVEL:-DEBUG}
       propagate: false
+    plugin.storage.postgres:
+      handlers:
+      - console
+      level: DEBUG
+      propagate: false
   root:
     handlers:
     - console

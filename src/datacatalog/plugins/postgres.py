@@ -23,6 +23,7 @@ _Q_HEALTHCHECK = 'SELECT 1'
 _Q_RETRIEVE_DOC = 'SELECT doc, etag FROM "Dataset" WHERE id = $1'
 _Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "Dataset"'
 _Q_RETRIEVE_IDS = 'SELECT id FROM "Dataset"'
+_Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "Dataset"'
 _Q_INSERT_DOC = 'INSERT INTO "Dataset" (id, doc, searchable_text, lang, etag) VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
 _Q_UPDATE_DOC = 'UPDATE "Dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=$6 RETURNING id'
 _Q_DELETE_DOC = 'DELETE FROM "Dataset" WHERE id=$1 AND etag=$2 RETURNING id'
@@ -100,76 +101,76 @@ async def storage_retrieve(id: str) -> T.Tuple[dict, str]:
         raise KeyError()
     return json.loads(record['doc']), record['etag']
 
-
 @_hookimpl
-async def storage_get_distinct_values(ptr: str) -> T.Generator[str, None, None]:
+async def storage_get_from_doc(ptr: str, distinct: bool=False) -> T.Generator[str, None, None]:
     # language=rst
-    """ Get a list of all distinct values, coerced to string, under the given
-    JSON pointer in all stored documents.
+    """Generator to extract values from the stored documents, optionally
+    distinct.
 
-    Used to, for example, get a list of all tags or ids in the system. Note
-    that although this function returns a generator, it caches all values it
-    emits to ensure distinctness, so all distinct values need ot fit into
-    memory.
+    Used to, for example, get a list of all tags or ids in the system. Or to
+    get all documents stored in the system. If distinct=True then the generator
+    will cache all values in a set, which may become prohibitively large.
 
     :param ptr: JSON pointer to the element.
+    :param distinct: Return only distinct values.
     :raises: ValueError if filter syntax is invalid.
     """
+    # If the pointer is '/' we should return all documents
+    if ptr == '/':
+        async with _pool.acquire() as con:
+            async with con.transaction():
+                # use a cursor so we can stream
+                async for row in con.cursor(_Q_RETRIEVE_ALL_DOCS):
+                    yield json.loads(row['doc'])
+        return
 
-    def ptr_to_extractor():
-        """Turns a json pointer into a pipeline that extracts the required
-        values from a document. This way we only parse the pointer once and can
-        use the extractor to extract values from all documents."""
-        pipeline = []
+    # Otherwise, return the values
+    try:
+        p = jsonpointer.JsonPointer(ptr)
+    except jsonpointer.JsonPointerException:
+        raise ValueError('Cannot parse pointer')
+    ptr_parts = p.parts
+    num_parts = len(ptr_parts)
 
-        def extract_all_from(doc):
-            def recurse(pi, d):
-                if pi < len(pipeline):
-                    res = set()
-                    for elm in pipeline[pi](d):
-                        res.update(recurse(pi+1, elm))
-                    return res
-                return {d}
-            return recurse(0, doc)
-
-        # parse the pointer
-        try:
-            p = jsonpointer.JsonPointer(ptr)
-        except jsonpointer.JsonPointerException:
-            raise ValueError('Cannot parse pointer')
-        parts = collections.deque(p.parts)
-
-        # create the pipeline of functions
-        while len(parts) > 0:
-            nxt = parts.popleft()
-            if nxt == 'properties':
-                if len(parts) == 0:
-                    raise ValueError('Properties must be followed by property name')
-                name = parts.popleft()
-                pipeline.append(lambda x, n=name: (type(x) is dict and (x[n],)) or {})
-            elif nxt == 'items':
-                pipeline.append(lambda x: (type(x) is list and x) or [])
+    def values(ptr_idx, elm):
+        """Recursive generator that yields all values that may live under the
+        given JSON pointer."""
+        if ptr_idx == num_parts:
+            yield elm
+            return
+        part = ptr_parts[ptr_idx]
+        if part == 'properties':
+            if ptr_idx == num_parts-1:
+                raise ValueError('Properties must be followed by property name')
+            key = ptr_parts[ptr_idx+1]
+            if type(elm) is not dict:
+                _logger.debug('Expected obj with key {}, got {}'.format(key, type(elm)))
+            elif key in elm:
+                for e in values(ptr_idx+2, elm[key]):
+                    yield e
             else:
-                raise ValueError('Child must be either list, object or end of pointer, not: ' + nxt)
-
-        # return the extractor
-        return extract_all_from
+                _logger.debug('Obj does not have key {}'.format(key))
+        elif part == 'items':
+            if type(elm) is not list:
+                _logger.debug('Expected array, got {}'.format(type(elm)))
+            else:
+                for item in elm:
+                    for e in values(ptr_idx+1, item):
+                        yield e
+        else:
+            raise ValueError('Element must be either list, object or end of pointer, not: ' + part)
 
     cache = set()
-    extractor = ptr_to_extractor()
     async with _pool.acquire() as con:
         async with con.transaction():
             # use a cursor so we can stream
             async for row in con.cursor(_Q_RETRIEVE_ALL_DOCS):
                 doc = json.loads(row['doc'])
-                try:
-                    for elm in extractor(doc):
-                        if elm not in cache:
-                            yield elm
+                for elm in values(0, doc):
+                    if not distinct or elm not in cache:
+                        yield elm
+                        if distinct:
                             cache.add(elm)
-                except KeyError as e:
-                    # keyerror means we can't find a specified object or list index
-                    _logger.warning('Error while extracting values from documents', e)
 
 
 @_hookimpl
