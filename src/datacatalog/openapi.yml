@@ -1,0 +1,235 @@
+openapi: '3.0.0'
+
+
+info:
+  title: Data catalog
+  version: '1.0.0-alpha'
+
+
+paths:
+  /datasets:
+    get:
+      description: |-
+        Get a list of all datasets, optionally selected by a free-text query and / or facet filters. This endpoint supports cursored paging using the limit parameter.
+      responses:
+        '200 OK':
+          description: A list of datasets.
+          headers:
+            ETag:
+              description: ETag of the resource.
+              schema:
+                $ref: '#/components/schemas/etag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dcat-doc-list'
+      parameters:
+      - name: q
+        description: Free-text query
+        required: false
+        in: query
+        schema:
+          type: string
+      - name: f
+        description: Facet filters
+        required: false
+        in: query
+        explode: true
+        schema:
+          type: array
+          items:
+            type: string
+            pattern: '^(/([^/~]*(~(0|1)))*)=.+$'
+      - name: limit
+        description: Amount of results to return
+        required: false
+        in: query
+        schema:
+          type: integer
+      - name: cursor
+        description: Cursor to the next batch of results
+        required: false
+        in: query
+        schema:
+          type: string
+    post:
+      description: |-
+        Upload a new dataset and let the system generate an identifier.
+      security:
+      - OAuth2:
+        - CAT/W
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dcat-doc'
+      responses:
+        '201 Created':
+          description: Upload was succesful.
+          headers:
+            ETag:
+              description: ETag of the newly created dataset.
+              schema:
+                $ref: '#/components/schemas/etag'
+            Location:
+              description: Location of the newly created dataset.
+              schema:
+                type: string
+  /datasets/{id}:
+    get:
+      description: Get the dataset identified by id.
+      responses:
+        '200 OK':
+          description: The dataset as a dcat document.
+          headers:
+            ETag:
+              description: ETag of the newly created dataset.
+              schema:
+                $ref: '#/components/schemas/etag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dcat-doc'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      description: Upload a dataset under the given ID.
+      security:
+      - OAuth2:
+        - CAT/W
+      parameters:
+      - name: If-Match
+        description: This request header is required if the client intends to *update* an existing `dataset` resource.  The value *must* be the current `ETag` of the dataset resource, as last seen by the client.  This prevents lost updates if multiple clients are concurrently editing the same resource.
+        required: false
+        in: header
+        schema:
+          $ref: '#/components/schemas/etag'
+      - name: If-None-Match
+        description: This request header is required if the client intends to *create* a new `dataset` resource.  This prevents lost updates if multiple clients are concurrently creating the same resource.
+        required: false
+        in: header
+        schema:
+          type: string
+          pattern: '^\*$'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/dcat-doc'
+      responses:
+        '201 Created':
+          description: The dataset was succesfully uploaded.
+          headers:
+            ETag:
+              description: ETag of the newly created dataset.
+              schema:
+                $ref: '#/components/schemas/etag'
+            Location:
+              description: Location of the newly created dataset.
+              schema:
+                type: string
+        '204 No Content':
+          description: The dataset was updated successfully.  The `ETag` response header contains the new ETag.
+          headers:
+            ETag:
+              schema:
+                $ref: '#/components/schemas/etag'
+    delete:
+      description: Remove the dataset under the given ID.
+      security:
+      - OAuth2:
+        - CAT/W
+      parameters:
+      - name: If-Match
+        description: This request header is required if the client intends to *update* an existing `dataset` resource.  The value *must* be the current `ETag` of the dataset resource, as last seen by the client.  This prevents lost updates if multiple clients are concurrently editing the same resource.
+        required: false
+        in: header
+        schema:
+          $ref: '#/components/schemas/etag'
+      responses:
+        '204':
+          description: No Content
+  /themes:
+    get:
+      description: Get the list of dataset themes.
+      responses:
+        '200':
+          description: List of themes.
+          headers:
+            ETag:
+              description: ETag of the list of themes.
+              schema:
+                $ref: '#/components/schemas/etag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/themes-list'
+  /owners:
+    get:
+      description: Get the list of dataset owners.
+      responses:
+        '200':
+          description: List of owners.
+          headers:
+            ETag:
+              description: ETag of the list of owners.
+              schema:
+                $ref: '#/components/schemas/etag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/owners-list'
+  /schema:
+    get:
+      description: Get the JSON schema of the datasets in this catalog.
+      responses:
+        '200':
+          description: The JSON schema.
+          headers:
+            ETag:
+              description: ETag of the schema.
+              schema:
+                $ref: '#/components/schemas/etag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dcat-schema'
+
+components:
+
+  schemas:
+    etag:
+      type: string
+      pattern: '^(?:W/)?"[^"]+"$'
+    dcat-doc:
+      type: string
+    dcat-doc-list:
+      type: array
+      items:
+        type: string
+    dcat-schema:
+      type: string
+    themes-list:
+      type: array
+      items:
+        type: string
+    owners-list:
+      type: array
+      items:
+        type: string
+
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: '/oauth2/authorize'
+          scopes:
+            CAT/W: Administer the data catalog
+
