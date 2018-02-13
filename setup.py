@@ -57,6 +57,7 @@ setup(
         'jsonschema',
         'jsonpointer',
         'pluggy',
+        'pyld',
         'PyYaml',
         'swagger-parser',
         'whoosh',
@@ -80,8 +81,7 @@ setup(
             'sphinx_rtd_theme',
         ],
         'dev': [
-            'aiohttp-devtools',
-            'pyld'
+            'aiohttp-devtools'
         ],
         'test': [
             'pytest',

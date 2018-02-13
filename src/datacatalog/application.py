@@ -31,6 +31,7 @@ class Application(web.Application):
                 if r.exception is not None:
                     raise r.exception
             self.assert_primary_schema()
+            print(await self.hooks.mds_json_schema(schema_name='dcat-ap-ams'))
         self.on_startup.append(on_startup)
 
         async def on_cleanup(app):
@@ -42,7 +43,7 @@ class Application(web.Application):
 
     def assert_primary_schema(self):
         primary_schema = self.config['primarySchema']
-        implemented_schemas = [ r.value for r in self.hooks.mds_schema_name() ]
+        implemented_schemas = [ r.value for r in self.hooks.mds_name() ]
         assert primary_schema in implemented_schemas, \
             "Primary schema '{}' not implemented by any plugin.".format(primary_schema)
 
