@@ -15,14 +15,14 @@ DCATDIR = 'dcatdata'
 
 
 _CONTEXT = {
-    'ams': 'http://datacatalogus.amsterdam.nl/',
+    'ams': 'http://datacatalogus.amsterdam.nl/term/',
     'ckan': 'https://ckan.org/terms/',
-    'class': 'http://datacatalogus.amsterdam.nl/term/classification/',
+    'class': 'ams:class#',
     'dc': 'http://purl.org/dc/elements/1.1/',
     'dct': 'http://purl.org/dc/terms/',
     'foaf': 'http://xmlns.com/foaf/0.1/',
     'lang2': 'http://id.loc.gov/vocabulary/iso639-1/',
-    'org': 'http://datacatalogus.amsterdam.nl/term/organization/',
+    'org': 'ams:org#',
     # Volgens dcat-ap-nl '.../term', maar dat kan niet. Zucht...
     # Volgens allerlei andere overheidsdocumenten:
     'overheid': 'http://standaarden.overheid.nl/owms/terms/',
@@ -31,7 +31,7 @@ _CONTEXT = {
     'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
     'skos': 'http://www.w3.org/2004/02/skos/core#',
-    'theme': 'http://datacatalogus.amsterdam.nl/term/theme/',
+    'theme': 'ams:theme#',
     'time': 'http://www.w3.org/2006/time#',
     'vcard': 'http://www.w3.org/2006/vcard/ns#',
     'dcat:keyword': {'@container': '@set'},
@@ -472,7 +472,7 @@ def ckan2dcat(ckan):
     retval = {
         '@context': dict(_CONTEXT),
         'dct:language': 'lang2:nl',
-        'ams:classification': 'class:open'
+        'ams:class': 'class:open'
     }
     retval['@context']['@vocab'] = 'https://ckan.org/terms/'
     for fieldname, field in _SCHEMA.items():

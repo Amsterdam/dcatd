@@ -1,22 +1,14 @@
-import typing as T
+from pyld import jsonld
 
-from aiopluggy import HookimplMarker
-
-from . import context
-
-hookimpl = HookimplMarker('datacatalog')
-
-_SCHEMA = 'dcat-ap-ams'
-
-_CONTEXT = {
-    'ams': 'http://datacatalogus.amsterdam.nl/term/',
+CONTEXT = {
+    'ams': 'http://datacatalogus.amsterdam.nl/',
     'ckan': 'https://ckan.org/terms/',
-    'class': 'ams:class#',
+    'class': 'http://datacatalogus.amsterdam.nl/term/classification/',
     'dc': 'http://purl.org/dc/elements/1.1/',
     'dct': 'http://purl.org/dc/terms/',
     'foaf': 'http://xmlns.com/foaf/0.1/',
     'lang2': 'http://id.loc.gov/vocabulary/iso639-1/',
-    'org': 'ams:org#',
+    'org': 'http://datacatalogus.amsterdam.nl/term/organization/',
     # Volgens dcat-ap-nl '.../term', maar dat kan niet. Zucht...
     # Volgens allerlei andere overheidsdocumenten:
     'overheid': 'http://standaarden.overheid.nl/owms/terms/',
@@ -25,7 +17,7 @@ _CONTEXT = {
     'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
     'skos': 'http://www.w3.org/2004/02/skos/core#',
-    'theme': 'ams:theme#',
+    'theme': 'http://datacatalogus.amsterdam.nl/term/theme/',
     'time': 'http://www.w3.org/2006/time#',
     'vcard': 'http://www.w3.org/2006/vcard/ns#',
     'dcat:keyword': {'@container': '@set'},
@@ -42,23 +34,6 @@ _CONTEXT = {
 }
 
 
-# @hookimpl
-# def initialize_sync(app):
-#     pass
-#
-#
-# @hookimpl
-# async def initialize(app):
-#     pass
-
-
-@hookimpl
-def mds_schema():
-    return _SCHEMA
-
-
-@hookimpl
-def normalize(schema: str, data: dict) -> T.Optional[dict]:
-    if schema != _SCHEMA:
-        return None
-    return context.compact(data)
+def compact(data):
+    expanded = jsonld.expand(data)
+    return jsonld.compact(expanded, CONTEXT)

@@ -1,5 +1,4 @@
 import typing as T
-import abc
 
 from aiopluggy import HookspecMarker
 
@@ -11,27 +10,30 @@ hookspec = HookspecMarker('datacatalog')
 # Generic Hooks #
 #################
 
-
 # noinspection PyUnusedLocal
 @hookspec.replay.sync
-def initialize_sync(app) -> T.Optional[T.Coroutine]:
+def initialize_sync(app) -> None:
     # language=rst
-    """ The first method to be called by the plugin-manager.
+    """The first method to be called by the plugin-manager.
 
     If your plugin needs to do some *asynchronous* initialization, try
     :func:`initialize`
+
+    :param app: the :class:`~datacatalog.app.Application` object.
 
     """
 
 
 # noinspection PyUnusedLocal
 @hookspec.replay
-def initialize(app) -> T.Optional[T.Coroutine]:
+def initialize(app) -> None:
     # language=rst
-    """ Called by the plugin-manager when the event loop starts.
+    """Called by the plugin-manager when the event loop starts.
 
     If your plugin needs to do some initialization even before the event loop
     starts, you'll need to do this in :func:`initialize_sync`.
+
+    :param app: the :class:`~datacatalog.app.Application` object.
 
     """
 
@@ -40,14 +42,18 @@ def initialize(app) -> T.Optional[T.Coroutine]:
 @hookspec
 def deinitialize(app) -> None:
     # language=rst
-    """ Called when the application shuts down."""
+    """Called when the application shuts down.
+
+    :param app: the :class:`~datacatalog.app.Application` object.
+
+    """
 
 
 # noinspection PyUnusedLocal
 @hookspec
 def health_check() -> T.Optional[str]:
     # language=rst
-    """ Health check.
+    """Health check.
 
     :returns: If unhealthy, a string describing the problem, otherwise ``None``.
     :raises Exception: if that's easier than returning a string.
@@ -158,28 +164,31 @@ def search_search(q: str, limit: T.Optional[int],
     """
 
 
-#######################
-# Metadata Convertors #
-#######################
-
-# noinspection PyUnusedLocal
-@hookspec
-def mdc_convert(from_profile, to_profile, data):
-    # language=rst
-    """ Convert metadata from one profile to another.
-    """
-
-
 ####################
-# Metadata Profile #
+# Metadata Schemas #
 ####################
 
 # noinspection PyUnusedLocal
 @hookspec
-def mdp_something():
+def mds_convert(from_schema: str, to_schema: str, data: dict) -> T.Optional[dict]:
     # language=rst
+    """Convert metadata from one schema to another.
+
+    :param from_schema: the schema of ``data``
+    :param to_schema: the schema to convert ``data`` to
+    :param data: the data to convert
+
     """
 
-    .. todo:: define
+
+# noinspection PyUnusedLocal
+@hookspec
+def mds_schema() -> str:
+    # language=rst
+    """The schema this plugin provides.
+
+    :returns: a string that is safe for use in a URL segment; ie. every string
+        that matches regular expression
+        ``^(?:%[a-f0-9]{2}|[-\w:@!$&'()*+,;=.~])*$``
 
     """

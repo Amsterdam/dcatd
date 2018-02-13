@@ -7,10 +7,12 @@ properties:
     $ref: '#/definitions/logging.dictconfig'
   plugins:
     $ref: '#/definitions/plugins'
-  postgres:
-    $ref: '#/definitions/postgres'
   web:
     $ref: '#/definitions/web'
+  primaryFormat:
+    type: string
+    # URL-segment safe string:
+    pattern: "^(?:%[a-f0-9]{2}|[-\\w:@!$&'()*+,;=.~])*$"
 
 required:
   - logging
@@ -128,25 +130,3 @@ definitions:
     required:
       - version
     type: object
-
-  postgres:
-    additionalProperties: false
-    properties:
-      dbname:
-        type: string
-      host:
-        type: string
-      password:
-        type: string
-      port:
-        type: integer
-      user:
-        type: string
-    required:
-      - host
-      - port
-      - user
-      - password
-      - dbname
-    type: object
-
