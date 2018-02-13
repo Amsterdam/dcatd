@@ -7,4 +7,3 @@ API Docs
 
     api/application
     api/handlers
-    api/plugins

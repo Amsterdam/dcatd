@@ -1,15 +1,15 @@
 import json
 
-from datacatalog.plugins.dcat import types as dcat
+from datacatalog.plugins.dcat import types
 
 
-class Markdown(dcat.String):
+class Markdown(types.String):
     def __init__(self, *args, format=None, **kwargs):
         assert format is None
         super().__init__(*args, format='markdown', **kwargs)
 
 
-LANGUAGE = dcat.Enum(
+LANGUAGE = types.Enum(
     [
         ('lang:nl', "Nederlands"),
         ('lang:en', "Engels")
@@ -21,7 +21,7 @@ LANGUAGE = dcat.Enum(
 )
 
 
-THEME = dcat.Enum(
+THEME = types.Enum(
     [
         ('theme:bestuur-en-organisatie', "Bestuur en organisatie"),
         ('theme:bevolking', "Bevolking"),
@@ -45,14 +45,14 @@ THEME = dcat.Enum(
 )
 
 
-CONTACT_POINT = dcat.Object(
+CONTACT_POINT = types.Object(
     title="Inhoudelijk contactpersoon",
     description="De contactpersoon voor eventuele vragen over de inhoud en kwaliteit van de gegevens",
     required=True
 )
 CONTACT_POINT.add(
     'vcard:fn',
-    dcat.PlainTextLine(
+    types.PlainTextLine(
         title="Naam",
         description="Naam inhoudelijk contactpersoon",
         required=True
@@ -60,7 +60,7 @@ CONTACT_POINT.add(
 )
 CONTACT_POINT.add(
     'vcard:hasEmail',
-    dcat.String(
+    types.String(
         format='email',
         title="Email",
         description="Email inhoudelijk contactpersoon"
@@ -68,7 +68,7 @@ CONTACT_POINT.add(
 )
 CONTACT_POINT.add(
     'vcard:hasURL',
-    dcat.String(
+    types.String(
         format='uri',
         title="Website",
         description="Website inhoudelijk contactpersoon"
@@ -76,14 +76,14 @@ CONTACT_POINT.add(
 )
 
 
-DCT_PUBLISHER = dcat.Object(
+DCT_PUBLISHER = types.Object(
     title="Technisch contactpersoon",
     description="De contactpersoon voor technische vragen over de aanlevering. Dit kan dezelfde contactpersoon zijn als voor de inhoudelijke vragen.",
     required=True
 )
 DCT_PUBLISHER.add(
     'foaf:name',
-    dcat.PlainTextLine(
+    types.PlainTextLine(
         title="Naam",
         description="Naam technisch contactpersoon",
         required=True
@@ -91,7 +91,7 @@ DCT_PUBLISHER.add(
 )
 DCT_PUBLISHER.add(
     'foaf:mbox',
-    dcat.String(
+    types.String(
         format='email',
         title="Email",
         description="Email technisch contactpersoon"
@@ -99,7 +99,7 @@ DCT_PUBLISHER.add(
 )
 DCT_PUBLISHER.add(
     'foaf:homepage',
-    dcat.String(
+    types.String(
         format='uri',
         title="Website",
         description="Website technisch contactpersoon"
@@ -107,10 +107,10 @@ DCT_PUBLISHER.add(
 )
 
 
-DISTRIBUTION = dcat.Object()
+DISTRIBUTION = types.Object()
 DISTRIBUTION.add(
     'dct:title',
-    dcat.PlainTextLine(
+    types.PlainTextLine(
         title="Titel van de link naar de gegevensset",
         required=True
     )
@@ -164,7 +164,7 @@ DISTRIBUTION.add(
 # )
 DISTRIBUTION.add(
     'dct:license',
-    dcat.Enum(
+    types.Enum(
         [
             ('cc-by', "Creative Commons, Naamsvermelding"),
             ('cc-by-nc', "Creative Commons, Naamsvermelding, Niet-Commercieel"),
@@ -187,7 +187,7 @@ DISTRIBUTION.add(
 )
 DISTRIBUTION.add(
     'dcat:accessURL',
-    dcat.String(
+    types.String(
         format='uri',
         title="Toegangs-URL",
         description="Toegangslink naar de daadwerkelijke gegevensset"
@@ -195,7 +195,7 @@ DISTRIBUTION.add(
 )
 DISTRIBUTION.add(
     'dcat:downloadURL',
-    dcat.String(
+    types.String(
         format='uri',
         title="Download URL",
         description="Downloadlink om gegevensset te downloaden"
@@ -203,7 +203,7 @@ DISTRIBUTION.add(
 )
 DISTRIBUTION.add(
     'dcat:mediaType',
-    dcat.PlainTextLine(
+    types.PlainTextLine(
         pattern=r'^[-\w.]+/[-\w.]+$',
         title="Bestandsformaat",
         description="Geef het formaat van de beschikbare leveringsvorm van de dataset"
@@ -211,7 +211,7 @@ DISTRIBUTION.add(
 )
 DISTRIBUTION.add(
     'dcat:byteSize',
-    dcat.Integer(
+    types.Integer(
         minimum=0,
         title="Bestandsgrootte",
         description="Bestandsgrootte in bytes"
@@ -219,17 +219,17 @@ DISTRIBUTION.add(
 )
 
 
-CATALOG_RECORD = dcat.Object(required=True)
+CATALOG_RECORD = types.Object(required=True)
 CATALOG_RECORD.add(
     'dct:issued',
-    dcat.Date(
+    types.Date(
         title="Publicatiedatum",
         description="De datum waarop deze beschrijving van de gegevensset beschikbaar is gesteld"
     )
 )
 CATALOG_RECORD.add(
     'dct:modified',
-    dcat.Date(
+    types.Date(
         title="Wijzigingsdatum",
         description="De datum waarop deze beschrijving van de gegevensset voor het laatst is gewijzigd",
         required=True
@@ -237,10 +237,10 @@ CATALOG_RECORD.add(
 )
 
 
-DATASET = dcat.Object()
+DATASET = types.Object()
 DATASET.add(
     'dct:title',
-    dcat.PlainTextLine(
+    types.PlainTextLine(
         title="Titel",
         description="Geef een titel van de gegevensset.",
         required=True
@@ -256,15 +256,15 @@ DATASET.add(
 )
 DATASET.add(
     'dct:identifier',
-    dcat.PlainTextLine(
+    types.PlainTextLine(
         title="ID",
         description="Unieke identifier"
     )
 )
 DATASET.add(
     'dcat:keyword',
-    dcat.List(
-        dcat.PlainTextLine(),
+    types.List(
+        types.PlainTextLine(),
         title="Trefwoorden",
         description="Trefwoorden die van toepassing zijn op de gegevensset, zodat de gegevensset gevonden kan worden"
     )
@@ -279,18 +279,18 @@ DATASET.add(
 )
 DATASET.add(
     'dct:Temporal',
-    dcat.Object(
+    types.Object(
         title="Tijdsperiode",
         description="De tijdsperiode die de gegevensset beslaat"
     ).add(
         'time:hasBeginning',
-        dcat.Date(
+        types.Date(
             title="Van",
             required=True
         )
     ).add(
         'time:hasEnd',
-        dcat.Date(
+        types.Date(
             title="Tot",
             required=True
         )
@@ -305,7 +305,7 @@ DATASET.add(
 )
 DATASET.add(
     'dct:accrualPeriodicity',
-    dcat.Enum(
+    types.Enum(
         [
             # 0 continu
             # 1 dagelijks
@@ -341,7 +341,7 @@ DATASET.add(
 )
 DATASET.add(
     'dcat:theme',
-    dcat.List(
+    types.List(
         THEME,
         title="Thema’s",
         description="Geef aan onder welke hoofdthema’s de gegevensset valt."
@@ -361,7 +361,7 @@ DATASET.add(
 )
 DATASET.add(
     'dcat:distribution',
-    dcat.List(
+    types.List(
         DISTRIBUTION,
         title="Resources",
         required=True

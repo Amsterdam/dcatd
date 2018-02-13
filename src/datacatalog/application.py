@@ -8,6 +8,10 @@ from .handlers import index, systemhealth
 
 
 class Application(web.Application):
+    # language=rst
+    """The Application.
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -26,6 +30,7 @@ class Application(web.Application):
             for r in results:
                 if r.exception is not None:
                     raise r.exception
+            self.assert_primary_schema()
         self.on_startup.append(on_startup)
 
         async def on_cleanup(app):
@@ -34,6 +39,12 @@ class Application(web.Application):
 
         self._load_plugins()
         self.hooks.initialize_sync(app=self)
+
+    def assert_primary_schema(self):
+        primary_schema = self.config['primarySchema']
+        implemented_schemas = [ r.value for r in self.hooks.mds_schema_name() ]
+        assert primary_schema in implemented_schemas, \
+            "Primary schema '{}' not implemented by any plugin.".format(primary_schema)
 
     @property
     def config(self) -> config.ConfigDict:

@@ -9,7 +9,7 @@ properties:
     $ref: '#/definitions/plugins'
   web:
     $ref: '#/definitions/web'
-  primaryFormat:
+  primarySchema:
     type: string
     # URL-segment safe string:
     pattern: "^(?:%[a-f0-9]{2}|[-\\w:@!$&'()*+,;=.~])*$"
@@ -17,6 +17,7 @@ properties:
 required:
   - logging
   - plugins
+  - primarySchema
 
 
 definitions:

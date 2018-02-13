@@ -182,13 +182,27 @@ def mds_convert(from_schema: str, to_schema: str, data: dict) -> T.Optional[dict
 
 
 # noinspection PyUnusedLocal
-@hookspec
-def mds_schema() -> str:
+@hookspec.sync
+def mds_name() -> str:
     # language=rst
     """The schema this plugin provides.
 
     :returns: a string that is safe for use in a URL segment; ie. every string
         that matches regular expression
         ``^(?:%[a-f0-9]{2}|[-\w:@!$&'()*+,;=.~])*$``
+
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_notnone
+def mds_json_schema(schema_name: str) -> T.Optional[dict]:
+    # language=rst
+    """The json schema.
+
+    :param schema_name: the name of the schema for which to return the JSON
+        schema.
+    :returns: If the plugin implements the schema named by ``schema_name``, it
+        should return a json schema dict, otherwise ``None``.
 
     """

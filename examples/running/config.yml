@@ -1,5 +1,8 @@
 plugins:
   - datacatalog.plugins.postgres
+  - datacatalog.plugins.dcat_ap_ams
+
+primarySchema: dcat_ap_ams
 
 logging:
   formatters:

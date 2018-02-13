@@ -54,7 +54,7 @@ upload:
 
 example:
 	@echo Starting example server:
-	@./examples/run.sh
+	@./examples/running/run.sh
 
 
 # ┏━━━━━━━━━━━━━┓
