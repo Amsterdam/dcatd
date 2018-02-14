@@ -146,7 +146,7 @@ def storage_id() -> str:
 # noinspection PyUnusedLocal
 @hookspec
 def search_search(q: str, limit: T.Optional[int],
-                  offset: T.Optional[int],
+                  cursor: T.Optional[str],
                   filters: T.Optional[T.Mapping[str, str]],
                   iso_639_1_code: T.Optional[str]
                   ) -> T.Tuple[T.Generator[T.Tuple[dict, str], None, None], str]:

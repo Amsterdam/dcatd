@@ -1,11 +1,16 @@
 version: "3.0"
 services:
-  web:
-    image: datacatalog-core:latest
-    build:
-      context: ./src
 
-  test:
-    build: ./tests
-    volumes:
-      - ./tests/fixtures:/app/data
+  database:
+    image: postgres:9.5
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: datacatalog
+      POSTGRES_USER: datacatalog
+      POSTGRES_PASSWORD: datacatalog
+
+  api:
+    image: dcatd:latest
+    build:
+      context: .

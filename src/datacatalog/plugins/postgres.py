@@ -257,7 +257,7 @@ async def storage_delete(id: str, etag: str) -> None:
 
 @_hookimpl
 async def search_search(q: str, limit: T.Optional[int],
-                        offset: T.Optional[int],
+                        cursor: T.Optional[str],
                         filters: T.Optional[T.Mapping[str, str]],
                         iso_639_1_code: T.Optional[str]
                         ) -> T.Tuple[T.Generator[T.Tuple[dict, str], None, None], str]:
@@ -266,7 +266,7 @@ async def search_search(q: str, limit: T.Optional[int],
 
     :param q: the query.
     :param limit: maximum hits to be returned.
-    :param offset: starting offset.
+    :param cursor: paging cursor.
     :param filters: mapping of JSON pointer -> value, used to filter on some value.
     :param iso_639_1_code: the language of the query.
     :returns: A tuple with a generator over the search results (documents with corresponding etags), and the cursor.
@@ -332,10 +332,12 @@ async def search_search(q: str, limit: T.Optional[int],
         filterexpr = ''.join(" AND doc @> '" + to_expr(pointer, val) + "'" for pointer, val in filters.items())
 
     # Interpret paging
-    if offset is None:
+    if cursor is None:
         offset = 0
+    else:
+        base64.decodebytes(cursor.encode())
     if limit is None:
-        limit = -1
+        limit = 'ALL'
 
     async with _pool.acquire() as con:
         async with con.transaction():
