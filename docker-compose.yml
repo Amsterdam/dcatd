@@ -1,6 +1,16 @@
 version: "3.0"
 services:
-  web:
-    build: ./src
+
+  database:
+    image: postgres:9.5
     ports:
-      - "8000:8000"
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: datacatalog
+      POSTGRES_USER: datacatalog
+      POSTGRES_PASSWORD: datacatalog
+
+  api:
+    image: dcatd:latest
+    build:
+      context: .
