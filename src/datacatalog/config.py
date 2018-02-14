@@ -24,8 +24,8 @@ Example usage::
 
     By default, this variable is initialized with:
 
-        -   :file:`/etc/datacatalog.yml`
-        -   :file:`./datacatalog.yml`
+        -   :file:`/etc/dcatd.yml`
+        -   :file:`./dcatd.yml`
 
 """
 
@@ -52,7 +52,7 @@ _CONFIG_SCHEMA_RESOURCE = 'config_schema.yml'
 
 
 DEFAULT_CONFIG_PATHS = [
-    pathlib.Path('/etc') / 'datacatalog.yml',
+    pathlib.Path('/etc') / 'dcatd.yml',
     pathlib.Path('config.yml')
 ]
 """List of locations to look for a configuration file."""

@@ -1,0 +1,9 @@
+# See https://docs.python.org/3/distutils/sourcedist.html
+
+include README.rst
+include setup.py
+include setup.cfg
+include LICENSE.rst
+include Makefile
+graft tests
+recursive-exclude * *.pyc *.pyo

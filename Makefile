@@ -54,7 +54,7 @@ upload:
 
 example:
 	@echo Starting example server:
-	@./examples/running/run.sh
+	@docker-compose up api
 
 
 # ┏━━━━━━━━━━━━━┓

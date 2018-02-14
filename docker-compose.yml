@@ -11,6 +11,35 @@ services:
       POSTGRES_PASSWORD: datacatalog
 
   api:
-    image: dcatd:latest
     build:
       context: .
+    image: amsterdam/dcatd:latest
+    depends_on:
+      - database
+      - builder
+    volumes:
+      - ./examples/running/config.yml:/etc/dcatd.yml
+    ports:
+      - "8122:8000"
+    environment:
+      DB_DATABASE: datacatalog
+      DB_USER: datacatalog
+      DB_PASSWORD: datacatalog
+      DB_HOST: database
+      DB_PORT: 5432
+    command: ["python", "-m", "datacatalog.main"]
+
+  builder:
+    build:
+      context: .
+      dockerfile: Dockerfile.builder
+    image: amsterdam/dcatd-builder:latest
+    depends_on:
+      - database
+    environment:
+      DB_DATABASE: datacatalog
+      DB_USER: datacatalog
+      DB_PASSWORD: datacatalog
+      DB_HOST: database
+      DB_PORT: 5432
+    command: ["make", "test"]
