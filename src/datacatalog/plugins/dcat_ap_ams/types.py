@@ -49,29 +49,28 @@ CONTACT_POINT = types.Object(
     title="Inhoudelijk contactpersoon",
     description="De contactpersoon voor eventuele vragen over de inhoud en kwaliteit van de gegevens",
     required=True
-)
-CONTACT_POINT.add(
+).add(
     'vcard:fn',
     types.PlainTextLine(
         title="Naam",
         description="Naam inhoudelijk contactpersoon",
         required=True
     )
-)
-CONTACT_POINT.add(
+).add(
     'vcard:hasEmail',
     types.String(
         format='email',
         title="Email",
-        description="Email inhoudelijk contactpersoon"
+        description="Email inhoudelijk contactpersoon",
+        examples=["steve@apple.com"]
     )
-)
-CONTACT_POINT.add(
+).add(
     'vcard:hasURL',
     types.String(
         format='uri',
         title="Website",
-        description="Website inhoudelijk contactpersoon"
+        description="Website inhoudelijk contactpersoon",
+        examples=['http://']
     )
 )
 
@@ -80,24 +79,21 @@ DCT_PUBLISHER = types.Object(
     title="Technisch contactpersoon",
     description="De contactpersoon voor technische vragen over de aanlevering. Dit kan dezelfde contactpersoon zijn als voor de inhoudelijke vragen.",
     required=True
-)
-DCT_PUBLISHER.add(
+).add(
     'foaf:name',
     types.PlainTextLine(
         title="Naam",
         description="Naam technisch contactpersoon",
         required=True
     )
-)
-DCT_PUBLISHER.add(
+).add(
     'foaf:mbox',
     types.String(
         format='email',
         title="Email",
         description="Email technisch contactpersoon"
     )
-)
-DCT_PUBLISHER.add(
+).add(
     'foaf:homepage',
     types.String(
         format='uri',
@@ -107,62 +103,20 @@ DCT_PUBLISHER.add(
 )
 
 
-DISTRIBUTION = types.Object()
-DISTRIBUTION.add(
+DISTRIBUTION = types.Object().add(
     'dct:title',
     types.PlainTextLine(
         title="Titel van de link naar de gegevensset",
         required=True
     )
-)
-DISTRIBUTION.add(
+).add(
     'dct:description',
     Markdown(
         title="Omschrijving van de link",
         description="Geef een omschrijving van de link, kan specifieke aanvullende informatie geven",
         required=True
     )
-)
-# DISTRIBUTION.add(
-#     'ams:serviceType',
-#     dcat.Enum(
-#         {
-#             'Atom': "Atom feed",
-#             'CSW': "CSW",
-#             'WCS': "WCS",
-#             'WFS': "WFS",
-#             'WMS': "WMS",
-#             'WMTS': "WMTS",
-#             'REST': "REST",
-#             'SOAP': "SOAP",
-#             'other': "Anders"
-#         },
-#         title="Type API/Service",
-#         description="Geef het type API of webservice"
-#     )
-# )
-# DISTRIBUTION.add(
-#     'ams:issued',
-#     dcat.Date(
-#         title="Publicatiedatum van de link naar de gegevensset",
-#         required=True
-#     )
-# )
-# DISTRIBUTION.add(
-#     'ams:modified',
-#     dcat.Date(
-#         title="Wijzigingsdatum van de link naar de gegevensset",
-#         required=True
-#     )
-# )
-# DISTRIBUTION.add(
-#     'dct:modified',
-#     dcat.Date(
-#         title="Verversingsdatum",
-#         description="Geef de datum waarop de inhoud van deze link voor het laatst is geactualiseerd."
-#     )
-# )
-DISTRIBUTION.add(
+).add(
     'dct:license',
     types.Enum(
         [
@@ -184,32 +138,29 @@ DISTRIBUTION.add(
         description="Geef aan onder welke open data licentie de gegevensset gepubliceerd is, indien van toepassing. Gebruik invulhulp om licentie te bepalen.\\\nIndien er sprake is van een gedeeltelijk publieke dataset, dan geldt de licentie voor het publieke deel",
         required=True
     )
-)
-DISTRIBUTION.add(
+).add(
     'dcat:accessURL',
     types.String(
         format='uri',
         title="Toegangs-URL",
-        description="Toegangslink naar de daadwerkelijke gegevensset"
+        description="Toegangslink naar de daadwerkelijke gegevensset",
+        examples=["http://"]
     )
-)
-DISTRIBUTION.add(
+).add(
     'dcat:downloadURL',
     types.String(
         format='uri',
         title="Download URL",
         description="Downloadlink om gegevensset te downloaden"
     )
-)
-DISTRIBUTION.add(
+).add(
     'dcat:mediaType',
     types.PlainTextLine(
         pattern=r'^[-\w.]+/[-\w.]+$',
         title="Bestandsformaat",
         description="Geef het formaat van de beschikbare leveringsvorm van de dataset"
     )
-)
-DISTRIBUTION.add(
+).add(
     'dcat:byteSize',
     types.Integer(
         minimum=0,
@@ -217,17 +168,51 @@ DISTRIBUTION.add(
         description="Bestandsgrootte in bytes"
     )
 )
+# .add(
+#     'ams:serviceType',
+#     dcat.Enum(
+#         {
+#             'Atom': "Atom feed",
+#             'CSW': "CSW",
+#             'WCS': "WCS",
+#             'WFS': "WFS",
+#             'WMS': "WMS",
+#             'WMTS': "WMTS",
+#             'REST': "REST",
+#             'SOAP': "SOAP",
+#             'other': "Anders"
+#         },
+#         title="Type API/Service",
+#         description="Geef het type API of webservice"
+#     )
+# ).add(
+#     'ams:issued',
+#     dcat.Date(
+#         title="Publicatiedatum van de link naar de gegevensset",
+#         required=True
+#     )
+# ).add(
+#     'ams:modified',
+#     dcat.Date(
+#         title="Wijzigingsdatum van de link naar de gegevensset",
+#         required=True
+#     )
+# ).add(
+#     'dct:modified',
+#     dcat.Date(
+#         title="Verversingsdatum",
+#         description="Geef de datum waarop de inhoud van deze link voor het laatst is geactualiseerd."
+#     )
+# )
 
 
-CATALOG_RECORD = types.Object(required=True)
-CATALOG_RECORD.add(
+CATALOG_RECORD = types.Object(required=True).add(
     'dct:issued',
     types.Date(
         title="Publicatiedatum",
         description="De datum waarop deze beschrijving van de gegevensset beschikbaar is gesteld"
     )
-)
-CATALOG_RECORD.add(
+).add(
     'dct:modified',
     types.Date(
         title="Wijzigingsdatum",
@@ -237,47 +222,380 @@ CATALOG_RECORD.add(
 )
 
 
-DATASET = types.Object()
-DATASET.add(
+DATASET = types.Object().add(
     'dct:title',
     types.PlainTextLine(
         title="Titel",
         description="Geef een titel van de gegevensset.",
         required=True
     )
-)
-DATASET.add(
+).add(
     'dct:description',
     Markdown(
         title="Beschrijving",
         description="Geef een samenvatting van de inhoud van de gegevensset, welke gegevens zitten erin en wat is expliciet eruit gelaten",
         required=True
     )
-)
-DATASET.add(
+).add(
     'dct:identifier',
     types.PlainTextLine(
         title="ID",
         description="Unieke identifier"
     )
-)
-DATASET.add(
+).add(
     'dcat:keyword',
     types.List(
-        types.PlainTextLine(),
+        types.PlainTextLine(examples=[
+
+        ]),
         title="Trefwoorden",
-        description="Trefwoorden die van toepassing zijn op de gegevensset, zodat de gegevensset gevonden kan worden"
+        description="Trefwoorden die van toepassing zijn op de gegevensset, zodat de gegevensset gevonden kan worden",
+        examples=[
+            '14.000 ft', '2.5D', '20Ke', '360 graden foto', '3D',
+            '50 dbA-contour', 'AHN', 'API', 'Afval', 'Aikido',
+            'Amersfoort', 'Amsterdam', 'Amsterdam Zuidoost', 'Apotheek',
+            'Arbeidsmarkt', 'Arena', 'Auto', 'BAG', 'BI', 'BIG', 'BRK',
+            'BRT', 'BSO', 'Badminton', 'Basismeetset', 'Basisregistratie',
+            'Basisregistratie kadaster', 'Basketbal', 'Bedrijfstak',
+            'Beperkingengebied', 'Bestemming', 'Boksen', 'Boswet',
+            'Buitenschoolse', 'Buurtcombinaties', 'Buurten', 'CBS',
+            'CCTV', 'CIR', 'COROP', 'Capoeira', 'Cijfers', 'City',
+            'CitySDK', 'Dans', 'Data', 'Datapunt', 'Demografische druk',
+            'Economie', 'Energie', 'Europa', 'Europe', 'European',
+            'Europees', 'Evenementen', 'Feiten', 'Fiets', 'GGD',
+            'Gastouderopvang', 'Gastouders', 'Gebiedsindeling',
+            'Gebiedsindelingstadsdelen', 'Gehandicaptenparkeerplaatsen',
+            'Grijze druk', 'Groene druk', 'Grofvuil', 'Groot-Amsterdam',
+            'Grootschalig', 'H2020', 'HIV', 'HR', 'Handelsregister',
+            'Hockey', 'Horeca Informatie Systeem', 'Horizon 2020',
+            'Huddesteen', 'ICC', 'ICT', 'IV3', 'Industrielawaai',
+            'Infrastructuur', 'Innovatie', 'Judo', 'KBKA', 'KDV',
+            'Kadaster', 'Kamer', 'Kamer van Koophandel',
+            'Kamer van koophandel', 'Kanoën', 'Karate',
+            'Kinderdagverblijf', 'Kinderen', 'Klimmen', 'Korfbal', 'Krav',
+            'Krijgskunst', 'KvK', 'LIB', 'LIB-4', 'LVNL', 'Leven',
+            'Linked', 'Luchthavenindelingbesluit', 'MIT', 'MOOR', 'MORA',
+            'Maga', 'Metropoolregio Amsterdam', 'Mismatch', 'NAP', 'NEN',
+            'NPR', 'Normaal Amsterdams Peil', 'OV', 'Omnisportvereniging',
+            'Onderzoek', 'Opleiding', 'Opvang', 'PC4', 'PC5', 'PC6',
+            'PM10', 'PM2.5', 'PP6', 'PR', 'PSZ', 'Parkeren', 'Parlement',
+            'Peuterspeelzaal', 'Peuterspeelzalen', 'Plusnet', 'Postcode',
+            'Postcode6', 'Postcodes', 'Provinciale', 'RCE', 'RD', 'RDA',
+            'RGB', 'RVE', 'RVO', 'RWS', 'Rijkswaterstaat', 'SDK',
+            'Schaken', 'Schietsportvereniging', 'Schiphol', 'Sjoelen',
+            'Sportschool', 'Stadsdelen', 'Staten', 'Statistiek',
+            'Taekwon-Do', 'Tafeltennis', 'Talent voor de Toekomst',
+            'Tennis', 'Top10NL', 'Top50NL', 'Turnen', 'Tweede',
+            'Tweede Kamer', 'Tweede kamer', 'UNESCO', 'UWV',
+            'Ultracam Eagle camera', 'VGO', 'VOR', 'VVE', 'Voetbal',
+            'Voetganger', 'Volleybal', 'WBSO', 'WKO', 'WOII',
+            'Wegenverkeerswet', 'West', 'Wkpb', 'Yoga', 'Zelfverdediging',
+            'Ziggo dome', 'Zomerse', 'Zwemmen', 'aanbieden grofvuil',
+            'aanbod', 'aanduiding in onderzoek', 'aangewezen',
+            'aanhoudingen', 'aantal', 'aantal kamers', 'aantasting',
+            'accounts', 'achtergrond', 'activiteiten', 'actueel',
+            'actueel hoogtebestand Nederland', 'adressen', 'afval',
+            'afval ophaalgebied', 'afval ophaalgebieden', 'afvalbak',
+            'afvalbakken', 'afvalcontainers', 'afvalophaalgebied',
+            'afvalophaalgebieden', 'afvalpunt', 'afvalregels',
+            'afvalregels per locatie', 'afvalscheiding', 'afweergeschut',
+            'agenda', 'agent', 'alcoholverbodgebieden', 'amsterdam',
+            'amsterdam\n', 'and', 'apotheken', 'appartement',
+            'appartementen', 'appartementsrecht', 'appartementsrechten',
+            'arbeidsmarkt', 'arbeidsongeschiktheid',
+            'arbeidsproductiviteit', 'archeologie', 'architect',
+            'architecten', 'architectuur', 'armoede', 'artsen', 'atcb',
+            'atelierpand', 'attracties', 'auto', 'autobezit', 'autos',
+            'balie', 'banen', 'bar', 'barometer', 'basiskaart',
+            'basisonderwijs', 'basisregistratie',
+            'basisregistratie adressen en gebouwen', 'basisscholen',
+            'basisschool', 'basisschooladviezen', 'baten', 'bebouwde kom',
+            'bedden', 'bedrijf', 'bedrijfstak',
+            'bedrijfsvaerzamelgebouwen', 'bedrijfsvestigingen',
+            'bedrijven', 'beeldbank', 'beelden', 'beeldhouwkunst',
+            'begroting', 'bekendmakingen', 'bekeuringen', 'belang',
+            'belangenbehartiging', 'belastingen', 'belemmering',
+            'belemmeringen', 'beperking', 'beperkingen',
+            'beroepsbevolking', 'beroepsonderwijs',
+            'beschermde dorpsgezichten', 'beschermde stadsgezichten',
+            'beschikbaar', 'beschikbaarheid', 'bestedingen',
+            'bestemmingsplan', 'bestemmingsplannen', 'beurs', 'bevolking',
+            'bevolkingsdichtheid', 'bevolkingsgroei',
+            'bevolkingsprognose', 'bezetting', 'bezettingsgraad',
+            'bezienswaardigheden\n', 'bi', 'bijen', 'bijstand',
+            'bijzonder', 'biologische', 'bioscoop', 'blokeenheid',
+            'bodemkwaliteit', 'boeken', 'boeren', 'boerenmarkten', 'bom',
+            'bomen', 'bommenkaart', 'boom', 'boswet', 'bout', 'bouten',
+            'bouw', 'bouwblok', 'bouwblokken', 'bouwblokzijde', 'bouwen',
+            'bouwjaar', 'bouwjaren', 'bouwrijp', 'bouwvergunning',
+            'braakliggend', 'branches', 'brand', 'branden', 'brandweer',
+            'broedplaats', 'bromfiets', 'brug', 'bruggen', 'buddy',
+            'budget', 'buien', 'bureau', 'burgerlijke',
+            'burgerlijke staat', 'bus', 'businesslocatie', 'bussen',
+            'buurt', 'buurtcentra', 'buurtcentrum', 'buurtcombinatie',
+            'buurtcombinaties', 'buurten', 'buurthuis', 'buurthuizen',
+            'buurtindeling', 'buurtwerk', 'cabaret', 'cafe', 'cafes',
+            'cameras', 'capaciteit', 'cartografie', 'casino', 'catalogus',
+            'cbs', 'centrum', 'chemisch afval', 'circulaire economie',
+            'circus', 'cito', 'classificatie', 'clinics', 'cohesie',
+            'collectie', 'collectief', 'compleet', 'congres',
+            'congressen', 'containers', 'corporaties',
+            'creatieve industrie', 'csv', 'cultureel', 'cultuur',
+            'cultuurhistorie', 'dagbesteding', 'daken', 'daklozen',
+            'daklozenzorg', 'dans', 'data', 'deformatie', 'dementie',
+            'demografie', 'detail', 'detailhandel', 'detaillering',
+            'dichtgetimmerd', 'dienst werk en inkomen', 'diensten',
+            'dienstencentra', 'dienstverlening', 'distribution',
+            'documenten', 'doden', 'doelgroepleerlingen', 'doodsoorzaken',
+            'drempels', 'drinkwater', 'drugs', 'drukte', 'dubbelglas',
+            'duurzaamheid', 'echtscheidende amsterdammer',
+            'echtscheiding', 'echtscheidingen', 'ecologie', 'ecologisch',
+            'ecologische', 'economie', 'economisch verkeer', 'eik',
+            'eiken', 'eindtoets', 'elektriciteit', 'elektrisch',
+            'elektrische', 'en', 'energie', 'energielabels',
+            'energieverbruik', 'erfpacht', 'eten', 'etnische groepen',
+            'evenementen', 'evenementenvergunning', 'excel',
+            'exploitatie', 'exploitatievergunning', 'explosieven',
+            'export', 'exposities', 'faillissementen', 'fauna',
+            'faunapassage', 'feitelijk gebruik', 'festivals', 'fiets',
+            'fietsen', 'fietsenstalling', 'fietsnetwerk', 'fietspaden',
+            'files', 'film', 'filtering', 'financien',
+            'financiële instellingen', 'fontein', 'food trucks',
+            'forensisch arts', 'fotos', 'functie', 'functiekaart',
+            'functies', 'fundering', 'funderinghoogte',
+            'fysiotherapeuten', 'fysiotherapie', 'galleries', 'gas',
+            'gbk', 'gbka', 'gbkn', 'gebieden', 'gebieden\n',
+            'gebiedsgericht werken', 'gebiedsindeling', 'geboorte',
+            'gebouw', 'gebouwen', 'gebouwhoogte', 'gebouwhoogtes',
+            'gebruiksdoel', 'gebruiksdoelen', 'gebruiksvergunning',
+            'gehandicapt', 'gehandicaptenparkeerplaatsvergunning',
+            'geluid', 'geluidshinder', 'geluidskaart', 'geluidsoverlast',
+            'geluidzones', 'gemeente', 'gemeentebegroting',
+            'gemeentefonds', 'gemeentelijk monument',
+            'gemeentelijke beperkingenregistratie', 'gemeenteraad',
+            'gemeenteraadsleden', 'gemeenterekening', 'geografie',
+            'geometrie', 'geothermie', 'geslaagden', 'geslachtsziekten',
+            'gevaarlijke', 'gewicht', 'gewonden', 'gezondheid',
+            'gezondheidszorg', 'gezoneerd industrieterrein',
+            'geïnterpoleerd', 'ggz', 'gierzwaluw', 'gis', 'gladheid',
+            'glas', 'glasbak', 'goederen', 'goods', 'gracht', 'grachten',
+            'granaat', 'grid', 'groei', 'groeicijfers', 'groen', 'groene',
+            'groenvoorziening', 'grof vuil', 'grond', 'grondgebied',
+            'grondgebruik', 'grondresolutie', 'grootschalig',
+            'grootschalige', 'grootschalige kaart',
+            'grootschalige topografie', 'grootstedelijk gebied',
+            'grootstedelijke gebieden', 'gvb', 'gymzaal', 'gymzalen',
+            'halte', 'haltes', 'handel', 'haven', 'havens', 'hbo',
+            'herbestemming', 'herhalingsmeting', 'herkomst', 'herrie',
+            'hinder', 'historie', 'historisch', 'hogescholen', 'homo',
+            'honing', 'hoofdbewoners', 'hoofdgroenstructuur',
+            'hoogopgeleide', 'hoogte', 'hoogtemodel', 'hoogtes', 'horeca',
+            'hotel', 'hotelloods', 'hotels', 'houtopstanden', 'huisarts',
+            'huisartspraktijk', 'huishoudelijk', 'huishoudens',
+            'huishoudenstypen', 'huisletter', 'huisletters', 'huisnummer',
+            'huisnummers', 'huisnummertoevoeging',
+            'huisnummertoevoegingen', 'huisvesting', 'huisvuil',
+            'huisvuil ophaalgebied', 'huizen', 'hulp', 'hulpverlening',
+            'huren', 'huur', 'huurprijs', 'huursubsidie', 'huurtoeslag',
+            'huurwoningen', 'huwelijk', 'huwelijken',
+            'huwende amsterdammer', 'ijzel', 'inburgering',
+            'indexcijfers', 'indicatie geconstateerd', 'indicaties',
+            'individueel', 'infectieziekten', 'ingetrokken', 'inkomen',
+            'inkomsten', 'innovatie', 'inslagen', 'instroom',
+            'intensiteit', 'internationaal', 'internet', 'invalide',
+            'invalideparkeerplaatsen', 'inwinningsdatum', 'inzameldag',
+            'inzameldagen', 'jaap eden', 'jaarcijfers', 'jeugd',
+            'jeugd-ggz', 'jeugdgezondheidszorg', 'jeugdzorg',
+            'jeughdhulpverlening', 'jongeren', 'jongerenhuisvesting',
+            'junioren', 'kaart', 'kaart achter de burgemeester',
+            'kaartblad', 'kaarttegels', 'kadastraal object',
+            'kadastraal perceel', 'kadastraal subject',
+            'kadastrale aanduiding', 'kadastrale grens',
+            'kadastrale grenzen', 'kadastrale kaart',
+            'kadastrale kaarten', 'kalender', 'kamers', 'kansengebieden',
+            'kansenkaart', 'kantoor', 'kantoorprijzen', 'kantoren',
+            'kantorenloods', 'kapvergunning', 'kartografie', 'kassen',
+            'kastanje', 'kastanjebloedingsziekte', 'kastanjebomen',
+            'kasteel', 'kastelen', 'kavel', 'kavels', 'kbk10', 'kbk50',
+            'kbka', 'kbka10', 'kbka50', 'kerk', 'kerken', 'kermis',
+            'kerncijfers', 'kernregistratie',
+            'kernregistratie monumenten', 'kiesgerechtigden',
+            'kinderboerderij', 'kinderdagverblijven', 'kinderopvang',
+            'klasse', 'kleine', 'kleinschalig', 'kleinschalige',
+            'kleinschalige topografie', 'klinieken', 'knnv', 'koopjaar',
+            'koopjaren', 'koopkrachtbinding', 'koopsom', 'koopsommen',
+            'koopwoning', 'kosten', 'koude', 'kruidentuin', 'kruispunten',
+            'kunst', 'kunstwerken', 'laadnetwerk', 'laden',
+            'laden en lossen', 'landbouw', 'landhuis', 'landhuizen',
+            'landschap', 'landsdekkend', 'laseraltimetrie', 'laserpunten',
+            'layers', 'leaseautos', 'leef', 'leefbaar', 'leefgebieden',
+            'leefomgeving', 'leefomgevingen', 'leefstijl', 'leeftijd',
+            'leeftijdsgroepen', 'leegstaande', 'leegstand', 'leerlingen',
+            'leerplicht', 'leisure', 'lesbisch', 'levensonderhoud',
+            'lhbt', 'lichamelijk', 'ligging', 'ligweide', 'linked',
+            'literatuur', 'live', 'live uitzendingen', 'logies',
+            'logiesvormen', 'logopedie', 'logopedisten', 'loketten',
+            'loop van de bevolking', 'lossen', 'luchtaanval',
+            'luchthaven', 'luchtkwaliteit', 'luchtmetingen', 'maaiveld',
+            'maatje', 'maatschappelijke activiteiten',
+            'maatschappelijke organisaties', 'macro-conjunctuur',
+            'mantelzorg', 'maps', 'markt', 'markten', 'meetbout',
+            'meetbouten', 'meldingen', 'meldpunt', 'mensen', 'meta',
+            'metadata', 'meteorologie', 'meting', 'metingen', 'metro',
+            'metropoolregio', 'middelbare', 'middelbare school',
+            'migratieachtergrond', 'milieu', 'milieuzone', 'minima',
+            'misdrijven', 'mobiliteit', 'moestuin', 'molen', 'molens',
+            'monitor', 'monument', 'monumentaal', 'monumentcomplex',
+            'monumenten', 'moskee', 'moskees', 'moties',
+            'motorvoertuigen', 'musea', 'museum', 'muurplanten',
+            'muurvlak', 'muurvlakken', 'muziek', 'nationaliteit',
+            'nationaliteiten', 'naturalisatie', 'natuur',
+            'natuurvoedingswinkels', 'nauwkeurig', 'nest', 'nesten',
+            'niet-natuurlijk persoon', 'nieuw', 'nieuw-west', 'nieuwbouw',
+            'nieuwkomers', 'noord', 'nulmeting', 'nulpunt',
+            'nummeraanduiding', 'nummeraanduidingen', 'oefentherapeut',
+            'oefentherapie', 'ois', 'omgeving', 'omgevingen',
+            'omgevingsschade', 'omgevingsvergunningen', 'omgevingswet',
+            'omgewaaid', 'omvalling', 'omzet', 'ondergrond',
+            'onderhoud groenvoorzieningen', 'onderhoud straten-stoepen',
+            'ondernemersvereniging', 'onderwijs', 'onderwijsdata',
+            'onderwijsniveau', 'ongelukken', 'ongevallen',
+            'onrechtmatige bewoning', 'ontmoeting', 'ontwikkeling',
+            'oorspronkelijk bouwjaar', 'oost', 'opbrekingen',
+            'opbrengsten', 'open', 'openbaar', 'openbaar vervoer',
+            'openbare', 'openbare ruimte', 'openbare ruimtes',
+            'ophaaldagen grofvuil', 'ophaaldagen huisvuil',
+            'ophalen grofvuil', 'opheffingen', 'oplaadpunten',
+            'oplaadstations', 'opladen', 'opleiding', 'opleidingsniveau',
+            'oppervlakte', 'oprichtingen', 'opstal', 'opvang', 'opvoeden',
+            'opvoedingsondersteuning', 'ordening', 'ordening\n',
+            'organisaties', 'orkest', 'oud', 'ouderen', 'ov',
+            'overgewicht', 'overlast', 'overnachtingen', 'overzicht',
+            'pand', 'panden', 'panoramabeeld', 'panoramabeelden',
+            'papier', 'park', 'parkeerautomaat', 'parkeerautomaten',
+            'parkeerdruk', 'parkeergarages', 'parkeergebieden',
+            'parkeerkaarten', 'parkeerplaatsen', 'parkeerplan',
+            'parkeervakken', 'parkeervergunning', 'parkeervergunningen',
+            'parkeerzones', 'parkeren', 'participatie', 'partnerschappen',
+            'partycentra', 'partylocatie', 'pc', 'perceel',
+            'perceelgrootte', 'perceelnummer', 'percelen', 'personeel',
+            'personeelkosten', 'personen', 'persoon', 'persoonlijke',
+            'plannen', 'planning', 'plantsoen', 'plantsoenen', 'plastic',
+            'plekken', 'po', 'podia', 'politie', 'politiebureau',
+            'politiek', 'post', 'postcode', 'postcodes', 'potentie',
+            'praktijk', 'precies', 'primair', 'processie',
+            'processierups', 'producten', 'prognoses', 'projecten',
+            'projectontwikkelaars', 'provinciale', 'provincie',
+            'psychiaters', 'psychiatrie', 'psychologen', 'psychosociaal',
+            'psychotherapeuten', 'publiekrechtrelijke beperkingen',
+            'puntdichtheid', 'puntenwolk', 'radar', 'real-time',
+            'realisatie', 'recht', 'rechten', 'rechtstoestand',
+            'rechtszekerheid', 'recreatie', 'rectificatie',
+            'reden opvoer', 'redenopvoer', 'referendum', 'referentie',
+            'referentiepunt', 'referentiepunten', 'regeling', 'regen',
+            'register', 'registerkinderopvang\n',
+            'registratie meetbouten', 'reisafstand', 'reistijd',
+            'reistijden', 'reizen', 'rekening', 'religie',
+            'remote sensing', 'restaurant', 'restaurants',
+            'resultaatrekening', 'resultaten', 'retributies', 'ride',
+            'rietland', 'rijden', 'rijksmonument', 'rijksmonumenten',
+            'rijksmuseum', 'rollaag', 'rollagen', 'routes', 'ruimte',
+            'ruimte\n', 'ruimtelijk\n', 'ruimtelijke', 'ruimtezoekers',
+            'rups', 'ruw', 'samen', 'schades', 'scheidingspercentages',
+            'schiphol', 'scholen', 'scholier', 'scholieren', 'school',
+            'schoolgebouwen', 'schoolverlaters', 'schoolverzuim',
+            'schoolwerktuin', 'schoolwijzer', 'schoonhouden',
+            'schriftelijke vragen', 'schuldhulpverlening', 'secundair',
+            'services', 'shapefile', 'shoppen', 'slachtoffer',
+            'slachtoffers', 'snelheid', 'snelle groeiers', 'snelweg',
+            'snijlijnen', 'so', 'sociaal minimum', 'sociaal-emotioneel',
+            'spanningsindicator', 'speciaal', 'speciaal onderwijs',
+            'splitsing', 'splitsingsvergunningen', 'sport',
+            'sportaccommodaties', 'sportevenement', 'sportevenementen',
+            'sporthal', 'sporthallen', 'sportplekken',
+            'sportverenigingen', 'spuiten', 'staat', 'stacaravan',
+            'stacaravans', 'stadsarchief', 'stadsdeel', 'stadsdeelraad',
+            'stadsdelen', 'stadsgezicht', 'stadsloods', 'stadsparken',
+            'stadspas', 'stadsstrand', 'stallinggedrag', 'standgegevens',
+            'starters', 'startersvacatures.', 'startkwalificatie',
+            'statistiek', 'statistieken', 'status', 'stedenbouw',
+            'stembureau', 'stembureaus', 'stemlocaties', 'stemmen',
+            'sterfte', 'sterren', 'stoffen', 'stoplichten', 'storm',
+            'stort', 'straat', 'straatnaam', 'straatnamen',
+            'straatnamenregister', 'straatparkeren', 'straten',
+            'streekproducten', 'streetview', 'strooien', 'strooiroutes',
+            'structuur', 'studenten', 'studentenhuisvesting', 'studeren',
+            'stukken', 'subsidie', 'subsidieregister', 'subsidies',
+            'subsidies.', 'synagoge', 'synagoges',
+            'talent voor de toekomst', 'tandarts', 'tandartspraktijk',
+            'tandzorg', 'tariefgebieden', 'tarieven', 'taxi',
+            'taxistandplaatsen', 'technologie', 'technologievelden',
+            'tegels', 'tempel', 'tempels', 'temperatuur',
+            'tentoonstellingen', 'terras', 'terreinen', 'terreinmodel',
+            'terreinmodellen', 'tertiar', 'textiel', 'theater',
+            'thuislozen', 'thuislozenzorg', 'thuiszorg', 'tijd',
+            'tijdreeks', 'tiles', 'toegang', 'toegankelijkheid',
+            'toegevoegde waarde', 'toerisme', 'toerisme\n', 'toeristen',
+            'toezicht', 'toneel', 'topo', 'topografie', 'touringcars',
+            'trade', 'tram', 'transformatie', 'transparantie',
+            'transseksueel', 'tunnels', 'tweede', 'twitter',
+            'type woonobject', 'uitgaan', 'uitgaanscentrum', 'uitgave',
+            'uitgaven', 'uitkeringen', 'uitslagen', 'uitstroom', 'unesco',
+            'universiteiten', 'vacatures', 'vaccinatie', 'veer',
+            'veiligheid', 'veiligheidsindex', 'verbeteraspecten buurt',
+            'verblijfsobject', 'verblijfsobjecten', 'verbruik',
+            'verdachten', 'verdedigingswerk', 'verdedigingswerken',
+            'verdieping toegang', 'vereniging', 'vergrijzing.',
+            'vergunning', 'vergunningen', 'verhuisgeneigdheid',
+            'verhuizingen', 'verhuringen', 'verhuur', 'verkeer',
+            'verkeersexamen', 'verkeerslicht', 'verkeersongevallen',
+            'verkeersslachtoffers', 'verkenningen', 'verkiezing',
+            'verkiezingen', 'verkiezingsuitslagen', 'verkochte woningen',
+            'verkoopprijs', 'verkoopprijzen', 'vermogen',
+            'verplaatsingen', 'verpleeghuizen', 'verslaafde',
+            'verslaafden', 'verslagen', 'verslavingszorg', 'vertragingen',
+            'vertrek', 'vertrektijden', 'vervoer', 'verzorgingshuizen',
+            'vestiging', 'vestigingen', 'vestingen', 'videoverslagen',
+            'vindplaats', 'vispassage', 'vloeroppervlakte',
+            'voedselwagens', 'volwassenen', 'volwasseneneducatie',
+            'voorschool', 'voorstellingen', 'voortgezet onderwijs',
+            'vraag', 'vrachtverkeer', 'vrachtwagens', 'vrije',
+            'vrijplaats', 'vrijwilliger', 'vruchtgebruik', 'waardering',
+            'wachtlijst', 'wandkaart', 'warmte', 'warmtekoudeopslak',
+            'water', 'waterpassing', 'waterschap', 'waterschappen',
+            'weer', 'weg- en waterwerken', 'wegen', 'wegenverkeerswet',
+            'wegverkeer', 'wegwerkzaamheden', 'welstand',
+            'welstandsniveau', 'welstandssysteem', 'welzijn',
+            'werelderfgoed', 'wereldoorlog', 'werk', 'werk in uitvoering',
+            'werkenden', 'werkgelegenheid', 'werkloosheid',
+            'werkloosheidscijfers', 'werknemers', 'werkplek',
+            'werkplekken', 'werktijd', 'werkzaamheden', 'werkzame',
+            'werkzame personen', 'west', 'wetenschappelijk onderwijs',
+            'wijk', 'wijkagent', 'wijkcentrum', 'wijken', 'wilde bijen',
+            'wildrooster', 'wind', 'windenergie', 'windmolens',
+            'windrichting', 'windvisie', 'winkelgebied', 'winkeliers',
+            'winkeliersverenigingen', 'winkels', 'winkelstraten',
+            'winter', 'wkpb', 'wo', 'wonen', 'woning', 'woningbezetting',
+            'woningbouw', 'woningdichtheid', 'woningen', 'woningprijs',
+            'woningtoewijzigingen', 'woningvoorraad', 'woningwaarde',
+            'woningzoekenden', 'woonduur', 'woonhuis', 'woonhuizen',
+            'woonlasten', 'woonomgeving', 'woonplaats', 'woonplaatsen',
+            'wozwaarde', 'ww', 'zakelijk recht',
+            'zakelijke dienstverlening', 'zakelijke rechten', 'zakking',
+            'zakking cumulatief', 'zakkingssnelheid', 'zeehaven',
+            'zelfbouw', 'zelfstandigen', 'zettingsgedrag', 'zomer',
+            'zomervlucht', 'zon', 'zonatlas', 'zones', 'zonne-energie',
+            'zonnepanelen', 'zorg', 'zorggebruik', 'zorgverleners',
+            'zuid', 'zuidoost', 'zwaluw', 'zwembad', 'zwembaden'
+        ]
     )
-)
-DATASET.add(
+).add(
     'dct:language',
     LANGUAGE
-)
-DATASET.add(
+).add(
     'dcat:contactPoint',
     CONTACT_POINT
-)
-DATASET.add(
+).add(
     'dct:Temporal',
     types.Object(
         title="Tijdsperiode",
@@ -295,29 +613,16 @@ DATASET.add(
             required=True
         )
     )
-)
-DATASET.add(
+).add(
     'dct:Spatial',
     Markdown(
         title="Coördinaten gebiedskader",
         description="Beschrijving of coördinaten van het gebied dat de gegevensset bestrijkt (boundingbox). Rijksdriehoeksstelsel (pseudo-RD) (EPSG:28992)"
     )
-)
-DATASET.add(
+).add(
     'dct:accrualPeriodicity',
     types.Enum(
         [
-            # 0 continu
-            # 1 dagelijks
-            # 7 wekelijks
-            # tweewekelijks
-            # maandelijks
-            # eens per kwartaal
-            # halfjaarlijks
-            # jaarlijks
-            # tweejaarlijks
-            # driejaarlijks
-            # onregelmatig
             ('realtime', "continu"),
             ('day', "dagelijks"),
             ('2pweek', "twee keer per week"),
@@ -338,42 +643,135 @@ DATASET.add(
         title="Wijzigingsfrequentie",
         description="Frequentie waarmee de gegevens worden geactualiseerd"
     )
-)
-DATASET.add(
+).add(
     'dcat:theme',
     types.List(
         THEME,
         title="Thema’s",
         description="Geef aan onder welke hoofdthema’s de gegevensset valt."
     )
-)
-DATASET.add(
+).add(
     'dct:publisher',
     DCT_PUBLISHER
-)
-DATASET.add(
+).add(
     'overheidds:doel',
     Markdown(
         title="Doel",
         description="Geef aan met welk doel deze gegevensset is aangelegd. Waarom bestaat deze gegevensset?",
         required=True
     )
-)
-DATASET.add(
+).add(
+    'overheid:grondslag',
+    Markdown(
+        title="Juridische grondslag",
+        description="Geef indien van toepassing aan wat is de oorspronkelijke juridische basis is van de gegevensset."
+    )
+).add(
     'dcat:distribution',
     types.List(
         DISTRIBUTION,
         title="Resources",
         required=True
     )
-)
-DATASET.add(
+).add(
     'foaf:isPrimaryTopicOf',
     CATALOG_RECORD
+).add(
+    'ams:temporalUnit',
+    types.Enum(
+        [
+            ('na', "Geen tijdseenheid"),
+            ('realtime', "Realtime"),
+            ('minutes', "Minuten"),
+            ('hours', "Uren"),
+            ('parttime', "Dagdelen"),
+            ('days', "Dagen"),
+            ('weeks', "Weken"),
+            ('months', "Maanden"),
+            ('quarter', "Kwartalen"),
+            ('years', "Jaren"),
+            ('other', "anders")
+        ],
+        title="Tijdseenheid",
+        description="Geef de tijdseenheid aan waarin de gegevensset is uitgedrukt, indien van toepassing."
+    )
+).add(
+    'ams:spatialUnit',
+    types.Enum(
+        [
+            ('na', "Geen geografie"),
+            ('specific', "Specifieke punten/vlakken/lijnen"),
+            ('city', "Gemeente"),
+            ('district', "Stadsdeel"),
+            ('area', "Gebied"),
+            ('borrow', "Wijk"),
+            ('neighborhood', "Buurt"),
+            ('block', "Bouwblok"),
+            ('zip4', "Postcode (4 cijfers)"),
+            ('zip5', "Postcode (4 cijfers, 1 letter)"),
+            ('zip6', "Postcode (4 cijfers, 2 letters)"),
+            ('other', "anders")
+        ],
+        title="Gebiedseenheid",
+        description="Geef een eenheid van het  gebied waarin de gegevensset is uitgedrukt."
+    )
+).add(
+    'ams:owner',
+    types.PlainTextLine(
+        title="Eigenaar",
+        description="Eigenaar en verantwoordelijke voor de betreffende registratie, ook wel bronhouder genoemd. Bij de overheid is dit het bestuursorgaan of rechtspersoon aan wie bij wettelijk voorschrift de verantwoordelijkheid voor het bijhouden van gegevens in een registratie is opgedragen.",
+        examples=[
+            'AEB Amsterdam',
+            'Amsterdam Economic Board',
+            'Amsterdam Marketing',
+            'Amsterdam Museum',
+            'Athlon Car Lease',
+            'Brandweer Amsterdam-Amstelland',
+            'CBS',
+            'CIBG',
+            'Cliëntenbelang',
+            'Cultuurcompagnie Noord-Holland',
+            'GGD Amsterdam',
+            'GOVI',
+            'Gemeente Amsterdam',
+            'Gemeente Amsterdam, Basisinformatie',
+            'Gemeente Amsterdam, Bestuur en Organisatie',
+            'Gemeente Amsterdam, Economie',
+            'Gemeente Amsterdam, Grond en Ontwikkeling',
+            'Gemeente Amsterdam, Monumenten en Archeologie',
+            'Gemeente Amsterdam, Onderwijs, Jeugd en Zorg',
+            'Gemeente Amsterdam, Onderzoek, Informatie en Statistiek',
+            'Gemeente Amsterdam, Projectmanagementbureau',
+            'Gemeente Amsterdam, Ruimte en Duurzaamheid',
+            'Gemeente Amsterdam, Sport en Bos',
+            'Gemeente Amsterdam, Stadsarchief',
+            'Gemeente Amsterdam, Stadsdeel Centrum',
+            'Gemeente Amsterdam, Stadsdeel West',
+            'Gemeente Amsterdam, Verkeer en Openbare Ruimte',
+            'Gemeente Amsterdam, Wonen',
+            'Gemeente Amsterdam, programma Afval Keten',
+            'Gemeente Amsterdam, stadsdeel Zuidoost',
+            'JeKuntMeer.nl',
+            'KNMI',
+            'Kadaster',
+            'Landelijk Register Kinderopvang en Peuterspeelzalen',
+            'Liander',
+            'Ministerie van OCW',
+            'Nationale Databank Wegverkeergegevens',
+            'Open Cultuur Data',
+            'Politie Amsterdam-Amstelland',
+            'Rijksdienst voor Cultureel Erfgoed',
+            'Rijksdienst voor Ondernemend Nederland',
+            'Rijksmuseum Amsterdam',
+            'Rijkswaterstaat',
+            'UWV',
+            'Waag Society'
+        ]
+    )
 )
 
 
-print(json.dumps(
-    DATASET.schema,
-    indent='  ', sort_keys=True
-))
+# print(json.dumps(
+#     DATASET.schema,
+#     indent='  ', sort_keys=True
+# ))

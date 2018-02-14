@@ -18,6 +18,7 @@ resource_attributes = {}
 licenses = {}
 frequencies = set()
 gebiedseenheid = set()
+keywords = set()
 organizations = {}
 themes = {}
 temporal = set()
@@ -59,6 +60,9 @@ for p in packages:
             }
             themes[v['name']] = o
 
+    for v in p.get('tags'):
+        keywords.add(v['display_name'])
+
     v = p.get('organization')
     if v is not None and v['name'] not in organizations:
         o = {
@@ -95,6 +99,9 @@ pprint.pprint(frequencies)
 print("\nThemes:")
 pprint.pprint(themes)
 
+print("\nKeywords:")
+pprint.pprint(keywords)
+
 print("\nOrganizations:")
 print(repr(organizations))
 
@@ -111,4 +118,3 @@ pprint.pprint(tijdseenheid)
 # pprint.pprint([
 #     p['metadata_created'] for p in packages
 # ])
-

@@ -1,10 +1,16 @@
 class Type(object):
-    def __init__(self, *args, title=None, description=None, required=False, **kwargs):
+    def __init__(self, *args, title=None, description=None, required=False,
+                 default=None, examples=None, read_only=None, write_only=None,
+                 **kwargs):
         if len(args) > 0 or len(kwargs) > 0:
             raise ValueError()
         self.title = title
         self.description = description
         self.required = required
+        self.default = default
+        self.examples = examples
+        self.read_only = read_only
+        self.write_only = write_only
 
     @property
     def schema(self) -> dict:
@@ -12,7 +18,15 @@ class Type(object):
         if self.title is not None:
             retval['title'] = self.title
         if self.description is not None:
-            retval['title'] = self.description
+            retval['description'] = self.description
+        if self.default is not None:
+            retval['default'] = self.default
+        if self.examples is not None:
+            retval['examples'] = self.examples
+        if self.read_only is not None:
+            retval['readOnly'] = self.read_only
+        if self.write_only is not None:
+            retval['writeOnly'] = self.write_only
         return retval
 
 
@@ -52,7 +66,6 @@ class Object(Type):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.properties = []
-        self.last = None
 
     @property
     def property_names(self):
@@ -77,7 +90,8 @@ class Object(Type):
             'properties': {
                 name: value.schema
                 for name, value in self.properties
-            }
+            },
+            'x-order': [name for name, value in self.properties]
         })
         required = [name for name, value in self.properties if value.required]
         if len(required) > 0:
