@@ -169,16 +169,16 @@ def search_search(q: str, limit: T.Optional[int],
 ####################
 
 # noinspection PyUnusedLocal
-@hookspec
-def mds_convert(from_schema: str, to_schema: str, data: dict) -> T.Optional[dict]:
-    # language=rst
-    """Convert metadata from one schema to another.
-
-    :param from_schema: the schema of ``data``
-    :param to_schema: the schema to convert ``data`` to
-    :param data: the data to convert
-
-    """
+# @hookspec
+# def mds_convert(from_schema: str, to_schema: str, data: dict) -> T.Optional[dict]:
+#     # language=rst
+#     """Convert metadata from one schema to another.
+#
+#     :param from_schema: the schema of ``data``
+#     :param to_schema: the schema to convert ``data`` to
+#     :param data: the data to convert
+#
+#     """
 
 
 # noinspection PyUnusedLocal
