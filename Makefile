@@ -16,18 +16,16 @@ schema schema_jenkins schema_acc:
 # ┃ Testing ┃
 # ┗━━━━━━━━━┛
 
-PYTEST = pytest
-PYTEST_OPTS ?= --loop uvloop -p no:cacheprovider --verbose --exitfirst
-PYTEST_COV_OPTS ?= --loop uvloop -p no:cacheprovider --verbose --cov=src --cov-report=term --no-cov-on-fail
-TESTS ?= tests
+PYTEST = $(PYTHON) setup.py test
+PYTEST_COV_OPTS ?= --cov=src --cov-report=term --no-cov-on-fail
 
 
 test: schema
-	$(PYTEST) $(PYTEST_OPTS) $(TESTS)
+	$(PYTEST)
 
 
 cov: schema
-	$(PYTEST) $(PYTEST_COV_OPTS) $(TESTS)
+	$(PYTEST) $(PYTEST_COV_OPTS)
 
 
 testdep:
