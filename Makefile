@@ -4,13 +4,16 @@ RM = rm -rf
 PYTHON = python3
 
 
-# ┏━━━━━━━━━━━┓
-# ┃ DB schema ┃
-# ┗━━━━━━━━━━━┛
+# ┏━━━━┓
+# ┃ DB ┃
+# ┗━━━━┛
 
 schema schema_jenkins schema_acc:
 	$(MAKE) -C alembic $@
 
+dbwait:
+	@echo Giving DB 5 seconds to come up
+	@sleep 5
 
 # ┏━━━━━━━━━┓
 # ┃ Testing ┃
@@ -21,6 +24,10 @@ PYTEST_COV_OPTS ?= --cov=src --cov-report=term --no-cov-on-fail
 
 
 test: cleanpy schema
+	$(PYTEST)
+
+
+waittest: cleanpy dbwait schema
 	$(PYTEST)
 
 
