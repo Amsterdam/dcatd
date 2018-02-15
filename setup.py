@@ -40,6 +40,7 @@ setup(
     packages=find_packages('src'),
     package_data={
         'datacatalog': ['*.yml'],
+        'datacatalog.handlers': ['*.yml'],
         'datacatalog.plugins': ['*.yml'],
     },
 
