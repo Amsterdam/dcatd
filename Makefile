@@ -43,8 +43,8 @@ upload: cleanpy
 	$(PYTHON) setup.py sdist upload
 
 example: cleanpy
-	@echo Starting example server:
-	@docker-compose up api
+	@echo Starting example server
+	@CONFIG_PATH=./examples/running/config.yml python -m datacatalog.main
 
 
 # ┏━━━━━━━━━━━━━┓
