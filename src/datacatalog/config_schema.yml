@@ -33,6 +33,9 @@ definitions:
     properties:
       port:
         type: integer
+      path:
+        type: string
+        pattern: '^(/[^/]+)*$'
     required:
       - port
     type: object

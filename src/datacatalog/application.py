@@ -16,9 +16,13 @@ class Application(web.Application):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.router.add_get('/', handlers.index.get)
-        self.router.add_get('/system/health', handlers.systemhealth.get)
-        self.router.add_get('/openapi', handlers.openapi.get)
+        # Initialize config:
+        self._config = config.load()
+
+        path = ('path' in self._config['web'] and self._config['web']['path']) or ''
+        self.router.add_get(path + '/', handlers.index.get)
+        self.router.add_get(path + '/system/health', handlers.systemhealth.get)
+        self.router.add_get(path + '/openapi', handlers.openapi.get)
 
         # Initialize config:
         self._config = config.load()
@@ -39,10 +43,6 @@ class Application(web.Application):
             if r.exception is not None:
                 raise r.exception
         self.assert_primary_schema()
-        print(json.dumps(
-            await self.hooks.mds_json_schema(schema_name='dcat-ap-ams'),
-            indent='  ', sort_keys=True
-        ))
 
     async def _on_cleanup(self):
         await self.hooks.deinitialize(app=self)

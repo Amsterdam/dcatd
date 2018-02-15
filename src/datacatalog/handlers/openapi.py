@@ -19,9 +19,15 @@ async def get(request: web.Request):
     # language=rst
     """Produce the OpenAPI3 definition of this service."""
     openapi_schema = _openapi_schema()
-    primary_schema = request.app.config['primarySchema']
+    c = request.app.config
+    # add document schema
+    primary_schema = c['primarySchema']
     json_schema = await request.app.hooks.mds_json_schema(schema_name=primary_schema)
     openapi_schema['components']['schemas']['dcat-doc'] = json_schema
+    # add path to servers
+    if 'path' in c['web']:
+        openapi_schema['servers'] = [{'url': c['web']['path']}]
+    # return the schema
     text = json.dumps(openapi_schema, indent='  ', sort_keys=True)
     return web.Response(
         text=text,
