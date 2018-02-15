@@ -5,7 +5,7 @@ from aiohttp import web
 import aiopluggy
 
 from . import config, plugin_interfaces
-from .handlers import index, systemhealth
+from . import handlers
 
 
 class Application(web.Application):
@@ -16,8 +16,9 @@ class Application(web.Application):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.router.add_get('/', index.handle)
-        self.router.add_get('/system/health', systemhealth.handle)
+        self.router.add_get('/', handlers.index.get)
+        self.router.add_get('/system/health', handlers.systemhealth.get)
+        self.router.add_get('/openapi', handlers.openapi.get)
 
         # Initialize config:
         self._config = config.load()
@@ -26,20 +27,25 @@ class Application(web.Application):
         self._pm = aiopluggy.PluginManager('datacatalog')
         self._pm.register_specs(plugin_interfaces)
 
-        async def on_startup(app):
-            results = await app.hooks.initialize(app=app)
-            for r in results:
-                if r.exception is not None:
-                    raise r.exception
-            self.assert_primary_schema()
-        self.on_startup.append(on_startup)
-
-        async def on_cleanup(app):
-            await app.hooks.deinitialize(app=app)
-        self.on_cleanup.append(on_cleanup)
+        self.on_startup.append(self.__class__._on_startup)
+        self.on_cleanup.append(self.__class__._on_cleanup)
 
         self._load_plugins()
         self.hooks.initialize_sync(app=self)
+
+    async def _on_startup(self):
+        results = await self.hooks.initialize(app=self)
+        for r in results:
+            if r.exception is not None:
+                raise r.exception
+        self.assert_primary_schema()
+        print(json.dumps(
+            await self.hooks.mds_json_schema(schema_name='dcat-ap-ams'),
+            indent='  ', sort_keys=True
+        ))
+
+    async def _on_cleanup(self):
+        await self.hooks.deinitialize(app=self)
 
     def assert_primary_schema(self):
         primary_schema = self.config['primarySchema']

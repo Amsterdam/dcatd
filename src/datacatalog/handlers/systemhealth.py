@@ -1,7 +1,7 @@
 from aiohttp import web
 
 
-async def handle(request):
+async def get(request):
     # language=rst
     """Handle the system health check.
 

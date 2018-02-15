@@ -191,21 +191,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/owners-list'
-  /schema:
-    get:
-      description: Get the JSON schema of the datasets in this catalog.
-      responses:
-        200:
-          description: The JSON schema.
-          headers:
-            ETag:
-              description: ETag of the schema.
-              schema:
-                $ref: '#/components/schemas/etag'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/dcat-schema'
+#  /schema:
+#    get:
+#      description: Get the JSON schema of the datasets in this catalog.
+#      responses:
+#        200:
+#          description: The JSON schema.
+#          headers:
+#            ETag:
+#              description: ETag of the schema.
+#              schema:
+#                $ref: '#/components/schemas/etag'
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/dcat-schema'
 
 components:
 
@@ -214,13 +214,12 @@ components:
       type: string
       pattern: '^(?:W/)?"[^"]+"$'
     dcat-doc:
-      type: string
+      description: >-
+        Intentionally left blank. Replaced by the actual schema at runtime.
     dcat-doc-list:
       type: array
       items:
         type: string
-    dcat-schema:
-      type: string
     themes-list:
       type: array
       items:

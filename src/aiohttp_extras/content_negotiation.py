@@ -7,7 +7,9 @@ To support *content type negotiation* in GET requests, this package provides the
 """
 import logging
 import functools
+import inspect
 import typing as T
+
 
 from aiohttp import web, hdrs
 
@@ -107,11 +109,14 @@ def produces_content_types(*content_types):
 
     def decorator(f: T.Callable):
         @functools.wraps(f)
-        async def wrapper(self, *args, **kwargs):
-            request = self.request
+        async def wrapper(request, *args, **kwargs):
+            if isinstance(request, web.View):
+                request = request.request
+            assert isinstance(request, web.Request), \
+                "first argument must be either a Request or a View"
             request['best_content_type'] = \
                 _best_content_type(request, content_types)
-            return await f(self, *args, **kwargs)
+            return await f(request, *args, **kwargs)
         return wrapper
 
     return decorator

@@ -124,8 +124,6 @@ import typing as T
 from yarl import URL
 from aiohttp import web
 
-from . import _view
-
 _logger = logging.getLogger(__name__)
 
 
@@ -300,7 +298,7 @@ async def _encode_dict(obj, stack):
 async def _encode(obj: T.Any, stack: T.Set) -> T.Union[str, T.Any]:
     if isinstance(obj, URL):
         yield _encode_string(str(obj))
-    elif isinstance(obj, _view.View):
+    elif hasattr(obj, 'to_dict'):
         try:
             obj = await obj.to_dict()
         except web.HTTPException as e:

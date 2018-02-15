@@ -1,7 +1,7 @@
 from aiohttp import web
 
 
-async def handle(request):
+async def get(request: web.Request):
     # language=rst
     """Handle the index request"""
     text = "Hello, World! This is the datacatalog"

@@ -6,17 +6,12 @@ Module that loads the configuration settings for all our services.
 
     If set, the configuration is loaded from this path.
 
-See also :mod:`config_loader`.
-
 Example usage::
 
     from . import config
-    os.chdir(config.get()['working_directory'])
+    CONFIG = config.load()
+    os.chdir(CONFIG['working_directory'])
 
-
-..  py:data:: CONFIG_SCHEMA_V1_PATH
-
-    :vartype: `pathlib.Path`
 
 ..  py:data:: DEFAULT_CONFIG_PATHS
 
@@ -25,7 +20,7 @@ Example usage::
     By default, this variable is initialized with:
 
         -   :file:`/etc/dcatd.yml`
-        -   :file:`./dcatd.yml`
+        -   :file:`./config.yml`
 
 """
 
@@ -36,9 +31,8 @@ import os
 import os.path
 import pathlib
 import string
-import types
 import typing as T
-from collections import abc, ChainMap
+from collections import ChainMap
 
 # external dependencies:
 import jsonschema
@@ -155,23 +149,6 @@ def _interpolate(config: dict) -> dict:
         return obj
 
     return {key: interpolate_recursively(config[key]) for key in config}
-
-
-def validate(config: T.Mapping, schema: T.Mapping):
-    # language=rst
-    """
-    Validate the given ``config`` using the JSON schema given in ``schemafile``.
-
-    Raises:
-        ConfigError: if schema validation failed
-
-    """
-    try:
-        jsonschema.validate(config, schema)
-    except jsonschema.exceptions.SchemaError as e:
-        raise ConfigError("Invalid JSON schema definition.") from e
-    except jsonschema.exceptions.ValidationError as e:
-        raise ConfigError("Schema validation failed.") from e
 
 
 class _TemplateWithDefaults(string.Template):
