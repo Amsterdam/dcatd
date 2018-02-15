@@ -13,6 +13,8 @@ storage_postgres:
 
 plugins: []
 
+primarySchema: ""
+
 logging:
   formatters:
     default:

@@ -2,6 +2,7 @@
 *
 
 # except a few
+!alembic
 !src
 !tests
 !setup.py

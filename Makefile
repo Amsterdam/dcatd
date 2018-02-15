@@ -20,11 +20,11 @@ PYTEST = $(PYTHON) setup.py test
 PYTEST_COV_OPTS ?= --cov=src --cov-report=term --no-cov-on-fail
 
 
-test: schema
+test: cleanpy schema
 	$(PYTEST)
 
 
-cov: schema
+cov: cleanpy schema
 	$(PYTEST) $(PYTEST_COV_OPTS)
 
 
@@ -32,7 +32,7 @@ testdep:
 	pip3 install --quiet --upgrade --upgrade-strategy eager -e .[test] && echo 'OK' || echo 'FAILED'
 
 
-testclean:
+testclean: cleanpy
 	@$(RM) .cache .coverage
 
 
@@ -40,17 +40,17 @@ testclean:
 # ┃ Installing, building, running ┃
 # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-install:
+install: cleanpy
 	@echo -n 'Installing... '
 	@pip3 install --quiet --upgrade --upgrade-strategy eager -e . && echo 'OK' || echo 'FAILED'
 
-dist:
+dist: cleanpy
 	$(PYTHON) setup.py sdist
 
-upload:
+upload: cleanpy
 	$(PYTHON) setup.py sdist upload
 
-example:
+example: cleanpy
 	@echo Starting example server:
 	@docker-compose up api
 
@@ -58,6 +58,10 @@ example:
 # ┏━━━━━━━━━━━━━┓
 # ┃ Cleaning up ┃
 # ┗━━━━━━━━━━━━━┛
+
+cleanpy:
+	@echo Removing pyc and pyo files
+	@find . -type f -name '*.py[co]' -exec rm {} \;
 
 clean:
 	@# From running pytest:
