@@ -22,15 +22,14 @@ node {
         checkout scm
     }
 
-    stage('Test') {
+    stage("Test") {
         tryStep "test", {
-            sh "docker-compose -p dcatd -f ./docker-compose.yml build --no-cache --pull && " +
-               "docker-compose -p dcatd -f ./docker-compose.yml run -u root --rm dcatd bash -c 'make jenkinstest'"
+            sh "docker-compose -p dcatd -f ./docker-compose.yml build --no-cache --pull test && " +
+               "docker-compose -p dcatd -f ./docker-compose.yml run --rm test bash -c 'make test'"
         }, {
             sh "docker-compose -p dcatd -f ./docker-compose.yml down"
         }
     }
-
 
     stage("Build image") {
         tryStep "build", {

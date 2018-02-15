@@ -13,10 +13,8 @@ services:
   api:
     build:
       context: .
-    image: amsterdam/dcatd:latest
     depends_on:
       - database
-      - builder
     volumes:
       - ./examples/running/config.yml:/etc/dcatd.yml
     ports:
@@ -29,11 +27,10 @@ services:
       DB_PORT: 5432
     command: ["python", "-m", "datacatalog.main"]
 
-  builder:
+  test:
     build:
       context: .
       dockerfile: Dockerfile.builder
-    image: amsterdam/dcatd-builder:latest
     depends_on:
       - database
     environment:

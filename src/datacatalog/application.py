@@ -32,10 +32,6 @@ class Application(web.Application):
                 if r.exception is not None:
                     raise r.exception
             self.assert_primary_schema()
-            print(json.dumps(
-                await self.hooks.mds_json_schema(schema_name='dcat-ap-ams'),
-                indent='  ', sort_keys=True
-            ))
         self.on_startup.append(on_startup)
 
         async def on_cleanup(app):
