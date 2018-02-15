@@ -30,7 +30,7 @@ services:
   test:
     build:
       context: .
-      dockerfile: Dockerfile.builder
+      dockerfile: Dockerfile.test
     depends_on:
       - database
     environment:
@@ -39,4 +39,4 @@ services:
       DB_PASSWORD: datacatalog
       DB_HOST: database
       DB_PORT: 5432
-    command: ["make", "waittest"]
+    command: ["make", "test"]

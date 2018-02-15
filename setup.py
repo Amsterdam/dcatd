@@ -65,12 +65,9 @@ setup(
 
         # for postgres storage plugin
         'asyncpg', # postgres plugin
-        'alembic', # postgres plugin
-        'psycopg2', # alembic
 
         # Recommended by aiohttp docs:
         'aiodns',    # optional asynchronous DNS client
-        'cchardet',  # optional fast character handling in C
         'uvloop',    # optional fast eventloop for asyncio
     ],
     extras_require={

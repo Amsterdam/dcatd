@@ -1,8 +1,8 @@
 """Postgres storage and search plugin.
 """
+import asyncio
 import base64
 import collections
-import functools
 import hashlib
 import json
 import logging
@@ -19,17 +19,32 @@ _pool: asyncpg.pool.Pool = None
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger('plugin.storage.postgres')
 
+CONNECT_ATTEMPT_INTERVAL_SECS = 2
+CONNECT_ATTEMPT_MAX_TRIES = 5
+
+_Q_CREATE = """
+CREATE TABLE IF NOT EXISTS "dataset" (
+    id character varying(50) PRIMARY KEY,
+    doc jsonb NOT NULL,
+    etag character varying(254) NOT NULL,
+    searchable_text tsvector,
+    lang character varying(20)
+);
+CREATE INDEX IF NOT EXISTS idx_id_etag ON "dataset" (id, etag);
+CREATE INDEX IF NOT EXISTS idx_full_text_search ON "dataset" USING gin (searchable_text);
+CREATE INDEX IF NOT EXISTS idx_json_docs ON "dataset" USING gin (doc jsonb_path_ops);
+"""
 _Q_HEALTHCHECK = 'SELECT 1'
-_Q_RETRIEVE_DOC = 'SELECT doc, etag FROM "Dataset" WHERE id = $1'
-_Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "Dataset"'
-_Q_RETRIEVE_IDS = 'SELECT id FROM "Dataset"'
-_Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "Dataset"'
-_Q_INSERT_DOC = 'INSERT INTO "Dataset" (id, doc, searchable_text, lang, etag) VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
-_Q_UPDATE_DOC = 'UPDATE "Dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=$6 RETURNING id'
-_Q_DELETE_DOC = 'DELETE FROM "Dataset" WHERE id=$1 AND etag=$2 RETURNING id'
+_Q_RETRIEVE_DOC = 'SELECT doc, etag FROM "dataset" WHERE id = $1'
+_Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "dataset"'
+_Q_RETRIEVE_IDS = 'SELECT id FROM "dataset"'
+_Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "dataset"'
+_Q_INSERT_DOC = 'INSERT INTO "dataset" (id, doc, searchable_text, lang, etag) VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
+_Q_UPDATE_DOC = 'UPDATE "dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=$6 RETURNING id'
+_Q_DELETE_DOC = 'DELETE FROM "dataset" WHERE id=$1 AND etag=$2 RETURNING id'
 _Q_SEARCH_DOCS = """
 SELECT doc, etag, ts_rank_cd(searchable_text, query) AS rank 
-  FROM "Dataset", plainto_tsquery($1, $2) query
+  FROM "dataset", plainto_tsquery($1, $2) query
  WHERE (''=$2::varchar OR searchable_text @@ query) {}
    AND ('simple'=$1::varchar OR lang=$1::varchar)
  ORDER BY rank DESC
@@ -64,14 +79,29 @@ async def initialize(app) -> T.Optional[T.Coroutine]:
     dbconf = app.config['storage_postgres']
     _logger.info("Connecting to database: postgres://%s:%i/%s",
                  dbconf['host'], dbconf['port'], dbconf['name'])
-    _pool = await asyncpg.create_pool(
-        user=dbconf['user'],
-        database=dbconf['name'],
-        host=dbconf['host'],
-        port=dbconf['port'],
-        password=dbconf['pass'],
-        loop=app.loop
-    )
+
+    connect_attempt_tries_left = CONNECT_ATTEMPT_MAX_TRIES - 1
+    while connect_attempt_tries_left >= 0:
+        try:
+            _pool = await asyncpg.create_pool(
+                user=dbconf['user'],
+                database=dbconf['name'],
+                host=dbconf['host'],
+                port=dbconf['port'],
+                password=dbconf['pass'],
+                loop=app.loop
+            )
+        except ConnectionRefusedError:
+            if connect_attempt_tries_left > 0:
+                connect_attempt_tries_left -= 1
+                _logger.warning("Database not accepting connections. Retrying %d more times.", connect_attempt_tries_left)
+                await asyncio.sleep(CONNECT_ATTEMPT_INTERVAL_SECS)
+            else:
+                _logger.error("Could not connect to the database. Aborting.")
+                raise
+        else:
+            break
+    await _pool.execute(_Q_CREATE)
 
 
 @_hookimpl
