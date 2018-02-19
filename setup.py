@@ -55,6 +55,7 @@ setup(
     install_requires=[
         'aiohttp',
         'aiopluggy',
+        'bleach',
         'datapunt_config_loader',
         'jsonschema',
         'jsonpointer',

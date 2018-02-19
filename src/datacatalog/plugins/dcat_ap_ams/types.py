@@ -1,4 +1,7 @@
+import datetime
 import json
+
+import bleach
 
 from datacatalog.plugins.dcat import types
 
@@ -7,6 +10,9 @@ class Markdown(types.String):
     def __init__(self, *args, format=None, **kwargs):
         assert format is None
         super().__init__(*args, format='markdown', **kwargs)
+
+    def full_text_search_representation(self, data: str):
+        return bleach.clean(data, tags=[], strip=True)
 
 
 LANGUAGE = types.Enum(
@@ -544,17 +550,22 @@ DISTRIBUTION = types.Object().add(
 # )
 
 
-CATALOG_RECORD = types.Object(required=True).add(
+CATALOG_RECORD = types.Object(
+    required=True,
+    title=""
+).add(
     'dct:issued',
     types.Date(
         title="Publicatiedatum",
-        description="De datum waarop deze beschrijving van de gegevensset beschikbaar is gesteld"
+        description="De datum waarop deze beschrijving van de gegevensset beschikbaar is gesteld",
+        default=datetime.date.today().isoformat()
     )
 ).add(
     'dct:modified',
     types.Date(
         title="Wijzigingsdatum",
         description="De datum waarop deze beschrijving van de gegevensset voor het laatst is gewijzigd",
+        default=datetime.date.today().isoformat(),
         required=True
     )
 )
@@ -621,7 +632,7 @@ DATASET = types.Object().add(
 ).add(
     'dct:temporal',
     types.Object(
-        #title="Tijdsperiode",
+        title=""
         #description="De tijdsperiode die de gegevensset beslaat"
     ).add(
         'time:hasBeginning',
@@ -803,7 +814,8 @@ DATASET = types.Object().add(
     'dct:identifier',
     types.PlainTextLine(
         title="UID",
-        description="Unieke identifier"
+        description="Unieke identifier",
+        format="hidden"
     )
 ).add(
     'foaf:isPrimaryTopicOf',
@@ -815,3 +827,13 @@ print(json.dumps(
     DATASET.schema,
     indent='  ', sort_keys=True
 ))
+
+# print(DATASET.full_text_search_representation({
+#     'dct:title': 'my dct:title',
+#     'dcat:distribution': [
+#         {
+#             'dct:description': "de omschrijving van één of andere **resource** met <b>markdown</b> opmaak.",\
+#             'dct:license': "cc-by-nc-sa"
+#         }
+#     ]
+# }))

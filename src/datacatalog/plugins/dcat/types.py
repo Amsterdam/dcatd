@@ -1,3 +1,6 @@
+import typing as T
+
+
 class Type(object):
     def __init__(self, *args, title=None, description=None, required=False,
                  default=None, examples=None, format=None, read_only=None,
@@ -32,6 +35,9 @@ class Type(object):
             retval['writeOnly'] = self.write_only
         return retval
 
+    def full_text_search_representation(self, data) -> T.Optional[str]:
+        return None
+
 
 class List(Type):
     def __init__(self, item_type: Type, *args,
@@ -54,6 +60,13 @@ class List(Type):
             retval['minItems'] = 1
         return retval
 
+    def full_text_search_representation(self, data: T.Iterable):
+        retval = '\n\n'.join([
+            self.item_type.full_text_search_representation(v)
+            for v in data if v is not None
+        ])
+        return retval if len(retval) > 0 else None
+
 
 class SomeOf(Type):
     def __init__(self, boolean, *types, **kwargs):
@@ -67,6 +80,9 @@ class SomeOf(Type):
         retval = dict(super().schema)
         retval[self.boolean] = [v.schema for v in self.types]
         return retval
+
+    def full_text_search_representation(self, data: str):
+        raise NotImplementedError()
 
 
 class Object(Type):
@@ -105,19 +121,14 @@ class Object(Type):
             retval['required'] = required
         return retval
 
-
-class Enum(Type):
-    def __init__(self, values, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.values = values
-
-    @property
-    def schema(self) -> dict:
-        retval = dict(super().schema)
-        retval['type'] = 'string'
-        retval['enum'] = [v[0] for v in self.values]
-        retval['enumNames'] = [v[1] for v in self.values]
-        return retval
+    def full_text_search_representation(self, data: str):
+        ftsr = (
+            value.full_text_search_representation(data[key])
+            for key, value in self.properties
+            if key in data
+        )
+        retval = '\n\n'.join(v for v in ftsr if v is not None)
+        return retval if len(retval) > 0 else None
 
 
 class String(Type):
@@ -137,6 +148,9 @@ class String(Type):
             retval['maxLength'] = self.max_length
         return retval
 
+    def full_text_search_representation(self, data: str):
+        return data
+
 
 class PlainTextLine(String):
     def __init__(self, *args, pattern=None, **kwargs):
@@ -154,6 +168,23 @@ class Language(String):
     def __init__(self, *args, format=None, pattern=None, **kwargs):
         assert format is None and pattern is None
         super().__init__(*args, format='lang', pattern=r'^(?:lang1:\w\w|lang2:\w\w\w)$', **kwargs)
+
+
+class Enum(String):
+    def __init__(self, values, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.values = values
+        self.dict = {key: value for key, value in values}
+
+    @property
+    def schema(self) -> dict:
+        retval = dict(super().schema)
+        retval['enum'] = [v[0] for v in self.values]
+        retval['enumNames'] = [v[1] for v in self.values]
+        return retval
+
+    def full_text_search_representation(self, data: str):
+        return self.dict[data]
 
 
 class Integer(Type):
@@ -178,6 +209,9 @@ class Integer(Type):
                 assert isinstance(v, int)
                 retval[k] = v
         return retval
+
+    def full_text_search_representation(self, data: T.Any):
+        return str(data) if isinstance(data, int) else None
 
 
 DISTRIBUTION = Object()
