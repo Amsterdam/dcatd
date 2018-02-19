@@ -161,36 +161,7 @@ paths:
       responses:
         204:
           description: No Content
-  /themes:
-    get:
-      description: Get the list of dataset themes.
-      responses:
-        200:
-          description: List of themes.
-          headers:
-            ETag:
-              description: ETag of the list of themes.
-              schema:
-                $ref: '#/components/schemas/etag'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/themes-list'
-  /owners:
-    get:
-      description: Get the list of dataset owners.
-      responses:
-        200:
-          description: List of owners.
-          headers:
-            ETag:
-              description: ETag of the list of owners.
-              schema:
-                $ref: '#/components/schemas/etag'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/owners-list'
+
 
 components:
 
@@ -202,14 +173,6 @@ components:
       description: >-
         Intentionally left blank. Replaced by the actual schema at runtime.
     dcat-doc-list:
-      type: array
-      items:
-        type: string
-    themes-list:
-      type: array
-      items:
-        type: string
-    owners-list:
       type: array
       items:
         type: string

@@ -26,12 +26,7 @@ class Application(web.Application):
         self.router.add_put(path + '/datasets/{dataset}', handlers.dataset.put)
         self.router.add_delete(path + '/datasets/{dataset}', handlers.dataset.delete)
         self.router.add_get(path + '/system/health', handlers.systemhealth.get)
-        self.router.add_get(path + '/themes', handlers.themes.get)
         self.router.add_get(path + '/openapi', handlers.openapi.get)
-        self.router.add_get(path + '/owners', handlers.owners.get)
-
-        # Initialize config:
-        self._config = config.load()
 
         # Load and initialize plugins:
         self._pm = aiopluggy.PluginManager('datacatalog')
