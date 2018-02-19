@@ -1,4 +1,5 @@
 import importlib
+import urlparse
 
 from aiohttp import web
 import aiopluggy
@@ -18,7 +19,7 @@ class Application(web.Application):
         # Initialize config:
         self._config = config.load()
 
-        path = ('path' in self._config['web'] and self._config['web']['path']) or ''
+        path = urlparse.urlparse(self._config['web']['baseurl']).path
         self.router.add_get(path + '/', handlers.index.get)
         self.router.add_get(path + '/datasets', handlers.datasets.get)
         self.router.add_post(path + '/datasets', handlers.datasets.post)
