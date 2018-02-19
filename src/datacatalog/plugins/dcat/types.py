@@ -1,7 +1,7 @@
 class Type(object):
     def __init__(self, *args, title=None, description=None, required=False,
-                 default=None, examples=None, read_only=None, write_only=None,
-                 **kwargs):
+                 default=None, examples=None, format=None, read_only=None,
+                 write_only=None, **kwargs):
         if len(args) > 0 or len(kwargs) > 0:
             raise ValueError()
         self.title = title
@@ -9,6 +9,7 @@ class Type(object):
         self.required = required
         self.default = default
         self.examples = examples
+        self.format = format
         self.read_only = read_only
         self.write_only = write_only
 
@@ -23,6 +24,8 @@ class Type(object):
             retval['default'] = self.default
         if self.examples is not None:
             retval['examples'] = self.examples
+        if self.format is not None:
+            retval['format'] = self.format
         if self.read_only is not None:
             retval['readOnly'] = self.read_only
         if self.write_only is not None:
@@ -31,10 +34,12 @@ class Type(object):
 
 
 class List(Type):
-    def __init__(self, item_type: Type, *args, allow_empty=True, **kwargs):
+    def __init__(self, item_type: Type, *args,
+                 allow_empty=True, unique_items=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.item_type = item_type
         self.allow_empty = allow_empty
+        self.unique_items = unique_items
 
     @property
     def schema(self) -> dict:
@@ -43,6 +48,8 @@ class List(Type):
             'type': 'array',
             'items': self.item_type.schema
         })
+        if self.unique_items is not None:
+            retval['uniqueItems'] = bool(self.unique_items)
         if not self.allow_empty:
             retval['minItems'] = 1
         return retval
@@ -99,14 +106,26 @@ class Object(Type):
         return retval
 
 
+class Enum(Type):
+    def __init__(self, values, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.values = values
+
+    @property
+    def schema(self) -> dict:
+        retval = dict(super().schema)
+        retval['type'] = 'string'
+        retval['enum'] = [v[0] for v in self.values]
+        retval['enumNames'] = [v[1] for v in self.values]
+        return retval
+
+
 class String(Type):
     def __init__(self, *args,
-                 pattern=None, max_length=None, format=None,
-                 **kwargs):
+                 pattern=None, max_length=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.pattern = pattern
         self.max_length = max_length
-        self.format = format
 
     @property
     def schema(self) -> dict:
@@ -116,26 +135,13 @@ class String(Type):
             retval['pattern'] = self.pattern
         if self.max_length is not None:
             retval['maxLength'] = self.max_length
-        if self.format is not None:
-            retval['format'] = self.format
         return retval
 
 
-class Enum(Type):
-    def __init__(self, values, default=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.values = values
-        self.default = default
-
-    @property
-    def schema(self) -> dict:
-        retval = dict(super().schema)
-        retval['type'] = 'string'
-        retval['enum'] = [v[0] for v in self.values]
-        retval['enumNames'] = [v[1] for v in self.values]
-        if self.default is not None:
-            retval['default'] = self.default
-        return retval
+class PlainTextLine(String):
+    def __init__(self, *args, pattern=None, **kwargs):
+        assert pattern is None
+        super().__init__(*args, pattern=r'^[^\n\r]*?\S[^\n\r]*$', **kwargs)
 
 
 class Date(String):
@@ -148,12 +154,6 @@ class Language(String):
     def __init__(self, *args, format=None, pattern=None, **kwargs):
         assert format is None and pattern is None
         super().__init__(*args, format='lang', pattern=r'^(?:lang1:\w\w|lang2:\w\w\w)$', **kwargs)
-
-
-class PlainTextLine(String):
-    def __init__(self, *args, format=None, pattern=r'^[^\n\r]*?\S[^\n\r]*$', **kwargs):
-        assert format is None
-        super().__init__(*args, format='line', pattern=pattern, **kwargs)
 
 
 class Integer(Type):
@@ -189,7 +189,7 @@ DISTRIBUTION.add('dct:license', String())
 DISTRIBUTION.add('dct:rights', String())
 DISTRIBUTION.add('dcat:accessURL', String(format='uri'))
 DISTRIBUTION.add('dcat:downloadURL', String(format='uri'))
-DISTRIBUTION.add('dcat:mediaType', PlainTextLine(pattern=r'^[-\w.]+/[-\w.]+$'))
+DISTRIBUTION.add('dcat:mediaType', String(pattern=r'^[-\w.]+/[-\w.]+$'))
 DISTRIBUTION.add('dct:format', String())
 DISTRIBUTION.add('dcat:byteSize', Integer(minimum=0))
 

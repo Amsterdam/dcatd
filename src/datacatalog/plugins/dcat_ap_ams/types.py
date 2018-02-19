@@ -388,7 +388,8 @@ KEYWORD = types.PlainTextLine(
 
 
 CONTACT_POINT = types.Object(
-    required=True
+    required=True,
+    title=""
 ).add(
     'vcard:fn',
     types.PlainTextLine(
@@ -413,7 +414,8 @@ CONTACT_POINT = types.Object(
 
 
 DCT_PUBLISHER = types.Object(
-    required=True
+    required=True,
+    title=""
 ).add(
     'foaf:name',
     types.PlainTextLine(
@@ -491,7 +493,7 @@ DISTRIBUTION = types.Object().add(
     )
 ).add(
     'dcat:mediaType',
-    types.PlainTextLine(
+    types.String(
         pattern=r'^[-\w.]+/[-\w.]+$',
         title="Bestandsformaat",
         description="Geef het formaat van de beschikbare leveringsvorm van de dataset"
@@ -698,6 +700,7 @@ DATASET = types.Object().add(
     'ams:owner',
     types.PlainTextLine(
         title="Eigenaar",
+        format="combobox",
         description="Eigenaar en verantwoordelijke voor de betreffende registratie, ook wel bronhouder genoemd. Bij de overheid is dit het bestuursorgaan of rechtspersoon aan wie bij wettelijk voorschrift de verantwoordelijkheid voor het bijhouden van gegevens in een registratie is opgedragen.",
         examples=[
             'AEB Amsterdam',
@@ -759,14 +762,18 @@ DATASET = types.Object().add(
         THEME,
         title="Thema",
         required=True,
-        allow_empty=True
+        allow_empty=False,
+        unique_items=True,
+        format='multiselect'
         #description="Geef aan onder welke hoofdthema’s de gegevensset valt."
     ),
 ).add(
     'dcat:keyword',
     types.List(
         KEYWORD,
-        title="Tags"
+        title="Tags",
+        unique_items=True,
+        format='multicombobox'
         #description="Geef een aantal trefwoorden, die van toepassing zijn op de gegevensset, zodat de gegevensset gevonden kan worden."
     )
 ).add(

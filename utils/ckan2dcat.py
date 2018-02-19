@@ -15,9 +15,6 @@ CKANDIR = 'ckandata'
 DCATDIR = 'dcatdata'
 
 
-_CONTEXT = CONTEXT
-
-
 def pandoc(input_, from_, to):
     # TODO remove this line:
     return input_
@@ -423,7 +420,7 @@ def dump_datasets(datasets):
     for dataset in datasets:
         try:
             expanded = jsonld.expand(dataset)
-            compacted = jsonld.compact(expanded, _CONTEXT)
+            compacted = jsonld.compact(expanded, CONTEXT)
         except:
             print(json.dumps(dataset, indent=2, sort_keys=True))
             raise
@@ -440,7 +437,7 @@ def ckan2dcat_distribution(resources):
 
 def ckan2dcat(ckan):
     retval = {
-        '@context': dict(_CONTEXT),
+        '@context': dict(CONTEXT),
         'dct:language': 'lang2:nl',
         'ams:class': 'class:open'
     }
