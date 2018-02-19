@@ -1,7 +1,11 @@
 from pyld import jsonld
+from datacatalog import config
+
+conf = config.load()
 
 CONTEXT = {
     'ams': 'http://datacatalogus.amsterdam.nl/term/',
+    'ams-dcatd': conf['web']['baseurl'] + 'datasets/',
     'ckan': 'https://ckan.org/terms/',
     'class': 'ams:class#',
     'dc': 'http://purl.org/dc/elements/1.1/',

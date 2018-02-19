@@ -9,43 +9,13 @@ import jsonpointer
 from pyld import jsonld
 
 from datacatalog import terms
+from datacatalog.plugins.dcat_ap_ams.context import CONTEXT
 
 CKANDIR = 'ckandata'
 DCATDIR = 'dcatdata'
 
 
-_CONTEXT = {
-    'ams': 'http://datacatalogus.amsterdam.nl/term/',
-    'ckan': 'https://ckan.org/terms/',
-    'class': 'ams:class#',
-    'dc': 'http://purl.org/dc/elements/1.1/',
-    'dct': 'http://purl.org/dc/terms/',
-    'foaf': 'http://xmlns.com/foaf/0.1/',
-    'lang2': 'http://id.loc.gov/vocabulary/iso639-1/',
-    'org': 'ams:org#',
-    # Volgens dcat-ap-nl '.../term', maar dat kan niet. Zucht...
-    # Volgens allerlei andere overheidsdocumenten:
-    'overheid': 'http://standaarden.overheid.nl/owms/terms/',
-    # Zelf verzonnen; juiste waarde nog opzoeken [--PvB]
-    'overheidds': 'http://standaarden.overheid.nl/owms/terms/ds#',
-    'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-    'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
-    'skos': 'http://www.w3.org/2004/02/skos/core#',
-    'theme': 'ams:theme#',
-    'time': 'http://www.w3.org/2006/time#',
-    'vcard': 'http://www.w3.org/2006/vcard/ns#',
-    'dcat:keyword': {'@container': '@set'},
-    'dcat:landingpage': {'@type': '@id'},
-    'dcat:theme': {'@container': '@set', '@type': '@id'},
-    'dct:issued': {'@type': 'xsd:date'},
-    'dct:language': {'@type': '@id'},
-    'dct:modified': {'@type': 'xsd:date'},
-    'foaf:homepage': {'@type': '@id'},
-    'foaf:mbox': {'@type': '@id'},
-    'vcard:hasEmail': {'@type': '@id'},
-    'vcard:hasURL': {'@type': '@id'},
-    'vcard:hasLogo': {'@type': '@id'}
-}
+_CONTEXT = CONTEXT
 
 
 def pandoc(input_, from_, to):
@@ -500,7 +470,7 @@ def ckan2dcat(ckan):
     #     if k not in _SCHEMA_KEYS:
     #         retval[k] = v
     retval['dcat:distribution'] = ckan2dcat_distribution(ckan['resources'])
-    retval['@id'] = f"ams:{retval['dct:identifier']}"
+    retval['@id'] = f"ams-dcatd:{retval['dct:identifier']}"
     retval['ckan:name'] = ckan['name']
     return retval
 

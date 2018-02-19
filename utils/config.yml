@@ -1,0 +1,10 @@
+plugins: []
+
+primarySchema: ""
+
+logging:
+  version: 1
+
+web:
+  port: 0
+  baseurl: http://localhost:8000/

@@ -1,5 +1,4 @@
 import importlib
-import json
 
 from aiohttp import web
 import aiopluggy

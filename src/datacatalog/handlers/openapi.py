@@ -24,10 +24,8 @@ async def get(request: web.Request):
     primary_schema = c['primarySchema']
     json_schema = await request.app.hooks.mds_json_schema(schema_name=primary_schema)
     openapi_schema['components']['schemas']['dcat-doc'] = json_schema
-    # add path to servers
-    if 'path' in c['web']:
-        openapi_schema['servers'] = [{'url': c['web']['path']}]
-    # return the schema
+    # add base url to servers
+    openapi_schema['servers'] = [{'url': c['baseurl']}]
     text = json.dumps(openapi_schema, indent='  ', sort_keys=True)
     return web.Response(
         text=text,

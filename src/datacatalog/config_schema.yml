@@ -33,11 +33,11 @@ definitions:
     properties:
       port:
         type: integer
-      path:
+      baseurl:
         type: string
-        pattern: '^(/[^/]+)*$'
     required:
       - port
+      - baseurl
     type: object
 
   logging.dictconfig:
