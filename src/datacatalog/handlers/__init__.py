@@ -1,1 +1,1 @@
-from . import datasets, index, openapi, systemhealth
+from . import dataset, datasets, index, openapi, systemhealth

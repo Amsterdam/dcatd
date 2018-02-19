@@ -24,14 +24,15 @@ def mds_name():
 
 
 @hookimpl
-def normalize(schema: str, data: dict) -> T.Optional[dict]:
-    if schema != _SCHEMA:
-        return None
+def mds_normalize(data: dict) -> dict:
     return context.compact(data)
 
 
 @hookimpl
-def mds_json_schema(schema_name: str) -> T.Optional[dict]:
-    if schema_name != _SCHEMA:
-        return None
+def mds_json_schema() -> dict:
     return types.DATASET.schema
+
+
+@hookimpl
+def mds_full_text_search_representation(data: dict) -> str:
+    return types.DATASET.full_text_search_representation(data)

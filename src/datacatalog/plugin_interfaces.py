@@ -182,7 +182,7 @@ def search_search(q: str, limit: T.Optional[int],
 
 
 # noinspection PyUnusedLocal
-@hookspec.sync
+@hookspec.first_only.sync
 def mds_name() -> str:
     # language=rst
     """The schema this plugin provides.
@@ -194,15 +194,27 @@ def mds_name() -> str:
     """
 
 
+@hookspec.first_only
+def mds_normalize(data: dict) -> dict:
+    # language=rst
+    """Normalize the given document according to this schema.
+
+    :returns: dict with normalized entries
+
+    """
+
+
 # noinspection PyUnusedLocal
-@hookspec.first_notnone
-def mds_json_schema(schema_name: str) -> T.Optional[dict]:
+@hookspec.first_only
+def mds_json_schema() -> dict:
     # language=rst
     """The json schema.
+    """
 
-    :param schema_name: the name of the schema for which to return the JSON
-        schema.
-    :returns: If the plugin implements the schema named by ``schema_name``, it
-        should return a json schema dict, otherwise ``None``.
 
+# noinspection PyUnusedLocal
+@hookspec.first_only
+def mds_full_text_search_representation(data: dict) -> str:
+    # language=rst
+    """Full text search representation of the given data.
     """
