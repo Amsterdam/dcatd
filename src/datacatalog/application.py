@@ -1,11 +1,14 @@
 import importlib
 import urllib.parse
+import logging
 
 from aiohttp import web
 import aiopluggy
 
 from . import config, plugin_interfaces
 from . import handlers
+
+logger = logging.getLogger(__name__)
 
 
 class Application(web.Application):
@@ -20,14 +23,17 @@ class Application(web.Application):
         self._config = config.load()
 
         path = urllib.parse.urlparse(self._config['web']['baseurl']).path
-        self.router.add_get(path + '/', handlers.index.get)
-        self.router.add_get(path + '/datasets', handlers.datasets.get)
-        self.router.add_post(path + '/datasets', handlers.datasets.post)
-        self.router.add_get(path + '/datasets/{dataset}', handlers.dataset.get)
-        self.router.add_put(path + '/datasets/{dataset}', handlers.dataset.put)
-        self.router.add_delete(path + '/datasets/{dataset}', handlers.dataset.delete)
-        self.router.add_get(path + '/system/health', handlers.systemhealth.get)
-        self.router.add_get(path + '/openapi', handlers.openapi.get)
+        if path[-1] != '/':
+            path += '/'
+        logger.info("Path: %s", path)
+        self.router.add_get(path, handlers.index.get)
+        self.router.add_get(path + 'datasets', handlers.datasets.get)
+        self.router.add_post(path + 'datasets', handlers.datasets.post)
+        self.router.add_get(path + 'datasets/{dataset}', handlers.dataset.get)
+        self.router.add_put(path + 'datasets/{dataset}', handlers.dataset.put)
+        self.router.add_delete(path + 'datasets/{dataset}', handlers.dataset.delete)
+        self.router.add_get(path + 'system/health', handlers.systemhealth.get)
+        self.router.add_get(path + 'openapi', handlers.openapi.get)
 
         # Load and initialize plugins:
         self._pm = aiopluggy.PluginManager('datacatalog')
@@ -44,16 +50,9 @@ class Application(web.Application):
         for r in results:
             if r.exception is not None:
                 raise r.exception
-        self.assert_primary_schema()
 
     async def _on_cleanup(self):
         await self.hooks.deinitialize(app=self)
-
-    def assert_primary_schema(self):
-        primary_schema = self.config['primarySchema']
-        implemented_schemas = [ r.value for r in self.hooks.mds_name() ]
-        assert primary_schema in implemented_schemas, \
-            "Primary schema '{}' not implemented by any plugin.".format(primary_schema)
 
     @property
     def config(self) -> config.ConfigDict:

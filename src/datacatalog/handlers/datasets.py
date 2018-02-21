@@ -1,3 +1,4 @@
+import csv
 import re
 import typing as T
 
@@ -34,19 +35,48 @@ async def get(request: web.Request) -> web.Response:
         match = _FACET_QUERY_VALUE.fullmatch(query[key])
         if not match:
             raise web.HTTPBadRequest(
-                "Unknown comparator in query parameter '%s'" % key
+                text="Unknown comparator in query parameter '%s'" % key
             )
-        comparator = match[0]
-        value = match[1]
-        if comparator == 'in=':
-            filter[key][comparator] = _split_comma_separated_stringset(value)
+        comparator = match[1]
+        value = match[2]
+        if comparator in filter[key]:
+            raise web.HTTPBadRequest(
+                text="Multiple facet filters for facet %s with comparator %s" %
+                     (key, comparator)
+            )
+        if comparator == 'in':
+            value = _csv_decode_line(value)
+            if value is None:
+                raise web.HTTPBadRequest(
+                    text="Value of query parameter '%s' is not a CSV encoded list of strings; see RFC4180" % key
+                )
+            filter[key][comparator] = value
         else:
             filter[key][comparator] = value
 
-    full_text_query = query.get('q')
+    full_text_query = query.get('q', '').strip()
 
-    retval = web.Response()
-    return retval
+    if full_text_query == '' and len(filter) == 0:
+        return web.Response(text="You'll receive *all* identifiers.")
+    text = "You asked for:"
+    if len(full_text_query) > 0:
+        text += "\nFree text query: %r" % full_text_query
+    operators = {'in': '=~', 'eq': '==', 'gt': '>', 'lt': '<', 'ge': '>=', 'le': '<='}
+    if len(filter) > 0:
+        for json_path, f in filter.items():
+            for comparator, value in f.items():
+                text += "\n%s %s %r" % (json_path, comparator, value)
+    return web.Response(
+        text=text
+    )
+
+
+def _csv_decode_line(s: str) -> T.Optional[T.Set[str]]:
+    reader = csv.reader([s])
+    try:
+        return next(iter(reader))
+    except (csv.Error, StopIteration):
+        return None
 
 
 def _split_comma_separated_stringset(s: str) -> T.Optional[T.Set[str]]:

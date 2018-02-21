@@ -775,10 +775,10 @@ DATASET = types.Object().add(
 )
 
 
-print(json.dumps(
-    DATASET.schema,
-    indent='  ', sort_keys=True
-))
+# print(json.dumps(
+#     DATASET.schema,
+#     indent='  ', sort_keys=True
+# ))
 
 # print(DATASET.full_text_search_representation({
 #     'dct:title': 'my dct:title',

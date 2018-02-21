@@ -1,6 +1,6 @@
 from aiohttp import web
 
-from . import application
+from datacatalog import application
 
 
 def main():
