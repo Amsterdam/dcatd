@@ -65,9 +65,10 @@ def health_check() -> T.Optional[str]:
 # Storage Hooks #
 #################
 
+
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_retrieve(id: str) -> T.Tuple[dict, str]:
+def storage_retrieve(id: str, etag: T.Optional[T.Set[str]]) -> T.Tuple[dict, str]:
     # language=rst
     """ Get document and corresponsing etag by id.
 
@@ -78,8 +79,57 @@ def storage_retrieve(id: str) -> T.Tuple[dict, str]:
 
 
 # noinspection PyUnusedLocal
+def storage_create(docid: str, doc: dict, searchable_text: str,
+                   iso_639_1_code: T.Optional[str]) -> str:
+    # language=rst
+    """ Store a new document.
+
+    :param docid: the ID under which to store this document. May or may not
+        already exist in the data store.
+    :param doc: the document to store; a "JSON dictionary".
+    :param searchable_text: this will be indexed for free-text search.
+    :param iso_639_1_code: the language of the document.
+    :returns: new ETag
+    :raises: KeyError if the docid already exists.
+    """
+
+
+# noinspection PyUnusedLocal
+def storage_update(docid: str, doc: dict, searchable_text: str,
+                   etags: T.Set[str], iso_639_1_code: T.Optional[str]) \
+        -> str:
+    # language=rst
+    """ Update the document with the given ID only if it has one of the provided Etags.
+
+    :param docid: the ID under which to store this document. May or may not
+        already exist in the data store.
+    :param doc: the document to store; a "JSON dictionary".
+    :param searchable_text: this will be indexed for free-text search.
+    :param etags: one or more Etags.
+    :param iso_639_1_code: the language of the document.
+    :returns: new ETag
+    :raises: ValueError if none of the given etags match the stored etag.
+    :raises: KeyError if the docid doesn't exist.
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_only
+def storage_delete(id: str, etag: T.Set[str]) -> None:
+    # language=rst
+    """ Delete document only if it has one of the provided Etags.
+
+    :param id: the ID of the document to delete.
+    :param etag: the last known ETag of this document.
+    :raises: ValueError if the given etag doesn't match the stored etag.
+    :raises: KeyError if a document with the given id doesn't exist.
+
+    """
+
+
+# noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_get_from_doc(ptr: str, distinct: bool=False) -> T.Generator[str, None, None]:
+def storage_extract(ptr: str, distinct: bool=False) -> T.Generator[str, None, None]:
     # language=rst
     """Generator to extract values from the stored documents, optionally
     distinct.
@@ -90,45 +140,6 @@ def storage_get_from_doc(ptr: str, distinct: bool=False) -> T.Generator[str, Non
     :param ptr: JSON pointer to the element.
     :param distinct: Return only distinct values.
     :raises: ValueError if filter syntax is invalid.
-    """
-
-
-# noinspection PyUnusedLocal
-@hookspec.first_only
-def storage_store(
-        id: str, doc: dict, searchable_text: str,
-        iso_639_1_code: T.Optional[str], etag: T.Optional[str]) -> str:
-    # language=rst
-    """ Store document.
-
-    :param id: the ID under which to store this document. May or may not
-        already exist in the data store.
-    :param doc: the document to store; a "JSON dictionary".
-    :param searchable_text: this will be indexed for free-text search.
-    :param iso_639_1_code: the language of the document. Will be used for
-        free-text search indexing.
-    :param etag: the last known ETag of this document, or ``None`` if no
-        document with this ``id`` should exist yet.
-    :returns: new ETag
-    :raises: ValueError if the given etag doesn't match the stored etag, or if
-             no etag is given while the doc identifier already exists.
-    :raises: KeyError if the call is an update (i.e. an etag is given) but the
-             identifier doesn't exist.
-
-    """
-
-
-# noinspection PyUnusedLocal
-@hookspec.first_only
-def storage_delete(id: str, etag: str) -> None:
-    # language=rst
-    """ Delete document.
-
-    :param id: the ID of the document to delete.
-    :param etag: the last known ETag of this document.
-    :raises: ValueError if the given etag doesn't match the stored etag.
-    :raises: KeyError if a document with the given id doesn't exist.
-
     """
 
 
