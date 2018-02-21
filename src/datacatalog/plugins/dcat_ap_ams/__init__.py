@@ -1,4 +1,4 @@
-import typing as T
+# import typing as T
 
 from aiopluggy import HookimplMarker
 
@@ -8,14 +8,10 @@ hookimpl = HookimplMarker('datacatalog')
 
 _SCHEMA = 'dcat-ap-ams'
 
+
 @hookimpl
 def initialize_sync(app):
-    pass
-
-
-@hookimpl
-async def initialize(app):
-    pass
+    types._APP = app
 
 
 @hookimpl

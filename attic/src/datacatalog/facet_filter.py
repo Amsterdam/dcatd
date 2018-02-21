@@ -10,11 +10,9 @@ import typing as T
 
 class Comparator(Enum):
     EQ = '=='
-    GT = '>'
-    LT = '<'
     GE = '>='
     LE = '<='
-    IN = 'in'
+    IN = '~='
 
 
 class LogicalOperator(Enum):
