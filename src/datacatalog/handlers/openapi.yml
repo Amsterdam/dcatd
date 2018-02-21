@@ -76,7 +76,8 @@ paths:
           ``/properties/dct:title=in=Hello,world`` The ``dct:title`` property must
           be either “Hello” or “world”.
 
-          ``/properties/dct:title=eq=Hello%20world`` The ``dct:title`` property must be “Hello world”.
+          ``/properties/dct:title=eq=Hello%20world`` The ``dct:title`` property
+          must be “Hello world”.
         required: false
         explode: true
         schema:
@@ -191,7 +192,9 @@ paths:
               schema:
                 type: string
         204:
-          description: The dataset was updated successfully.  The `ETag` response header contains the new ETag.
+          description: >-
+            The dataset was updated successfully.  The `ETag` response header
+            contains the new ETag.
           headers:
             ETag:
               schema:

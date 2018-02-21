@@ -21,11 +21,10 @@ async def get(request: web.Request):
     openapi_schema = _openapi_schema()
     c = request.app.config
     # add document schema
-    primary_schema = c['primarySchema']
-    json_schema = await request.app.hooks.mds_json_schema(schema_name=primary_schema)
+    json_schema = await request.app.hooks.mds_json_schema()
     openapi_schema['components']['schemas']['dcat-doc'] = json_schema
     # add base url to servers
-    openapi_schema['servers'] = [{'url': c['baseurl']}]
+    openapi_schema['servers'] = [{'url': c['web']['baseurl']}]
     text = json.dumps(openapi_schema, indent='  ', sort_keys=True)
     return web.Response(
         text=text,
@@ -33,7 +32,7 @@ async def get(request: web.Request):
     )
 
 
-def _openapi_schema() -> T.Mapping:
+def _openapi_schema() -> T.MutableMapping:
     global _OPENAPI_SCHEMA
     if _OPENAPI_SCHEMA is None:
         with resource_stream(__name__, _OPENAPI_SCHEMA_RESOURCE) as s:

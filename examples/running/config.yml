@@ -1,5 +1,6 @@
 plugins:
   - datacatalog.plugins.postgres
+  - datacatalog.plugins.dcat
   - datacatalog.plugins.dcat_ap_ams
 
 primarySchema: dcat-ap-ams
