@@ -1,17 +1,27 @@
 from aiohttp import web_exceptions, web
 
 from aiohttp_extras import conditional
+from aiohttp_extras.content_negotiation import produces_content_types
 
 
+@produces_content_types('application/ld+json', 'application/json')
 async def get(request: web.Request):
     given_id = request.match_info['dataset']
-    etag_if_none_match = conditional.parse_if_header(request, conditional.HEADER_IF_MATCH)
+    etag_if_none_match = conditional.parse_if_header(
+        request, conditional.HEADER_IF_MATCH
+    )
     if etag_if_none_match == '*':
         raise web_exceptions.HTTPBadRequest(
             body='Endpoint does not support * in the If-None-Match header.'
         )
     # now we know the etag is either None or a set
-
+    try:
+        doc, etag = await request.app.hooks.storage_retrieve(
+            given_id, etag_if_none_match
+        )
+    except KeyError:
+        raise web_exceptions.HTTPNotFound()
+    return web.json_response(doc, headers={'Etag', etag})
 
 
 async def put(request: web.Request):
@@ -27,7 +37,8 @@ async def put(request: web.Request):
         if val:
             if given_id != val:
                 raise web_exceptions.HTTPBadRequest(
-                    text='Document identifier mismatch: {} != {}'.format(given_id, val)
+                    text='Document identifier mismatch: '
+                         '{} != {}'.format(given_id, val)
                 )
             del normalized_doc[attr]
     # Let the metadata plugin grab the full-text search representation
@@ -76,4 +87,14 @@ async def put(request: web.Request):
 
 
 async def delete(request: web.Request):
-    ...
+    given_id = request.match_info['dataset']
+    etag_if_match = conditional.parse_if_header(request, conditional.HEADER_IF_MATCH)
+    if not etag_if_match or etag_if_match == '*':
+        raise web_exceptions.HTTPBadRequest(
+            text='Must provide a If-Match header containing one or more ETags.'
+        )
+    try:
+        await request.app.hooks.storage_delete(given_id, etag_if_match)
+    except KeyError:
+        raise web_exceptions.HTTPNotFound()
+    return web.Response(status=204)
