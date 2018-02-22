@@ -393,11 +393,11 @@ async def search_search(
                 if op != '==' and op != '~=':
                     raise NotImplementedError('Postgres plugin only supports "==" and "=~" filter operators')
                 if op == "==":
-                    filterexprs.append("doc @> '" + to_expr(ptr, val) + "'")
+                    filterexprs.append(" AND doc @> '" + to_expr(ptr, val) + "'")
                 elif op == "~=":
                     orexpr = ' OR '.join("doc @> '" + to_expr(ptr, v) + "'" for v in val)
-                    filterexprs.append('(' + orexpr + ')')
-    filterexpr = ' AND '.join(filterexprs)
+                    filterexprs.append(' AND (' + orexpr + ')')
+    filterexpr = ''.join(filterexprs)
 
     # Interpret paging
     if cursor is None:

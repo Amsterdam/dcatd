@@ -21,32 +21,27 @@ _corpus = {
     'dutch_dataset1': {
         'doc': {'id': 'dutch_dataset1'},
         'searchable_text': 'dit is de eerste nederlandse dataset',
-        'iso_639_1_code': 'nl',
-        'etag': None
+        'iso_639_1_code': 'nl'
     },
     'dutch_dataset2': {
         'doc': {'id': 'dutch_dataset2'},
         'searchable_text': 'dit is de tweede nederlandse dataset',
-        'iso_639_1_code': 'nl',
-        'etag': None
+        'iso_639_1_code': 'nl'
     },
     'english_dataset1': {
         'doc': {'id': 'english_dataset1'},
         'searchable_text': 'this is the first english dataset',
-        'iso_639_1_code': 'en',
-        'etag': None
+        'iso_639_1_code': 'en'
     },
     'english_dataset2': {
         'doc': {'id': 'english_dataset2'},
         'searchable_text': 'this is the second english dataset',
-        'iso_639_1_code': 'en',
-        'etag': None
+        'iso_639_1_code': 'en'
     },
     'unspecified_language_dataset1': {
         'doc': {'id': 'unspecified_language_dataset1'},
         'searchable_text': 'isto pode ser escrito em qualquer idioma',
-        'iso_639_1_code': None,
-        'etag': None
+        'iso_639_1_code': None
     },
 }
 
@@ -72,7 +67,7 @@ def corpus(event_loop):
     for doc_id, record in _corpus.items():
         c[doc_id] = copy.deepcopy(record)
         c[doc_id]['etag'] = event_loop.run_until_complete(
-            postgres_plugin.storage_store(doc_id, **record)
+            postgres_plugin.storage_create(doc_id, **record)
         )
     try:
         yield c
@@ -80,7 +75,7 @@ def corpus(event_loop):
         # try to delete the corpus on exit
         for doc_id, record in c.items():
             try:
-                event_loop.run_until_complete(postgres_plugin.storage_delete(doc_id, record['etag']))
+                event_loop.run_until_complete(postgres_plugin.storage_delete(doc_id, {record['etag']}))
             except:
                 pass
 
@@ -101,7 +96,7 @@ def test_health_check(event_loop):
     assert event_loop.run_until_complete(postgres_plugin.health_check()) is None
 
 
-def test_storage_store(corpus):
+def test_storage_create(corpus):
     # if the corpus fixture includes all doc ids from _corpus and has etags,
     # then uploading works.
     assert len(corpus) == len(_corpus)
@@ -110,23 +105,36 @@ def test_storage_store(corpus):
         assert record['etag'] is not None
 
 
-def test_storage_retrieve(event_loop, corpus):
+def test_storage_retrieve_no_etag(event_loop, corpus):
     for doc_id, record in corpus.items():
-        doc, etag = event_loop.run_until_complete(postgres_plugin.storage_retrieve(doc_id))
+        doc, etag = event_loop.run_until_complete(postgres_plugin.storage_retrieve(doc_id, None))
         assert doc == record['doc']
         assert etag == record['etag']
 
 
-def test_storage_get_distinct_values(event_loop, corpus):
+def test_storage_retrieve_with_current_etag(event_loop, corpus):
+    for doc_id, record in corpus.items():
+        n = event_loop.run_until_complete(postgres_plugin.storage_retrieve(doc_id, {record['etag']}))
+        assert n == None
+
+
+def test_storage_retrieve_with_old_etag(event_loop, corpus):
+    for doc_id, record in corpus.items():
+        doc, etag = event_loop.run_until_complete(postgres_plugin.storage_retrieve(doc_id, {'oldetag'}))
+        assert doc == record['doc']
+        assert etag == record['etag']
+
+
+def test_storage_extract(event_loop, corpus):
     # test ids
     async def retrieve_ids():
-        return [doc_id async for doc_id in postgres_plugin.storage_get_from_doc('/properties/id')]
+        return [doc_id async for doc_id in postgres_plugin.storage_extract('/properties/id')]
     ids = event_loop.run_until_complete(retrieve_ids())
     assert len(ids) == len(corpus)
     assert len(set(corpus.keys()) - set(ids)) == 0
     # test nonexisting
     async def retrieve_nothing():
-        return [doc_id async for doc_id in postgres_plugin.storage_get_from_doc('/items')]
+        return [doc_id async for doc_id in postgres_plugin.storage_extract('/items')]
     empty = event_loop.run_until_complete(retrieve_nothing())
     assert len(empty) == 0
 
@@ -142,7 +150,7 @@ def test_search_search(event_loop, corpus):
             assert etag == record['etag']
     # filtered search
     async def search(record):
-        filters = {'/properties/id': record['doc']['id']}
+        filters = {'/properties/id': {'==': record['doc']['id']}}
         return [r async for r in postgres_plugin.search_search('', 1, None, filters, record['iso_639_1_code'])]
     for doc_id, record in corpus.items():
         for doc, etag in event_loop.run_until_complete(search(record)):
@@ -152,4 +160,4 @@ def test_search_search(event_loop, corpus):
 
 def test_storage_delete(event_loop, corpus):
     for doc_id, record in corpus.items():
-        event_loop.run_until_complete(postgres_plugin.storage_delete(doc_id, record['etag']))
+        event_loop.run_until_complete(postgres_plugin.storage_delete(doc_id, {record['etag']}))
