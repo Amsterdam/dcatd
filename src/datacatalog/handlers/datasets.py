@@ -12,7 +12,7 @@ _FACET_QUERY_KEY = re.compile(
     r'(?:/properties/[^/=~<>]+(?:/items)?)+'
 )
 _FACET_QUERY_VALUE = re.compile(
-    r'(in|eq|gt|lt|ge|le)=(.*)'
+    r'(in|eq|gt|lt|ge|le)=(.*)', flags=re.S
 )
 _COMMA_SEPARATED_SEGMENT = re.compile(
     r'(?:\\.|[^,\\])+'
