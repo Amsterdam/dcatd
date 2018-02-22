@@ -307,17 +307,25 @@ async def storage_id() -> str:
 
 
 @_hookimpl
-async def search_search(q: str, limit: T.Optional[int],
-                        cursor: T.Optional[str],
-                        filters: T.Optional[T.Mapping[str, str]],
-                        iso_639_1_code: T.Optional[str]
-                        ) -> T.Tuple[T.Generator[T.Tuple[dict, str], None, None], str]:
+async def search_search(
+        q: str, limit: T.Optional[int],
+        cursor: T.Optional[str],
+        filters: T.Optional[T.Mapping[
+            str, # a JSON pointer
+            T.Mapping[
+                str, # a comparator; one of '=~' '==' '>' '<' '>=' '<='
+                # a string, or a set of strings if the comparator is ``~``
+                T.Union[str, T.Set[str]]
+            ]
+        ]],
+        iso_639_1_code: T.Optional[str]
+) -> T.Tuple[T.Generator[T.Tuple[dict, str], None, None], str]:
     # language=rst
     """ Search.
 
-    :param q: the query.
-    :param limit: maximum hits to be returned.
-    :param cursor: paging cursor.
+    :param q: the query
+    :param limit: maximum hits to be returned
+    :param cursor: TODO: documentation
     :param filters: mapping of JSON pointer -> value, used to filter on some value.
     :param iso_639_1_code: the language of the query.
     :returns: A tuple with a generator over the search results (documents with corresponding etags), and the cursor.
@@ -378,9 +386,18 @@ async def search_search(q: str, limit: T.Optional[int],
     # Interpret the filters (to_expr calls json.dumps on both the json pointers
     # and corresponding values, so we don't escape separately and use a format
     # string).
-    filterexpr = ''
+    filterexprs = []
     if filters:
-        filterexpr = ''.join(" AND doc @> '" + to_expr(pointer, val) + "'" for pointer, val in filters.items())
+        for ptr, filter in filters.items():
+            for op, val in filter.items():
+                if op != '==' and op != '~=':
+                    raise NotImplementedError('Postgres plugin only supports "==" and "=~" filter operators')
+                if op == "==":
+                    filterexprs.append("doc @> '" + to_expr(ptr, val) + "'")
+                elif op == "~=":
+                    orexpr = ' OR '.join("doc @> '" + to_expr(ptr, v) + "'" for v in val)
+                    filterexprs.append('(' + orexpr + ')')
+    filterexpr = ' AND '.join(filterexprs)
 
     # Interpret paging
     if cursor is None:
