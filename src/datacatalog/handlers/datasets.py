@@ -50,9 +50,7 @@ async def get(request: web.Request) -> web.Response:
                 raise web.HTTPBadRequest(
                     text="Value of query parameter '%s' is not a CSV encoded list of strings; see RFC4180" % key
                 )
-            filter[key][comparator] = value
-        else:
-            filter[key][comparator] = value
+        filter[key][comparator] = value
 
     full_text_query = query.get('q', '').strip()
 
@@ -65,7 +63,7 @@ async def get(request: web.Request) -> web.Response:
     if len(filter) > 0:
         for json_path, f in filter.items():
             for comparator, value in f.items():
-                text += "\n%s %s %r" % (json_path, comparator, value)
+                text += "\n%s %s %r" % (json_path, operators[comparator], value)
     return web.Response(
         text=text
     )
@@ -74,7 +72,7 @@ async def get(request: web.Request) -> web.Response:
 def _csv_decode_line(s: str) -> T.Optional[T.Set[str]]:
     reader = csv.reader([s])
     try:
-        return next(iter(reader))
+        return set(next(iter(reader)))
     except (csv.Error, StopIteration):
         return None
 

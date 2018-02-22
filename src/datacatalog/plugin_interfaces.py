@@ -151,7 +151,7 @@ def search_search(
     filters: T.Optional[T.Mapping[
         str, # a JSON pointer
         T.Mapping[
-            str, # a comparator; one of ``=``, ``~``, ``<``, or ``>``
+            str, # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``
             # a string, or a set of strings if the comparator is ``~``
             T.Union[str, T.Set[str]]
         ]
