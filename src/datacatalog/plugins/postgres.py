@@ -15,6 +15,8 @@ import aiopluggy
 import asyncpg.pool
 import jsonpointer
 
+from aiohttp_extras import conditional
+
 _pool: asyncpg.pool.Pool = None
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger('plugin.storage.postgres')
@@ -36,19 +38,17 @@ CREATE INDEX IF NOT EXISTS idx_json_docs ON "dataset" USING gin (doc jsonb_path_
 """
 _Q_HEALTHCHECK = 'SELECT 1'
 _Q_RETRIEVE_DOC = 'SELECT doc, etag FROM "dataset" WHERE id = $1'
-_Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "dataset"'
-_Q_RETRIEVE_IDS = 'SELECT id FROM "dataset"'
-_Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "dataset"'
 _Q_INSERT_DOC = 'INSERT INTO "dataset" (id, doc, searchable_text, lang, etag) VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
-_Q_UPDATE_DOC = 'UPDATE "dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=$6 RETURNING id'
-_Q_DELETE_DOC = 'DELETE FROM "dataset" WHERE id=$1 AND etag=$2 RETURNING id'
+_Q_UPDATE_DOC = 'UPDATE "dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=ANY($6) RETURNING id'
+_Q_DELETE_DOC = 'DELETE FROM "dataset" WHERE id=$1 AND etag=ANY($2) RETURNING id'
+_Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "dataset"'
 _Q_SEARCH_DOCS = """
 SELECT doc, etag, ts_rank_cd(searchable_text, query) AS rank 
-  FROM "dataset", plainto_tsquery($1, $2) query
- WHERE (''=$2::varchar OR searchable_text @@ query) {}
-   AND ('simple'=$1::varchar OR lang=$1::varchar)
- ORDER BY rank DESC
- LIMIT $3
+FROM "dataset", plainto_tsquery($1, $2) query
+WHERE (''=$2::varchar OR searchable_text @@ query) {}
+AND ('simple'=$1::varchar OR lang=$1::varchar)
+ORDER BY rank DESC
+LIMIT $3
 OFFSET $4;
 """
 # TODO: This search query uses one a default ranking algorihm.
@@ -118,21 +118,110 @@ async def health_check() -> T.Optional[str]:
 
 
 @_hookimpl
-async def storage_retrieve(id: str) -> T.Tuple[dict, str]:
+async def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]]) \
+        -> T.Optional[T.Tuple[dict, str]]:
     # language=rst
     """ Get document and corresponsing etag by id.
 
-    :returns: a "JSON dictionary"
+    :param docid: document id
+    :param etags: None, or a set of Etags
+    :returns:
+        Either a tuple containing the document and current etag, or None if the
+        document's Etag corresponds to one of the given etags.
     :raises KeyError: if not found
 
     """
-    record = await _pool.fetchrow(_Q_RETRIEVE_DOC, id)
+    record = await _pool.fetchrow(_Q_RETRIEVE_DOC, docid)
     if record is None:
         raise KeyError()
+    if etags and conditional.match_etags(record['etag'], etags, True):
+        return None
     return json.loads(record['doc']), record['etag']
 
+
 @_hookimpl
-async def storage_get_from_doc(ptr: str, distinct: bool=False) -> T.Generator[str, None, None]:
+async def storage_create(docid: str, doc: dict, searchable_text: str,
+                         iso_639_1_code: T.Optional[str]) -> str:
+    # language=rst
+    """ Store a new document.
+
+    :param docid: the ID under which to store this document. May or may not
+        already exist in the data store.
+    :param doc: the document to store; a "JSON dictionary".
+    :param searchable_text: this will be indexed for free-text search.
+    :param iso_639_1_code: the language of the document.
+    :returns: new ETag
+    :raises: KeyError if the docid already exists.
+    """
+    new_doc = json.dumps(doc, ensure_ascii=False, sort_keys=True)
+    new_etag = _etag_from_str(new_doc)
+    lang = _iso_639_1_code_to_pg(iso_639_1_code)
+    try:
+        await _pool.execute(_Q_INSERT_DOC, docid, new_doc, lang, searchable_text, new_etag)
+    except asyncpg.exceptions.UniqueViolationError as e:
+        raise KeyError from e
+    return new_etag
+
+
+@_hookimpl
+async def storage_update(docid: str, doc: dict, searchable_text: str,
+                         etags: T.Set[str], iso_639_1_code: T.Optional[str]) \
+        -> str:
+    # language=rst
+    """ Update the document with the given ID only if it has one of the provided Etags.
+
+    :param docid: the ID under which to store this document. May or may not
+        already exist in the data store.
+    :param doc: the document to store; a "JSON dictionary".
+    :param searchable_text: this will be indexed for free-text search.
+    :param etags: one or more Etags.
+    :param iso_639_1_code: the language of the document.
+    :returns: new ETag
+    :raises: ValueError if none of the given etags match the stored etag.
+    :raises: KeyError if the docid doesn't exist.
+    """
+    new_doc = json.dumps(doc, ensure_ascii=False, sort_keys=True)
+    new_etag = _etag_from_str(new_doc)
+    lang = _iso_639_1_code_to_pg(iso_639_1_code)
+    try:
+        if (await _pool.fetchval(_Q_UPDATE_DOC, new_doc, lang, searchable_text, new_etag, docid, list(etags))) is None:
+            # the operation may fail because either the id doesn't exist or the given
+            # etag doesn't match. There's no way to atomically check for both
+            # conditions at the same time, apart from a full table lock. However,
+            # all scenario's in which the below, not threat-safe way of identifying
+            # the cause of failure is not correct, are trivial.
+            doc = await storage_retrieve(id, etags)  # this may raise a KeyError
+            assert doc is not None
+            raise ValueError
+    except asyncpg.exceptions.UniqueViolationError:
+        raise KeyError()
+    return new_etag
+
+
+@_hookimpl
+async def storage_delete(docid: str, etags: T.Set[str]) -> None:
+    # language=rst
+    """ Delete document only if it has one of the provided Etags.
+
+    :param docid: the ID of the document to delete.
+    :param etags: the last known ETags of this document.
+    :raises: ValueError if none of the given etags match the stored etag.
+    :raises: KeyError if a document with the given id doesn't exist.
+
+    """
+    if (await _pool.fetchval(_Q_DELETE_DOC, docid, etags)) is None:
+        # the operation may fail because either the id doesn't exist or the given
+        # etag doesn't match. There's no way to atomically check for both
+        # conditions at the same time, apart from a full table lock. However,
+        # all scenario's in which the below, not threat-safe way of identifying
+        # the cause of failure is not correct, are trivial.
+        doc = await storage_retrieve(docid, etags)  # this may raise a KeyError
+        assert doc is not None
+        raise ValueError
+
+
+@_hookimpl
+async def storage_extract(ptr: str, distinct: bool=False) -> T.Generator[str, None, None]:
     # language=rst
     """Generator to extract values from the stored documents, optionally
     distinct.
@@ -204,48 +293,6 @@ async def storage_get_from_doc(ptr: str, distinct: bool=False) -> T.Generator[st
 
 
 @_hookimpl
-async def storage_store(
-        id: str, doc: dict, searchable_text: str,
-        iso_639_1_code: T.Optional[str], etag: T.Optional[str]) -> str:
-    # language=rst
-    """ Store document.
-
-    :param id: the ID under which to store this document. May or may not
-        already exist in the data store.
-    :param doc: the document to store; a "JSON dictionary".
-    :param searchable_text: this will be indexed for free-text search.
-    :param iso_639_1_code: the language of the document. Will be used for free-text search indexing.
-    :param etag: the last known ETag of this document, or ``None`` if no
-        document with this ``id`` should exist yet.
-    :returns: new ETag
-    :raises: ValueError if the given etag doesn't match the stored etag, or if
-             no etag is given while the doc identifier already exists.
-
-    """
-    new_doc = json.dumps(doc, ensure_ascii=False, sort_keys=True)
-    # the etag is a hash of the document
-    hash = hashlib.sha3_224()
-    hash.update(new_doc.encode())
-    new_etag = '"' + base64.urlsafe_b64encode(hash.digest()).decode() + '"'
-    # we use the simple dictionary for ISO 639-1 language codes we don't know
-    if iso_639_1_code not in _iso_639_1_to_pg_dictionaries:
-        if iso_639_1_code is not None:
-            _logger.warning('invalid ISO 639-1 language code: ' + iso_639_1_code)
-        lang = 'simple'
-    else:
-        lang = _iso_639_1_to_pg_dictionaries[iso_639_1_code]
-    if etag is None:
-        try:
-            await _pool.execute(_Q_INSERT_DOC, id, new_doc, lang, searchable_text, new_etag)
-        except asyncpg.exceptions.UniqueViolationError:
-            _logger.debug('Document {} exists but no etag provided'.format(id))
-            raise ValueError
-    elif (await _pool.fetchval(_Q_UPDATE_DOC, new_doc, lang, searchable_text, new_etag, id, etag)) is None:
-            raise ValueError
-    return new_etag
-
-
-@_hookimpl
 async def storage_id() -> str:
     # language=rst
     """New unique identifier.
@@ -257,32 +304,6 @@ async def storage_id() -> str:
 
     """
     return secrets.token_urlsafe(nbytes=10)
-
-
-@_hookimpl
-async def storage_delete(id: str, etag: str) -> None:
-    # language=rst
-    """ Delete document.
-
-    :param id: the ID of the document to delete.
-    :param etag: the last known ETag of this document.
-    :raises: ValueError if the given etag doesn't match the stored etag.
-    :raises: KeyError if a document with the given id doesn't exist.
-
-    """
-    if (await _pool.fetchval(_Q_DELETE_DOC, id, etag)) is None:
-        # the delete may fail because either the id doesn't exist or the given
-        # etag doesn't match. There's no way to atomically check for both
-        # conditions at the same time, apart from a full table lock. However,
-        # all scenario's in which the below, not threat-safe way of identifying
-        # the cause of failure is not correct, are trivial.
-        try:
-            await storage_retrieve(id)
-        except KeyError:
-            _logger.debug('Document {} not found'.format(id))
-            raise
-        _logger.debug('Etag ({}) mismatch for {}'.format(etag, id))
-        raise ValueError
 
 
 @_hookimpl
@@ -377,7 +398,19 @@ async def search_search(q: str, limit: T.Optional[int],
                 yield row['doc'], row['etag']
 
 
+def _etag_from_str(s: str) -> str:
+    h = hashlib.sha3_224()
+    h.update(s.encode())
+    return '"' + base64.urlsafe_b64encode(h.digest()).decode() + '"'
 
+
+def _iso_639_1_code_to_pg(iso_639_1_code: str) -> str:
+    # we use the simple dictionary for ISO 639-1 language codes we don't know
+    if iso_639_1_code not in _iso_639_1_to_pg_dictionaries:
+        if iso_639_1_code is not None:
+            _logger.warning('invalid ISO 639-1 language code: ' + iso_639_1_code)
+        return 'simple'
+    return _iso_639_1_to_pg_dictionaries[iso_639_1_code]
 
 
 # The below maps ISO 639-1 language codes (as used in dcat) to pg dictionaries.

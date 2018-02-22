@@ -68,11 +68,16 @@ def health_check() -> T.Optional[str]:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_retrieve(id: str, etag: T.Optional[T.Set[str]]) -> T.Tuple[dict, str]:
+def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]]) \
+        -> T.Optional[T.Tuple[dict, str]]:
     # language=rst
     """ Get document and corresponsing etag by id.
 
-    :returns: a "JSON dictionary"
+    :param docid: document id
+    :param etags: None, or a set of Etags
+    :returns:
+        Either a tuple containing the document and current etag, or None if the
+        document's Etag corresponds to one of the given etags.
     :raises KeyError: if not found
 
     """
@@ -115,13 +120,13 @@ def storage_update(docid: str, doc: dict, searchable_text: str,
 
 # noinspection PyUnusedLocal
 @hookspec.first_only
-def storage_delete(id: str, etag: T.Set[str]) -> None:
+def storage_delete(docid: str, etags: T.Set[str]) -> None:
     # language=rst
     """ Delete document only if it has one of the provided Etags.
 
-    :param id: the ID of the document to delete.
-    :param etag: the last known ETag of this document.
-    :raises: ValueError if the given etag doesn't match the stored etag.
+    :param docid: the ID of the document to delete.
+    :param etags: the last known ETags of this document.
+    :raises: ValueError if none of the given etags match the stored etag.
     :raises: KeyError if a document with the given id doesn't exist.
 
     """
