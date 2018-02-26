@@ -2,7 +2,7 @@
 
 from aiopluggy import HookimplMarker
 
-from . import context, types
+from . import types
 
 hookimpl = HookimplMarker('datacatalog')
 
@@ -21,7 +21,7 @@ def mds_name():
 
 @hookimpl
 def mds_canonicalize(data: dict) -> dict:
-    return context.compact(data)
+    return types.compact(data)
 
 
 @hookimpl
