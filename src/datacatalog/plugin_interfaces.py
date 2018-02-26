@@ -156,6 +156,21 @@ def storage_id() -> str:
 
 
 ################
+# Object Store #
+################
+
+# noinspection PyUnusedLocal
+@hookspec.first_only
+def object_store_writer(name: str, content_type: str) -> T.AsyncContextManager:
+    # language=rst
+    """Asynchronous context manager for file storage.
+
+    The *context* must implement an asynchronous ``write(data: bytes)`` method.
+
+    """
+
+
+################
 # Search Hooks #
 ################
 

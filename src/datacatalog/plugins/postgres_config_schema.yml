@@ -3,7 +3,7 @@ $schema: 'http://json-schema.org/draft-07/schema#'
 type: object
 
 properties:
-  storage_postgres:
+  storage_s3:
     type: object
     additionalProperties: false
     properties:

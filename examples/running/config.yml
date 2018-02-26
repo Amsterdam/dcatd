@@ -2,6 +2,7 @@ plugins:
   - datacatalog.plugins.postgres
   - datacatalog.plugins.dcat
   - datacatalog.plugins.dcat_ap_ams
+  - datacatalog.plugins.swift
 
 primarySchema: dcat-ap-ams
 
@@ -59,6 +60,12 @@ storage_postgres:
   pass: ${DB_PASS:-datacatalog}
   port: ${DB_PORT:-5432}
   user: ${DB_USER:-datacatalog}
+
+storage_swift:
+  project_id: ${SWIFT_PROJECT_ID}
+  authz_token: ${SWIFT_AUTHZ_TOKEN}
+  base_url: ${SWIFT_BASE_URL:-https://volume.stack.cloudvps.com/v2/}
+  container: ${SWIFT_CONTAINER:-dcatd}
 
 web:
   port: 8000
