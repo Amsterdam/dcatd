@@ -41,10 +41,10 @@ def mds_full_text_search_representation(data: dict) -> str:
     return DATASET.full_text_search_representation(data)
 
 
-def context():
+def context(base_url=_BASE_URL):
     return {
         'ams': 'http://datacatalogus.amsterdam.nl/term/',
-        'ams-dcatd': _BASE_URL + 'datasets/',
+        'ams-dcatd': base_url + 'datasets/',
         'ckan': 'https://ckan.org/terms/',
         'class': 'ams:class#',
         'dc': 'http://purl.org/dc/elements/1.1/',
