@@ -17,12 +17,12 @@ class Markdown(types.String):
 
 LANGUAGE = types.Enum(
     [
-        ('lang:nl', "Nederlands"),
-        ('lang:en', "Engels")
+        ('lang1:nl', "Nederlands"),
+        ('lang1:en', "Engels")
     ],
     title="Taal",
     #description="De taal van de gegevensset",
-    default='lang:nl',
+    default='lang1:nl',
     required=True
 )
 

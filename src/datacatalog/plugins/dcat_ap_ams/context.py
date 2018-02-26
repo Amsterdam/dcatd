@@ -11,7 +11,8 @@ CONTEXT = {
     'dc': 'http://purl.org/dc/elements/1.1/',
     'dct': 'http://purl.org/dc/terms/',
     'foaf': 'http://xmlns.com/foaf/0.1/',
-    'lang2': 'http://id.loc.gov/vocabulary/iso639-1/',
+    'lang1': 'http://id.loc.gov/vocabulary/iso639-1/',
+    'lang2': 'http://id.loc.gov/vocabulary/iso639-2/',
     'org': 'ams:org#',
     # Volgens dcat-ap-nl '.../term', maar dat kan niet. Zucht...
     # Volgens allerlei andere overheidsdocumenten:

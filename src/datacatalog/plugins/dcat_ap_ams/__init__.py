@@ -20,7 +20,7 @@ def mds_name():
 
 
 @hookimpl
-def mds_normalize(data: dict) -> dict:
+def mds_canonicalize(data: dict) -> dict:
     return context.compact(data)
 
 

@@ -1,5 +1,7 @@
 import typing as T
 
+import jsonschema
+
 
 class Type(object):
     def __init__(self, *args, title=None, description=None, required=False,
@@ -38,6 +40,21 @@ class Type(object):
     def full_text_search_representation(self, data) -> T.Optional[str]:
         return None
 
+    def validate(self, data):
+        """Validate the data.
+
+        :returns: the Type for which validation succeeded. See also
+            :meth:`OneOf.validate`
+        :rtype: Type
+
+        """
+        jsonschema.validate(data, self.schema)
+        return self
+
+    # noinspection PyMethodMayBeStatic
+    def canonicalize(self, data):
+        return data
+
 
 class List(Type):
     def __init__(self, item_type: Type, *args,
@@ -68,21 +85,31 @@ class List(Type):
         return retval if len(retval) > 0 else None
 
 
-class SomeOf(Type):
-    def __init__(self, boolean, *types, **kwargs):
-        assert boolean in {'allOf', 'anyOf', 'oneOf'}
+class OneOf(Type):
+    def __init__(self, *types, **kwargs):
         super().__init__(**kwargs)
-        self.boolean = boolean
         self.types = list(types)
 
     @property
     def schema(self) -> dict:
         retval = dict(super().schema)
-        retval[self.boolean] = [v.schema for v in self.types]
+        retval['oneOf'] = [v.schema for v in self.types]
         return retval
+
+    def validate(self, data):
+        for type in self.types:
+            try:
+                jsonschema.validate(data, self.schema)
+                return type
+            except jsonschema.ValidationError:
+                pass
+        raise jsonschema.ValidationError("Not valid for any type")
 
     def full_text_search_representation(self, data: str):
         raise NotImplementedError()
+
+    def canonicalize(self, data):
+        return self.validate(data).canonicalize(data)
 
 
 class Object(Type):

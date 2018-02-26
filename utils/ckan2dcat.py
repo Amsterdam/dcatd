@@ -97,8 +97,8 @@ class Language(FieldType):
     @staticmethod
     def validate(value):
         assert value in {
-            'lang2:nl',
-            'lang2:en'
+            'lang1:nl',
+            'lang1:en'
         }
 
 

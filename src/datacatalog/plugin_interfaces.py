@@ -219,11 +219,11 @@ def mds_name() -> str:
 
 
 @hookspec.first_only
-def mds_normalize(data: dict) -> dict:
+def mds_canonicalize(data: dict) -> dict:
     # language=rst
-    """Normalize the given document according to this schema.
+    """Canonicalize the given document according to this schema.
 
-    :returns: dict with normalized entries
+    :returns: dict with canonicalized entries
 
     """
 
