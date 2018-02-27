@@ -84,6 +84,7 @@ def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]]) \
 
 
 # noinspection PyUnusedLocal
+@hookspec.first_only.required
 def storage_create(docid: str, doc: dict, searchable_text: str,
                    iso_639_1_code: T.Optional[str]) -> str:
     # language=rst
@@ -100,6 +101,7 @@ def storage_create(docid: str, doc: dict, searchable_text: str,
 
 
 # noinspection PyUnusedLocal
+@hookspec.first_only.required
 def storage_update(docid: str, doc: dict, searchable_text: str,
                    etags: T.Set[str], iso_639_1_code: T.Optional[str]) \
         -> str:
@@ -119,7 +121,7 @@ def storage_update(docid: str, doc: dict, searchable_text: str,
 
 
 # noinspection PyUnusedLocal
-@hookspec.first_only
+@hookspec.first_only.required
 def storage_delete(docid: str, etags: T.Set[str]) -> None:
     # language=rst
     """ Delete document only if it has one of the provided Etags.
@@ -149,7 +151,7 @@ def storage_extract(ptr: str, distinct: bool=False) -> T.Generator[str, None, No
 
 
 # noinspection PyUnusedLocal
-@hookspec.first_only
+@hookspec.first_only.required
 def storage_id() -> str:
     # language=rst
     """New unique identifier."""
@@ -160,20 +162,20 @@ def storage_id() -> str:
 ################
 
 # noinspection PyUnusedLocal
-@hookspec.first_only
-def object_store_writer(name,
-                        content_type,
-                        stream) -> T.AsyncContextManager:
-    # language=rst
-    """Asynchronous context manager for file storage.
-
-    The *context* must implement an asynchronous ``write(data: bytes)`` method.
-
-    :param str name: file name under which to store the data
-    :param str content_type: the content type of the file
-    :param aiohttp.StreamReader stream: the data to store
-
-    """
+# @hookspec.first_only
+# def object_store_writer(name,
+#                         content_type,
+#                         stream) -> T.AsyncContextManager:
+#     # language=rst
+#     """Asynchronous context manager for file storage.
+#
+#     The *context* must implement an asynchronous ``write(data: bytes)`` method.
+#
+#     :param str name: file name under which to store the data
+#     :param str content_type: the content type of the file
+#     :param aiohttp.StreamReader stream: the data to store
+#
+#     """
 
 
 ################

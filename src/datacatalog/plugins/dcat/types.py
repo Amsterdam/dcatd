@@ -148,7 +148,7 @@ class Object(Type):
             retval['required'] = required
         return retval
 
-    def full_text_search_representation(self, data: str):
+    def full_text_search_representation(self, data: dict):
         ftsr = (
             value.full_text_search_representation(data[key])
             for key, value in self.properties
