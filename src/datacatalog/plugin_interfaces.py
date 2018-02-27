@@ -183,7 +183,7 @@ def storage_id() -> str:
 ################
 
 # noinspection PyUnusedLocal
-@hookspec
+@hookspec.first_only.required
 def search_search(
     q: str, limit: T.Optional[int],
     cursor: T.Optional[str],
@@ -191,12 +191,12 @@ def search_search(
         str, # a JSON pointer
         T.Mapping[
             str, # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``
-            # a string, or a set of strings if the comparator is ``~``
+            # a string, or a set of strings if the comparator is ``in``
             T.Union[str, T.Set[str]]
         ]
     ]],
     iso_639_1_code: T.Optional[str]
-) -> T.Tuple[T.Generator[T.Tuple[dict, str], None, None], str]:
+) -> T.Generator[T.Tuple[dict, str], None, None]:
     # language=rst
     """ Search.
 
@@ -205,7 +205,7 @@ def search_search(
     :param cursor: TODO: documentation
     :param filters: mapping of JSON pointer -> value, used to filter on some value.
     :param iso_639_1_code: the language of the query.
-    :returns: A tuple with a generator over the search results (documents with corresponding etags), and the cursor.
+    :returns: A tuple with a generator over the search results (documents with corresponding etags)
     :raises: ValueError if filter syntax is invalid, or if the ISO 639-1 code is not recognized.
 
     """

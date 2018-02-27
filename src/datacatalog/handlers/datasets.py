@@ -54,17 +54,13 @@ async def get(request: web.Request) -> web.Response:
 
     full_text_query = query.get('q', '').strip()
 
-    if full_text_query == '' and len(filter) == 0:
-        # return web.Response(text="You'll receive *all* identifiers.")
-        return web.json_response([], content_type='application/ld+json')
-    text = "You asked for:"
-    if len(full_text_query) > 0:
-        text += "\nFree text query: %r" % full_text_query
-    operators = {'in': '=~', 'eq': '==', 'gt': '>', 'lt': '<', 'ge': '>=', 'le': '<='}
-    if len(filter) > 0:
-        for json_path, f in filter.items():
-            for comparator, value in f.items():
-                text += "\n%s %s %r" % (json_path, operators[comparator], value)
+    resultiterator = request.app.hooks.search_search(
+        q=full_text_query, limit=50, cursor=None, filters=filter,
+        iso_639_1_code=None
+    )
+
+    async for doc, etag in await resultiterator:
+        print(doc, etag)
     # return web.Response(text=text)
     return web.json_response([], content_type='application/ld+json')
 

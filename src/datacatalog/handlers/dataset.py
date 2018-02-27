@@ -33,7 +33,9 @@ async def get(request: web.Request):
     expanded_doc[_DCAT_ID_KEY] = docurl
     expanded_doc[_DCAT_DC_ID_KEY] = [{'@value': docid}]
     cannonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc)
-    return web.json_response(cannonical_doc, headers={'Etag': etag})
+    return web.json_response(cannonical_doc, headers={
+        'Etag': etag, 'content_type': 'application/ld+json'
+    })
 
 
 async def put(request: web.Request):
