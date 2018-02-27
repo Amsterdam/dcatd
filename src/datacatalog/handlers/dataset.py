@@ -8,7 +8,7 @@ from aiohttp_extras import conditional
 from aiohttp_extras.content_negotiation import produces_content_types
 
 _DCAT_ID_KEY = '@id'
-_DCAT_DC_ID_KEY = 'http://purl.org/dc/elements/1.1/identifier'
+_DCAT_DC_ID_KEY = 'http://purl.org/dc/terms/identifier'
 
 
 @produces_content_types('application/ld+json', 'application/json')
@@ -28,7 +28,14 @@ async def get(request: web.Request):
         )
     except KeyError:
         raise web_exceptions.HTTPNotFound()
-    return web.json_response(doc, headers={'Etag': etag})
+    expanded_doc = jsonld.expand(doc)[0]
+    docurl = _doc_url(request)
+    expanded_doc[_DCAT_ID_KEY] = docurl
+    expanded_doc[_DCAT_DC_ID_KEY] = [{'@value': docid}]
+    cannonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc)
+    return web.json_response(cannonical_doc, headers={
+        'Etag': etag, 'content_type': 'application/ld+json'
+    })
 
 
 async def put(request: web.Request):
@@ -44,12 +51,9 @@ async def put(request: web.Request):
     # document, if any. The assumption is that request.path (which corresponds
     # to the path part of the incoming HTTP request) is the path as seen by
     # the client. This is not necessarily true.
-    baseurl = request.app.config['web']['baseurl']
-    parsed_baseurl = urllib.parse.urlparse(baseurl)
-    root = baseurl[:-len(parsed_baseurl.path)] + '/'
-    docurl = urllib.parse.urljoin(root, request.path)
+    docurl = _doc_url(request)
     docid = request.match_info['dataset']
-    expanded_doc = jsonld.expand(cannonical_doc)
+    expanded_doc = jsonld.expand(cannonical_doc)[0]
     if _DCAT_ID_KEY in expanded_doc:
         if expanded_doc[_DCAT_ID_KEY] != docurl:
             raise web_exceptions.HTTPBadRequest(
@@ -66,7 +70,8 @@ async def put(request: web.Request):
                 )
             )
         del expanded_doc[_DCAT_DC_ID_KEY]
-
+    # recompute the canonnical doc
+    cannonical_doc = await hooks.mds_canonicalize(data=expanded_doc)
     # Let the metadata plugin grab the full-text search representation
     searchable_text = await hooks.mds_full_text_search_representation(
         data=cannonical_doc
@@ -129,3 +134,10 @@ async def delete(request: web.Request):
     except KeyError:
         raise web_exceptions.HTTPNotFound()
     return web.Response(status=204)
+
+
+def _doc_url(request):
+    baseurl = request.app.config['web']['baseurl']
+    parsed_baseurl = urllib.parse.urlparse(baseurl)
+    root = baseurl[:-len(parsed_baseurl.path)] + '/'
+    return urllib.parse.urljoin(root, request.path)

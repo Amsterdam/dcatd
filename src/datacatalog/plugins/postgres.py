@@ -303,13 +303,13 @@ async def search_search(
         filters: T.Optional[T.Mapping[
             str, # a JSON pointer
             T.Mapping[
-                str, # a comparator; one of '=~' '==' '>' '<' '>=' '<='
-                # a string, or a set of strings if the comparator is ``~``
+                str, # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``
+                # a string, or a set of strings if the comparator is ``in``
                 T.Union[str, T.Set[str]]
             ]
         ]],
         iso_639_1_code: T.Optional[str]
-) -> T.Tuple[T.Generator[T.Tuple[dict, str], None, None], str]:
+) -> T.Generator[T.Tuple[dict, str], None, None]:
     # language=rst
     """ Search.
 
@@ -318,7 +318,7 @@ async def search_search(
     :param cursor: TODO: documentation
     :param filters: mapping of JSON pointer -> value, used to filter on some value.
     :param iso_639_1_code: the language of the query.
-    :returns: A tuple with a generator over the search results (documents with corresponding etags), and the cursor.
+    :returns: A tuple with a generator over the search results (documents with corresponding etags)
     :raises: ValueError if filter syntax is invalid, or if the ISO 639-1 code is not recognized.
 
     """
@@ -380,11 +380,11 @@ async def search_search(
     if filters:
         for ptr, filter in filters.items():
             for op, val in filter.items():
-                if op != '==' and op != '~=':
-                    raise NotImplementedError('Postgres plugin only supports "==" and "=~" filter operators')
-                if op == "==":
+                if op != 'eq' and op != 'in':
+                    raise NotImplementedError('Postgres plugin only supports "eq" and "in" filter operators')
+                if op == "eq":
                     filterexprs.append(" AND doc @> '" + to_expr(ptr, val) + "'")
-                elif op == "~=":
+                elif op == "in":
                     orexpr = ' OR '.join("doc @> '" + to_expr(ptr, v) + "'" for v in val)
                     filterexprs.append(' AND (' + orexpr + ')')
     filterexpr = ''.join(filterexprs)
