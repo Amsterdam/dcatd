@@ -463,101 +463,6 @@ DCT_PUBLISHER = _types.Object(
 )
 
 
-DISTRIBUTION = _types.Object().add(
-    'dcat:accessURL',
-    _types.String(
-        format='uri',
-        title="URL",
-        description="Link naar de daadwerkelijke gegevensset"
-    )
-).add(
-    'dct:title',
-    _types.PlainTextLine(
-        title="Titel",
-        # description="Titel van de link naar de gegevensset",
-        required=True
-    )
-).add(
-#     'dct:license',
-#     _types.Enum(
-#         [
-#             ('cc-by', "Creative Commons, Naamsvermelding"),
-#             ('cc-by-nc', "Creative Commons, Naamsvermelding, Niet-Commercieel"),
-#             ('cc-by-nc-nd', "Creative Commons, Naamsvermelding, Niet-Commercieel, Geen Afgeleide Werken"),
-#             ('cc-by-nc-sa', "Creative Commons, Naamsvermelding, Niet-Commercieel, Gelijk Delen"),
-#             ('cc-by-nd', "Creative Commons, Naamsvermelding, Geen Afgeleide Werken"),
-#             ('cc-by-sa', "Creative Commons, Naamsvermelding, Gelijk Delen"),
-#             ('cc-nc', "Creative Commons, Niet-Commercieel"),
-#             ('cc-zero', "Publiek Domein"),
-#             ('other-open', "Anders, Open"),
-#             ('other-by', "Anders, Naamsvermelding"),
-#             ('other-nc', "Anders, Niet Commercieel"),
-#             ('other-not-open', "Anders, Niet Open"),
-#             ('unspec', "Niet gespecificeerd")
-#         ],
-#         title="Licentie",
-#         description="Geef aan onder welke open data licentie de gegevensset gepubliceerd is, indien van toepassing. Gebruik invulhulp om licentie te bepalen.\\\nIndien er sprake is van een gedeeltelijk publieke dataset, dan geldt de licentie voor het publieke deel",
-#         required=True
-#     )
-# ).add(
-    'dct:description',
-    Markdown(
-        title="Beschrijving",
-        description="Geef een omschrijving van de link; kan specifieke aanvullende informatie geven."
-    )
-).add(
-    'dcat:mediaType',
-    _types.String(
-        pattern=r'^[-\w.]+/[-\w.]+$',
-        title="Bestandsformaat",
-        description="Geef het formaat van de beschikbare leveringsvorm van de dataset"
-    )
-).add(
-    'dcat:byteSize',
-    _types.Integer(
-        minimum=0,
-        title="Bestandsgrootte",
-        description="Bestandsgrootte in bytes"
-    )
-)
-# .add(
-#     'ams:serviceType',
-#     dcat.Enum(
-#         {
-#             'Atom': "Atom feed",
-#             'CSW': "CSW",
-#             'WCS': "WCS",
-#             'WFS': "WFS",
-#             'WMS': "WMS",
-#             'WMTS': "WMTS",
-#             'REST': "REST",
-#             'SOAP': "SOAP",
-#             'other': "Anders"
-#         },
-#         title="Type API/Service",
-#         description="Geef het type API of webservice"
-#     )
-# ).add(
-#     'ams:issued',
-#     dcat.Date(
-#         title="Publicatiedatum van de link naar de gegevensset",
-#         required=True
-#     )
-# ).add(
-#     'ams:modified',
-#     dcat.Date(
-#         title="Wijzigingsdatum van de link naar de gegevensset",
-#         required=True
-#     )
-# ).add(
-#     'dct:modified',
-#     dcat.Date(
-#         title="Verversingsdatum",
-#         description="Geef de datum waarop de inhoud van deze link voor het laatst is geactualiseerd."
-#     )
-# )
-
-
 CATALOG_RECORD = _types.Object(
     required=True,
     title=""
@@ -576,6 +481,104 @@ CATALOG_RECORD = _types.Object(
         default=datetime.date.today().isoformat(),
         required=True
     )
+)
+
+
+DISTRIBUTION = _types.Object().add(
+    'dcat:accessURL',
+    _types.String(
+        format='uri',
+        title="URL",
+        description="Link naar de daadwerkelijke gegevensset"
+    )
+).add(
+    'dct:title',
+    _types.PlainTextLine(
+        title="Titel",
+        # description="Titel van de link naar de gegevensset",
+        required=True
+    )
+).add(
+    'dct:description',
+    Markdown(
+        title="Beschrijving",
+        description="Geef een omschrijving van de link; kan specifieke aanvullende informatie geven."
+    )
+).add(
+    'ams:resourceType',
+    _types.Enum(
+        [
+            ('data', "Data"),
+            ('doc', "Documentatie"),
+            ('vis', "Visualisatie"),
+            ('app', "Voorbeeldtoepassing")
+        ],
+        title="Type resource",
+        description="""Geef aan van welk type de target van deze specifieke link is:
+
+*   **Data:** de gepubliceerde api, service of een bestand
+*   **Documentatie:** uitwerkte informatie over de dataset, bijvoorbeeld het bijbehorende datamodel, keuzelijsten, etc. (bijv. aanvullende api documentatie)
+*   **Visualisatie:** directe weergave van de dataset bij publicatie, bijv. kaart, grafiek, etc.)
+*   **Voorbeeldtoepassing:** het gebruik van de gepubliceerde data in een toepassing voor een informatieproduct)"""
+    )
+).add(
+    'ams:distributionType',
+    _types.Enum(
+        [
+            ('api', "API/Service"),
+            ('file', "Bestand"),
+            ('web', "Website")
+        ],
+        title="Verschijningsvorm"
+    )
+).add(
+    'dct:format',
+    _types.Enum(
+        [
+            ('n/a', ""),
+            ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', "xlsx"),
+            ('application/pdf', "pdf"),
+            ('text/csv', "csv"),
+            ('application/json', "json"),
+            ('application/zip; format="shp"', "shp"),
+            ('application/xml', "xml"),
+            ('application/octet-stream', "anders"),
+        ],
+        title="Bestandsformaat"
+    )
+).add(
+    'dcat:byteSize',
+    _types.Integer(
+        minimum=0,
+        title="Bestandsgrootte",
+        description="Bestandsgrootte in bytes"
+    )
+).add(
+    'ams:serviceType',
+    _types.Enum(
+        [
+            ('atom', "REST: Atom feed"),
+            ('rest', "REST: overig"),
+            ('csw', "CSW"),
+            ('wcs', "WCS"),
+            ('wfs', "WFS"),
+            ('wms', "WMS"),
+            ('wmts', "WMTS"),
+            ('soap', "SOAP"),
+            ('other', "Anders")
+        ],
+        title="Type API/Service",
+        description="Geef het type API of webservice"
+    )
+).add(
+    'ams:layerIdentifier',
+    _types.PlainTextLine(
+        title="Interne Kaartlaag ID",
+        description="De Citydata kaartlaag waarmee deze dataset op de kaart getoond kan worden"
+    )
+).add(
+    'foaf:isPrimaryTopicOf',
+    CATALOG_RECORD
 )
 
 

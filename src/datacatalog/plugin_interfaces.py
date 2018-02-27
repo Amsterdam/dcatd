@@ -161,11 +161,17 @@ def storage_id() -> str:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only
-def object_store_writer(name: str, content_type: str) -> T.AsyncContextManager:
+def object_store_writer(name,
+                        content_type,
+                        stream) -> T.AsyncContextManager:
     # language=rst
     """Asynchronous context manager for file storage.
 
     The *context* must implement an asynchronous ``write(data: bytes)`` method.
+
+    :param str name: file name under which to store the data
+    :param str content_type: the content type of the file
+    :param aiohttp.StreamReader stream: the data to store
 
     """
 

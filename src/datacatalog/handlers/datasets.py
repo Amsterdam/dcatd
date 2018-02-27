@@ -55,7 +55,8 @@ async def get(request: web.Request) -> web.Response:
     full_text_query = query.get('q', '').strip()
 
     if full_text_query == '' and len(filter) == 0:
-        return web.Response(text="You'll receive *all* identifiers.")
+        # return web.Response(text="You'll receive *all* identifiers.")
+        return web.json_response([], content_type='application/ld+json')
     text = "You asked for:"
     if len(full_text_query) > 0:
         text += "\nFree text query: %r" % full_text_query
@@ -64,6 +65,7 @@ async def get(request: web.Request) -> web.Response:
         for json_path, f in filter.items():
             for comparator, value in f.items():
                 text += "\n%s %s %r" % (json_path, operators[comparator], value)
+    # return web.Response(text=text)
     return web.json_response([], content_type='application/ld+json')
 
 
