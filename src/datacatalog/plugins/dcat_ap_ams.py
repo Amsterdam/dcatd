@@ -464,6 +464,13 @@ DCT_PUBLISHER = _types.Object(
 
 
 DISTRIBUTION = _types.Object().add(
+    'dcat:accessURL',
+    _types.String(
+        format='uri',
+        title="URL",
+        description="Link naar de daadwerkelijke gegevensset"
+    )
+).add(
     'dct:title',
     _types.PlainTextLine(
         title="Titel",
@@ -471,48 +478,32 @@ DISTRIBUTION = _types.Object().add(
         required=True
     )
 ).add(
+#     'dct:license',
+#     _types.Enum(
+#         [
+#             ('cc-by', "Creative Commons, Naamsvermelding"),
+#             ('cc-by-nc', "Creative Commons, Naamsvermelding, Niet-Commercieel"),
+#             ('cc-by-nc-nd', "Creative Commons, Naamsvermelding, Niet-Commercieel, Geen Afgeleide Werken"),
+#             ('cc-by-nc-sa', "Creative Commons, Naamsvermelding, Niet-Commercieel, Gelijk Delen"),
+#             ('cc-by-nd', "Creative Commons, Naamsvermelding, Geen Afgeleide Werken"),
+#             ('cc-by-sa', "Creative Commons, Naamsvermelding, Gelijk Delen"),
+#             ('cc-nc', "Creative Commons, Niet-Commercieel"),
+#             ('cc-zero', "Publiek Domein"),
+#             ('other-open', "Anders, Open"),
+#             ('other-by', "Anders, Naamsvermelding"),
+#             ('other-nc', "Anders, Niet Commercieel"),
+#             ('other-not-open', "Anders, Niet Open"),
+#             ('unspec', "Niet gespecificeerd")
+#         ],
+#         title="Licentie",
+#         description="Geef aan onder welke open data licentie de gegevensset gepubliceerd is, indien van toepassing. Gebruik invulhulp om licentie te bepalen.\\\nIndien er sprake is van een gedeeltelijk publieke dataset, dan geldt de licentie voor het publieke deel",
+#         required=True
+#     )
+# ).add(
     'dct:description',
     Markdown(
-        title="Omschrijving van de link",
-        description="Geef een omschrijving van de link, kan specifieke aanvullende informatie geven",
-        required=True
-    )
-).add(
-    'dct:license',
-    _types.Enum(
-        [
-            ('cc-by', "Creative Commons, Naamsvermelding"),
-            ('cc-by-nc', "Creative Commons, Naamsvermelding, Niet-Commercieel"),
-            ('cc-by-nc-nd', "Creative Commons, Naamsvermelding, Niet-Commercieel, Geen Afgeleide Werken"),
-            ('cc-by-nc-sa', "Creative Commons, Naamsvermelding, Niet-Commercieel, Gelijk Delen"),
-            ('cc-by-nd', "Creative Commons, Naamsvermelding, Geen Afgeleide Werken"),
-            ('cc-by-sa', "Creative Commons, Naamsvermelding, Gelijk Delen"),
-            ('cc-nc', "Creative Commons, Niet-Commercieel"),
-            ('cc-zero', "Publiek Domein"),
-            ('other-open', "Anders, Open"),
-            ('other-by', "Anders, Naamsvermelding"),
-            ('other-nc', "Anders, Niet Commercieel"),
-            ('other-not-open', "Anders, Niet Open"),
-            ('unspec', "Niet gespecificeerd")
-        ],
-        title="Licentie",
-        description="Geef aan onder welke open data licentie de gegevensset gepubliceerd is, indien van toepassing. Gebruik invulhulp om licentie te bepalen.\\\nIndien er sprake is van een gedeeltelijk publieke dataset, dan geldt de licentie voor het publieke deel",
-        required=True
-    )
-).add(
-    'dcat:accessURL',
-    _types.String(
-        format='uri',
-        title="Toegangs-URL",
-        description="Toegangslink naar de daadwerkelijke gegevensset",
-        examples=["http://"]
-    )
-).add(
-    'dcat:downloadURL',
-    _types.String(
-        format='uri',
-        title="Download URL",
-        description="Downloadlink om gegevensset te downloaden"
+        title="Beschrijving",
+        description="Geef een omschrijving van de link; kan specifieke aanvullende informatie geven."
     )
 ).add(
     'dcat:mediaType',
@@ -606,8 +597,7 @@ DATASET = _types.Object().add(
     'dcat:distribution',
     _types.List(
         DISTRIBUTION,
-        title="Resources",
-        required=True
+        title="Resources"
     )
 ).add(
     'overheidds:doel',

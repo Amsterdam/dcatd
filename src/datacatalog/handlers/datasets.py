@@ -64,9 +64,7 @@ async def get(request: web.Request) -> web.Response:
         for json_path, f in filter.items():
             for comparator, value in f.items():
                 text += "\n%s %s %r" % (json_path, operators[comparator], value)
-    return web.Response(
-        text=text
-    )
+    return web.json_response([], content_type='application/ld+json')
 
 
 def _csv_decode_line(s: str) -> T.Optional[T.Set[str]]:
