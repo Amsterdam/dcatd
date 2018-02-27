@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import subprocess
@@ -9,7 +10,7 @@ import jsonpointer
 from pyld import jsonld
 
 from datacatalog import terms
-from datacatalog.plugins.dcat_ap_ams.context import CONTEXT
+from datacatalog.plugins import dcat_ap_ams
 
 CKANDIR = 'ckandata'
 DCATDIR = 'dcatdata'
@@ -415,12 +416,12 @@ def load_packages():
     return retval
 
 
-def dump_datasets(datasets):
+def dump_datasets(datasets, context):
     os.makedirs(DCATDIR, exist_ok=True)
     for dataset in datasets:
         try:
             expanded = jsonld.expand(dataset)
-            compacted = jsonld.compact(expanded, CONTEXT)
+            compacted = jsonld.compact(expanded, context)
         except:
             print(json.dumps(dataset, indent=2, sort_keys=True))
             raise
@@ -435,9 +436,9 @@ def ckan2dcat_distribution(resources):
     return retval
 
 
-def ckan2dcat(ckan):
+def ckan2dcat(ckan, context):
     retval = {
-        '@context': dict(CONTEXT),
+        '@context': dict(context),  # dict() because we mutate the context
         'dct:language': 'lang2:nl',
         'ams:class': 'class:open'
     }
@@ -472,5 +473,10 @@ def ckan2dcat(ckan):
     return retval
 
 
+parser = argparse.ArgumentParser(description='CKAN 2 DCAT.')
+parser.add_argument('baseurl', metavar='URL', help='baseurl of the dcatd instance')
+
 if __name__ == '__main__':
-    dump_datasets(ckan2dcat(x) for x in load_packages())
+    args = parser.parse_args()
+    ctx = dcat_ap_ams.context(args.baseurl)
+    dump_datasets((ckan2dcat(x, ctx) for x in load_packages()), ctx)

@@ -183,18 +183,8 @@ async def storage_update(docid: str, doc: dict, searchable_text: str,
     new_doc = json.dumps(doc, ensure_ascii=False, sort_keys=True)
     new_etag = _etag_from_str(new_doc)
     lang = _iso_639_1_code_to_pg(iso_639_1_code)
-    try:
-        if (await _pool.fetchval(_Q_UPDATE_DOC, new_doc, lang, searchable_text, new_etag, docid, list(etags))) is None:
-            # the operation may fail because either the id doesn't exist or the given
-            # etag doesn't match. There's no way to atomically check for both
-            # conditions at the same time, apart from a full table lock. However,
-            # all scenario's in which the below, not threat-safe way of identifying
-            # the cause of failure is not correct, are trivial.
-            doc = await storage_retrieve(id, etags)  # this may raise a KeyError
-            assert doc is not None
-            raise ValueError
-    except asyncpg.exceptions.UniqueViolationError:
-        raise KeyError()
+    if (await _pool.fetchval(_Q_UPDATE_DOC, new_doc, lang, searchable_text, new_etag, docid, list(etags))) is None:
+        raise ValueError
     return new_etag
 
 

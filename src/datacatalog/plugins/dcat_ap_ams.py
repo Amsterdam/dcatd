@@ -41,7 +41,7 @@ def mds_full_text_search_representation(data: dict) -> str:
     return DATASET.full_text_search_representation(data)
 
 
-def context(base_url=_BASE_URL):
+def context(base_url=_BASE_URL) -> dict:
     return {
         'ams': 'http://datacatalogus.amsterdam.nl/term/',
         'ams-dcatd': base_url + 'datasets/',
@@ -67,7 +67,6 @@ def context(base_url=_BASE_URL):
         'dcat:keyword': {'@container': '@set'},
         'dcat:landingpage': {'@type': '@id'},
         'dcat:theme': {'@container': '@set', '@type': '@id'},
-        'dct:identifier': {'@type': '@id'},
         'dct:issued': {'@type': 'xsd:date'},
         'dct:language': {'@type': '@id'},
         'dct:modified': {'@type': 'xsd:date'},
