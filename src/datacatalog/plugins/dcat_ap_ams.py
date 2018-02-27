@@ -41,7 +41,9 @@ def mds_full_text_search_representation(data: dict) -> str:
     return DATASET.full_text_search_representation(data)
 
 
-def context(base_url=_BASE_URL) -> dict:
+def context(base_url=None) -> dict:
+    if base_url is None:
+        base_url = _BASE_URL
     return {
         'ams': 'http://datacatalogus.amsterdam.nl/term/',
         'ams-dcatd': base_url + 'datasets/',
