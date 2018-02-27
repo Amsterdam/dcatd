@@ -150,11 +150,7 @@ class Organization(FieldType):
 
     @staticmethod
     def from_ckan(value):
-        id = f"org:{value['name']}"
-        org = list(
-            org for org in terms.TERMS['org'] if org['@id'] == id
-        )
-        return org[0]
+        return value['title']
 
 
 class TemporalUnit(FieldType):
@@ -439,7 +435,7 @@ def ckan2dcat_distribution(resources):
 def ckan2dcat(ckan, context):
     retval = {
         '@context': dict(context),  # dict() because we mutate the context
-        'dct:language': 'lang2:nl',
+        'dct:language': 'lang1:nl',
         'ams:class': 'class:open'
     }
     retval['@context']['@vocab'] = 'https://ckan.org/terms/'
@@ -456,7 +452,11 @@ def ckan2dcat(ckan, context):
             #jsonpointer.set_pointer(ckan, field['ckan'], None)
         if data is None:
             continue
-        data = field['type'].from_ckan(data)
+        try:
+            data = field['type'].from_ckan(data)
+        except AttributeError:
+            print(data)
+            raise
         if data is not None:
             try:
                 field['type'].validate(data)

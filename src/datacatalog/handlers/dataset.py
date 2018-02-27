@@ -1,4 +1,5 @@
 import urllib.parse
+import json.decoder
 
 from aiohttp import web_exceptions, web
 from pyld import jsonld
@@ -23,17 +24,20 @@ async def get(request: web.Request):
     # now we know the etag is either None or a set
     try:
         doc, etag = await request.app.hooks.storage_retrieve(
-            docid, etag_if_none_match
+            docid=docid, etags=etag_if_none_match
         )
     except KeyError:
         raise web_exceptions.HTTPNotFound()
-    return web.json_response(doc, headers={'Etag', etag})
+    return web.json_response(doc, headers={'Etag': etag})
 
 
 async def put(request: web.Request):
     hooks = request.app.hooks
     # Grab the document from the request body and canonicalize it.
-    doc = await request.json()
+    try:
+        doc = await request.json()
+    except json.decoder.JSONDecodeError:
+        raise web_exceptions.HTTPBadRequest(text='invalid json')
     cannonical_doc = await hooks.mds_canonicalize(data=doc)
 
     # Make sure the docid in the path corresponds to the ids given in the
@@ -73,7 +77,7 @@ async def put(request: web.Request):
         request, conditional.HEADER_IF_MATCH
     )
     etag_if_none_match = conditional.parse_if_header(
-        request, conditional.HEADER_IF_MATCH
+        request, conditional.HEADER_IF_NONE_MATCH
     )
     # Can't accept a value in both headers
     if etag_if_match is not None and etag_if_none_match is not None:
@@ -96,22 +100,21 @@ async def put(request: web.Request):
             )
         except ValueError:
             raise web_exceptions.HTTPPreconditionFailed()
-        return web.Response(status=204, headers={'Etag', new_etag})
+        return web.Response(status=204, headers={'Etag': new_etag})
 
     # If-None-Match: * is for creates
     if etag_if_none_match != '*':
         raise web_exceptions.HTTPBadRequest(
-            body='Endpoint does not support specific Etags in the '
-                 'If-None-Match header. For inserts of new documents, '
-                 'value must be *.'
+            body='For inserts of new documents, provide If-None-Match: *'
         )
     try:
         new_etag = await hooks.storage_create(
-            docid, cannonical_doc, searchable_text, "nl"
+            docid=docid, doc=cannonical_doc, searchable_text=searchable_text,
+            iso_639_1_code="nl"
         )
     except KeyError:
         raise web_exceptions.HTTPPreconditionFailed()
-    return web.Response(status=201, headers={'Etag', new_etag})
+    return web.Response(status=201, headers={'Etag': new_etag})
 
 
 async def delete(request: web.Request):
@@ -122,7 +125,7 @@ async def delete(request: web.Request):
             text='Must provide a If-Match header containing one or more ETags.'
         )
     try:
-        await request.app.hooks.storage_delete(given_id, etag_if_match)
+        await request.app.hooks.storage_delete(docid=given_id, etags=etag_if_match)
     except KeyError:
         raise web_exceptions.HTTPNotFound()
     return web.Response(status=204)

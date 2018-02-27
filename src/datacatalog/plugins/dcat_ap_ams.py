@@ -28,7 +28,7 @@ def mds_name():
 @hookimpl
 def mds_canonicalize(data: dict) -> dict:
     expanded = jsonld.expand(data)
-    return jsonld.compact(expanded, context)
+    return jsonld.compact(expanded, context())
 
 
 @hookimpl
