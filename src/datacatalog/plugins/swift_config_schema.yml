@@ -7,6 +7,11 @@ properties:
     type: object
     additionalProperties: false
     properties:
+      user:
+        type: string
+        pattern: '^[^:]+$'
+      password:
+        type: string
       project_id:
         type: string
         pattern: '^[0-9a-fA-F]{32}$'
@@ -22,10 +27,12 @@ properties:
         # a URL-segment safe string:
         pattern: "^(?:%[a-f0-9]{2}|[-\\w:@!$&'()*+,;=.~])*$"
     required:
-      - project_id
-      - authz_token
-      - base_url
-      - container
+    - user
+    - password
+    - project_id
+    - authz_token
+    - base_url
+    - container
 
 required:
   - storage_swift

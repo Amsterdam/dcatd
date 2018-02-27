@@ -25,7 +25,7 @@ class Application(web.Application):
         path = urllib.parse.urlparse(self._config['web']['baseurl']).path
         if path[-1] != '/':
             path += '/'
-        logger.info("Path: %s", path)
+        self['path'] = path
         self.router.add_get(path, handlers.index.get)
         self.router.add_get(path + 'datasets', handlers.datasets.get)
         self.router.add_post(path + 'datasets', handlers.datasets.post)
@@ -43,7 +43,13 @@ class Application(web.Application):
         self.on_cleanup.append(self.__class__._on_cleanup)
 
         self._load_plugins()
-        self.hooks.initialize_sync(app=self)
+        self._initialize_sync()
+
+    def _initialize_sync(self):
+        results = self.hooks.initialize_sync(app=self)
+        for r in results:
+            if r.exception is not None:
+                raise r.exception
 
     async def _on_startup(self):
         results = await self.hooks.initialize(app=self)

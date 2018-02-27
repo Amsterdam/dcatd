@@ -62,9 +62,11 @@ storage_postgres:
   user: ${DB_USER:-datacatalog}
 
 storage_swift:
+  user: ${SWIFT_USER:-catalogus}
+  password: ${SWIFT_PASSWORD}
   project_id: ${SWIFT_PROJECT_ID}
   authz_token: ${SWIFT_AUTHZ_TOKEN}
-  base_url: ${SWIFT_BASE_URL:-https://volume.stack.cloudvps.com/v2/}
+  base_url: ${SWIFT_BASE_URL:-https://e85bcf2124fb4437b1bc6eb75dfc3abf.objectstore.eu/}
   container: ${SWIFT_CONTAINER:-dcatd}
 
 web:

@@ -17,7 +17,7 @@ _BASE_URL = 'http://localhost/'
 @hookimpl
 def initialize_sync(app):
     global _BASE_URL
-    _BASE_URL = app.config['web']['base_url']
+    _BASE_URL = app.config['web']['baseurl']
 
 
 @hookimpl
