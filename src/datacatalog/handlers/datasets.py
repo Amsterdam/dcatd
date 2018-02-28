@@ -185,9 +185,15 @@ async def get_collection(request: web.Request) -> web.Response:
         filters[key][comparator] = value
 
     full_text_query = query.get('q', '').strip()
+    limit = query.get('limit', None)
+    if limit is not None:
+        limit = int(limit)
+    offset = query.get('offset', None)
+    if offset is not None:
+        offset = int(offset)
 
     resultiterator = hooks.search_search(
-        q=full_text_query, limit=None, offset=None, filters=filters,
+        q=full_text_query, limit=limit, offset=offset, filters=filters,
         iso_639_1_code='nl'
     )
 

@@ -94,12 +94,12 @@ paths:
         required: false
         schema:
           type: integer
-      - name: cursor
+      - name: offset
         in: query
-        description: Cursor to the next batch of results
+        description: Offset in resultset
         required: false
         schema:
-          type: string
+          type: integer
     post:
       description: >-
         Upload a new dataset and let the system generate an identifier.
