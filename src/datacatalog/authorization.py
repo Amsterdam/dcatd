@@ -122,13 +122,16 @@ def authorize(p_method=None):
             baseurl = request.app.config['web']['baseurl']
             base_path = urllib.parse.urlparse(baseurl).path
 
+            path_offset = len(base_path)
+            if len(base_path) > 0 and base_path[-1] == '/':
+                path_offset -= 1
+
             paths = openapi['paths']
+            req_path = request.rel_url.raw_path[path_offset:]
             method = p_method or request.method
-            path, pathspec = _get_path_spec(
-                openapi['paths'], request.rel_url.raw_path, method.lower()
-            )
+
+            path, pathspec = _get_path_spec(paths, req_path, method.lower())
             assert path is not None
-            assert path.startswith(base_path)
             if 'security' in pathspec:
                 await enforce_one_of(request, pathspec['security'])
             return await f(request, *args, **kwargs)

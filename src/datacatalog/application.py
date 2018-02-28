@@ -23,7 +23,7 @@ class Application(web.Application):
         self._config = config.load()
 
         path = urllib.parse.urlparse(self._config['web']['baseurl']).path
-        if path[-1] != '/':
+        if len(path) == 0 or path[-1] != '/':
             path += '/'
         self['path'] = path
         self.router.add_get(path, handlers.index.get)
