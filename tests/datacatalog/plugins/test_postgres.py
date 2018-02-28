@@ -145,17 +145,17 @@ def test_search_search(event_loop, corpus):
         q = record['searchable_text']
         return [r async for r in postgres_plugin.search_search(q, 1, None, None, record['iso_639_1_code'])]
     for doc_id, record in corpus.items():
-        for doc, etag in event_loop.run_until_complete(search(record)):
-            assert json.loads(doc) == record['doc']
-            assert etag == record['etag']
+        for docid, doc in event_loop.run_until_complete(search(record)):
+            assert doc == record['doc']
+            assert docid == doc_id
     # filtered search
     async def search(record):
-        filters = {'/properties/id': {'==': record['doc']['id']}}
+        filters = {'/properties/id': {'eq': record['doc']['id']}}
         return [r async for r in postgres_plugin.search_search('', 1, None, filters, record['iso_639_1_code'])]
     for doc_id, record in corpus.items():
-        for doc, etag in event_loop.run_until_complete(search(record)):
-            assert json.loads(doc) == record['doc']
-            assert etag == record['etag']
+        for docid, doc in event_loop.run_until_complete(search(record)):
+            assert doc == record['doc']
+            assert docid == doc_id
 
 
 def test_storage_delete(event_loop, corpus):
