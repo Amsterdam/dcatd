@@ -152,6 +152,12 @@ paths:
       - OAuth2:
         - CAT/W
       parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
       - name: If-Match
         description: >-
           This request header is required if the client intends to *update* an
@@ -205,6 +211,12 @@ paths:
       - OAuth2:
         - CAT/W
       parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
       - name: If-Match
         description: >-
           This request header is required if the client intends to *update* an
