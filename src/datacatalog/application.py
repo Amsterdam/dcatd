@@ -27,11 +27,11 @@ class Application(web.Application):
             path += '/'
         self['path'] = path
         self.router.add_get(path, handlers.index.get)
-        self.router.add_get(path + 'datasets', handlers.datasets.get)
-        self.router.add_post(path + 'datasets', handlers.datasets.post)
-        self.router.add_get(path + 'datasets/{dataset}', handlers.dataset.get)
-        self.router.add_put(path + 'datasets/{dataset}', handlers.dataset.put)
-        self.router.add_delete(path + 'datasets/{dataset}', handlers.dataset.delete)
+        self.router.add_get(path + 'datasets', handlers.datasets.get_collection)
+        self.router.add_post(path + 'datasets', handlers.datasets.post_collection)
+        self.router.add_get(path + 'datasets/{dataset}', handlers.datasets.get)
+        self.router.add_put(path + 'datasets/{dataset}', handlers.datasets.put)
+        self.router.add_delete(path + 'datasets/{dataset}', handlers.datasets.delete)
         self.router.add_get(path + 'system/health', handlers.systemhealth.get)
         self.router.add_get(path + 'openapi', handlers.openapi.get)
 

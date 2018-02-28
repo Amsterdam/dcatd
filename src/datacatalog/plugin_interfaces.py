@@ -186,7 +186,7 @@ def storage_id() -> str:
 @hookspec.first_only.required
 def search_search(
     q: str, limit: T.Optional[int],
-    cursor: T.Optional[str],
+    offset: T.Optional[int],
     filters: T.Optional[T.Mapping[
         str, # a JSON pointer
         T.Mapping[
@@ -196,17 +196,19 @@ def search_search(
         ]
     ]],
     iso_639_1_code: T.Optional[str]
-) -> T.Generator[T.Tuple[dict, str], None, None]:
+) -> T.Generator[T.Tuple[str, dict], None, None]:
     # language=rst
     """ Search.
 
     :param q: the query
     :param limit: maximum hits to be returned
-    :param cursor: TODO: documentation
-    :param filters: mapping of JSON pointer -> value, used to filter on some value.
-    :param iso_639_1_code: the language of the query.
-    :returns: A tuple with a generator over the search results (documents with corresponding etags)
-    :raises: ValueError if filter syntax is invalid, or if the ISO 639-1 code is not recognized.
+    :param offset: offset in resultset
+    :param filters: mapping of JSON pointer -> value, used to filter on some
+        value.
+    :param iso_639_1_code: the language of the query
+    :returns: A generator over the search results (id, doc)
+    :raises: ValueError if filter syntax is invalid, if the ISO 639-1 code is
+        not recognized, or if the offset is invalid.
 
     """
 
@@ -264,4 +266,12 @@ def mds_json_schema() -> dict:
 def mds_full_text_search_representation(data: dict) -> str:
     # language=rst
     """Full text search representation of the given data.
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_only
+def mds_context() -> dict:
+    # language=rst
+    """Context of the metadata schema.
     """

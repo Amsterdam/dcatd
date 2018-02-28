@@ -43,13 +43,13 @@ _Q_UPDATE_DOC = 'UPDATE "dataset" SET doc=$1, searchable_text=to_tsvector($2, $3
 _Q_DELETE_DOC = 'DELETE FROM "dataset" WHERE id=$1 AND etag=ANY($2) RETURNING id'
 _Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "dataset"'
 _Q_SEARCH_DOCS = """
-SELECT doc, etag, ts_rank_cd(searchable_text, query) AS rank 
+SELECT id, doc, ts_rank_cd(searchable_text, query) AS rank 
 FROM "dataset", plainto_tsquery($1, $2) query
-WHERE (''=$2::varchar OR searchable_text @@ query) {}
+WHERE (''=$2::varchar OR searchable_text @@ query) {filters}
 AND ('simple'=$1::varchar OR lang=$1::varchar)
 ORDER BY rank DESC
-LIMIT $3
-OFFSET $4;
+{limit}
+OFFSET $3;
 """
 # TODO: This search query uses one a default ranking algorihm.
 
@@ -299,7 +299,7 @@ async def storage_id() -> str:
 @_hookimpl
 async def search_search(
         q: str, limit: T.Optional[int],
-        cursor: T.Optional[str],
+        offset: T.Optional[int],
         filters: T.Optional[T.Mapping[
             str, # a JSON pointer
             T.Mapping[
@@ -309,17 +309,19 @@ async def search_search(
             ]
         ]],
         iso_639_1_code: T.Optional[str]
-) -> T.Generator[T.Tuple[dict, str], None, None]:
+) -> T.Generator[T.Tuple[str, dict], None, None]:
     # language=rst
     """ Search.
 
     :param q: the query
     :param limit: maximum hits to be returned
-    :param cursor: TODO: documentation
-    :param filters: mapping of JSON pointer -> value, used to filter on some value.
-    :param iso_639_1_code: the language of the query.
-    :returns: A tuple with a generator over the search results (documents with corresponding etags)
-    :raises: ValueError if filter syntax is invalid, or if the ISO 639-1 code is not recognized.
+    :param offset: offset in resultset
+    :param filters: mapping of JSON pointer -> value, used to filter on some
+        value.
+    :param iso_639_1_code: the language of the query
+    :returns: A generator over the search results (id, doc)
+    :raises: ValueError if filter syntax is invalid, if the ISO 639-1 code is
+        not recognized, or if the offset is invalid.
 
     """
 
@@ -389,20 +391,19 @@ async def search_search(
                     filterexprs.append(' AND (' + orexpr + ')')
     filterexpr = ''.join(filterexprs)
 
-    # Interpret paging
-    if cursor is None:
+    # Paging
+    limitexpr = ''
+    if limit is not None:
+        limitexpr = 'LIMIT {:d}'.format(limit)  # will raise ValueError if !int
+    if offset is None:
         offset = 0
-    else:
-        base64.decodebytes(cursor.encode())
-    if limit is None:
-        limit = 'ALL'
 
     async with _pool.acquire() as con:
         async with con.transaction():
             # use a cursor so we can stream
-            sql = _Q_SEARCH_DOCS.format(filterexpr)
-            async for row in con.cursor(sql, lang, q, limit, offset):
-                yield row['doc'], row['etag']
+            sql = _Q_SEARCH_DOCS.format(filters=filterexpr, limit=limitexpr)
+            async for row in con.cursor(sql, lang, q, offset):
+                yield row['id'], json.loads(row['doc'])
 
 
 def _etag_from_str(s: str) -> str:

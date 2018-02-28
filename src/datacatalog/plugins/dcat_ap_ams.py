@@ -41,6 +41,11 @@ def mds_full_text_search_representation(data: dict) -> str:
     return DATASET.full_text_search_representation(data)
 
 
+@hookimpl
+def mds_context() -> dict:
+    return context()
+
+
 def context(base_url=None) -> dict:
     if base_url is None:
         base_url = _BASE_URL
@@ -50,6 +55,7 @@ def context(base_url=None) -> dict:
         'ckan': 'https://ckan.org/terms/',
         'class': 'ams:class#',
         'dc': 'http://purl.org/dc/elements/1.1/',
+        'dcat': 'http://www.w3.org/ns/dcat#',
         'dct': 'http://purl.org/dc/terms/',
         'foaf': 'http://xmlns.com/foaf/0.1/',
         'lang1': 'http://id.loc.gov/vocabulary/iso639-1/',
@@ -66,6 +72,7 @@ def context(base_url=None) -> dict:
         'theme': 'ams:theme#',
         'time': 'http://www.w3.org/2006/time#',
         'vcard': 'http://www.w3.org/2006/vcard/ns#',
+        'dcat:dataset': {'@container': '@list'},
         'dcat:keyword': {'@container': '@set'},
         'dcat:landingpage': {'@type': '@id'},
         'dcat:theme': {'@container': '@set', '@type': '@id'},
