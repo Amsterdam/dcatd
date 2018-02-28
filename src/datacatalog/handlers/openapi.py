@@ -16,7 +16,7 @@ async def get(request: web.Request):
     """Produce the OpenAPI3 definition of this service."""
     global _OPENAPI_SCHEMA
     if _OPENAPI_SCHEMA is None:
-        openapi_schema = copy.deepcopy(request.app['openapi'].specification)
+        openapi_schema = copy.deepcopy(request.app['openapi'])
     else:
         openapi_schema = _OPENAPI_SCHEMA
     c = request.app.config
