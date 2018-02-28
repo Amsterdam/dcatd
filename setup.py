@@ -60,9 +60,9 @@ setup(
         'jsonschema',
         'jsonpointer',
         'pluggy',
+        'pyjwt',
         'pyld',
         'PyYaml',
-        'swagger-parser',
         'whoosh',
 
         # for postgres storage plugin

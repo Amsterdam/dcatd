@@ -8,6 +8,7 @@ import urllib.parse
 from aiohttp import web_exceptions, web
 from pyld import jsonld
 
+from datacatalog import authorization
 from aiohttp_extras import conditional
 from aiohttp_extras.content_negotiation import produces_content_types
 
@@ -54,6 +55,7 @@ async def get(request: web.Request):
     })
 
 
+@authorization.authorize()
 async def put(request: web.Request):
     hooks = request.app.hooks
     # Grab the document from the request body and canonicalize it.
@@ -138,6 +140,7 @@ async def put(request: web.Request):
     return web.Response(status=201, headers={'Etag': new_etag})
 
 
+@authorization.authorize()
 async def delete(request: web.Request):
     given_id = request.match_info['dataset']
     etag_if_match = conditional.parse_if_header(request, conditional.HEADER_IF_MATCH)
@@ -233,6 +236,7 @@ async def get_collection(request: web.Request) -> web.Response:
     return response
 
 
+@authorization.authorize()
 async def post_collection(request: web.Request):
     hooks = request.app.hooks
     # Grab the document from the request body and canonicalize it.
