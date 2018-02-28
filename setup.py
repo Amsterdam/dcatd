@@ -64,6 +64,7 @@ setup(
         'pyld',
         'PyYaml',
         'whoosh',
+        'cryptography==2.1.2',
 
         # for postgres storage plugin
         'asyncpg', # postgres plugin

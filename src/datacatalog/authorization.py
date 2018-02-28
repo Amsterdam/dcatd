@@ -7,6 +7,8 @@ import functools
 from aiohttp import web
 import jwt
 
+from datacatalog import jwks
+
 _logger = logging.getLogger(__name__)
 
 

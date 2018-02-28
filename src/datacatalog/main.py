@@ -1,12 +1,9 @@
-from pkg_resources import resource_stream
 import typing as T
 
 from aiohttp import web
-import yaml
 
 from datacatalog import application, authorization
 
-_OPENAPI_SCHEMA_RESOURCE = 'openapi.yml'
 
 
 def main():
@@ -16,8 +13,6 @@ def main():
             web.normalize_path_middleware(),
             authorization.middleware
         ])
-    with resource_stream(__name__, _OPENAPI_SCHEMA_RESOURCE) as s:
-        aio_app['openapi'] = yaml.load(s)
     web.run_app(aio_app, port=aio_app.config['web']['port'])
     return 0
 

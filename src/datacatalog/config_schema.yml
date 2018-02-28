@@ -9,6 +9,8 @@ properties:
     $ref: '#/definitions/plugins'
   web:
     $ref: '#/definitions/web'
+  jwks:
+    $ref: '#/definitions/jwks'
   primarySchema:
     type: string
     # URL-segment safe string:
@@ -18,6 +20,7 @@ required:
   - logging
   - plugins
   - primarySchema
+  - jwks
 
 
 definitions:
@@ -39,6 +42,9 @@ definitions:
       - port
       - baseurl
     type: object
+
+  jwks:
+    type: string
 
   logging.dictconfig:
     additionalProperties: false

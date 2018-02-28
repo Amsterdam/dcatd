@@ -1,14 +1,18 @@
 import importlib
 import urllib.parse
 import logging
+from pkg_resources import resource_stream
 
 from aiohttp import web
 import aiopluggy
+import yaml
 
-from . import config, plugin_interfaces
+from . import config, jwks, plugin_interfaces
 from . import handlers
 
 logger = logging.getLogger(__name__)
+
+_OPENAPI_SCHEMA_RESOURCE = 'openapi.yml'
 
 
 class Application(web.Application):
@@ -26,6 +30,9 @@ class Application(web.Application):
         if len(path) == 0 or path[-1] != '/':
             path += '/'
         self['path'] = path
+        with resource_stream(__name__, _OPENAPI_SCHEMA_RESOURCE) as s:
+            self['openapi'] = yaml.load(s)
+        self['jwks'] = jwks.load(self._config['jwks'])
         self.router.add_get(path, handlers.index.get)
         self.router.add_get(path + 'datasets', handlers.datasets.get_collection)
         self.router.add_post(path + 'datasets', handlers.datasets.post_collection)
