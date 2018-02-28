@@ -1,5 +1,6 @@
 import csv
 import json.decoder
+import os.path
 import re
 import typing as T
 import urllib.parse
@@ -233,7 +234,56 @@ async def get_collection(request: web.Request) -> web.Response:
 
 
 async def post_collection(request: web.Request):
-    ...
+    hooks = request.app.hooks
+    # Grab the document from the request body and canonicalize it.
+    try:
+        doc = await request.json()
+    except json.decoder.JSONDecodeError:
+        raise web_exceptions.HTTPBadRequest(text='invalid json')
+    collection_url = _resource_url(request) + '/'
+    cannonical_doc = await hooks.mds_canonicalize(data=doc)
+    expanded_doc = jsonld.expand(cannonical_doc)[0]
+    docid = None
+    docurl = None
+    if _DCAT_ID_KEY in expanded_doc:
+        docurl = expanded_doc[_DCAT_ID_KEY]
+        del expanded_doc[_DCAT_ID_KEY]
+    if _DCAT_DC_ID_KEY in expanded_doc:
+        docid = expanded_doc[_DCAT_DC_ID_KEY]
+        del expanded_doc[_DCAT_DC_ID_KEY]
+    if docid is not None:
+        docid = docid[0]['@value']
+        if docurl is not None:
+            if docurl != urllib.parse.urljoin(collection_url, docid):
+                raise web_exceptions.HTTPBadRequest(
+                    text='{} != {}'.format(_DCAT_ID_KEY, _DCAT_DC_ID_KEY)
+                )
+    elif docurl is not None:
+        path = urllib.parse.urlparse(docurl).path
+        if path == '':
+            raise web_exceptions.HTTPBadRequest(
+                text='{} must be a URL'.format(_DCAT_ID_KEY)
+            )
+        docid = os.path.basename(os.path.normpath(path))
+    else:
+        docid = await hooks.storage_id()
+        docurl = urllib.parse.urljoin(collection_url, docid)
+    # recompute the canonnical doc
+    cannonical_doc = await hooks.mds_canonicalize(data=expanded_doc)
+    # Let the metadata plugin grab the full-text search representation
+    searchable_text = await hooks.mds_full_text_search_representation(
+        data=cannonical_doc
+    )
+    try:
+        new_etag = await hooks.storage_create(
+            docid=docid, doc=cannonical_doc, searchable_text=searchable_text,
+            iso_639_1_code="nl"
+        )
+    except KeyError:
+        raise web_exceptions.HTTPBadRequest(
+            text='Document with id {} already exists'.format(docid)
+        )
+    return web.Response(status=303, headers={'Etag': new_etag, 'Location': docurl})
 
 
 def _resource_url(request):
