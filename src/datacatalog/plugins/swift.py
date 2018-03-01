@@ -84,11 +84,14 @@ async def post(request: web.Request) -> web.Response:
     reader = await request.multipart()
     field = await reader.next()
     assert field.name == 'distribution'
-    filename = field.filename
     uuid = uuid4().hex
+    content_type = field.headers.get(
+        aiohttp.hdrs.CONTENT_TYPE,
+        'application/octet-stream'
+    )
     await _put_file_to_object_store(
-        uuid, request.content_type,
-        field, filename=filename
+        uuid, content_type,
+        field, filename=field.filename
     )
     return web.Response(
         status=201,
