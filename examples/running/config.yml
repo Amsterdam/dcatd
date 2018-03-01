@@ -2,7 +2,7 @@ plugins:
   - datacatalog.plugins.postgres
   - datacatalog.plugins.dcat
   - datacatalog.plugins.dcat_ap_ams
-#  - datacatalog.plugins.swift
+  - datacatalog.plugins.swift
 
 primarySchema: dcat-ap-ams
 
@@ -61,13 +61,11 @@ storage_postgres:
   port: ${DB_PORT:-5432}
   user: ${DB_USER:-datacatalog}
 
-#storage_swift:
-#  user: ${SWIFT_USER:-catalogus}
-#  password: ${SWIFT_PASSWORD}
-#  project_id: ${SWIFT_PROJECT_ID}
-#  authz_token: ${SWIFT_AUTHZ_TOKEN}
-#  base_url: ${SWIFT_BASE_URL:-https://e85bcf2124fb4437b1bc6eb75dfc3abf.objectstore.eu/}
-#  container: ${SWIFT_CONTAINER:-dcatd}
+storage_swift:
+  user: ${SWIFT_USER:-catalogus}
+  password: ${SWIFT_PASSWORD}
+  base_url: ${SWIFT_BASE_URL:-https://e85bcf2124fb4437b1bc6eb75dfc3abf.objectstore.eu/}
+  container: ${SWIFT_CONTAINER:-dcatd_acc}
 
 web:
   port: 8000

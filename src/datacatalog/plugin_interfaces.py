@@ -163,7 +163,7 @@ def storage_id() -> str:
 
 # noinspection PyUnusedLocal
 # @hookspec.first_only
-# def object_store_writer(name,
+# def _put_file_to_object_store(name,
 #                         content_type,
 #                         stream) -> T.AsyncContextManager:
 #     # language=rst

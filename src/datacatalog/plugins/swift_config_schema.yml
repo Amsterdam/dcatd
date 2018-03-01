@@ -12,12 +12,6 @@ properties:
         pattern: '^[^:]+$'
       password:
         type: string
-      project_id:
-        type: string
-        pattern: '^[0-9a-fA-F]{32}$'
-      authz_token:
-        type: string
-        pattern: '^[0-9a-fA-F]{32}$'
       base_url:
         type: string
         format: uri
@@ -29,8 +23,6 @@ properties:
     required:
     - user
     - password
-    - project_id
-    - authz_token
     - base_url
     - container
 
