@@ -69,15 +69,16 @@ def health_check() -> T.Optional[str]:
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
 def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]]) \
-        -> T.Optional[T.Tuple[dict, str]]:
+        -> T.Tuple[T.Optional[dict], str]:
     # language=rst
     """ Get document and corresponsing etag by id.
 
     :param docid: document id
     :param etags: None, or a set of Etags
     :returns:
-        Either a tuple containing the document and current etag, or None if the
-        document's Etag corresponds to one of the given etags.
+        A tuple. The first element is either the document or None if the
+        document's Etag corresponds to one of the given etags. The second
+        element is the current etag.
     :raises KeyError: if not found
 
     """

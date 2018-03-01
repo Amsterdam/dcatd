@@ -119,15 +119,16 @@ async def health_check() -> T.Optional[str]:
 
 @_hookimpl
 async def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]]) \
-        -> T.Optional[T.Tuple[dict, str]]:
+        -> T.Tuple[T.Optional[dict], str]:
     # language=rst
     """ Get document and corresponsing etag by id.
 
     :param docid: document id
     :param etags: None, or a set of Etags
     :returns:
-        Either a tuple containing the document and current etag, or None if the
-        document's Etag corresponds to one of the given etags.
+        A tuple. The first element is either the document or None if the
+        document's Etag corresponds to one of the given etags. The second
+        element is the current etag.
     :raises KeyError: if not found
 
     """
@@ -135,7 +136,7 @@ async def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]]) \
     if record is None:
         raise KeyError()
     if etags and conditional.match_etags(record['etag'], etags, True):
-        return None
+        return None, record['etag']
     return json.loads(record['doc']), record['etag']
 
 
@@ -205,8 +206,8 @@ async def storage_delete(docid: str, etags: T.Set[str]) -> None:
         # conditions at the same time, apart from a full table lock. However,
         # all scenario's in which the below, not threat-safe way of identifying
         # the cause of failure is not correct, are trivial.
-        doc = await storage_retrieve(docid, etags)  # this may raise a KeyError
-        assert doc is not None
+        _, etag = await storage_retrieve(docid, etags)  # this may raise a KeyError
+        assert etag not in etags
         raise ValueError
 
 

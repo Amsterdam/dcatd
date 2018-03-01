@@ -11,6 +11,8 @@ properties:
     $ref: '#/definitions/web'
   jwks:
     $ref: '#/definitions/jwks'
+  cors:
+    $ref: '#/definitions/cors'
   primarySchema:
     type: string
     # URL-segment safe string:
@@ -49,6 +51,14 @@ definitions:
 
   jwks:
     type: string
+
+  cors:
+    type: object
+    additionalProperties: false
+    properties:
+      allow_all:
+        type: boolean
+
 
   logging.dictconfig:
     additionalProperties: false

@@ -32,7 +32,7 @@ _ESCAPED_CHARACTER = re.compile(r'\\(.)')
 async def get(request: web.Request):
     docid = request.match_info['dataset']
     etag_if_none_match = conditional.parse_if_header(
-        request, conditional.HEADER_IF_MATCH
+        request, conditional.HEADER_IF_NONE_MATCH
     )
     if etag_if_none_match == '*':
         raise web_exceptions.HTTPBadRequest(
@@ -45,6 +45,8 @@ async def get(request: web.Request):
         )
     except KeyError:
         raise web_exceptions.HTTPNotFound()
+    if doc is None:
+        return web.Response(status=304, headers={'Etag': etag})
     expanded_doc = jsonld.expand(doc)[0]
     docurl = _resource_url(request)
     expanded_doc[_DCAT_ID_KEY] = docurl
@@ -137,7 +139,9 @@ async def put(request: web.Request):
         )
     except KeyError:
         raise web_exceptions.HTTPPreconditionFailed()
-    return web.Response(status=201, headers={'Etag': new_etag})
+    return web.Response(
+        status=201, headers={'Etag': new_etag}, content_type='text/plain'
+    )
 
 
 @authorization.authorize()
@@ -152,9 +156,10 @@ async def delete(request: web.Request):
         await request.app.hooks.storage_delete(docid=given_id, etags=etag_if_match)
     except KeyError:
         raise web_exceptions.HTTPNotFound()
-    return web.Response(status=204)
+    return web.Response(status=204, content_type='text/plain')
 
 
+@produces_content_types('application/ld+json', 'application/json')
 async def get_collection(request: web.Request) -> web.Response:
     # language=rst
     """Handler for ``/datasets``"""
@@ -287,7 +292,10 @@ async def post_collection(request: web.Request):
         raise web_exceptions.HTTPBadRequest(
             text='Document with id {} already exists'.format(docid)
         )
-    return web.Response(status=303, headers={'Etag': new_etag, 'Location': docurl})
+    return web.Response(
+        status=201, headers={'Etag': new_etag, 'Location': docurl},
+        content_type='text/plain'
+    )
 
 
 def _resource_url(request):

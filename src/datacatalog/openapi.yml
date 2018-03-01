@@ -116,8 +116,8 @@ paths:
         201:
           description: Created.
           headers:
-            ETag:
-              description: ETag of the newly created dataset.
+            Etag:
+              description: Etag of the newly created dataset.
               schema:
                 $ref: '#/components/schemas/etag'
             Location:
@@ -131,15 +131,32 @@ paths:
         200:
           description: The dataset as a dcat document.
           headers:
-            ETag:
-              description: ETag of the newly created dataset.
+            Etag:
+              description: Etag of the dataset.
               schema:
                 $ref: '#/components/schemas/etag'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/dcat-doc'
+        304:
+          description: >-
+            Not Modified: The document has an etag that equals one of the given
+            etags in If-None-Match.
+          headers:
+            Etag:
+              description: Etag of the dataset.
+              schema:
+                $ref: '#/components/schemas/etag'
       parameters:
+      - name: If-None-Match
+        description: >-
+          This request header can be used to fetch content iff none of the
+          given etags match.
+        required: false
+        in: header
+        schema:
+          type: string
       - name: id
         in: path
         required: true
@@ -161,7 +178,7 @@ paths:
       - name: If-Match
         description: >-
           This request header is required if the client intends to *update* an
-          existing `dataset` resource.  The value *must* be the current `ETag`
+          existing `dataset` resource.  The value *must* be the current `Etag`
           of the dataset resource, as last seen by the client.  This prevents
           lost updates if multiple clients are concurrently editing the same
           resource.
@@ -189,8 +206,8 @@ paths:
         201:
           description: The dataset was succesfully uploaded.
           headers:
-            ETag:
-              description: ETag of the newly created dataset.
+            Etag:
+              description: Etag of the newly created dataset.
               schema:
                 $ref: '#/components/schemas/etag'
             Location:
@@ -199,10 +216,11 @@ paths:
                 type: string
         204:
           description: >-
-            The dataset was updated successfully.  The `ETag` response header
-            contains the new ETag.
+            The dataset was updated successfully.  The `Etag` response header
+            contains the new Etag.
           headers:
-            ETag:
+            Etag:
+              description: New Etag of the updated dataset.
               schema:
                 $ref: '#/components/schemas/etag'
     delete:
@@ -219,12 +237,10 @@ paths:
           minLength: 1
       - name: If-Match
         description: >-
-          This request header is required if the client intends to *update* an
-          existing `dataset` resource.  The value *must* be the current `ETag`
-          of the dataset resource, as last seen by the client.  This prevents
-          lost updates if multiple clients are concurrently editing the same
-          resource.
-        required: false
+          The value *must* be the current `Etag` of the dataset resource, as
+          last seen by the client. This prevents lost updates if multiple
+          clients are concurrently editing the same resource.
+        required: true
         in: header
         schema:
           $ref: '#/components/schemas/etag'
