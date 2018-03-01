@@ -1,12 +1,10 @@
 import datetime
-import json
 
 from aiopluggy import HookimplMarker
 import bleach
 from pyld import jsonld
 
-from datacatalog.plugins.dcat import types as _types
-
+from datacatalog import dcat
 
 hookimpl = HookimplMarker('datacatalog')
 
@@ -87,7 +85,7 @@ def context(base_url=None) -> dict:
     }
 
 
-class Markdown(_types.String):
+class Markdown(dcat.String):
     def __init__(self, *args, format=None, **kwargs):
         assert format is None
         super().__init__(*args, format='markdown', **kwargs)
@@ -96,7 +94,7 @@ class Markdown(_types.String):
         return bleach.clean(data, tags=[], strip=True)
 
 
-LANGUAGE = _types.Enum(
+LANGUAGE = dcat.Enum(
     [
         ('lang1:nl', "Nederlands"),
         ('lang1:en', "Engels")
@@ -107,7 +105,7 @@ LANGUAGE = _types.Enum(
     required=True
 )
 
-THEME = _types.Enum(
+THEME = dcat.Enum(
     [
         ('theme:bestuur-en-organisatie', "Bestuur en organisatie"),
         ('theme:bevolking', "Bevolking"),
@@ -130,7 +128,7 @@ THEME = _types.Enum(
     ]
 )
 
-KEYWORD = _types.PlainTextLine(
+KEYWORD = dcat.PlainTextLine(
     examples=['14.000 ft', '2.5D', '20Ke', '360 graden foto', '3D',
               '50 dbA-contour', 'AHN', 'API', 'Afval', 'Aikido', 'Amersfoort',
               'Amsterdam', 'Amsterdam Zuidoost', 'Apotheek', 'Arbeidsmarkt', 'Arena',
@@ -418,25 +416,25 @@ KEYWORD = _types.PlainTextLine(
 )
 
 
-CONTACT_POINT = _types.Object(
+CONTACT_POINT = dcat.Object(
     required=True,
     title=""
 ).add(
     'vcard:fn',
-    _types.PlainTextLine(
+    dcat.PlainTextLine(
         description="Geef de naam van de contactpersoon voor eventuele vragen over de inhoud en kwaliteit van de gegevens.",
         title="Inhoudelijke contactpersoon",
         required=True
     )
 ).add(
     'vcard:hasEmail',
-    _types.String(
+    dcat.String(
         format='email',
         title="E-mail inhoudelijke contactpersoon"
     )
 ).add(
     'vcard:hasURL',
-    _types.String(
+    dcat.String(
         format='uri',
         title="Website inhoudelijke contactpersoon",
         # description="Website inhoudelijk contactpersoon"
@@ -444,26 +442,26 @@ CONTACT_POINT = _types.Object(
 )
 
 
-DCT_PUBLISHER = _types.Object(
+DCT_PUBLISHER = dcat.Object(
     required=True,
     title=""
 ).add(
     'foaf:name',
-    _types.PlainTextLine(
+    dcat.PlainTextLine(
         title="Technische contactpersoon",
         description="Geef de naam van de contactpersoon voor technische vragen over de aanlevering. Dit kan dezelfde contactpersoon zijn als voor de inhoudelijke vragen.",
         required=True
     )
 ).add(
     'foaf:mbox',
-    _types.String(
+    dcat.String(
         format='email',
         title="E-mail technische contactpersoon"
         # description="Email technisch contactpersoon"
     )
 ).add(
     'foaf:homepage',
-    _types.String(
+    dcat.String(
         format='uri',
         title="Website technische contactpersoon"
         # description="Website technisch contactpersoon"
@@ -471,19 +469,19 @@ DCT_PUBLISHER = _types.Object(
 )
 
 
-CATALOG_RECORD = _types.Object(
+CATALOG_RECORD = dcat.Object(
     required=True,
     title=""
 ).add(
     'dct:issued',
-    _types.Date(
+    dcat.Date(
         title="Publicatiedatum",
         description="De datum waarop deze beschrijving van de gegevensset beschikbaar is gesteld",
         default=datetime.date.today().isoformat()
     )
 ).add(
     'dct:modified',
-    _types.Date(
+    dcat.Date(
         title="Wijzigingsdatum",
         description="De datum waarop deze beschrijving van de gegevensset voor het laatst is gewijzigd",
         default=datetime.date.today().isoformat(),
@@ -492,16 +490,16 @@ CATALOG_RECORD = _types.Object(
 )
 
 
-DISTRIBUTION = _types.Object().add(
+DISTRIBUTION = dcat.Object().add(
     'dcat:accessURL',
-    _types.String(
+    dcat.String(
         format='uri',
         title="URL",
         description="Link naar de daadwerkelijke gegevensset"
     )
 ).add(
     'dct:title',
-    _types.PlainTextLine(
+    dcat.PlainTextLine(
         title="Titel",
         # description="Titel van de link naar de gegevensset",
         required=True
@@ -514,7 +512,7 @@ DISTRIBUTION = _types.Object().add(
     )
 ).add(
     'ams:resourceType',
-    _types.Enum(
+    dcat.Enum(
         [
             ('data', "Data"),
             ('doc', "Documentatie"),
@@ -531,7 +529,7 @@ DISTRIBUTION = _types.Object().add(
     )
 ).add(
     'ams:distributionType',
-    _types.Enum(
+    dcat.Enum(
         [
             ('api', "API/Service"),
             ('file', "Bestand"),
@@ -541,7 +539,7 @@ DISTRIBUTION = _types.Object().add(
     )
 ).add(
     'dct:format',
-    _types.Enum(
+    dcat.Enum(
         [
             ('n/a', ""),
             ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', "xlsx"),
@@ -556,14 +554,14 @@ DISTRIBUTION = _types.Object().add(
     )
 ).add(
     'dcat:byteSize',
-    _types.Integer(
+    dcat.Integer(
         minimum=0,
         title="Bestandsgrootte",
         description="Bestandsgrootte in bytes"
     )
 ).add(
     'ams:serviceType',
-    _types.Enum(
+    dcat.Enum(
         [
             ('atom', "REST: Atom feed"),
             ('rest', "REST: overig"),
@@ -580,7 +578,7 @@ DISTRIBUTION = _types.Object().add(
     )
 ).add(
     'ams:layerIdentifier',
-    _types.PlainTextLine(
+    dcat.PlainTextLine(
         title="Interne Kaartlaag ID",
         description="De Citydata kaartlaag waarmee deze dataset op de kaart getoond kan worden"
     )
@@ -590,9 +588,9 @@ DISTRIBUTION = _types.Object().add(
 )
 
 
-DATASET = _types.Object().add(
+DATASET = dcat.Object().add(
     'dct:title',
-    _types.PlainTextLine(
+    dcat.PlainTextLine(
         title="Titel",
         #description="Geef een titel van de gegevensset.",
         required=True
@@ -606,7 +604,7 @@ DATASET = _types.Object().add(
     )
 ).add(
     'dcat:distribution',
-    _types.List(
+    dcat.List(
         DISTRIBUTION,
         title="Resources"
     )
@@ -619,13 +617,13 @@ DATASET = _types.Object().add(
     )
 ).add(
     'dcat:landingPage',
-    _types.String(
+    dcat.String(
         title="URL voor meer informatie (optioneel)",
         format='uri'
     )
 ).add(
     'dct:accrualPeriodicity',
-    _types.Enum(
+    dcat.Enum(
         [
             ('realtime', "continu"),
             ('day', "dagelijks"),
@@ -649,25 +647,25 @@ DATASET = _types.Object().add(
     )
 ).add(
     'dct:temporal',
-    _types.Object(
+    dcat.Object(
         title=""
         #description="De tijdsperiode die de gegevensset beslaat"
     ).add(
         'time:hasBeginning',
-        _types.Date(
+        dcat.Date(
             title="Tijdsperiode van",
             description="Geef de tijdsperiode aan (begindatum), die de gegevensset beslaat."
         )
     ).add(
         'time:hasEnd',
-        _types.Date(
+        dcat.Date(
             title="Tijdsperiode tot",
             description="Geef de tijdsperiode aan (einddatum), die de gegevensset beslaat."
         )
     )
 ).add(
     'ams:temporalUnit',
-    _types.Enum(
+    dcat.Enum(
         [
             ('na', "Geen tijdseenheid"),
             ('realtime', "Realtime"),
@@ -686,18 +684,18 @@ DATASET = _types.Object().add(
     )
 ).add(
     'ams:spatialDescription',
-    _types.PlainTextLine(
+    dcat.PlainTextLine(
         title="Omschrijving gebied"
     )
 ).add(
     'dct:spatial',
-    _types.PlainTextLine(
+    dcat.PlainTextLine(
         title="Coördinaten gebiedskader",
         description="Beschrijving of coördinaten van het gebied dat de gegevensset bestrijkt (boundingbox). Rijksdriehoeksstelsel (pseudo-RD)"
     )
 ).add(
     'ams:spatialUnit',
-    _types.Enum(
+    dcat.Enum(
         [
             ('na', "Geen geografie"),
             ('specific', "Specifieke punten/vlakken/lijnen"),
@@ -727,7 +725,7 @@ DATASET = _types.Object().add(
     LANGUAGE
 ).add(
     'ams:owner',
-    _types.PlainTextLine(
+    dcat.PlainTextLine(
         title="Eigenaar",
         format="combobox",
         description="Eigenaar en verantwoordelijke voor de betreffende registratie, ook wel bronhouder genoemd. Bij de overheid is dit het bestuursorgaan of rechtspersoon aan wie bij wettelijk voorschrift de verantwoordelijkheid voor het bijhouden van gegevens in een registratie is opgedragen.",
@@ -787,7 +785,7 @@ DATASET = _types.Object().add(
     DCT_PUBLISHER
 ).add(
     'dcat:theme',
-    _types.List(
+    dcat.List(
         THEME,
         title="Thema",
         required=True,
@@ -798,7 +796,7 @@ DATASET = _types.Object().add(
     ),
 ).add(
     'dcat:keyword',
-    _types.List(
+    dcat.List(
         KEYWORD,
         title="Tags",
         unique_items=True,
@@ -807,7 +805,7 @@ DATASET = _types.Object().add(
     )
 ).add(
     'ams:license',
-    _types.Enum(
+    dcat.Enum(
         [
             ('cc-by', "Creative Commons, Naamsvermelding"),
             ('cc-by-nc', "Creative Commons, Naamsvermelding, Niet-Commercieel"),
@@ -830,7 +828,7 @@ DATASET = _types.Object().add(
     )
 ).add(
     'dct:identifier',
-    _types.PlainTextLine(
+    dcat.PlainTextLine(
         title="UID",
         description="Unieke identifier",
         format="hidden"

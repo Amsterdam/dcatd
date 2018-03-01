@@ -3,6 +3,7 @@ import pkg_resources
 import yaml
 import logging
 import re
+import typing as T
 from uuid import uuid4
 
 from aiohttp import helpers, multipart, web
@@ -39,22 +40,23 @@ def initialize_sync(app):
     app.router.add_post(app['path'] + 'files', post)
 
 
-async def _put_file_to_object_store(uuid: str, content_type: str,
-                                    filename: str, data):
+async def _put_file_to_object_store(uuid: str, content_type: str, data,
+                                    filename: T.Optional[str]=None):
     _logger.debug("url: %s\n", _BASE_URL + uuid)
     _logger.debug("Authorization: %s", _AUTHORIZATION)
-    content_disposition = helpers.content_disposition_header(
-        'attachment', filename=filename
-    )
+    headers = {
+        'Authorization': _AUTHORIZATION,
+        'Content-Type': content_type
+    }
+    if filename is not None:
+        headers['Content-Disposition'] = helpers.content_disposition_header(
+            'attachment', filename=filename
+        )
     async with aiohttp.ClientSession() as session:
         async with session.put(
             _BASE_URL + uuid,
             data=data,
-            headers={
-                'Authorization': _AUTHORIZATION,
-                'Content-Type': content_type,
-                'Content-Disposition': content_disposition
-            },
+            headers=headers,
             chunked=True,
             expect100=True
         ) as response:
@@ -70,7 +72,7 @@ async def _put_file_to_object_store(uuid: str, content_type: str,
 @aiohttp.streamer
 async def _streamer(sink, source):
     while True:
-        chunk = await source.readany()
+        chunk = await source.read_chunk(size=65536)
         if not chunk:
             break
         await sink.write(chunk)
@@ -79,10 +81,14 @@ async def _streamer(sink, source):
 async def post(request: web.Request) -> web.Response:
     # language=rst
     """POST handler for ``/files``"""
+    reader = await request.multipart()
+    field = await reader.next()
+    assert field.name == 'distribution'
+    filename = field.filename
     uuid = uuid4().hex
     await _put_file_to_object_store(
-        uuid, request.content_type, 'hallo_wereld.txt',
-        _streamer(request.content)
+        uuid, request.content_type,
+        field, filename=filename
     )
     return web.Response(
         status=201,

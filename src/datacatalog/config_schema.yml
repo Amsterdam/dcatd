@@ -17,10 +17,11 @@ properties:
     pattern: "^(?:%[a-f0-9]{2}|[-\\w:@!$&'()*+,;=.~])*$"
 
 required:
-  - logging
-  - plugins
-  - primarySchema
-  - jwks
+- logging
+- plugins
+- primarySchema
+- jwks
+- web
 
 
 definitions:
@@ -36,11 +37,14 @@ definitions:
     properties:
       port:
         type: integer
+        minimum: 1024
+        maximum: 65535
       baseurl:
         type: string
+        pattern: '/$'
     required:
-      - port
-      - baseurl
+    - port
+    - baseurl
     type: object
 
   jwks:

@@ -1,6 +1,5 @@
 plugins:
   - datacatalog.plugins.postgres
-  - datacatalog.plugins.dcat
   - datacatalog.plugins.dcat_ap_ams
   - datacatalog.plugins.swift
 
@@ -63,13 +62,13 @@ storage_postgres:
 
 storage_swift:
   user: ${SWIFT_USER:-catalogus}
-  password: ${SWIFT_PASSWORD}
+  password: ${SWIFT_PASSWORD:-insecure}
   base_url: ${SWIFT_BASE_URL:-https://e85bcf2124fb4437b1bc6eb75dfc3abf.objectstore.eu/}
-  container: ${SWIFT_CONTAINER:-dcatd_acc}
+  container: ${SWIFT_CONTAINER:-non_existing}
 
 web:
-  port: 8000
-  baseurl: ${BASEURL:-http://localhost:8000}
+  port: ${PORT:-8000}
+  baseurl: ${BASEURL:-http://localhost:8000/}
 
 jwks: >
   {

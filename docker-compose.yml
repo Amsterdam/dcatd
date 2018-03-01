@@ -25,7 +25,10 @@ services:
       DB_PASSWORD: datacatalog
       DB_HOST: database
       DB_PORT: 5432
+      PORT: 8122
       BASEURL: http://localhost:8122/
+      SWIFT_PASSWORD: insecure
+      SWIFT_CONTAINER: dcatd_acc
     command: ["python", "-m", "datacatalog.main"]
 
   test:
@@ -40,6 +43,8 @@ services:
       DB_PASSWORD: datacatalog
       DB_HOST: database
       DB_PORT: 5432
+      SWIFT_PASSWORD: insecure
+      SWIFT_CONTAINER: dcatd_acc
     command: ["make", "test"]
 
   swaggerui:
