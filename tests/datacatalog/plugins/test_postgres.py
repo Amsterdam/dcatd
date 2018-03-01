@@ -114,8 +114,9 @@ def test_storage_retrieve_no_etag(event_loop, corpus):
 
 def test_storage_retrieve_with_current_etag(event_loop, corpus):
     for doc_id, record in corpus.items():
-        n = event_loop.run_until_complete(postgres_plugin.storage_retrieve(doc_id, {record['etag']}))
-        assert n == None
+        doc, etag = event_loop.run_until_complete(postgres_plugin.storage_retrieve(doc_id, {record['etag']}))
+        assert doc == None
+        assert etag == record['etag']
 
 
 def test_storage_retrieve_with_old_etag(event_loop, corpus):
