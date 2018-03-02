@@ -56,6 +56,9 @@ class Application(web.Application):
         self.router.add_get(path + 'openapi', handlers.openapi.get)
         self.router.add_get(path + 'system/health', handlers.systemhealth.get)
 
+        # TEMPORARY FIX
+        self.router.add_route('OPTIONS', path + 'files', _preflight_handler('POST'))
+
         # Load and initialize plugins:
         self._pm = aiopluggy.PluginManager('datacatalog')
         self._pm.register_specs(plugin_interfaces)
