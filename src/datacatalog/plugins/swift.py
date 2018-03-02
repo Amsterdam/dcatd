@@ -2,11 +2,10 @@ import pkg_resources
 # import typing as T
 import yaml
 import logging
-import re
 import typing as T
 from uuid import uuid4
 
-from aiohttp import helpers, multipart, web
+from aiohttp import helpers, web, web_exceptions
 import aiohttp
 
 import aiopluggy
@@ -83,7 +82,10 @@ async def post(request: web.Request) -> web.Response:
     """POST handler for ``/files``"""
     reader = await request.multipart()
     field = await reader.next()
-    assert field.name == 'distribution'
+    if field.name != 'distribution':
+        raise web_exceptions.HTTPBadRequest(
+            text='file field must be named “distribution”'
+        )
     uuid = uuid4().hex
     content_type = field.headers.get(
         aiohttp.hdrs.CONTENT_TYPE,
