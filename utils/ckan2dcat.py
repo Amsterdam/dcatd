@@ -425,10 +425,42 @@ def dump_datasets(datasets, context):
             json.dump(compacted, fh, indent=2, sort_keys=True)
 
 
+resourcetypes = {
+    "xlsx": 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    "pdf": 'application/pdf',
+    "csv": 'text/csv',
+    "json": 'application/json',
+    "geojson": 'application/vnd.geo+json',
+    "shp": 'application/zip; format="shp"',
+    "xml": 'application/xml'
+}
+
 def ckan2dcat_distribution(resources):
     retval = []
     for resource in resources:
-        pass
+        retval.append(
+            {
+                #'ams:layerIdentifier'  # uhm...
+                'ams:classification': 'public',  # right?
+                #'ams:serviceType': ,  # well...
+                'ams:distributionType': 'file',  # mandatory, but no idea
+                'dcat:accessURL': resource['url'],
+                'dcat:byteSize': resource['size'],
+                'dct:title': resource['name'],
+                'dct:description': resource['description'],
+                'dct:format': 'application/octet-stream',
+                'foaf:isPrimaryTopicOf': {
+                    'dct:issued': resource['created'],
+                    'dct:modified': resource['last_modified']
+                }
+            }
+        )
+        if 'format' in resource and resource['format'] is not None:
+            t = resource['format'].lower()
+            if t == 'api':
+                retval[-1]['ams:distributionType'] = 'api'
+            if t in resourcetypes:
+                retval[-1]['dct:format'] = resourcetypes[t]
     return retval
 
 

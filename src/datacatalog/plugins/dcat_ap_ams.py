@@ -491,26 +491,6 @@ CATALOG_RECORD = dcat.Object(
 
 
 DISTRIBUTION = dcat.Object().add(
-    'dcat:accessURL',
-    dcat.String(
-        format='uri',
-        title="URL",
-        description="Link naar de daadwerkelijke gegevensset"
-    )
-).add(
-    'dct:title',
-    dcat.PlainTextLine(
-        title="Titel",
-        # description="Titel van de link naar de gegevensset",
-        required=True
-    )
-).add(
-    'dct:description',
-    Markdown(
-        title="Beschrijving",
-        description="Geef een omschrijving van de link; kan specifieke aanvullende informatie geven."
-    )
-).add(
     'ams:resourceType',
     dcat.Enum(
         [
@@ -538,28 +518,6 @@ DISTRIBUTION = dcat.Object().add(
         title="Verschijningsvorm"
     )
 ).add(
-    'dct:format',
-    dcat.Enum(
-        [
-            ('n/a', ""),
-            ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', "xlsx"),
-            ('application/pdf', "pdf"),
-            ('text/csv', "csv"),
-            ('application/json', "json"),
-            ('application/zip; format="shp"', "shp"),
-            ('application/xml', "xml"),
-            ('application/octet-stream', "anders"),
-        ],
-        title="Bestandsformaat"
-    )
-).add(
-    'dcat:byteSize',
-    dcat.Integer(
-        minimum=0,
-        title="Bestandsgrootte",
-        description="Bestandsgrootte in bytes"
-    )
-).add(
     'ams:serviceType',
     dcat.Enum(
         [
@@ -581,6 +539,64 @@ DISTRIBUTION = dcat.Object().add(
     dcat.PlainTextLine(
         title="Interne Kaartlaag ID",
         description="De Citydata kaartlaag waarmee deze dataset op de kaart getoond kan worden"
+    )
+).add(
+    'ams:classification',
+    dcat.Enum(
+        [
+            ('public', "Publiek toegankelijk"),
+        ],
+        title="Classification"
+    )
+).add(
+    'dcat:accessURL',
+    dcat.String(
+        format='uri',
+        title="URL",
+        description="Link naar de daadwerkelijke gegevensset"
+    )
+).add(
+    'dcat:byteSize',
+    dcat.Integer(
+        minimum=0,
+        title="Bestandsgrootte",
+        description="Bestandsgrootte in bytes"
+    )
+).add(
+    'dct:title',
+    dcat.PlainTextLine(
+        title="Titel",
+        # description="Titel van de link naar de gegevensset",
+        required=True
+    )
+).add(
+    'dct:description',
+    Markdown(
+        title="Beschrijving",
+        description="Geef een omschrijving van de link; kan specifieke aanvullende informatie geven."
+    )
+).add(
+    'dct:format',
+    dcat.Enum(
+        [
+            ('n/a', ""),
+            ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', "xlsx"),
+            ('application/pdf', "pdf"),
+            ('text/csv', "csv"),
+            ('application/json', "json"),
+            ('application/vnd.geo+json', "geojson"),
+            ('application/zip; format="shp"', "shp"),
+            ('application/xml', "xml"),
+            ('application/octet-stream', "anders"),
+        ],
+        title="Bestandsformaat"
+    )
+).add(
+    'dct:license',
+    dcat.Date(
+        title="Licentie",
+        description="Licentie",
+        required=True
     )
 ).add(
     'foaf:isPrimaryTopicOf',

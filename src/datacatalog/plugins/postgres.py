@@ -93,8 +93,8 @@ async def initialize(app) -> T.Optional[T.Coroutine]:
             )
         except ConnectionRefusedError:
             if connect_attempt_tries_left > 0:
-                connect_attempt_tries_left -= 1
                 _logger.warning("Database not accepting connections. Retrying %d more times.", connect_attempt_tries_left)
+                connect_attempt_tries_left -= 1
                 await asyncio.sleep(CONNECT_ATTEMPT_INTERVAL_SECS)
             else:
                 _logger.error("Could not connect to the database. Aborting.")

@@ -78,11 +78,15 @@ class List(Type):
         return retval
 
     def full_text_search_representation(self, data: T.Iterable):
-        retval = '\n\n'.join([
-            self.item_type.full_text_search_representation(v)
-            for v in data if v is not None
-        ])
-        return retval if len(retval) > 0 else None
+        """We must check whether the given data is really a list, jsonld may
+        flatten lists."""
+        if type(data) is list:
+            retval = '\n\n'.join([
+                self.item_type.full_text_search_representation(v)
+                for v in data if v is not None
+            ])
+            return retval if len(retval) > 0 else None
+        return self.item_type.full_text_search_representation(data)
 
 
 class OneOf(Type):
