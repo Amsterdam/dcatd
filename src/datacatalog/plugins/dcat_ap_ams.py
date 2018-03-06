@@ -88,7 +88,7 @@ def context(base_url=None) -> dict:
 class Markdown(dcat.String):
     def __init__(self, *args, format=None, **kwargs):
         assert format is None
-        super().__init__(*args, format='markdown', **kwargs)
+        super().__init__(*args, **kwargs)
 
     def full_text_search_representation(self, data: str):
         return bleach.clean(data, tags=[], strip=True)
@@ -743,7 +743,6 @@ DATASET = dcat.Object().add(
     'ams:owner',
     dcat.PlainTextLine(
         title="Eigenaar",
-        format="combobox",
         description="Eigenaar en verantwoordelijke voor de betreffende registratie, ook wel bronhouder genoemd. Bij de overheid is dit het bestuursorgaan of rechtspersoon aan wie bij wettelijk voorschrift de verantwoordelijkheid voor het bijhouden van gegevens in een registratie is opgedragen.",
         examples=[
             'AEB Amsterdam',
@@ -806,8 +805,7 @@ DATASET = dcat.Object().add(
         title="Thema",
         required=True,
         allow_empty=False,
-        unique_items=True,
-        format='multiselect'
+        unique_items=True
         #description="Geef aan onder welke hoofdthema’s de gegevensset valt."
     ),
 ).add(
@@ -816,7 +814,6 @@ DATASET = dcat.Object().add(
         KEYWORD,
         title="Tags",
         unique_items=True,
-        format='multicombobox'
         #description="Geef een aantal trefwoorden, die van toepassing zijn op de gegevensset, zodat de gegevensset gevonden kan worden."
     )
 ).add(

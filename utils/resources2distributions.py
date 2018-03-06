@@ -41,7 +41,7 @@ async def _download(alldistributions):
 
     async with aiohttp.ClientSession() as session:
 
-        print('Downloading: ', end='')
+        print('Downloading: ', end='', flush=True)
 
         async def download_distribution(dataset, url, name):
             try:
@@ -53,9 +53,9 @@ async def _download(alldistributions):
                                 break
                             fd.write(chunk)
             except aiohttp.InvalidURL:
-                print('X', end='')
+                print('X', end='', flush=True)
             else:
-                print('.', end='')
+                print('.', end='', flush=True)
 
         for dataset, distributions in alldistributions.items():
             try:
@@ -68,7 +68,7 @@ async def _download(alldistributions):
                 )
                 for distribution in distributions
             ])
-        print(' DONE')
+        print(' DONE', flush=True)
 
 
 async def _upload(alldistributions, token):
@@ -76,7 +76,7 @@ async def _upload(alldistributions, token):
 
     async with aiohttp.ClientSession() as session:
 
-        print('Uploading: ', end='')
+        print('Uploading: ', end='', flush=True)
 
         async def upload_distribution(dataset, oldurl, name, mime):
             data = aiohttp.FormData()
@@ -88,7 +88,7 @@ async def _upload(alldistributions, token):
                 uploadurl, data=data, headers={'Authorization': 'Bearer {}'.format(token)}
             )
             results[dataset][oldurl] = response.headers['Location']
-            print('.', end='')
+            print('.', end='', flush=True)
 
         for dataset, distributions in alldistributions.items():
             results[dataset] = {}
@@ -100,7 +100,7 @@ async def _upload(alldistributions, token):
                 for distribution in distributions
             ])
 
-        print(' DONE')
+        print(' DONE', flush=True)
 
     return results
 
