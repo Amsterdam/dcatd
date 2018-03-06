@@ -592,11 +592,11 @@ DISTRIBUTION = dcat.Object().add(
         title="Bestandsformaat"
     )
 ).add(
-    'dct:license',
+    'dct:issued',
     dcat.Date(
-        title="Licentie",
-        description="Licentie",
-        required=True
+        title="Verversingsdatum",
+        description="De datum waarop de inhoud van deze link voor het laatst is geactualiseerd. ",
+        default=datetime.date.today().isoformat()
     )
 ).add(
     'foaf:isPrimaryTopicOf',

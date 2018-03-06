@@ -425,7 +425,7 @@ def dump_datasets(datasets, context):
             json.dump(compacted, fh, indent=2, sort_keys=True)
 
 
-resourcetypes = {
+dct_formats = {
     "xlsx": 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     "pdf": 'application/pdf',
     "csv": 'text/csv',
@@ -435,32 +435,46 @@ resourcetypes = {
     "xml": 'application/xml'
 }
 
+resourcetypes = {
+    'Data': 'data',
+    'Documentatie': 'doc',
+    'Weergave': 'vis',
+    'Toepassingen': 'app'
+}
+
+distributiontypes = {
+    'api': 'api',
+    'file': 'file',
+    'file.upload': 'file',
+}
+
 def ckan2dcat_distribution(resources):
     retval = []
     for resource in resources:
+        ckan_format = (resource.get('format', None) or '').lower()
+        dct_format = dct_formats.get(ckan_format, 'application/octet-stream')
+        ams_disttype = distributiontypes.get(resource['resource_type'], 'file')
         retval.append(
             {
-                #'ams:layerIdentifier'  # uhm...
-                'ams:classification': 'public',  # right?
-                #'ams:serviceType': ,  # well...
-                'ams:distributionType': 'file',  # mandatory, but no idea
+                'ams:classification': 'public',
+                'ams:distributionType': ams_disttype,
+                'ams:resourceType': resourcetypes[resource.get('type', 'Data')],
                 'dcat:accessURL': resource['url'],
                 'dcat:byteSize': resource['size'],
                 'dct:title': resource['name'],
                 'dct:description': resource['description'],
-                'dct:format': 'application/octet-stream',
+                'dct:format': dct_format,
                 'foaf:isPrimaryTopicOf': {
                     'dct:issued': resource['created'],
                     'dct:modified': resource['last_modified']
                 }
             }
         )
-        if 'format' in resource and resource['format'] is not None:
-            t = resource['format'].lower()
-            if t == 'api':
-                retval[-1]['ams:distributionType'] = 'api'
-            if t in resourcetypes:
-                retval[-1]['dct:format'] = resourcetypes[t]
+        if ams_disttype == 'api':
+            servicetype = 'other'
+            if ckan_format in ('wms', 'wfs'):
+                servicetype = ckan_format
+            retval[-1]['ams:serviceType'] = servicetype
     return retval
 
 
