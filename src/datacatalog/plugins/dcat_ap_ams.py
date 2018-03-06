@@ -491,6 +491,32 @@ CATALOG_RECORD = dcat.Object(
 
 
 DISTRIBUTION = dcat.Object().add(
+    'dct:title',
+    dcat.PlainTextLine(
+        title="Titel",
+        required=True
+    )
+).add(
+    'dct:description',
+    Markdown(
+        title="Beschrijving",
+    )
+).add(
+    'dcat:accessURL',
+    dcat.String(
+        format='uri',
+        title="URL",
+        description="Link naar de daadwerkelijke gegevensset",
+        required=True
+    )
+).add(
+    'dct:issued',
+    dcat.Date(
+        title="Verversingsdatum",
+        description="De datum waarop de inhoud van deze link voor het laatst is geactualiseerd.",
+        default=datetime.date.today().isoformat()
+    )
+).add(
     'ams:resourceType',
     dcat.Enum(
         [
@@ -500,12 +526,7 @@ DISTRIBUTION = dcat.Object().add(
             ('app', "Voorbeeldtoepassing")
         ],
         title="Type resource",
-        description="""Geef aan van welk type de target van deze specifieke link is:
-
-*   **Data:** de gepubliceerde api, service of een bestand
-*   **Documentatie:** uitwerkte informatie over de dataset, bijvoorbeeld het bijbehorende datamodel, keuzelijsten, etc. (bijv. aanvullende api documentatie)
-*   **Visualisatie:** directe weergave van de dataset bij publicatie, bijv. kaart, grafiek, etc.)
-*   **Voorbeeldtoepassing:** het gebruik van de gepubliceerde data in een toepassing voor een informatieproduct)"""
+        required=True
     )
 ).add(
     'ams:distributionType',
@@ -515,7 +536,14 @@ DISTRIBUTION = dcat.Object().add(
             ('file', "Bestand"),
             ('web', "Website")
         ],
-        title="Verschijningsvorm"
+        title="Verschijningsvorm",
+        required=True
+    )
+).add(
+    'ams:layerIdentifier',
+    dcat.PlainTextLine(
+        title="Interne Kaartlaag ID",
+        description="De Citydata kaartlaag waarmee deze dataset op de kaart getoond kan worden"
     )
 ).add(
     'ams:serviceType',
@@ -535,47 +563,6 @@ DISTRIBUTION = dcat.Object().add(
         description="Geef het type API of webservice"
     )
 ).add(
-    'ams:layerIdentifier',
-    dcat.PlainTextLine(
-        title="Interne Kaartlaag ID",
-        description="De Citydata kaartlaag waarmee deze dataset op de kaart getoond kan worden"
-    )
-).add(
-    'ams:classification',
-    dcat.Enum(
-        [
-            ('public', "Publiek toegankelijk"),
-        ],
-        title="Classification"
-    )
-).add(
-    'dcat:accessURL',
-    dcat.String(
-        format='uri',
-        title="URL",
-        description="Link naar de daadwerkelijke gegevensset"
-    )
-).add(
-    'dcat:byteSize',
-    dcat.Integer(
-        minimum=0,
-        title="Bestandsgrootte",
-        description="Bestandsgrootte in bytes"
-    )
-).add(
-    'dct:title',
-    dcat.PlainTextLine(
-        title="Titel",
-        # description="Titel van de link naar de gegevensset",
-        required=True
-    )
-).add(
-    'dct:description',
-    Markdown(
-        title="Beschrijving",
-        description="Geef een omschrijving van de link; kan specifieke aanvullende informatie geven."
-    )
-).add(
     'dct:format',
     dcat.Enum(
         [
@@ -589,14 +576,23 @@ DISTRIBUTION = dcat.Object().add(
             ('application/xml', "xml"),
             ('application/octet-stream', "anders"),
         ],
-        title="Bestandsformaat"
+        title="Type bestand"
     )
 ).add(
-    'dct:issued',
-    dcat.Date(
-        title="Verversingsdatum",
-        description="De datum waarop de inhoud van deze link voor het laatst is geactualiseerd. ",
-        default=datetime.date.today().isoformat()
+    'ams:classification',
+    dcat.Enum(
+        [
+            ('public', "Publiek toegankelijk"),
+        ],
+        title="Classification"
+    )
+).add(
+    'dcat:byteSize',
+    dcat.Integer(
+        minimum=0,
+        title="Bestandsgrootte",
+        description="Bestandsgrootte in bytes",
+        required=True
     )
 ).add(
     'foaf:isPrimaryTopicOf',
