@@ -44,7 +44,7 @@ _Q_DELETE_DOC = 'DELETE FROM "dataset" WHERE id=$1 AND etag=ANY($2) RETURNING id
 _Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "dataset"'
 _Q_SEARCH_DOCS = """
 SELECT id, doc, ts_rank_cd(searchable_text, query) AS rank 
-FROM "dataset", plainto_tsquery($1, $2) query
+FROM "dataset", to_tsquery($1, $2) query
 WHERE (''=$2::varchar OR searchable_text @@ query) {filters}
 AND ('simple'=$1::varchar OR lang=$1::varchar)
 ORDER BY rank DESC
@@ -399,11 +399,14 @@ async def search_search(
     if offset is None:
         offset = 0
 
+    # query
+    query = ' | '.join("{}:*".format(t) for t in q.split())
+
     async with _pool.acquire() as con:
         async with con.transaction():
             # use a cursor so we can stream
             sql = _Q_SEARCH_DOCS.format(filters=filterexpr, limit=limitexpr)
-            async for row in con.cursor(sql, lang, q, offset):
+            async for row in con.cursor(sql, lang, query, offset):
                 yield row['id'], json.loads(row['doc'])
 
 

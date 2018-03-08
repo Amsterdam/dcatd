@@ -1,3 +1,14 @@
+"""
+
+NOTE on uploading existing data from CKAN to dcatd:
+
+$ python dumpckan.py
+$ python ckan2dcat.py https://api.data.amsterdam.nl/dcatd/
+$ python resources2distributions.py [UPLOADURL] [JWT]
+$ cd dcatdata
+$ for d in *.json; do curl -XPOST --header "Authorization: Bearer [JWT]" [DCATDURL]/datasets -d @${d} & done
+
+"""
 import argparse
 import json
 import os

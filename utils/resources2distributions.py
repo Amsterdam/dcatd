@@ -1,4 +1,5 @@
 import aiohttp
+import argparse
 import asyncio
 import collections
 import glob
@@ -6,8 +7,6 @@ import json
 import os
 import sys
 import uvloop
-
-uploadurl = 'https://acc.api.data.amsterdam.nl/dcatd/files'
 
 
 def _ckan_url(url):
@@ -71,7 +70,7 @@ async def _download(alldistributions):
         print(' DONE', flush=True)
 
 
-async def _upload(alldistributions, token):
+async def _upload(alldistributions, token, uploadurl):
     results = {}
 
     async with aiohttp.ClientSession() as session:
@@ -126,14 +125,17 @@ def _update_distributions(urls):
             writer.write(json.dumps(doc, indent='    '))
 
 
+parser = argparse.ArgumentParser(description='CKAN 2 DCAT.')
+parser.add_argument('uploadurl', metavar='URL', help='dcatd /files endpoint to use')
+parser.add_argument('token', metavar='JWT', help='token to use for upload')
+
 if __name__ == '__main__':
-    token = os.getenv('TOKEN')
-    if token is None:
-        print('set TOKEN in env')
-        exit(1)
+    args = parser.parse_args()
+    token = args.token
+    uploadurl = args.uploadurl
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     loop = asyncio.get_event_loop()
     alldists = _distributions()
     loop.run_until_complete(_download(alldists))
-    urls = loop.run_until_complete(_upload(alldists, token))
+    urls = loop.run_until_complete(_upload(alldists, token, uploadurl))
     _update_distributions(urls)
