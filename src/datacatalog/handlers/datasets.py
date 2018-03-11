@@ -251,7 +251,12 @@ async def post_collection(request: web.Request):
         raise web_exceptions.HTTPBadRequest(text='invalid json')
     collection_url = _resource_url(request) + '/'
     cannonical_doc = await hooks.mds_canonicalize(data=doc)
-    expanded_doc = jsonld.expand(cannonical_doc)[0]
+    try:
+        expanded_doc = jsonld.expand(cannonical_doc)[0]
+    except IndexError:
+        raise web_exceptions.HTTPBadRequest(
+            text='Must upload a valid document'
+        )
     docid = None
     docurl = None
     if _DCAT_ID_KEY in expanded_doc:

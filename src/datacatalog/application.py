@@ -51,7 +51,7 @@ class Application(web.Application):
         self.router.add_get(path + 'datasets/{dataset}', handlers.datasets.get)
         self.router.add_put(path + 'datasets/{dataset}', handlers.datasets.put)
         self.router.add_delete(path + 'datasets/{dataset}', handlers.datasets.delete)
-        self.router.add_route('OPTIONS', path + 'datasets/{dataset}', _preflight_handler('PUT', 'DELETE'))
+        self.router.add_route('OPTIONS', path + 'datasets/{dataset}', _preflight_handler('GET', 'DELETE', 'PUT'))
 
         self.router.add_get(path + 'openapi', handlers.openapi.get)
         self.router.add_get(path + 'system/health', handlers.systemhealth.get)
