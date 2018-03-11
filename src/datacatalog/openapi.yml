@@ -11,12 +11,15 @@ paths:
     get:
       description: >-
         Get a list of all datasets, optionally selected by a free-text query
-        and/or facet filters. This endpoint supports cursored paging using the
+        and/or facet filters. This endpoint supports paging using the
         limit parameter.
+
+        Search for datasets concerned with jeugdzorg:
+        ``GET /datasets?q=jeugdzorg``
 
         Get all datasets that have ``jeugdzorg`` as one of its themes:
 
-        ``GET /datasets?/properties/dct:theme/items==jeugdzorg``
+        ``GET /datasets?/properties/dct:theme/items=in=jeugdzorg``
 
         Get all datasets that have ``jeugdzorg`` or ``ouderenzorg`` as one of
         their themes:
