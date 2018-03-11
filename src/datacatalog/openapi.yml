@@ -247,6 +247,30 @@ paths:
       responses:
         204:
           description: No Content
+  /files:
+    post:
+      description: >-
+        Upload a dcat distribution.
+      security:
+      - OAuth2:
+        - CAT/W
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                distribution:
+                  type: string
+                  format: binary
+      responses:
+        201:
+          description: Created.
+          headers:
+            Location:
+              description: Location of the uploaded distribution.
+              schema:
+                type: string
 
 
 components:

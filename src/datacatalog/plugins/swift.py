@@ -1,14 +1,14 @@
 import pkg_resources
-# import typing as T
 import yaml
 import logging
 import typing as T
 from uuid import uuid4
 
-from aiohttp import helpers, web, web_exceptions
+from aiohttp import hdrs, helpers, web, web_exceptions
 import aiohttp
-
 import aiopluggy
+
+from datacatalog import authorization
 
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger(__name__)
@@ -77,9 +77,15 @@ async def _streamer(sink, source):
         await sink.write(chunk)
 
 
+@authorization.authorize()
 async def post(request: web.Request) -> web.Response:
     # language=rst
     """POST handler for ``/files``"""
+    mimetype = helpers.parse_mimetype(request.headers[hdrs.CONTENT_TYPE])
+    if mimetype.type != 'multipart':
+        raise web_exceptions.HTTPBadRequest(
+            text='multipart/* content type expected'
+        )
     reader = await request.multipart()
     field = await reader.next()
     if field.name != 'distribution':

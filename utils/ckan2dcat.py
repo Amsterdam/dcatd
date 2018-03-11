@@ -188,6 +188,7 @@ class TemporalUnit(FieldType):
             'Jaren': 'year',
             'Minuten': 'minute',
             'Dagen': 'day',
+            'Maanden': 'month',
             'Kwartalen': 'quarter'
         }[value]
 
