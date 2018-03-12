@@ -839,8 +839,7 @@ DATASET = dcat.Object().add(
     'dct:identifier',
     dcat.PlainTextLine(
         title="UID",
-        description="Unieke identifier",
-        format="hidden"
+        description="Unieke identifier"
     )
 ).add(
     'foaf:isPrimaryTopicOf',
