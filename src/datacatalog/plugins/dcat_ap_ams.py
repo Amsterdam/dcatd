@@ -71,6 +71,7 @@ def context(base_url=None) -> dict:
         'time': 'http://www.w3.org/2006/time#',
         'vcard': 'http://www.w3.org/2006/vcard/ns#',
         'dcat:dataset': {'@container': '@list'},
+        'dcat:distribution': {'@container': '@set'},
         'dcat:keyword': {'@container': '@set'},
         'dcat:landingpage': {'@type': '@id'},
         'dcat:theme': {'@container': '@set', '@type': '@id'},
