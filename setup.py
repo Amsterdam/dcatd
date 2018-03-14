@@ -64,6 +64,8 @@ setup(
         'pyld',
         'PyYaml',
         'whoosh',
+        # @evert: Why this specific version? --PvB
+        # Evert says: Just remove it and see what happens.
         'cryptography==2.1.2',
 
         # for postgres storage plugin
@@ -79,7 +81,7 @@ setup(
             'Sphinx',
             'sphinx-autobuild',
             'sphinx-autodoc-typehints',
-            'sphinx_rtd_theme',
+            'sphinx-rtd-theme',
         ],
         'dev': [
             'aiohttp-devtools'

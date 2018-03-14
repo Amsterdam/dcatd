@@ -1,3 +1,10 @@
+# language=rst
+"""Helper module to handle JWKS stuff.
+
+This module provides only one method: :meth:`load`, which may raise a
+:exc:`JWKError`.
+
+"""
 import base64
 import collections
 import json
@@ -8,18 +15,27 @@ from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.utils import int_from_bytes
 
 _Key = collections.namedtuple('Key', 'alg key')
+# language=rst
 """Immutable type for key storage"""
 
 _KeySet = collections.namedtuple('KeySet', 'signers verifiers')
+# language=rst
 """Immutable type for key sets"""
 
 
 class JWKError(Exception):
+    # language=rst
     """Error raised when parsing a JWKSet fails."""
 
 
 def load(jwks):
-    """Parse a JWKSet and return a dictionary that maps key IDs on keys."""
+    # language=rst
+    """Parse a JWKSet and return a dictionary that maps key IDs on keys.
+
+    :param str jwks:
+    :raises JWKError: when parsing fails
+
+    """
     sign_keys = {}
     verify_keys = {}
     try:
@@ -97,3 +113,8 @@ def _load_ecdsa(key, is_verifier):
         key = public_numbers.public_key(default_backend())
 
     return alg, key
+
+
+import sys
+__all__ = dir(sys.modules[__name__])
+__all__.remove('int_from_bytes')  # To keep Sphinx happy

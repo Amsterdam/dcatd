@@ -2,7 +2,6 @@ import typing as T
 
 from aiopluggy import HookspecMarker
 
-
 hookspec = HookspecMarker('datacatalog')
 
 

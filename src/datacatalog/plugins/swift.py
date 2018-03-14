@@ -1,10 +1,11 @@
 import pkg_resources
 import yaml
 import logging
+import re
 import typing as T
 from uuid import uuid4
 
-from aiohttp import hdrs, helpers, web, web_exceptions
+from aiohttp import helpers, multipart, web
 import aiohttp
 import aiopluggy
 
@@ -81,15 +82,15 @@ async def _streamer(sink, source):
 async def post(request: web.Request) -> web.Response:
     # language=rst
     """POST handler for ``/files``"""
-    mimetype = helpers.parse_mimetype(request.headers[hdrs.CONTENT_TYPE])
+    mimetype = helpers.parse_mimetype(request.headers[aiohttp.hdrs.CONTENT_TYPE])
     if mimetype.type != 'multipart':
-        raise web_exceptions.HTTPBadRequest(
+        raise web.HTTPBadRequest(
             text='multipart/* content type expected'
         )
     reader = await request.multipart()
     field = await reader.next()
     if field.name != 'distribution':
-        raise web_exceptions.HTTPBadRequest(
+        raise web.HTTPBadRequest(
             text='file field must be named “distribution”'
         )
     uuid = uuid4().hex

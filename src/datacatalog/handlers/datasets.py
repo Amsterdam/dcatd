@@ -5,7 +5,7 @@ import re
 import typing as T
 import urllib.parse
 
-from aiohttp import web_exceptions, web
+from aiohttp import web
 from pyld import jsonld
 
 from datacatalog import authorization
@@ -35,7 +35,7 @@ async def get(request: web.Request):
         request, conditional.HEADER_IF_NONE_MATCH
     )
     if etag_if_none_match == '*':
-        raise web_exceptions.HTTPBadRequest(
+        raise web.HTTPBadRequest(
             body='Endpoint does not support * in the If-None-Match header.'
         )
     # now we know the etag is either None or a set
@@ -44,7 +44,7 @@ async def get(request: web.Request):
             docid=docid, etags=etag_if_none_match
         )
     except KeyError:
-        raise web_exceptions.HTTPNotFound()
+        raise web.HTTPNotFound()
     if doc is None:
         return web.Response(status=304, headers={'Etag': etag})
     expanded_doc = jsonld.expand(doc)[0]
@@ -64,7 +64,7 @@ async def put(request: web.Request):
     try:
         doc = await request.json()
     except json.decoder.JSONDecodeError:
-        raise web_exceptions.HTTPBadRequest(text='invalid json')
+        raise web.HTTPBadRequest(text='invalid json')
     cannonical_doc = await hooks.mds_canonicalize(data=doc)
 
     # Make sure the docid in the path corresponds to the ids given in the
@@ -76,7 +76,7 @@ async def put(request: web.Request):
     expanded_doc = jsonld.expand(cannonical_doc)[0]
     if _DCAT_ID_KEY in expanded_doc:
         if expanded_doc[_DCAT_ID_KEY] != docurl:
-            raise web_exceptions.HTTPBadRequest(
+            raise web.HTTPBadRequest(
                 text='Invalid {}: {} != {}'.format(
                     _DCAT_ID_KEY, expanded_doc[_DCAT_ID_KEY], docurl
                 )
@@ -84,7 +84,7 @@ async def put(request: web.Request):
         del expanded_doc[_DCAT_ID_KEY]
     if _DCAT_DC_ID_KEY in expanded_doc:
         if expanded_doc[_DCAT_DC_ID_KEY][0]['@value'] != docid:
-            raise web_exceptions.HTTPBadRequest(
+            raise web.HTTPBadRequest(
                 text='Invalid {}: {} != {}'.format(
                     _DCAT_DC_ID_KEY, expanded_doc[_DCAT_DC_ID_KEY], docid
                 )
@@ -106,7 +106,7 @@ async def put(request: web.Request):
     )
     # Can't accept a value in both headers
     if etag_if_match is not None and etag_if_none_match is not None:
-        raise web_exceptions.HTTPBadRequest(
+        raise web.HTTPBadRequest(
             body='Endpoint supports either If-Match or If-None-Match in a '
                  'single request, not both'
         )
@@ -114,7 +114,7 @@ async def put(request: web.Request):
     # If-Match: {etag, ...} is for updates
     if etag_if_match is not None:
         if etag_if_match == '*':
-            raise web_exceptions.HTTPBadRequest(
+            raise web.HTTPBadRequest(
                 body='Endpoint does not support If-Match: *. Must provide one '
                      'or more Etags.'
             )
@@ -124,12 +124,12 @@ async def put(request: web.Request):
                 etags=etag_if_match, iso_639_1_code="nl"
             )
         except ValueError:
-            raise web_exceptions.HTTPPreconditionFailed()
+            raise web.HTTPPreconditionFailed()
         return web.Response(status=204, headers={'Etag': new_etag})
 
     # If-None-Match: * is for creates
     if etag_if_none_match != '*':
-        raise web_exceptions.HTTPBadRequest(
+        raise web.HTTPBadRequest(
             body='For inserts of new documents, provide If-None-Match: *'
         )
     try:
@@ -138,7 +138,7 @@ async def put(request: web.Request):
             iso_639_1_code="nl"
         )
     except KeyError:
-        raise web_exceptions.HTTPPreconditionFailed()
+        raise web.HTTPPreconditionFailed()
     return web.Response(
         status=201, headers={'Etag': new_etag}, content_type='text/plain'
     )
@@ -149,13 +149,13 @@ async def delete(request: web.Request):
     given_id = request.match_info['dataset']
     etag_if_match = conditional.parse_if_header(request, conditional.HEADER_IF_MATCH)
     if etag_if_match is None or etag_if_match == '*':
-        raise web_exceptions.HTTPBadRequest(
+        raise web.HTTPBadRequest(
             text='Must provide a If-Match header containing one or more ETags.'
         )
     try:
         await request.app.hooks.storage_delete(docid=given_id, etags=etag_if_match)
     except KeyError:
-        raise web_exceptions.HTTPNotFound()
+        raise web.HTTPNotFound()
     return web.Response(status=204, content_type='text/plain')
 
 
@@ -248,13 +248,13 @@ async def post_collection(request: web.Request):
     try:
         doc = await request.json()
     except json.decoder.JSONDecodeError:
-        raise web_exceptions.HTTPBadRequest(text='invalid json')
+        raise web.HTTPBadRequest(text='invalid json')
     collection_url = _resource_url(request) + '/'
     cannonical_doc = await hooks.mds_canonicalize(data=doc)
     try:
         expanded_doc = jsonld.expand(cannonical_doc)[0]
     except IndexError:
-        raise web_exceptions.HTTPBadRequest(
+        raise web.HTTPBadRequest(
             text='Must upload a valid document'
         )
     docid = None
@@ -269,13 +269,13 @@ async def post_collection(request: web.Request):
         docid = docid[0]['@value']
         if docurl is not None:
             if docurl != urllib.parse.urljoin(collection_url, docid):
-                raise web_exceptions.HTTPBadRequest(
+                raise web.HTTPBadRequest(
                     text='{} != {}'.format(_DCAT_ID_KEY, _DCAT_DC_ID_KEY)
                 )
     elif docurl is not None:
         path = urllib.parse.urlparse(docurl).path
         if path == '':
-            raise web_exceptions.HTTPBadRequest(
+            raise web.HTTPBadRequest(
                 text='{} must be a URL'.format(_DCAT_ID_KEY)
             )
         docid = os.path.basename(os.path.normpath(path))
@@ -294,7 +294,7 @@ async def post_collection(request: web.Request):
             iso_639_1_code="nl"
         )
     except KeyError:
-        raise web_exceptions.HTTPBadRequest(
+        raise web.HTTPBadRequest(
             text='Document with id {} already exists'.format(docid)
         )
     return web.Response(

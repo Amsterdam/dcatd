@@ -7,8 +7,6 @@ import functools
 from aiohttp import web
 import jwt
 
-from datacatalog import jwks
-
 _logger = logging.getLogger(__name__)
 
 
@@ -41,7 +39,7 @@ async def _extract_scopes(request: web.Request) -> T.Set:
             key=key.key,
             algorithms=key.alg
         )
-    except jwt.InvalidTokenError as e:
+    except jwt.InvalidTokenError:
         raise web.HTTPBadRequest(text='Invalid Bearer token') from None
     if 'scopes' not in access_token or not isinstance(access_token['scopes'], list):
         raise web.HTTPBadRequest(

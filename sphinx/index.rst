@@ -3,7 +3,7 @@
 .. toctree::
     :hidden:
 
-    api_docs
+    dev_docs
     plugins
     schemas
     sphinx_101

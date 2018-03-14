@@ -5,10 +5,10 @@ Handlers
 ========
 
 
-Index
------
+Datasets
+--------
 
-.. automodule:: datacatalog.handlers.index
+.. automodule:: datacatalog.handlers.datasets
 
 
 System Health
