@@ -511,13 +511,6 @@ DISTRIBUTION = dcat.Object().add(
         required=True
     )
 ).add(
-    'dct:issued',
-    dcat.Date(
-        title="Verversingsdatum",
-        description="De datum waarop de inhoud van deze link voor het laatst is geactualiseerd.",
-        default=datetime.date.today().isoformat()
-    )
-).add(
     'ams:resourceType',
     dcat.Enum(
         [
@@ -539,12 +532,6 @@ DISTRIBUTION = dcat.Object().add(
         ],
         title="Verschijningsvorm",
         required=True
-    )
-).add(
-    'ams:layerIdentifier',
-    dcat.PlainTextLine(
-        title="Interne Kaartlaag ID",
-        description="De Citydata kaartlaag waarmee deze dataset op de kaart getoond kan worden"
     )
 ).add(
     'ams:serviceType',
@@ -578,6 +565,19 @@ DISTRIBUTION = dcat.Object().add(
             ('application/octet-stream', "anders"),
         ],
         title="Type bestand"
+    )
+).add(
+    'ams:layerIdentifier',
+    dcat.PlainTextLine(
+        title="Interne Kaartlaag ID",
+        description="De Citydata kaartlaag waarmee deze dataset op de kaart getoond kan worden"
+    )
+).add(
+    'dct:modified',
+    dcat.Date(
+        title="Verversingsdatum",
+        description="De datum waarop de inhoud van deze link voor het laatst is geactualiseerd.",
+        default=datetime.date.today().isoformat()
     )
 ).add(
     'ams:classification',
