@@ -637,6 +637,7 @@ DATASET = dcat.Object().add(
     'dct:accrualPeriodicity',
     dcat.Enum(
         [
+            ('unknown', "onbekend"),
             ('realtime', "continu"),
             ('day', "dagelijks"),
             ('2pweek', "twee keer per week"),
@@ -652,9 +653,11 @@ DATASET = dcat.Object().add(
             ('10years', "tienjaarlijks"),
             ('reg', "regelmatig"),
             ('irreg', "onregelmatig"),
-            ('req', "op afroep")
+            ('req', "op afroep"),
+            ('other', "anders")
         ],
         title="Wijzigingsfrequentie",
+        default='unknown'
         #description="Frequentie waarmee de gegevens worden geactualiseerd"
     )
 ).add(

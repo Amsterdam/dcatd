@@ -29,7 +29,7 @@ DCATDIR = 'dcatdata'
 
 def pandoc(input_, from_, to):
     # TODO remove this line:
-    return input_
+    #return input_
 
     #print(f"input: {input_}")
     return subprocess.run(
@@ -44,13 +44,24 @@ class FieldType(object):
         pass
 
     @staticmethod
-    def fulltext(value):
-        return None
-
-    @staticmethod
     def from_ckan(value):
         result = value.strip()
         return None if result == '' else result
+
+
+class CatalogRecord(FieldType):
+    @staticmethod
+    def from_ckan(ckan):
+        retval = {}
+        for from_, to_ in {'metadata_created': 'dct:issued',
+                           'metadata_modified': 'dct:modified'}.items():
+            if from_ in ckan:
+                assert re.fullmatch(
+                    r'\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?',
+                    ckan[from_]
+                )
+            retval[to_] = ckan[from_][:10] + '+0100'
+        return retval
 
 
 class Date(FieldType):
@@ -69,18 +80,15 @@ class Distribution(FieldType):
 
 
 class Distributions(FieldType):
-    pass
+    @staticmethod
+    def from_ckan(value):
+        return []
 
 
 class FOAFPerson(FieldType):
     @staticmethod
     def validate(value):
         assert 'foaf:name' in value
-
-    @staticmethod
-    def fulltext(value):
-        retval = ' '.join(value.values())
-        return retval.replace('mailto:', '')
 
     @staticmethod
     def from_ckan(ckan):
@@ -145,23 +153,63 @@ class Markdown(FieldType):
     def __init__(self, from_):
         self.from_ = from_
 
-    @staticmethod
-    def fulltext(value):
-        return pandoc(value, 'markdown', 'plain')
-
     def from_ckan(self, value):
         return pandoc(value, self.from_, 'markdown')
 
 
 class Organization(FieldType):
     @staticmethod
-    def fulltext(value):
-        # TODO: enrich with known organizational info.
-        return value
+    def from_ckan(value):
+        return value['title']
+
+
+class AccrualPeriodicity(FieldType):
+    @staticmethod
+    def validate(value):
+        assert value in {
+            'unknown',
+            'realtime',
+            'day',
+            '2pweek',
+            'week',
+            '2weeks',
+            'month',
+            'quarter',
+            '2pyear',
+            'year',
+            '2years',
+            '4years',
+            '5years',
+            '10years',
+            'reg',
+            'irreg',
+            'req',
+            'other'
+        }
 
     @staticmethod
     def from_ckan(value):
-        return value['title']
+        return {
+            '': 'unknown',
+            '4-jaarlijks': '4years',
+            'Bij verkiezingen (vierjaarlijks)': '4years',
+            'Geen vaste frequentie, alleen bij beleidswijzigingen vanuit het ministerie van I&W': 'irreg',
+            'Halfjaarlijks': '2pyear',
+            'Jaarlijks': 'year',
+            'Minimaal 5 jaarlijks (cyclus europese richtlijn omgevingslawaai)': '5years',
+            'Onregelmatig': 'irreg',
+            'Regelmatig': 'reg',
+            'Twee keer per week': '2pweek',
+            'dagelijks': 'day',
+            'een keer per 5 jaar': '5years',
+            'jaarlijks': 'year',
+            'kleinschalige topografie: jaarlijks, grootschalige topografie: maandelijks': 'month',
+            'maandelijks': 'month',
+            'om de 10 jaar': '10years',
+            'onregelmatig': 'irreg',
+            'op afroep': 'req',
+            'wekelijks': 'week'
+        }[value.strip()]
 
 
 class TemporalUnit(FieldType):
@@ -236,7 +284,7 @@ class TextLine(FieldType):
         assert not re.search(r'[\r\n]', value)
 
 
-class Theme(FieldType):
+class Themes(FieldType):
     @staticmethod
     def validate(value):
         validator = URLSegment().validate
@@ -259,13 +307,8 @@ class Theme(FieldType):
 
 class URL(FieldType):
     @staticmethod
-    def validate(urls):
-        for url in urls:
-            urlparse(url)
-
-    @staticmethod
-    def from_ckan(value):
-        return [v for v in value.split(' ') if len(v) > 0]
+    def validate(url):
+        urlparse(url)
 
 
 class URLSegment(FieldType):
@@ -279,10 +322,7 @@ class URLSegment(FieldType):
 
 
 class VCard(FieldType):
-    @staticmethod
-    def fulltext(value):
-        retval = ' '.join(value.values())
-        return retval.replace('mailto:', '')
+    pass
 
 
 class VCardContact(VCard):
@@ -302,109 +342,91 @@ class VCardContact(VCard):
         return retval
 
 
-class VCardOwner(VCard):
-    @staticmethod
-    def from_ckan(org):
-        retval = {
-            '@id': f"org:{org['name']}",
-            'vcard:fn': org['title'].strip(),
-            'vcard:note': pandoc(org['description'].strip(), 'html', 'rst'),
-            'vcard:hasLogo': org['image_url'].strip()
-        }
-        email = org.get('publisher_email', '').strip()
-        if email != '':
-            retval['vcard:hasEmail'] = f"mailto:{email}"
-        uri = org.get('publisher_uri', '').strip()
-        if uri != '':
-            retval['vcard:hasURL'] = uri
-        return retval
-
-
-class VCardPublisher(VCard):
-    @staticmethod
-    def from_ckan(ckan):
-        if 'publisher' not in ckan:
-            return None
-        retval = {
-            'vcard:fn': ckan['publisher'].strip()
-        }
-        email = ckan.get('publisher_email', '').strip()
-        if email != '':
-            retval['vcard:hasEmail'] = f"mailto:{email}"
-        uri = ckan.get('publisher_uri', '').strip()
-        if uri != '':
-            retval['vcard:hasURL'] = uri
-        return retval
+# class VCardPublisher(VCard):
+#     @staticmethod
+#     def from_ckan(ckan):
+#         if 'publisher' not in ckan:
+#             return None
+#         retval = {
+#             'vcard:fn': ckan['publisher'].strip()
+#         }
+#         email = ckan.get('publisher_email', '').strip()
+#         if email != '':
+#             retval['vcard:hasEmail'] = f"mailto:{email}"
+#         uri = ckan.get('publisher_uri', '').strip()
+#         if uri != '':
+#             retval['vcard:hasURL'] = uri
+#         return retval
 
 
 _SCHEMA = {
-    'ams:owner': {
-        'type': Organization(),
-        'ckan': '/organization'
-    },
-    'ams:publisher': {
-        'type': VCardPublisher(),
-        'ckan': None
-    },
-    'ams:spatial_description': {
+    'dct:title': {
         'type': TextLine(),
-        'ckan': '/spatial'
-    },
-    'ams:spatial_unit': {
-        'type': SpatialUnit(),
-        'ckan': '/gebiedseenheid'
-    },
-    'ams:temporal_unit': {
-        'type': TemporalUnit(),
-        'ckan': '/tijdseenheid'
-    },
-    'dcat:contactPoint': {
-        'type': VCardContact(),
-        'ckan': None
-    },
-    'dcat:keyword': {
-        'type': Keywords(),
-        'ckan': '/tags'
-    },
-    'dcat:landingpage': {
-        'type': URL(),
-        'ckan': '/url'
-    },
-    'dcat:theme': {
-        'type': Theme(),
-        'ckan': '/groups'
+        'ckan': '/title'
     },
     'dct:description': {
         'type': Markdown('html'),
         'ckan': '/notes'
     },
-    'dct:identifier': {
-        'type': TextLine(),
-        'ckan': '/id'
+    'dcat:distribution': {
+        'type': Distributions(),
+        'ckan': '/resources'
     },
-    'dct:issued': {
-        'type': Date(),
-        'ckan': '/metadata_created'
+    'dcat:landingPage': {
+        'type': URL(),
+        'ckan': '/url'
     },
-    'dct:license': {
-        'type': License(),
-        'ckan': '/license_id'
-    },
-    'dct:modified': {
-        'type': Date(),
-        'ckan': '/metadata_modified'
-    },
-    'dct:publisher': {
-        'type': FOAFPerson(),
-        'ckan': None
+    'dct:accrualPeriodicity': {
+        'type': AccrualPeriodicity(),
+        'ckan': '/frequency'
     },
     'dct:temporal': {
         'type': TextLine(),
         'ckan': '/temporal'
     },
-    'dct:title': {
+    'ams:temporalUnit': {
+        'type': TemporalUnit(),
+        'ckan': '/tijdseenheid'
+    },
+    'ams:spatialDescription': {
         'type': TextLine(),
-        'ckan': '/title'
+        'ckan': '/spatial'
+    },
+    'ams:spatialUnit': {
+        'type': SpatialUnit(),
+        'ckan': '/gebiedseenheid'
+    },
+    'ams:owner': {
+        'type': Organization(),
+        'ckan': '/organization'
+    },
+    'dcat:contactPoint': {
+        'type': VCardContact(),
+        'ckan': None
+    },
+    'dct:publisher': {
+        'type': FOAFPerson(),
+        'ckan': None
+    },
+    'dcat:theme': {
+        'type': Themes(),
+        'ckan': '/groups'
+    },
+    'dcat:keyword': {
+        'type': Keywords(),
+        'ckan': '/tags'
+    },
+    'ams:license': {
+        'type': License(),
+        'ckan': '/license_id'
+    },
+    'dct:identifier': {
+        'type': TextLine(),
+        'ckan': '/id'
+    },
+    'foaf:isPrimaryTopicOf': {
+        'type': CatalogRecord(),
+        'ckan': None
     }
 }
 _SCHEMA_KEYS = {
@@ -491,12 +513,12 @@ def ckan2dcat_distribution(resources):
 
 
 def ckan2dcat(ckan, context):
+    context = dict(context)  # dict() because we mutate the context
+    context['@vocab'] = 'https://ckan.org/terms/'
     retval = {
-        '@context': dict(context),  # dict() because we mutate the context
-        'dct:language': 'lang1:nl',
-        'ams:class': 'class:open'
+        '@context':context,
+        'dct:language': 'lang1:nl'
     }
-    retval['@context']['@vocab'] = 'https://ckan.org/terms/'
     for fieldname, field in _SCHEMA.items():
         if 'ckan' not in field:
             continue
@@ -525,16 +547,14 @@ def ckan2dcat(ckan, context):
     # for k, v in ckan.items():
     #     if k not in _SCHEMA_KEYS:
     #         retval[k] = v
-    retval['dcat:distribution'] = ckan2dcat_distribution(ckan['resources'])
     retval['@id'] = f"ams-dcatd:{retval['dct:identifier']}"
     retval['ckan:name'] = ckan['name']
     return retval
 
 
-parser = argparse.ArgumentParser(description='CKAN 2 DCAT.')
-parser.add_argument('baseurl', metavar='URL', help='baseurl of the dcatd instance')
-
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='CKAN 2 DCAT.')
+    parser.add_argument('baseurl', metavar='URL', help='baseurl of the dcatd instance')
     args = parser.parse_args()
     ctx = dcat_ap_ams.context(args.baseurl)
     dump_datasets((ckan2dcat(x, ctx) for x in load_packages()), ctx)
