@@ -25,7 +25,8 @@ DATASET = Object(json_pointer='').add(
     Markdown(
         title="Beschrijving",
         description="Geef een samenvatting van de inhoud van de gegevensset, welke gegevens zitten erin en wat is expliciet eruit gelaten",
-        required=True,
+        # TODO: should be required, but now empty for same datasets:
+        # required=True,
         json_pointer='/notes',
         from_='html'
     )
@@ -96,7 +97,9 @@ DATASET = Object(json_pointer='').add(
                 'om de 10 jaar': '10years',
                 'onregelmatig': 'irreg',
                 'op afroep': 'req',
-                'wekelijks': 'week'
+                'wekelijks': 'week',
+                # TODO: controleren of dit wel een goede mapping is:
+                'dagen': '2pweek'
             }[(x or '').strip()]
         )
         # description="Frequentie waarmee de gegevens worden geactualiseerd"
@@ -132,22 +135,25 @@ DATASET = Object(json_pointer='').add(
             ('days', "Dagen"),
             ('weeks', "Weken"),
             ('months', "Maanden"),
-            ('quarter', "Kwartalen"),
+            ('quarters', "Kwartalen"),
             ('years', "Jaren"),
             ('other', "anders")
         ],
         title="Tijdseenheid",
         json_pointer='/tijdseenheid',
+        default='na',
+        required=True,
         mapping=(
             lambda x:
             {
-                None: None,
-                'Geen tijdseenheid': None,
-                'Jaren': 'year',
-                'Minuten': 'minute',
-                'Dagen': 'day',
-                'Maanden': 'month',
-                'Kwartalen': 'quarter'
+                None: 'na',
+                'Geen tijdseenheid': 'na',
+                'Minuten': 'minutes',
+                'Uren': 'hours',
+                'Dagen': 'days',
+                'Maanden': 'months',
+                'Kwartalen': 'quarters',
+                'Jaren': 'years'
             }[x]
         )
         # description="Geef de tijdseenheid aan waarin de gegevensset is uitgedrukt, indien van toepassing."
@@ -171,6 +177,8 @@ DATASET = Object(json_pointer='').add(
         [
             ('na', "Geen geografie"),
             ('specific', "Specifieke punten/vlakken/lijnen"),
+            ('nation', "Land"),
+            ('region', "Regio"),
             ('city', "Gemeente"),
             ('district', "Stadsdeel"),
             ('area', "Gebied"),
@@ -190,12 +198,12 @@ DATASET = Object(json_pointer='').add(
             {
                 None: None,
                 'Geen geografie': None,
-                'Buurt': 'buurt',
-                'Gemeente': 'gemeente',
-                'Land': 'land',
-                'Regio': 'regio',
-                'Specifieke punten/vlakken/lijnen': 'specifieke-geometrie',
-                'Stadsdeel': 'stadsdeel'
+                'Buurt': 'neighborhood',
+                'Gemeente': 'city',
+                'Land': 'nation',
+                'Regio': 'region',
+                'Specifieke punten/vlakken/lijnen': 'specific',
+                'Stadsdeel': 'district'
             }[x]
         )
         # description="Geef een eenheid van het gebied waarin de gegevensset is uitgedrukt."
@@ -245,7 +253,8 @@ DATASET = Object(json_pointer='').add(
         ),
         title="Thema",
         required=True,
-        allow_empty=False,
+        # TODO: This should be false, but some datasets don't have a theme yet.
+        allow_empty=True,
         unique_items=True,
         json_pointer='/groups'
         # description="Geef aan onder welke hoofdthema’s de gegevensset valt."

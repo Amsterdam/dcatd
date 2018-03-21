@@ -108,6 +108,7 @@ async def initialize(app):
 async def deinitialize(app):
     # language=rst
     """ Deinitialize the plugin."""
+    await _pool.close()
 
 
 @_hookimpl

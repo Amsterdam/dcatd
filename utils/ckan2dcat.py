@@ -27,6 +27,14 @@ def load_packages():
     for filename in pathlib.Path(CKANDIR).glob('*.json'):
         with open(filename) as fh:
             retval.append(json.load(fh))
+    for package in retval:
+        if 'contact_name' not in package or not package['contact_name']:
+            package['contact_name'] = "Gemeente Amsterdam, Onderzoek, Informatie en Statistiek"
+            package['contact_email'] = "algemeen.OIS@amsterdam.nl"
+        if 'publisher' not in package:
+            package['publisher'] = "Gemeente Amsterdam, Onderzoek, Informatie en Statistiek"
+            package['publisher_email'] = "algemeen.OIS@amsterdam.nl"
+
     return retval
 
 

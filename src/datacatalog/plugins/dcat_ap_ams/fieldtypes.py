@@ -94,7 +94,8 @@ class PlainTextLine(dcat.PlainTextLine):
         self.json_pointer = json_pointer
 
     def from_ckan(self, data: dict) -> T.Optional[str]:
-        return resolve_pointer(data, self.json_pointer, None)
+        original = resolve_pointer(data, self.json_pointer, None)
+        return original or None
 
 
 class String(dcat.String):
@@ -115,7 +116,9 @@ class Markdown(String):
 
     def from_ckan(self, data: dict) -> T.Optional[str]:
         original = super().from_ckan(data)
-        if original is None or self.from_ is None:
+        if not original:
+            return None
+        if self.from_ is None:
             return original
         # TODO replace this line...
         return original
