@@ -85,12 +85,6 @@ default_role = 'py:obj'
 
 # nitpicky = False
 
-# This value contains a list of modules to be mocked up. This is useful when
-# some external dependencies are not met at build time and break the building
-# process. You may only specify the root package of the dependencies themselves
-# and ommit the sub-modules:
-autodoc_mock_imports = ['aiohttp.web_exceptions']
-
 
 # -- Options for extensions -----------------------------------------------
 

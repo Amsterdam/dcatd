@@ -3,7 +3,8 @@ import urllib.parse
 import logging
 from pkg_resources import resource_stream
 
-from aiohttp import hdrs, web
+import aiohttp.hdrs as hdrs
+import aiohttp.web as web
 import aiopluggy
 import yaml
 
@@ -43,7 +44,6 @@ class Application(web.Application):
         self['jwks'] = jwks.load(self._config['jwks'])
 
         # set routes
-        self.router.add_get(path, handlers.index.get)
         self.router.add_get(path + 'datasets', handlers.datasets.get_collection)
         self.router.add_post(path + 'datasets', handlers.datasets.post_collection)
         self.router.add_route('OPTIONS', path + 'datasets', _preflight_handler('POST'))

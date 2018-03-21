@@ -192,7 +192,7 @@ class PlainTextLine(String):
 class Date(String):
     def __init__(self, *args, format=None, pattern=None, **kwargs):
         assert format is None and pattern is None
-        super().__init__(*args, format='date', pattern=r'^\d\d\d\d-\d\d-\d\d$', **kwargs)
+        super().__init__(*args, format='date', pattern=r'^\d\d\d\d-[01]\d-[0-3]\d(?:\+[01]\d:\d\d)?$', **kwargs)
 
 
 class Language(String):

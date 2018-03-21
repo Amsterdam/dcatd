@@ -55,7 +55,7 @@ OFFSET $3;
 
 
 @_hookimpl
-async def initialize(app) -> T.Optional[T.Coroutine]:
+async def initialize(app):
     # language=rst
     """ Initialize the plugin.
 
@@ -102,6 +102,12 @@ async def initialize(app) -> T.Optional[T.Coroutine]:
         else:
             break
     await _pool.execute(_Q_CREATE)
+
+
+@_hookimpl
+async def deinitialize(app):
+    # language=rst
+    """ Deinitialize the plugin."""
 
 
 @_hookimpl
