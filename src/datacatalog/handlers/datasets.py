@@ -16,6 +16,7 @@ _DCAT_ID_KEY = '@id'
 _DCAT_DC_ID_KEY = 'http://purl.org/dc/terms/identifier'
 _DCAT_DC_DESCRIPTION_KEY = 'http://purl.org/dc/terms/description'
 _DCAT_DC_TITLE_KEY = 'http://purl.org/dc/terms/title'
+_DCAT_DCAT_DISTRIBUTION_KEY = 'http://www.w3.org/ns/dcat#distribution'
 _FACET_QUERY_KEY = re.compile(
     r'(?:/properties/[^/=~<>]+(?:/items)?)+'
 )
@@ -26,6 +27,13 @@ _COMMA_SEPARATED_SEGMENT = re.compile(
     r'(?:\\.|[^,\\])+'
 )
 _ESCAPED_CHARACTER = re.compile(r'\\(.)')
+
+
+def _add_blank_node_identifiers_to(distributions: T.Iterable[dict]) -> None:
+    counter = 0
+    for distribution in distributions:
+        counter += 1
+        distribution['@id'] = "_:d{}".format(counter)
 
 
 @produces_content_types('application/ld+json', 'application/json')
@@ -52,6 +60,7 @@ async def get(request: web.Request):
     expanded_doc[_DCAT_ID_KEY] = docurl
     expanded_doc[_DCAT_DC_ID_KEY] = [{'@value': docid}]
     cannonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc)
+    _add_blank_node_identifiers_to(cannonical_doc['dcat:distribution'])
     return web.json_response(cannonical_doc, headers={
         'Etag': etag, 'content_type': 'application/ld+json'
     })
