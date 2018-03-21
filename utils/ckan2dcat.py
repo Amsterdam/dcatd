@@ -31,7 +31,7 @@ def load_packages():
         if 'contact_name' not in package or not package['contact_name']:
             package['contact_name'] = "Gemeente Amsterdam, Onderzoek, Informatie en Statistiek"
             package['contact_email'] = "algemeen.OIS@amsterdam.nl"
-        if 'publisher' not in package:
+        if 'publisher' not in package or not package['publisher']:
             package['publisher'] = "Gemeente Amsterdam, Onderzoek, Informatie en Statistiek"
             package['publisher_email'] = "algemeen.OIS@amsterdam.nl"
 

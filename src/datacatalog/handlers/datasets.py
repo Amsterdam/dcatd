@@ -268,9 +268,10 @@ async def post_collection(request: web.Request):
     if docid is not None:
         docid = docid[0]['@value']
         if docurl is not None:
-            if docurl != urllib.parse.urljoin(collection_url, docid):
+            collection_url_plus_docid = urllib.parse.urljoin(collection_url, docid)
+            if docurl != collection_url_plus_docid:
                 raise web.HTTPBadRequest(
-                    text='{} != {}'.format(_DCAT_ID_KEY, _DCAT_DC_ID_KEY)
+                    text='{} != {}'.format(docurl, collection_url_plus_docid)
                 )
     elif docurl is not None:
         path = urllib.parse.urlparse(docurl).path

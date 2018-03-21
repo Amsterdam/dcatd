@@ -91,6 +91,7 @@ DATASET = Object(json_pointer='').add(
                 'Twee keer per week': '2pweek',
                 'dagelijks': 'day',
                 'een keer per 5 jaar': '5years',
+                'halfjaarlijks': '2pyear',
                 'jaarlijks': 'year',
                 'kleinschalige topografie: jaarlijks, grootschalige topografie: maandelijks': 'month',
                 'maandelijks': 'month',
@@ -301,3 +302,23 @@ DATASET = Object(json_pointer='').add(
     'foaf:isPrimaryTopicOf',
     DATASET_CATALOG_RECORD
 )
+
+
+# def _from_ckan(data: dict):
+#     original = resolve_pointer(data, DATASET.json_pointer, None)
+#     if original is None:
+#         return None
+#     assert isinstance(original, dict)
+#     retval = {}
+#     for (name, value) in DATASET.properties:
+#         v = value.from_ckan(original)
+#         if v is not None:
+#             retval[name] = v
+#     def distribution_filter(distribution):
+#         if 'dcat:accessURL' not in distribution:
+#             logger.error(
+#                 "No dcat:accessURL is distribution %s of dataset %s",
+#                 distribution['title']
+#             )
+#             return None
+#     return retval if len(retval) else None
