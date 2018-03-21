@@ -19,8 +19,6 @@ def _distributions():
         with open(f) as reader:
             doc = json.loads(reader.read())
         docdists = doc.get('dcat:distribution', [])
-        if type(docdists) is not list:
-            docdists = [docdists]
         for distribution in docdists:
             url = distribution['dcat:accessURL']
             if _ckan_url(url):

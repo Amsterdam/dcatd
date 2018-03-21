@@ -2,11 +2,12 @@
 
 NOTE on uploading existing data from CKAN to dcatd:
 
+$ export JWT='<JWT>'
 $ python dumpckan.py
-$ python ckan2dcat.py https://api.data.amsterdam.nl/dcatd/
-$ python resources2distributions.py [UPLOADURL] [JWT]
+$ python ckan2dcat.py https://acc.api.data.amsterdam.nl/dcatd/
+$ python resources2distributions.py https://acc.api.data.amsterdam.nl/dcatd/files ${JWT}
 $ cd dcatdata
-$ for d in *.json; do curl -XPOST --header "Authorization: Bearer [JWT]" [DCATDURL]/datasets -d @${d} & done
+$ for d in *.json; do curl -XPOST --header "Authorization: Bearer ${JWT}" 'https://acc.api.data.amsterdam.nl/datasets' -d @${d} & done
 
 """
 import argparse
@@ -44,6 +45,8 @@ def dump_datasets(datasets, context):
         try:
             expanded = jsonld.expand(dataset)
             compacted = jsonld.compact(expanded, context)
+            # if 'dct:identifier' in compacted:
+            #     del compacted['dct:identifier']
         except:
             print(json.dumps(dataset, indent=2, sort_keys=True))
             raise
