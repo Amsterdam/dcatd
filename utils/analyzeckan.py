@@ -15,10 +15,11 @@ for filename in pathlib.Path(PACKAGE_DIR).glob('*.json'):
 
 attributes = {}
 resource_attributes = {}
-licenses = {}
+formats = set()
 frequencies = set()
 gebiedseenheid = set()
 keywords = set()
+licenses = {}
 organizations = {}
 themes = {}
 temporal = set()
@@ -36,15 +37,14 @@ for p in packages:
             else:
                 resource_attributes[a] = resource_attributes[a] + 1
 
-    v = p.get('license_id')
-    if v is not None:
-        if v not in licenses:
-            licenses[v] = set()
-        licenses[v].add(p['license_title'])
-
     v = p.get('gebiedseenheid')
     if v is not None:
         gebiedseenheid.add(v)
+
+    for r in p['resources']:
+        v = r.get('format')
+        if v is not None:
+            formats.add(v)
 
     v = p.get('frequency')
     if v is not None:
@@ -60,8 +60,11 @@ for p in packages:
             }
             themes[v['name']] = o
 
-    for v in p.get('tags'):
-        keywords.add(v['display_name'])
+    v = p.get('license_id')
+    if v is not None:
+        if v not in licenses:
+            licenses[v] = set()
+        licenses[v].add(p['license_title'])
 
     v = p.get('organization')
     if v is not None and v['name'] not in organizations:
@@ -75,6 +78,9 @@ for p in packages:
         if match:
             o['foaf:homepage'] = match[1]
         organizations[v['name']] = o
+
+    for v in p.get('tags'):
+        keywords.add(v['display_name'])
 
     v = p.get('temporal')
     if v is not None:
@@ -90,26 +96,29 @@ pprint.pprint(attributes)
 print("\nResource attribute occurrence:")
 pprint.pprint(resource_attributes)
 
-print("\nLicenses:")
-pprint.pprint(licenses)
+print("\nFormats:")
+pprint.pprint(formats)
 
 print("\nFrequencies:")
 pprint.pprint(frequencies)
 
-print("\nThemes:")
-pprint.pprint(themes)
+print("\nGebiedseenheid:")
+pprint.pprint(gebiedseenheid)
 
 print("\nKeywords:")
 pprint.pprint(keywords)
 
+print("\nLicenses:")
+pprint.pprint(licenses)
+
 print("\nOrganizations:")
 print(repr(organizations))
 
-print("\nGebiedseenheid:")
-pprint.pprint(gebiedseenheid)
-
 print("\nTemporal:")
 pprint.pprint(temporal)
+
+print("\nThemes:")
+pprint.pprint(themes)
 
 print("\nTijdseenheid:")
 pprint.pprint(tijdseenheid)

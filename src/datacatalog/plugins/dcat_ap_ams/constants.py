@@ -414,12 +414,22 @@ LICENSES = [
 ]
 
 
-DCT_FORMATS = {
-    "xlsx": 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    "pdf": 'application/pdf',
-    "csv": 'text/csv',
-    "json": 'application/json',
-    "geojson": 'application/vnd.geo+json',
-    "shp": 'application/zip; format="shp"',
-    "xml": 'application/xml'
-}
+DCT_FORMATS = [
+    ('n/a', ''),
+    ('text/csv', "CSV"),
+    ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', "DOCX"),
+    ('application/vnd.ms-excel', "MS Excel"),
+    ('application/vnd.geo+json', "GeoJSON"),
+    ('application/gml+xml', "GML"),
+    ('text/html', "HTML"),
+    ('application/json', "JSON"),
+    ('application/pdf', "PDF"),
+    ('image/png', "PNG"),
+    ('application/zip; format="shp"', "SHP"),
+    ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', "XLSX"),
+    # application/xml is the prefered media type for XML documents. RFC7303
+    # defines text/xml as merely an alias of application/xml.
+    ('application/xml', "XML"),
+    ('application/octet-stream', "Anders"),
+]
+

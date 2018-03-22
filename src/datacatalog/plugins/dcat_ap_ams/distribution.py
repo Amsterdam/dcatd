@@ -95,21 +95,26 @@ DISTRIBUTION = Object(json_pointer='').add(
 ).add(
     'dct:format',
     Enum(
-        [
-            ('n/a', ""),
-            ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', "xlsx"),
-            ('application/pdf', "pdf"),
-            ('text/csv', "csv"),
-            ('application/json', "json"),
-            ('application/vnd.geo+json', "geojson"),
-            ('application/zip; format="shp"', "shp"),
-            ('application/xml', "xml"),
-            ('application/octet-stream', "anders"),
-        ],
+        constants.DCT_FORMATS,
         title="Type bestand",
         json_pointer='/format',
         mapping=(
-            lambda x: constants.DCT_FORMATS.get(x.lower(), 'application/octet-stream')
+            lambda x: {
+                'csv': 'text/csv',
+                'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'geojson': 'application/vnd.geo+json',
+                'gml': 'application/gml+xml',
+                'html': 'text/html',
+                'json': 'application/json',
+                'pdf': 'application/pdf',
+                'png': 'image/png',
+                'shp': 'application/zip; format="shp"',
+                'xls': 'application/vnd.ms-excel',
+                'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                # application/xml is the prefered media type for XML documents. RFC7303
+                # defines text/xml as merely an alias of application/xml.
+                'xml': 'application/xml'
+            }.get(x.lower(), 'application/octet-stream')
         )
     )
 ).add(
