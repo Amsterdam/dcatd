@@ -31,6 +31,9 @@ DATASET = Object(json_pointer='').add(
         from_='html'
     )
 ).add(
+    'foaf:isPrimaryTopicOf',
+    DATASET_CATALOG_RECORD
+).add(
     'dcat:distribution',
     List(
         DISTRIBUTION,
@@ -298,9 +301,6 @@ DATASET = Object(json_pointer='').add(
         description="Unieke identifier",
         json_pointer='/id'
     )
-).add(
-    'foaf:isPrimaryTopicOf',
-    DATASET_CATALOG_RECORD
 )
 
 

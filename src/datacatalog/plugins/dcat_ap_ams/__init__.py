@@ -24,7 +24,11 @@ def mds_name():
 @_hookimpl
 def mds_canonicalize(data: dict) -> dict:
     expanded = jsonld.expand(data)
-    return jsonld.compact(expanded, context())
+    retval = jsonld.compact(expanded, context())
+    for distribution in retval['dcat:distribution']:
+        if '@id' in distribution:
+            del distribution['@id']
+    return retval
 
 
 @_hookimpl
