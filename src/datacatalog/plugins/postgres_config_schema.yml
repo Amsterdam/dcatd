@@ -22,9 +22,9 @@ properties:
       connection_timeout:
         type: number
       min_pool_size:
-        type: int
+        type: integer
       max_pool_size:
-        type: int
+        type: integer
       max_inactive_connection_lifetime:
         type: number
     required:
