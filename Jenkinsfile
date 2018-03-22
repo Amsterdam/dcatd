@@ -24,7 +24,8 @@ node {
 
     stage("Test") {
         tryStep "test", {
-            sh "docker-compose -p dcatd -f ./docker-compose.yml build --no-cache --pull test && " +
+            sh "docker-compose -p dcatd -f ./docker-compose.yml up -d database && " +
+               "docker-compose -p dcatd -f ./docker-compose.yml build --no-cache --pull test && " +
                "docker-compose -p dcatd -f ./docker-compose.yml run --rm test make test"
         }, {
             sh "docker-compose -p dcatd -f ./docker-compose.yml down"
