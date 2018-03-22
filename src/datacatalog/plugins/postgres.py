@@ -23,6 +23,10 @@ _logger = logging.getLogger('plugin.storage.postgres')
 
 CONNECT_ATTEMPT_INTERVAL_SECS = 2
 CONNECT_ATTEMPT_MAX_TRIES = 5
+_DEFAULT_CONNECTION_TIMEOUT = 0.2
+_DEFAULT_MIN_POOL_SIZE = 0
+_DEFAULT_MAX_POOL_SIZE = 5
+_DEFAULT_MAX_INACTIVE_CONNECTION_LIFETIME = 5.0
 
 _Q_CREATE = """
 CREATE TABLE IF NOT EXISTS "dataset" (
@@ -51,7 +55,6 @@ ORDER BY rank DESC
 {limit}
 OFFSET $3;
 """
-# TODO: This search query uses one a default ranking algorihm.
 
 
 @_hookimpl
@@ -74,9 +77,16 @@ async def initialize(app):
     with pkg_resources.resource_stream(__name__, 'postgres_config_schema.yml') as s:
         schema = yaml.load(s)
     app.config.validate(schema)
+    dbconf = app.config['storage_postgres']
+
+    # check for optional config
+    conn_timeout = dbconf.get('connection_timeout', _DEFAULT_CONNECTION_TIMEOUT)
+    min_pool_size = dbconf.get('min_pool_size', _DEFAULT_MIN_POOL_SIZE)
+    max_pool_size = dbconf.get('max_pool_size', _DEFAULT_MAX_POOL_SIZE)
+    max_inactive_conn_lifetime = dbconf.get(
+        'max_inactive_connection_lifetime', _DEFAULT_MAX_INACTIVE_CONNECTION_LIFETIME)
 
     # create asyncpg engine
-    dbconf = app.config['storage_postgres']
     _logger.info("Connecting to database: postgres://%s:%i/%s",
                  dbconf['host'], dbconf['port'], dbconf['name'])
 
@@ -89,6 +99,10 @@ async def initialize(app):
                 host=dbconf['host'],
                 port=dbconf['port'],
                 password=dbconf['pass'],
+                timeout=conn_timeout,
+                min_size=min_pool_size,
+                max_size=max_pool_size,
+                max_inactive_connection_lifetime=max_inactive_conn_lifetime,
                 loop=app.loop
             )
         except ConnectionRefusedError:

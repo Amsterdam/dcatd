@@ -3,7 +3,7 @@ $schema: 'http://json-schema.org/draft-07/schema#'
 type: object
 
 properties:
-  storage_s3:
+  storage_postgres:
     type: object
     additionalProperties: false
     properties:
@@ -19,6 +19,14 @@ properties:
         type: string
       pass:
         type: string
+      connection_timeout:
+        type: number
+      min_pool_size:
+        type: int
+      max_pool_size:
+        type: int
+      max_inactive_connection_lifetime:
+        type: number
     required:
       - host
       - port
