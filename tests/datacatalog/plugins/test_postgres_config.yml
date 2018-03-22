@@ -4,7 +4,6 @@ storage_postgres:
   pass: ${DB_PASS:-datacatalog}
   port: ${DB_PORT:-5432}
   user: ${DB_USER:-datacatalog}
-  connection_timeout: 2.0 # high to allow the db to come up
 
 
 
