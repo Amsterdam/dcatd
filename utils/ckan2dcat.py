@@ -3,11 +3,19 @@
 NOTE on uploading existing data from CKAN to dcatd:
 
 $ export JWT='<JWT>'
+$ export DCATD='https://acc.api.data.amsterdam.nl/dcatd/'
 $ python dumpckan.py
-$ python ckan2dcat.py https://acc.api.data.amsterdam.nl/dcatd/
-$ python resources2distributions.py https://acc.api.data.amsterdam.nl/dcatd/files ${JWT}
-$ cd dcatdata
-$ for d in *.json; do curl -XPOST --header "Authorization: Bearer ${JWT}" 'https://acc.api.data.amsterdam.nl/datasets' -d @${d} & done
+$ python ckan2dcat.py "${DCATD}"
+$ python resources2distributions.py "${DCATD}files" "${JWT}"
+$ for d in dcatdata/*.json; do
+    echo -n "${d}..."
+    STATUS=$(
+      curl -XPOST --header "Authorization: Bearer ${JWT}" -d @${d}  \
+        --silent --output /dev/stderr --write-out "%{http_code}" \
+        "${DCATD}datasets"
+    )
+    [ "$STATUS" -eq 201 ] && echo "OK" && rm "${d}" || echo "FAILED: $STATUS"
+  done
 
 """
 import argparse

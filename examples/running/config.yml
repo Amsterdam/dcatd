@@ -5,6 +5,42 @@ plugins:
 
 primarySchema: dcat-ap-ams
 
+storage_postgres:
+  name: ${DB_DATABASE:-datacatalog}
+  host: ${DB_HOST:-localhost}
+  pass: ${DB_PASS:-datacatalog}
+  port: ${DB_PORT:-5432}
+  user: ${DB_USER:-datacatalog}
+
+storage_swift:
+  user: ${SWIFT_USER:-catalogus}
+  password: ${SWIFT_PASSWORD:-insecure}
+  base_url: ${SWIFT_BASE_URL:-https://e85bcf2124fb4437b1bc6eb75dfc3abf.objectstore.eu/}
+  container: ${SWIFT_CONTAINER:-non_existing}
+
+web:
+  port: ${PORT:-8000}
+  baseurl: ${BASEURL:-http://localhost:8000/}
+  oauth2: false
+
+jwks: >
+  {
+    "keys": [
+        {
+          "kty": "EC",
+          "key_ops": [
+            "verify",
+            "sign"
+          ],
+          "kid": "2aedafba-8170-4064-b704-ce92b7c89cc6",
+          "crv": "P-256",
+          "x": "6r8PYwqfZbq_QzoMA4tzJJsYUIIXdeyPA27qTgEJCDw=",
+          "y": "Cf2clfAfFuuCB06NMfIat9ultkMyrMQO9Hd2H7O9ZVE=",
+          "d": "N1vu0UQUp0vLfaNeM0EDbl4quvvL6m_ltjoAXXzkI3U="
+      }
+    ]
+  }
+
 logging:
   formatters:
     default:
@@ -52,38 +88,3 @@ logging:
     - console
     level: ${LOGLEVEL:-WARNING}
   version: 1
-
-storage_postgres:
-  name: ${DB_DATABASE:-datacatalog}
-  host: ${DB_HOST:-localhost}
-  pass: ${DB_PASS:-datacatalog}
-  port: ${DB_PORT:-5432}
-  user: ${DB_USER:-datacatalog}
-
-storage_swift:
-  user: ${SWIFT_USER:-catalogus}
-  password: ${SWIFT_PASSWORD:-insecure}
-  base_url: ${SWIFT_BASE_URL:-https://e85bcf2124fb4437b1bc6eb75dfc3abf.objectstore.eu/}
-  container: ${SWIFT_CONTAINER:-non_existing}
-
-web:
-  port: ${PORT:-8000}
-  baseurl: ${BASEURL:-http://localhost:8000/}
-
-jwks: >
-  {
-    "keys": [
-        {
-          "kty": "EC",
-          "key_ops": [
-            "verify",
-            "sign"
-          ],
-          "kid": "2aedafba-8170-4064-b704-ce92b7c89cc6",
-          "crv": "P-256",
-          "x": "6r8PYwqfZbq_QzoMA4tzJJsYUIIXdeyPA27qTgEJCDw=",
-          "y": "Cf2clfAfFuuCB06NMfIat9ultkMyrMQO9Hd2H7O9ZVE=",
-          "d": "N1vu0UQUp0vLfaNeM0EDbl4quvvL6m_ltjoAXXzkI3U="
-      }
-    ]
-  }

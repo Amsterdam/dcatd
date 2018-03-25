@@ -87,7 +87,9 @@ async def middleware(app: web.Application, handler):
 
 
 async def enforce_one_of(request: web.Request,
-                         security_requirements: T.List[T.Dict[str, T.Optional[T.Iterable]]]):
+                         security_requirements: T.List[T.Dict[
+                             str, T.Optional[T.Iterable]]
+                         ]):
     for security_requirement in security_requirements:
         if await _enforce_all_of(request, security_requirement):
             return
@@ -95,7 +97,9 @@ async def enforce_one_of(request: web.Request,
 
 
 async def _enforce_all_of(request: web.Request,
-                          security_requirements: T.Dict[str, T.Optional[T.Iterable]]) -> bool:
+                          security_requirements: T.Dict[
+                              str, T.Optional[T.Iterable]
+                          ]) -> bool:
     openapi = request.app['openapi']
     security_definitions = openapi['components']['securitySchemes']
     for requirement, scopes in security_requirements.items():
@@ -117,13 +121,16 @@ def authorize(p_method=None):
     def decorator(f: T.Callable):
         @functools.wraps(f)
         async def wrapper(request, *args, **kwargs):
+            require_oauth2 = request.app.config['web'].get('oauth2', True)
+            if not require_oauth2:
+                return
             openapi = request.app['openapi']
 
             baseurl = request.app.config['web']['baseurl']
             base_path = urllib.parse.urlparse(baseurl).path
 
             path_offset = len(base_path)
-            if len(base_path) > 0 and base_path[-1] == '/':
+            if path_offset > 0 and base_path[-1] == '/':
                 path_offset -= 1
 
             paths = openapi['paths']

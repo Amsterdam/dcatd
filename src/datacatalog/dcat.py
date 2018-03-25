@@ -77,6 +77,16 @@ class List(Type):
             retval['minItems'] = 1
         return retval
 
+    def canonicalize(self, data: list) -> list:
+        if not isinstance(data, list):
+            raise TypeError("{}: not a list".format(data))
+        retval = []
+        for datum in data:
+            value = self.item_type.canonicalize(datum)
+            if value is not None:
+                retval.append(value)
+        return retval
+
     def full_text_search_representation(self, data: T.Iterable):
         """We must check whether the given data is really a list, jsonld may
         flatten lists."""
@@ -100,7 +110,7 @@ class OneOf(Type):
         retval['oneOf'] = [v.schema for v in self.types]
         return retval
 
-    def validate(self, data):
+    def validate(self, data) -> Type:
         for type in self.types:
             try:
                 jsonschema.validate(data, self.schema)
@@ -109,21 +119,27 @@ class OneOf(Type):
                 pass
         raise jsonschema.ValidationError("Not valid for any type")
 
-    def full_text_search_representation(self, data: str):
+    def full_text_search_representation(self, data: T.Any):
         raise NotImplementedError()
 
-    def canonicalize(self, data):
+    def canonicalize(self, data: T.Any):
         return self.validate(data).canonicalize(data)
 
 
 class Object(Type):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.properties = []
+        self.properties: T.List[T.Tuple[str, Type]] = []
 
     @property
     def property_names(self):
         return [x[0] for x in self.properties]
+
+    def __getitem__(self, item):
+        for name, value in self.properties:
+            if name == item:
+                return value
+        raise KeyError()
 
     def add(self, name, value, before=None):
         if name in self.property_names:
@@ -161,13 +177,25 @@ class Object(Type):
         retval = '\n\n'.join(v for v in ftsr if v is not None)
         return retval if len(retval) > 0 else None
 
+    def canonicalize(self, data: dict):
+        if not isinstance(data, dict):
+            raise TypeError("{}: not a dict".format(data))
+        retval = {}
+        for key, value in self.properties:
+            if key in data:
+                canonical_value = value.canonicalize(data[key])
+                if canonical_value is not None:
+                    retval[key] = canonical_value
+        return retval
+
 
 class String(Type):
-    def __init__(self, *args,
-                 pattern=None, max_length=None, **kwargs):
+    def __init__(self, *args, pattern=None, max_length=None, allow_empty=False,
+                 **kwargs):
         super().__init__(*args, **kwargs)
         self.pattern = pattern
         self.max_length = max_length
+        self.allow_empty = allow_empty
 
     @property
     def schema(self) -> dict:
@@ -177,10 +205,18 @@ class String(Type):
             retval['pattern'] = self.pattern
         if self.max_length is not None:
             retval['maxLength'] = self.max_length
+        if not self.allow_empty:
+            retval['minLength'] = 1
         return retval
 
     def full_text_search_representation(self, data: str):
         return data
+
+    def canonicalize(self, data: str):
+        if not isinstance(data, str):
+            raise TypeError("{}: not a string".format(data))
+        retval = data.strip()
+        return retval if len(retval) > 0 or self.allow_empty else None
 
 
 class PlainTextLine(String):
@@ -194,6 +230,11 @@ class Date(String):
         assert format is None and pattern is None
         super().__init__(*args, format='date', pattern=r'^\d\d\d\d-[01]\d-[0-3]\d(?:\+[01]\d:\d\d)?$', **kwargs)
 
+    def canonicalize(self, data: str) -> str:
+        if not isinstance(data, str):
+            raise TypeError("{}: not a string".format(data))
+        return data if len(data) == 15 else data + '+0100'
+
 
 class Language(String):
     def __init__(self, *args, format=None, pattern=None, **kwargs):
@@ -202,7 +243,8 @@ class Language(String):
 
 
 class Enum(String):
-    def __init__(self, values, *args, **kwargs):
+    def __init__(self, values, *args, allow_empty=None, **kwargs):
+        assert allow_empty is None
         super().__init__(*args, **kwargs)
         self.values = values
         self.dict = {key: value for key, value in values}
@@ -216,6 +258,12 @@ class Enum(String):
 
     def full_text_search_representation(self, data: str):
         return self.dict[data]
+
+    def canonicalize(self, data: str) -> T.Optional[str]:
+        keys = {v[0] for v in self.values}
+        if data in keys:
+            return data
+        return None if len(data) == 0 else data
 
 
 class Integer(Type):
@@ -243,6 +291,15 @@ class Integer(Type):
 
     def full_text_search_representation(self, data: T.Any):
         return str(data) if isinstance(data, int) else None
+
+    def canonicalize(self, data):
+        if isinstance(data, int):
+            return data
+        if isinstance(data, str):
+            retval = int(data)
+            if len(str(retval)) != len(data):
+                raise ValueError("{}: not an integer".format(data))
+        raise TypeError("{}: not an integer".format(data))
 
 
 DISTRIBUTION = Object()

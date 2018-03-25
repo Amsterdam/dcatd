@@ -1,11 +1,10 @@
 import pkg_resources
 import yaml
 import logging
-import re
 import typing as T
 from uuid import uuid4
 
-from aiohttp import helpers, multipart, web
+from aiohttp import helpers, web
 import aiohttp
 import aiopluggy
 
@@ -21,12 +20,11 @@ _AUTHORIZATION = None
 @_hookimpl
 def initialize_sync(app):
     # language=rst
-    """ Initialize the plugin.
+    """Initialize the plugin.
 
-    This function validates the configuration and creates a connection pool.
-    The pool is stored as a module-scoped singleton in _pool.
-
-    :param datacatalog.application.Application app:
+    -  validates the configuration loaded by `app`;
+    -  initializes `_BASE_URL` and `_AUTHORIZATION`;
+    -  registers a new endpoint ``/files`` in the HTTP service.
 
     """
     # validate configuration
@@ -67,15 +65,6 @@ async def _put_file_to_object_store(uuid: str, content_type: str, data,
                     await response.text(), response
                 )
                 raise web.HTTPBadGateway()
-
-
-@aiohttp.streamer
-async def _streamer(sink, source):
-    while True:
-        chunk = await source.read_chunk(size=65536)
-        if not chunk:
-            break
-        await sink.write(chunk)
 
 
 @authorization.authorize()

@@ -23,11 +23,15 @@ def mds_name():
 
 @_hookimpl
 def mds_canonicalize(data: dict) -> dict:
-    expanded = jsonld.expand(data)
-    retval = jsonld.compact(expanded, context())
+    # The expansion is implicitly done in jsonld.compact() below.
+    # data = jsonld.expand(data)
+    retval = jsonld.compact(data, context())
     for distribution in retval['dcat:distribution']:
         if '@id' in distribution:
             del distribution['@id']
+    for item in ['@id', 'dct:identifier']:
+        if item in retval:
+            del retval[item]
     return retval
 
 

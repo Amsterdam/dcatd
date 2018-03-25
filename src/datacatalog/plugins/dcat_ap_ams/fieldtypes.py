@@ -9,21 +9,27 @@ from jsonpointer import resolve_pointer
 from datacatalog import dcat
 
 
-class Date(dcat.Date):
+class FromCKANMixin(object):
     def __init__(self, *args, json_pointer: str, **kwargs):
         super().__init__(*args, **kwargs)
         self.json_pointer = json_pointer
 
     def from_ckan(self, data: dict) -> T.Optional[str]:
-        original = resolve_pointer(data, self.json_pointer, None)
+        return resolve_pointer(data, self.json_pointer, None)
+
+
+class Date(FromCKANMixin, dcat.Date):
+
+    def from_ckan(self, data: dict) -> T.Optional[str]:
+        original = super().from_ckan(data)
         if original is None:
             return None
         assert re.fullmatch(r'\d\d\d\d-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?', original)
-        return original[:10]
+        return original[:10] + '+0100'
 
 
-class Enum(dcat.Enum):
-    def __init__(self, *args, mapping: T.Callable, json_pointer: str, **kwargs):
+class Enum(FromCKANMixin, dcat.Enum):
+    def __init__(self, *args, mapping: T.Callable, **kwargs):
         # language=rst
         """
 
@@ -33,32 +39,19 @@ class Enum(dcat.Enum):
         """
         super().__init__(*args, **kwargs)
         self.mapping = mapping
-        self.json_pointer = json_pointer
 
     def from_ckan(self, data: dict) -> T.Optional[str]:
-        original = resolve_pointer(data, self.json_pointer, None)
+        original = super().from_ckan(data)
         return self.mapping(original)
 
 
-class Integer(dcat.Integer):
-    def __init__(self, *args, json_pointer: str, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.json_pointer = json_pointer
-
-    def from_ckan(self, data: dict) -> T.Optional[int]:
-        retval = resolve_pointer(data, self.json_pointer, None)
-        if retval is not None:
-            retval = int(retval)
-        return retval
+class Integer(FromCKANMixin, dcat.Integer):
+    pass
 
 
-class List(dcat.List):
-    def __init__(self, *args, json_pointer: str, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.json_pointer = json_pointer
-
-    def from_ckan(self, data: T.Iterable):
-        original = resolve_pointer(data, self.json_pointer, None)
+class List(FromCKANMixin, dcat.List):
+    def from_ckan(self, data: dict):
+        original = super().from_ckan(data)
         if original is None:
             return None
         assert isinstance(original, list)
@@ -67,16 +60,12 @@ class List(dcat.List):
             v = self.item_type.from_ckan(item)
             if v is not None:
                 retval.append(v)
-        return retval
+        return retval if len(retval) > 0 or self.allow_empty else None
 
 
-class Object(dcat.Object):
-    def __init__(self, *args, json_pointer: str, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.json_pointer = json_pointer
-
+class Object(FromCKANMixin, dcat.Object):
     def from_ckan(self, data: dict) -> T.Optional[dict]:
-        original = resolve_pointer(data, self.json_pointer, None)
+        original = super().from_ckan(data)
         if original is None:
             return None
         assert isinstance(original, dict)
@@ -85,27 +74,15 @@ class Object(dcat.Object):
             v = value.from_ckan(original)
             if v is not None:
                 retval[name] = v
-        return retval if len(retval) else None
+        return retval
 
 
-class PlainTextLine(dcat.PlainTextLine):
-    def __init__(self, *args, json_pointer: str, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.json_pointer = json_pointer
-
-    def from_ckan(self, data: dict) -> T.Optional[str]:
-        original = resolve_pointer(data, self.json_pointer, None)
-        return original or None
+class PlainTextLine(FromCKANMixin, dcat.PlainTextLine):
+    pass
 
 
-class String(dcat.String):
-    def __init__(self, *args, json_pointer: str, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.json_pointer = json_pointer
-
-    def from_ckan(self, data: dict) -> T.Optional[str]:
-        original = resolve_pointer(data, self.json_pointer, None)
-        return original or None
+class String(FromCKANMixin, dcat.String):
+    pass
 
 
 class Markdown(String):
@@ -116,7 +93,7 @@ class Markdown(String):
 
     def from_ckan(self, data: dict) -> T.Optional[str]:
         original = super().from_ckan(data)
-        if not original:
+        if original is None:
             return None
         if self.from_ is None:
             return original
@@ -126,7 +103,7 @@ class Markdown(String):
         # return subprocess.run(
         #     ['pandoc', '-f', self.from_, '-t', 'markdown'],
         #     input=original.encode(), stdout=subprocess.PIPE, check=True
-        # ).stdout.decode()
+        # ).stdout.decode().strip() or None
 
     def full_text_search_representation(self, data: str):
         return bleach.clean(data, tags=[], strip=True)
