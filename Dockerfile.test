@@ -1,4 +1,6 @@
 FROM python:3.6-slim
     WORKDIR /root/app
     COPY . /root/app
+    RUN apt-get update
+    RUN apt-get install make
     RUN pip install .[test]
