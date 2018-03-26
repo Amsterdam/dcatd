@@ -1,5 +1,4 @@
-FROM python:3.6-alpine3.7
+FROM python:3.6-slim
     WORKDIR /root/app
     COPY . /root/app
-    RUN apk --update add gcc make musl-dev libffi-dev openssl-dev
     RUN pip install .[test]
