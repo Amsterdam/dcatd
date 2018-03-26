@@ -13,9 +13,11 @@ from aiohttp_extras import conditional
 from aiohttp_extras.content_negotiation import produces_content_types
 
 _DCAT_ID_KEY = '@id'
-_DCAT_DC_ID_KEY = 'http://purl.org/dc/terms/identifier'
-_DCAT_DC_DESCRIPTION_KEY = 'http://purl.org/dc/terms/description'
-_DCAT_DC_TITLE_KEY = 'http://purl.org/dc/terms/title'
+_DCAT_DCT_ID_KEY = 'http://purl.org/dc/terms/identifier'
+_DCAT_DCT_DESCRIPTION_KEY = 'http://purl.org/dc/terms/description'
+_DCAT_DCT_TITLE_KEY = 'http://purl.org/dc/terms/title'
+_DCAT_DCT_FORMAT_KEY = 'http://purl.org/dc/terms/format'
+_DCAT_DCAT_KEYWORD_KEY = 'http://www.w3.org/ns/dcat#keyword'
 _DCAT_DCAT_DISTRIBUTION_KEY = 'http://www.w3.org/ns/dcat#distribution'
 _FACET_QUERY_KEY = re.compile(
     r'(?:/properties/[^/=~<>]+(?:/items)?)+'
@@ -58,7 +60,7 @@ async def get(request: web.Request):
     expanded_doc = jsonld.expand(doc)[0]
     docurl = _resource_url(request)
     expanded_doc[_DCAT_ID_KEY] = docurl
-    expanded_doc[_DCAT_DC_ID_KEY] = [{'@value': docid}]
+    expanded_doc[_DCAT_DCT_ID_KEY] = [{'@value': docid}]
     cannonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc)
     _add_blank_node_identifiers_to(cannonical_doc['dcat:distribution'])
     return web.json_response(cannonical_doc, headers={
@@ -91,14 +93,14 @@ async def put(request: web.Request):
                 )
             )
         del expanded_doc[_DCAT_ID_KEY]
-    if _DCAT_DC_ID_KEY in expanded_doc:
-        if expanded_doc[_DCAT_DC_ID_KEY][0]['@value'] != docid:
+    if _DCAT_DCT_ID_KEY in expanded_doc:
+        if expanded_doc[_DCAT_DCT_ID_KEY][0]['@value'] != docid:
             raise web.HTTPBadRequest(
                 text='Invalid {}: {} != {}'.format(
-                    _DCAT_DC_ID_KEY, expanded_doc[_DCAT_DC_ID_KEY], docid
+                    _DCAT_DCT_ID_KEY, expanded_doc[_DCAT_DCT_ID_KEY], docid
                 )
             )
-        del expanded_doc[_DCAT_DC_ID_KEY]
+        del expanded_doc[_DCAT_DCT_ID_KEY]
     # recompute the canonnical doc
     cannonical_doc = await hooks.mds_canonicalize(data=expanded_doc)
     # Let the metadata plugin grab the full-text search representation
@@ -233,9 +235,14 @@ async def get_collection(request: web.Request) -> web.Response:
         docurl = urllib.parse.urljoin(collection_url, docid)
         resultdoc = {
             _DCAT_ID_KEY: docurl,
-            _DCAT_DC_ID_KEY: [{'@value': docid}],
-            _DCAT_DC_TITLE_KEY: expanded_doc.get(_DCAT_DC_TITLE_KEY, ''),
-            _DCAT_DC_DESCRIPTION_KEY: expanded_doc.get(_DCAT_DC_DESCRIPTION_KEY, ''),
+            _DCAT_DCT_ID_KEY: [{'@value': docid}],
+            _DCAT_DCT_TITLE_KEY: expanded_doc.get(_DCAT_DCT_TITLE_KEY, ''),
+            _DCAT_DCT_DESCRIPTION_KEY: expanded_doc.get(_DCAT_DCT_DESCRIPTION_KEY, ''),
+            _DCAT_DCAT_KEYWORD_KEY: expanded_doc.get(_DCAT_DCAT_KEYWORD_KEY, []),
+            _DCAT_DCAT_DISTRIBUTION_KEY: [
+                {_DCAT_DCT_FORMAT_KEY: d[_DCAT_DCT_FORMAT_KEY]}
+                for d in expanded_doc.get(_DCAT_DCAT_DISTRIBUTION_KEY, [])
+            ]
         }
         compacted_doc = jsonld.compact(resultdoc, ctx)
         del compacted_doc['@context']
@@ -271,9 +278,9 @@ async def post_collection(request: web.Request):
     if _DCAT_ID_KEY in expanded_doc:
         docurl = expanded_doc[_DCAT_ID_KEY]
         del expanded_doc[_DCAT_ID_KEY]
-    if _DCAT_DC_ID_KEY in expanded_doc:
-        docid = expanded_doc[_DCAT_DC_ID_KEY]
-        del expanded_doc[_DCAT_DC_ID_KEY]
+    if _DCAT_DCT_ID_KEY in expanded_doc:
+        docid = expanded_doc[_DCAT_DCT_ID_KEY]
+        del expanded_doc[_DCAT_DCT_ID_KEY]
     if docid is not None:
         docid = docid[0]['@value']
         if docurl is not None:
