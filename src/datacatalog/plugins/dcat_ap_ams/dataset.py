@@ -31,8 +31,12 @@ DATASET = Object(json_pointer='').add(
         from_='html'
     )
 ).add(
-    'foaf:isPrimaryTopicOf',
-    DATASET_CATALOG_RECORD
+    'dcat:distribution',
+    List(
+        DISTRIBUTION,
+        title="Resources",
+        json_pointer='/resources'
+    )
 ).add(
     'overheidds:doel',
     Markdown(
@@ -48,12 +52,8 @@ DATASET = Object(json_pointer='').add(
         json_pointer='/url'
     )
 ).add(
-    'dcat:distribution',
-    List(
-        DISTRIBUTION,
-        title="Resources",
-        json_pointer='/resources'
-    )
+    'foaf:isPrimaryTopicOf',
+    DATASET_CATALOG_RECORD
 ).add(
     'dct:accrualPeriodicity',
     Enum(
