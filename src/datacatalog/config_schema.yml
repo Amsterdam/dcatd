@@ -44,8 +44,6 @@ definitions:
       baseurl:
         type: string
         pattern: '/$'
-      oauth2:
-        type: boolean
     required:
     - port
     - baseurl

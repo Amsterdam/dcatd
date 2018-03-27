@@ -121,9 +121,6 @@ def authorize(p_method=None):
     def decorator(f: T.Callable):
         @functools.wraps(f)
         async def wrapper(request, *args, **kwargs):
-            require_oauth2 = request.app.config['web'].get('oauth2', True)
-            if not require_oauth2:
-                return
             openapi = request.app['openapi']
 
             baseurl = request.app.config['web']['baseurl']

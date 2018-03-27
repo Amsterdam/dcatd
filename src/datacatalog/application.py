@@ -63,8 +63,8 @@ class Application(web.Application):
         self._pm = aiopluggy.PluginManager('datacatalog')
         self._pm.register_specs(plugin_interfaces)
 
-        self.on_startup.append(self.__class__._on_startup)
-        self.on_cleanup.append(self.__class__._on_cleanup)
+        self.on_startup.append(_on_startup)
+        self.on_cleanup.append(_on_cleanup)
         self.on_response_prepare.append(_on_response_prepare)
 
         self._load_plugins()
@@ -75,15 +75,6 @@ class Application(web.Application):
         for r in results:
             if r.exception is not None:
                 raise r.exception
-
-    async def _on_startup(self):
-        results = await self.hooks.initialize(app=self)
-        for r in results:
-            if r.exception is not None:
-                raise r.exception
-
-    async def _on_cleanup(self):
-        await self.hooks.deinitialize(app=self)
 
     @property
     def config(self) -> config.ConfigDict:
@@ -106,6 +97,17 @@ class Application(web.Application):
             raise Exception(
                 "There are no implementations for the following required hooks: %s" % missing
             )
+
+
+async def _on_startup(app):
+    results = await app.hooks.initialize(app=app)
+    for r in results:
+        if r.exception is not None:
+            raise r.exception
+
+
+async def _on_cleanup(app):
+    await app.hooks.deinitialize(app=app)
 
 
 def _resolve_plugin_path(fq_name: str):

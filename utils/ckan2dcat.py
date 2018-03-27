@@ -1,21 +1,26 @@
+# language=rst
 """
 
-NOTE on uploading existing data from CKAN to dcatd:
+.. note::
 
-$ export JWT='<JWT>'
-$ export DCATD='https://acc.api.data.amsterdam.nl/dcatd/'
-$ python dumpckan.py
-$ python ckan2dcat.py "${DCATD}"
-$ python resources2distributions.py "${DCATD}files" "${JWT}"
-$ for d in dcatdata/*.json; do
-    echo -n "${d}..."
-    STATUS=$(
-      curl -XPOST --header "Authorization: Bearer ${JWT}" -d @${d}  \
-        --silent --output /dev/stderr --write-out "%{http_code}" \
-        "${DCATD}datasets"
-    )
-    [ "$STATUS" -eq 201 ] && echo "OK" && rm "${d}" || echo "FAILED: $STATUS"
-  done
+    .. highlight:: sh
+
+    uploading existing data from CKAN to dcatd:
+
+        export JWT='<JWT>'
+        export DCATD='https://acc.api.data.amsterdam.nl/dcatd/'
+        python dumpckan.py
+        python ckan2dcat.py "${DCATD}"
+        python resources2distributions.py "${DCATD}files" "${JWT}"
+        for d in dcatdata/*.json; do
+          echo -n "${d}..."
+          STATUS=$(
+            curl -XPOST --header "Authorization: Bearer ${JWT}" -d @${d}  \
+              --silent --output /dev/stderr --write-out "%{http_code}" \
+              "${DCATD}datasets"
+          )
+          [ "$STATUS" -eq 201 ] && echo "OK" && rm "${d}" || echo "FAILED: $STATUS"
+        done
 
 """
 import argparse
@@ -67,6 +72,7 @@ def ckan2dcat(ckan, context):
     # context['@vocab'] = 'https://ckan.org/terms/'
     retval = dcat_ap_ams.DATASET.from_ckan(ckan)
     retval['@context'] = context
+    retval = dcat_ap_ams.DATASET.canonicalize(retval)
     retval['@id'] = f"ams-dcatd:{retval['dct:identifier']}"
     retval['ams:ckan_name'] = ckan['name']
     for distribution in retval['dcat:distribution']:

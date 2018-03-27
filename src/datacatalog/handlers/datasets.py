@@ -58,12 +58,12 @@ async def get(request: web.Request):
     if doc is None:
         return web.Response(status=304, headers={'Etag': etag})
     expanded_doc = jsonld.expand(doc)[0]
-    docurl = _resource_url(request)
+    docurl = f"{_datasets_url(request)}/{docid}"
     expanded_doc[_DCAT_ID_KEY] = docurl
     expanded_doc[_DCAT_DCT_ID_KEY] = [{'@value': docid}]
-    cannonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc)
-    _add_blank_node_identifiers_to(cannonical_doc['dcat:distribution'])
-    return web.json_response(cannonical_doc, headers={
+    canonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc)
+    _add_blank_node_identifiers_to(canonical_doc['dcat:distribution'])
+    return web.json_response(canonical_doc, headers={
         'Etag': etag, 'content_type': 'application/ld+json'
     })
 
@@ -76,15 +76,15 @@ async def put(request: web.Request):
         doc = await request.json()
     except json.decoder.JSONDecodeError:
         raise web.HTTPBadRequest(text='invalid json')
-    cannonical_doc = await hooks.mds_canonicalize(data=doc)
+    canonical_doc = await hooks.mds_canonicalize(data=doc)
 
     # Make sure the docid in the path corresponds to the ids given in the
     # document, if any. The assumption is that request.path (which corresponds
     # to the path part of the incoming HTTP request) is the path as seen by
     # the client. This is not necessarily true.
-    docurl = _resource_url(request)
     docid = request.match_info['dataset']
-    expanded_doc = jsonld.expand(cannonical_doc)[0]
+    docurl = f"{_datasets_url(request)}/{docid}"
+    expanded_doc = jsonld.expand(canonical_doc)[0]
     if _DCAT_ID_KEY in expanded_doc:
         if expanded_doc[_DCAT_ID_KEY] != docurl:
             raise web.HTTPBadRequest(
@@ -102,10 +102,10 @@ async def put(request: web.Request):
             )
         del expanded_doc[_DCAT_DCT_ID_KEY]
     # recompute the canonnical doc
-    cannonical_doc = await hooks.mds_canonicalize(data=expanded_doc)
+    canonical_doc = await hooks.mds_canonicalize(data=expanded_doc)
     # Let the metadata plugin grab the full-text search representation
     searchable_text = await hooks.mds_full_text_search_representation(
-        data=cannonical_doc
+        data=canonical_doc
     )
 
     # Figure out the mode (insert / update) of the request.
@@ -131,7 +131,7 @@ async def put(request: web.Request):
             )
         try:
             new_etag = await hooks.storage_update(
-                docid=docid, doc=cannonical_doc, searchable_text=searchable_text,
+                docid=docid, doc=canonical_doc, searchable_text=searchable_text,
                 etags=etag_if_match, iso_639_1_code="nl"
             )
         except ValueError:
@@ -145,7 +145,7 @@ async def put(request: web.Request):
         )
     try:
         new_etag = await hooks.storage_create(
-            docid=docid, doc=cannonical_doc, searchable_text=searchable_text,
+            docid=docid, doc=canonical_doc, searchable_text=searchable_text,
             iso_639_1_code="nl"
         )
     except KeyError:
@@ -217,7 +217,6 @@ async def get_collection(request: web.Request) -> web.Response:
         iso_639_1_code='nl'
     )
 
-    collection_url = _resource_url(request) + '/'
     ctx = await hooks.mds_context()
     ctx_json = json.dumps(ctx)
 
@@ -232,7 +231,7 @@ async def get_collection(request: web.Request) -> web.Response:
 
     async for docid, doc in await resultiterator:
         expanded_doc = jsonld.expand(doc)[0]
-        docurl = urllib.parse.urljoin(collection_url, docid)
+        docurl = f"{_datasets_url(request)}/{docid}"
         resultdoc = {
             _DCAT_ID_KEY: docurl,
             _DCAT_DCT_ID_KEY: [{'@value': docid}],
@@ -260,54 +259,50 @@ async def get_collection(request: web.Request) -> web.Response:
 @authorization.authorize()
 async def post_collection(request: web.Request):
     hooks = request.app.hooks
+    datasets_url = _datasets_url(request)
     # Grab the document from the request body and canonicalize it.
     try:
         doc = await request.json()
     except json.decoder.JSONDecodeError:
         raise web.HTTPBadRequest(text='invalid json')
-    collection_url = _resource_url(request) + '/'
-    cannonical_doc = await hooks.mds_canonicalize(data=doc)
-    try:
-        expanded_doc = jsonld.expand(cannonical_doc)[0]
-    except IndexError:
-        raise web.HTTPBadRequest(
-            text='Must upload a valid document'
-        )
-    docid = None
-    docurl = None
-    if _DCAT_ID_KEY in expanded_doc:
-        docurl = expanded_doc[_DCAT_ID_KEY]
-        del expanded_doc[_DCAT_ID_KEY]
-    if _DCAT_DCT_ID_KEY in expanded_doc:
-        docid = expanded_doc[_DCAT_DCT_ID_KEY]
-        del expanded_doc[_DCAT_DCT_ID_KEY]
+    canonical_doc = await hooks.mds_canonicalize(data=doc)
+
+    docurl = canonical_doc.get('@id')
+    if docurl is not None:
+        del canonical_doc['@id']
+
+    docid = canonical_doc.get('dct:identifier')
     if docid is not None:
-        docid = docid[0]['@value']
-        if docurl is not None:
-            collection_url_plus_docid = urllib.parse.urljoin(collection_url, docid)
-            if docurl != collection_url_plus_docid:
-                raise web.HTTPBadRequest(
-                    text='{} != {}'.format(docurl, collection_url_plus_docid)
-                )
-    elif docurl is not None:
-        path = urllib.parse.urlparse(docurl).path
-        if path == '':
+        del canonical_doc['dct:identifier']
+
+    if docid is not None:
+        collection_url_plus_docid = f"ams-dcatd:{docid}"
+        if docurl is None:
+            docurl = collection_url_plus_docid
+        elif docurl != collection_url_plus_docid:
             raise web.HTTPBadRequest(
-                text='{} must be a URL'.format(_DCAT_ID_KEY)
+                text='{} != {}'.format(docurl, collection_url_plus_docid)
             )
-        docid = os.path.basename(os.path.normpath(path))
+    elif docurl is not None:
+        if docurl.find(datasets_url + '/') != 0:
+            raise web.HTTPBadRequest(
+                text=f"{_DCAT_ID_KEY} must start with {datasets_url}/"
+            )
+        docid = docurl[len(datasets_url) + 1:]
+        if not re.fullmatch(r"(?:%[a-f0-9]{2}|[-\w:@!$&'()*+,;=.~])+", docid):
+            raise web.HTTPBadRequest(
+                text=f"Illegal value for {_DCAT_ID_KEY}"
+            )
     else:
         docid = await hooks.storage_id()
-        docurl = urllib.parse.urljoin(collection_url, docid)
-    # recompute the canonnical doc
-    cannonical_doc = await hooks.mds_canonicalize(data=expanded_doc)
+        docurl = f"{datasets_url}/{docid}"
     # Let the metadata plugin grab the full-text search representation
     searchable_text = await hooks.mds_full_text_search_representation(
-        data=cannonical_doc
+        data=canonical_doc
     )
     try:
         new_etag = await hooks.storage_create(
-            docid=docid, doc=cannonical_doc, searchable_text=searchable_text,
+            docid=docid, doc=canonical_doc, searchable_text=searchable_text,
             iso_639_1_code="nl"
         )
     except KeyError:
@@ -320,11 +315,8 @@ async def post_collection(request: web.Request):
     )
 
 
-def _resource_url(request):
-    baseurl = request.app.config['web']['baseurl']
-    parsed_baseurl = urllib.parse.urlparse(baseurl)
-    root = baseurl[:-len(parsed_baseurl.path)] + '/'
-    return urllib.parse.urljoin(root, request.path)
+def _datasets_url(request: web.Request) -> str:
+    return request.app.config['web']['baseurl'] + 'datasets'
 
 
 def _csv_decode_line(s: str) -> T.Optional[T.Set[str]]:

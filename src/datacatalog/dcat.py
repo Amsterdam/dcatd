@@ -228,7 +228,7 @@ class PlainTextLine(String):
 class Date(String):
     def __init__(self, *args, format=None, pattern=None, **kwargs):
         assert format is None and pattern is None
-        super().__init__(*args, format='date', pattern=r'^\d\d\d\d-[01]\d-[0-3]\d(?:\+[01]\d:\d\d)?$', **kwargs)
+        super().__init__(*args, format='date', pattern=r'^\d\d\d\d-[01]\d-[0-3]\d(?:\+[01]\d\d\d)?$', **kwargs)
 
     def canonicalize(self, data: str) -> str:
         if not isinstance(data, str):
@@ -299,6 +299,7 @@ class Integer(Type):
             retval = int(data)
             if len(str(retval)) != len(data):
                 raise ValueError("{}: not an integer".format(data))
+            return retval
         raise TypeError("{}: not an integer".format(data))
 
 

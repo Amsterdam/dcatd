@@ -1,3 +1,5 @@
+import typing as T
+
 from aiopluggy import HookimplMarker
 from pyld import jsonld
 
@@ -22,16 +24,38 @@ def mds_name():
 
 
 @_hookimpl
-def mds_canonicalize(data: dict) -> dict:
+def mds_canonicalize(data: dict, id: T.Optional[str]=None) -> dict:
+    # language=rst
+    """
+
+    :param data:
+    :param id: Can be one of three values:
+
+        #.  ``None``: do nothing with the ``@id`` or ``dct:identifier`` fields.
+        #.  ``""`` (the empty string): remove the ``@id`` or ``dct:identifier`` fields.
+        #.  ``str`` (non-empty string): set the ``@id`` or ``dct:identifier`` fields.
+
+    """
+    ctx = context()
     # The expansion is implicitly done in jsonld.compact() below.
     # data = jsonld.expand(data)
-    retval = jsonld.compact(data, context())
+    retval = jsonld.compact(data, ctx)
+    old_id = retval.get('@id')
+    retval = DATASET.canonicalize(retval)
+    retval['@context'] = ctx
+
     for distribution in retval['dcat:distribution']:
         if '@id' in distribution:
             del distribution['@id']
-    for item in ['@id', 'dct:identifier']:
-        if item in retval:
-            del retval[item]
+    if id == '':
+        for item in ['@id', 'dct:identifier']:
+            if item in retval:
+                del retval[item]
+    elif id is not None:
+        retval['@id'] = f"ams-dcatd:{id}"
+        retval['dct:identifier'] = str(id)
+    elif old_id is not None:
+        retval['@id'] = old_id
     return retval
 
 
