@@ -244,7 +244,7 @@ def mds_name() -> str:
 
 
 @hookspec.first_only
-def mds_canonicalize(data: dict) -> dict:
+def mds_canonicalize(data: dict, id: T.Optional[str]=None) -> dict:
     # language=rst
     """Canonicalize the given document according to this schema.
 

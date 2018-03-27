@@ -1,9 +1,9 @@
 import csv
 import json.decoder
-import os.path
+# import os.path
 import re
 import typing as T
-import urllib.parse
+# import urllib.parse
 
 from aiohttp import web
 from pyld import jsonld
@@ -58,10 +58,7 @@ async def get(request: web.Request):
     if doc is None:
         return web.Response(status=304, headers={'Etag': etag})
     expanded_doc = jsonld.expand(doc)[0]
-    docurl = f"{_datasets_url(request)}/{docid}"
-    expanded_doc[_DCAT_ID_KEY] = docurl
-    expanded_doc[_DCAT_DCT_ID_KEY] = [{'@value': docid}]
-    canonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc)
+    canonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc, id=docid)
     _add_blank_node_identifiers_to(canonical_doc['dcat:distribution'])
     return web.json_response(canonical_doc, headers={
         'Etag': etag, 'content_type': 'application/ld+json'
@@ -83,26 +80,23 @@ async def put(request: web.Request):
     # to the path part of the incoming HTTP request) is the path as seen by
     # the client. This is not necessarily true.
     docid = request.match_info['dataset']
-    docurl = f"{_datasets_url(request)}/{docid}"
-    expanded_doc = jsonld.expand(canonical_doc)[0]
-    if _DCAT_ID_KEY in expanded_doc:
-        if expanded_doc[_DCAT_ID_KEY] != docurl:
+    docurl = f"ams-dcatd:{docid}"
+    if '@id' in canonical_doc:
+        if canonical_doc['@id'] != docurl:
             raise web.HTTPBadRequest(
-                text='Invalid {}: {} != {}'.format(
-                    _DCAT_ID_KEY, expanded_doc[_DCAT_ID_KEY], docurl
+                text='Invalid @id: {} != {}'.format(
+                    canonical_doc['@id'], docurl
                 )
             )
-        del expanded_doc[_DCAT_ID_KEY]
-    if _DCAT_DCT_ID_KEY in expanded_doc:
-        if expanded_doc[_DCAT_DCT_ID_KEY][0]['@value'] != docid:
+        del canonical_doc[_DCAT_ID_KEY]
+    if 'dct:identifier' in canonical_doc:
+        if canonical_doc['dct:identifier'] != docid:
             raise web.HTTPBadRequest(
-                text='Invalid {}: {} != {}'.format(
-                    _DCAT_DCT_ID_KEY, expanded_doc[_DCAT_DCT_ID_KEY], docid
+                text='Invalid dct:identifier: {} != {}'.format(
+                    canonical_doc['dct:identifier'], docid
                 )
             )
-        del expanded_doc[_DCAT_DCT_ID_KEY]
-    # recompute the canonnical doc
-    canonical_doc = await hooks.mds_canonicalize(data=expanded_doc)
+        del canonical_doc[_DCAT_DCT_ID_KEY]
     # Let the metadata plugin grab the full-text search representation
     searchable_text = await hooks.mds_full_text_search_representation(
         data=canonical_doc
@@ -171,7 +165,7 @@ async def delete(request: web.Request):
 
 
 @produces_content_types('application/ld+json', 'application/json')
-async def get_collection(request: web.Request) -> web.Response:
+async def get_collection(request: web.Request) -> web.StreamResponse:
     # language=rst
     """Handler for ``/datasets``"""
     hooks = request.app.hooks
@@ -184,7 +178,7 @@ async def get_collection(request: web.Request) -> web.Response:
             continue
         if key not in filters:
             filters[key] = {}
-        match = _FACET_QUERY_VALUE.fullmatch(query[key])
+        match: T.List[str] = _FACET_QUERY_VALUE.fullmatch(query[key])
         if not match:
             raise web.HTTPBadRequest(
                 text="Unknown comparator in query parameter '%s'" % key
@@ -334,10 +328,10 @@ def _split_comma_separated_stringset(s: str) -> T.Optional[T.Set[str]]:
     while pos < len_s:
         if pos != 0 and s[pos] == ',':
             pos = pos + 1
-        match = _COMMA_SEPARATED_SEGMENT.match(s, pos)
-        if match is None:
+        matches: T.List[str] = _COMMA_SEPARATED_SEGMENT.match(s, pos)
+        if matches is None:
             return None
-        match = match[0]
+        match = matches[0]
         pos = pos + len(match)
         retval.add(_ESCAPED_CHARACTER.sub(r'\1', match))
     return retval
