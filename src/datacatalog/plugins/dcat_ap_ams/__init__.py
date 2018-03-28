@@ -44,7 +44,7 @@ def mds_canonicalize(data: dict, id: T.Optional[str]=None) -> dict:
     retval = DATASET.canonicalize(retval)
     retval['@context'] = ctx
 
-    for distribution in retval['dcat:distribution']:
+    for distribution in retval.get('dcat:distribution', []):
         if '@id' in distribution:
             del distribution['@id']
     if id == '':
