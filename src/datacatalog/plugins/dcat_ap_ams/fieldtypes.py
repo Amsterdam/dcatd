@@ -25,7 +25,7 @@ class Date(FromCKANMixin, dcat.Date):
         if original is None:
             return None
         assert re.fullmatch(r'\d\d\d\d-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d(?:\.\d+)?', original)
-        return original[:10] + '+0100'
+        return original[:10]
 
 
 class Enum(FromCKANMixin, dcat.Enum):

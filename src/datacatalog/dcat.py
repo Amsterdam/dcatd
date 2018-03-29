@@ -228,12 +228,12 @@ class PlainTextLine(String):
 class Date(String):
     def __init__(self, *args, format=None, pattern=None, **kwargs):
         assert format is None and pattern is None
-        super().__init__(*args, format='date', pattern=r'^\d\d\d\d-[01]\d-[0-3]\d(?:\+[01]\d\d\d)?$', **kwargs)
+        super().__init__(*args, format='date', pattern=r'^\d\d\d\d-[01]\d-[0-3]\d(?:T[012]\d:[0-5]\d:[0-5]\d(?:\.\d+)?)?(?:Z|[01]\d(?::[0-5]\d)?)?$', **kwargs)
 
     def canonicalize(self, data: str) -> str:
         if not isinstance(data, str):
             raise TypeError("{}: not a string".format(data))
-        return data if len(data) == 15 else data + '+0100'
+        return data[0:10]
 
 
 class Language(String):
