@@ -233,7 +233,7 @@ class Date(String):
     def canonicalize(self, data: str) -> str:
         if not isinstance(data, str):
             raise TypeError("{}: not a string".format(data))
-        return data[0:10]
+        return data[:10]
 
 
 class Language(String):

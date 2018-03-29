@@ -96,7 +96,7 @@ async def put(request: web.Request):
                     canonical_doc['dct:identifier'], docid
                 )
             )
-        del canonical_doc[_DCAT_DCT_ID_KEY]
+        del canonical_doc['dct:identifier']
     # Let the metadata plugin grab the full-text search representation
     searchable_text = await hooks.mds_full_text_search_representation(
         data=canonical_doc
