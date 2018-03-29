@@ -46,7 +46,7 @@ class Application(web.Application):
         # set routes
         self.router.add_get(path + 'datasets', handlers.datasets.get_collection)
         self.router.add_post(path + 'datasets', handlers.datasets.post_collection)
-        self.router.add_route('OPTIONS', path + 'datasets', _preflight_handler('POST'))
+        self.router.add_route('OPTIONS', path + 'datasets', _preflight_handler('POST', 'GET'))
 
         self.router.add_get(path + 'datasets/{dataset}', handlers.datasets.get)
         self.router.add_put(path + 'datasets/{dataset}', handlers.datasets.put)
@@ -54,6 +54,8 @@ class Application(web.Application):
         self.router.add_route('OPTIONS', path + 'datasets/{dataset}', _preflight_handler('GET', 'DELETE', 'PUT'))
 
         self.router.add_get(path + 'openapi', handlers.openapi.get)
+        self.router.add_route('OPTIONS', path + 'datasets', _preflight_handler('GET'))
+
         self.router.add_get(path + 'system/health', handlers.systemhealth.get)
 
         # TEMPORARY FIX
