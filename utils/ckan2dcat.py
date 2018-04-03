@@ -48,6 +48,10 @@ def load_packages():
         if 'publisher' not in package or not package['publisher']:
             package['publisher'] = "Gemeente Amsterdam, Onderzoek, Informatie en Statistiek"
             package['publisher_email'] = "algemeen.OIS@amsterdam.nl"
+        if not package.get('notes'):
+            package['notes'] = '<i>Geen omschrijving</i>'
+        if not package.get('groups'):
+            package['groups'] = [{'name': 'none'}]
 
     return retval
 

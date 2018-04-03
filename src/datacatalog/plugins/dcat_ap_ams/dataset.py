@@ -25,8 +25,7 @@ DATASET = Object(json_pointer='').add(
     Markdown(
         title="Beschrijving",
         description="Geef een samenvatting van de inhoud van de gegevensset, welke gegevens zitten erin en wat is expliciet eruit gelaten",
-        # TODO: should be required, but now empty for same datasets:
-        # required=True,
+        required=True,
         json_pointer='/notes',
         from_='html'
     )
@@ -102,7 +101,6 @@ DATASET = Object(json_pointer='').add(
                 'onregelmatig': 'irreg',
                 'op afroep': 'req',
                 'wekelijks': 'week',
-                # TODO: controleren of dit wel een goede mapping is:
                 'dagen': '2pweek'
             }[(x or '').strip()]
         )
@@ -257,8 +255,6 @@ DATASET = Object(json_pointer='').add(
         ),
         title="Thema",
         required=True,
-        # TODO: This should be false, but some datasets don't have a theme yet.
-        allow_empty=True,
         unique_items=True,
         json_pointer='/groups'
         # description="Geef aan onder welke hoofdthema’s de gegevensset valt."

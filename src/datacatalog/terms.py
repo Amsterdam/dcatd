@@ -431,6 +431,10 @@ TERMS = {
     ],
     'theme': [
         {
+            '@id': 'theme:none',
+            'skos:prefLabel': 'Geen thema'
+        },
+        {
             '@id': 'theme:bestuur-en-organisatie',
             'skos:prefLabel': 'Bestuur en organisatie'
         },

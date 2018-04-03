@@ -1,6 +1,6 @@
 import datetime
 import re
-# import subprocess
+import subprocess
 import typing as T
 
 import bleach
@@ -98,12 +98,12 @@ class Markdown(String):
         if self.from_ is None:
             return original
         # TODO replace this line...
-        return original
+        # return original
         # TODO with these lines:
-        # return subprocess.run(
-        #     ['pandoc', '-f', self.from_, '-t', 'markdown'],
-        #     input=original.encode(), stdout=subprocess.PIPE, check=True
-        # ).stdout.decode().strip() or None
+        return subprocess.run(
+            ['pandoc', '-f', self.from_, '-t', 'markdown'],
+            input=original.encode(), stdout=subprocess.PIPE, check=True
+        ).stdout.decode().strip() or None
 
     def full_text_search_representation(self, data: str):
         return bleach.clean(data, tags=[], strip=True)
