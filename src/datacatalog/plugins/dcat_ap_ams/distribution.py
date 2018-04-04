@@ -28,8 +28,8 @@ DISTRIBUTION = Object(json_pointer='').add(
     'dcat:accessURL',
     String(
         format='uri',
-        title="URL",
-        description="Link naar de daadwerkelijke gegevensset",
+        title="URL of upload",
+        description="Toegangslink naar de daadwerkelijke gegevensset óf downloadlink om gegevensset te downloaden",
         required=True,
         json_pointer='/url'
     )

@@ -38,10 +38,13 @@ setup(
     # ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
     package_dir={'': 'src'},
     packages=find_packages('src'),
+
+    # TODO: is there a more elegant way to do this?
     package_data={
         'datacatalog': ['*.yml'],
         'datacatalog.handlers': ['*.yml'],
         'datacatalog.plugins': ['*.yml'],
+        'datacatalog.plugins.postgres': ['*.yml'],
     },
 
 

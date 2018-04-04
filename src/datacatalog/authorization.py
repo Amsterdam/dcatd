@@ -153,8 +153,8 @@ def _get_path_spec(paths: dict, path: str, method: str=None) -> T.Optional[T.Tup
         path_name = path
     else:
         for base_path in paths.keys():
-            regex_from_path = re.compile(re.sub('{[^/]*}', '([^/]*)', base_path) + r'$')
-            if re.match(regex_from_path, path):
+            regex_from_path = re.compile(re.sub('{[^/]*}', '([^/]*)', base_path))
+            if re.fullmatch(regex_from_path, path):
                 path_spec = paths[base_path]
                 path_name = base_path
 

@@ -17,6 +17,7 @@ import jsonpointer
 
 from aiohttp_extras import conditional
 
+from .languages import ISO_639_1_TO_PG_DICTIONARIES
 _pool: asyncpg.pool.Pool = None
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger('plugin.storage.postgres')
@@ -74,7 +75,7 @@ async def initialize(app):
         return
 
     # validate configuration
-    with pkg_resources.resource_stream(__name__, 'postgres_config_schema.yml') as s:
+    with pkg_resources.resource_stream(__name__, 'config_schema.yml') as s:
         schema = yaml.load(s)
     app.config.validate(schema)
     dbconf = app.config['storage_postgres']
@@ -392,10 +393,10 @@ async def search_search(
     # Interpret the language
     lang = 'simple'
     if iso_639_1_code is not None:
-        if iso_639_1_code not in _iso_639_1_to_pg_dictionaries:
+        if iso_639_1_code not in ISO_639_1_TO_PG_DICTIONARIES:
             raise ValueError('invalid ISO 639-1 language code: ' + iso_639_1_code)
         else:
-            lang = _iso_639_1_to_pg_dictionaries[iso_639_1_code]
+            lang = ISO_639_1_TO_PG_DICTIONARIES[iso_639_1_code]
 
     # Interpret the filters (to_expr calls json.dumps on both the json pointers
     # and corresponding values, so we don't escape separately and use a format
@@ -439,163 +440,8 @@ def _etag_from_str(s: str) -> str:
 
 def _iso_639_1_code_to_pg(iso_639_1_code: str) -> str:
     # we use the simple dictionary for ISO 639-1 language codes we don't know
-    if iso_639_1_code not in _iso_639_1_to_pg_dictionaries:
+    if iso_639_1_code not in ISO_639_1_TO_PG_DICTIONARIES:
         if iso_639_1_code is not None:
             _logger.warning('invalid ISO 639-1 language code: ' + iso_639_1_code)
         return 'simple'
-    return _iso_639_1_to_pg_dictionaries[iso_639_1_code]
-
-
-# The below maps ISO 639-1 language codes (as used in dcat) to pg dictionaries.
-# Note that a default postgres installation comes with a limited set of
-# dictionaries; on my system, danish, dutch, english, finnish, french,
-# german, hungarian, italian, norwegian, portuguese, romanian, russian, simple,
-# spanish, swedish and turkish. If you need support for a different language
-# you will need to install that dictionary and register it under the name
-# listed in the below mapping. You may also want to experiment with Ispell or
-# Snowball dictionaries. See more info at
-# https://www.postgresql.org/docs/current/static/textsearch-dictionaries.html
-_iso_639_1_to_pg_dictionaries = {
-    'aa': 'afar',
-    'ab': 'abkhazian',
-    'af': 'afrikaans',
-    'am': 'amharic',
-    'ar': 'arabic',
-    'as': 'assamese',
-    'ay': 'aymara',
-    'az': 'azerbaijani',
-    'ba': 'bashkir',
-    'be': 'byelorussian',
-    'bg': 'bulgarian',
-    'bh': 'bihari',
-    'bi': 'bislama',
-    'bn': 'bengali',
-    'bo': 'tibetan',
-    'br': 'breton',
-    'ca': 'catalan',
-    'co': 'corsican',
-    'cs': 'czech',
-    'cy': 'welch',
-    'da': 'danish',
-    'de': 'german',
-    'dz': 'bhutani',
-    'el': 'greek',
-    'en': 'english',
-    'eo': 'esperanto',
-    'es': 'spanish',
-    'et': 'estonian',
-    'eu': 'basque',
-    'fa': 'persian',
-    'fi': 'finnish',
-    'fj': 'fiji',
-    'fo': 'faeroese',
-    'fr': 'french',
-    'fy': 'frisian',
-    'ga': 'irish',
-    'gd': 'scots gaelic',
-    'gl': 'galician',
-    'gn': 'guarani',
-    'gu': 'gujarati',
-    'ha': 'hausa',
-    'he': 'hebrew',
-    'hi': 'hindi',
-    'hr': 'croatian',
-    'hu': 'hungarian',
-    'hy': 'armenian',
-    'ia': 'interlingua',
-    'id': 'indonesian',
-    'ie': 'interlingue',
-    'ik': 'inupiak',
-    'in': 'indonesian',
-    'is': 'icelandic',
-    'it': 'italian',
-    'iu': 'inuktitut',
-    'iw': 'hebrew',
-    'ja': 'japanese',
-    'ji': 'yiddish',
-    'jw': 'javanese',
-    'ka': 'georgian',
-    'kk': 'kazakh',
-    'kl': 'greenlandic',
-    'km': 'cambodian',
-    'kn': 'kannada',
-    'ko': 'korean',
-    'ks': 'kashmiri',
-    'ku': 'kurdish',
-    'ky': 'kirghiz',
-    'la': 'latin',
-    'ln': 'lingala',
-    'lo': 'laothian',
-    'lt': 'lithuanian',
-    'lv': 'latvian',
-    'mg': 'malagasy',
-    'mi': 'maori',
-    'mk': 'macedonian',
-    'ml': 'malayalam',
-    'mn': 'mongolian',
-    'mo': 'moldavian',
-    'mr': 'marathi',
-    'ms': 'malay',
-    'mt': 'maltese',
-    'my': 'burmese',
-    'na': 'nauru',
-    'ne': 'nepali',
-    'nl': 'dutch',
-    'no': 'norwegian',
-    'oc': 'occitan',
-    'om': 'oromo',
-    'or': 'oriya',
-    'pa': 'punjabi',
-    'pl': 'polish',
-    'ps': 'pashto',
-    'pt': 'portuguese',
-    'qu': 'quechua',
-    'rm': 'rhaeto-romance',
-    'rn': 'kirundi',
-    'ro': 'romanian',
-    'ru': 'russian',
-    'rw': 'kinyarwanda',
-    'sa': 'sanskrit',
-    'sd': 'sindhi',
-    'sg': 'sangro',
-    'sh': 'serbo-croatian',
-    'si': 'singhalese',
-    'sk': 'slovak',
-    'sl': 'slovenian',
-    'sm': 'samoan',
-    'sn': 'shona',
-    'so': 'somali',
-    'sq': 'albanian',
-    'sr': 'serbian',
-    'ss': 'siswati',
-    'st': 'sesotho',
-    'su': 'sudanese',
-    'sv': 'swedish',
-    'sw': 'swahili',
-    'ta': 'tamil',
-    'te': 'tegulu',
-    'tg': 'tajik',
-    'th': 'thai',
-    'ti': 'tigrinya',
-    'tk': 'turkmen',
-    'tl': 'tagalog',
-    'tn': 'setswana',
-    'to': 'tonga',
-    'tr': 'turkish',
-    'ts': 'tsonga',
-    'tt': 'tatar',
-    'tw': 'twi',
-    'ug': 'uigur',
-    'uk': 'ukrainian',
-    'ur': 'urdu',
-    'uz': 'uzbek',
-    'vi': 'vietnamese',
-    'vo': 'volapuk',
-    'wo': 'wolof',
-    'xh': 'xhosa',
-    'yi': 'yiddish',
-    'yo': 'yoruba',
-    'za': 'zhuang',
-    'zh': 'chinese',
-    'zu': 'zulu'
-}
+    return ISO_639_1_TO_PG_DICTIONARIES[iso_639_1_code]
