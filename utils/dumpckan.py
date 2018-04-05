@@ -10,6 +10,7 @@ with request.urlopen('https://api.data.amsterdam.nl/catalogus/api/3/action/packa
     packagenames = json.load(response)['result']
 
 for package in packagenames:
+    print(package)
     with request.urlopen(f'https://api.data.amsterdam.nl/catalogus/api/3/action/package_show?id={package}') as result:
         assert 200 == result.getcode()
         with open(f'{PACKAGE_DIR}/{package}.json', mode='w') as fh:

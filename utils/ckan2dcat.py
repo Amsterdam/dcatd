@@ -14,10 +14,12 @@
         python resources2distributions.py "${DCATD}files" "${JWT}"
         for d in dcatdata/*.json; do
           echo -n "${d}..."
+          b=`basename "${id}"`
           STATUS=$(
-            curl -XPOST --header "Authorization: Bearer ${JWT}" -d @${d}  \
+            curl --header "Authorization: Bearer ${JWT}" \
+              --header "If-None-Match: *" --upload-file "${d}" \
               --silent --output /dev/stderr --write-out "%{http_code}" \
-              "${DCATD}datasets"
+              "${DCATD}datasets/${b}"
           )
           [ "$STATUS" -eq 201 ] && echo "OK" && rm "${d}" || echo "FAILED: $STATUS"
         done
@@ -37,6 +39,7 @@ DCATDIR = 'dcatdata'
 
 
 def load_packages():
+    print(f"Loading files from {CKANDIR}")
     retval = []
     for filename in pathlib.Path(CKANDIR).glob('*.json'):
         with open(filename) as fh:
@@ -57,6 +60,7 @@ def load_packages():
 
 
 def dump_datasets(datasets, context):
+    print(f"Writing files to {DCATDIR}")
     os.makedirs(DCATDIR, exist_ok=True)
     for dataset in datasets:
         try:
@@ -67,11 +71,13 @@ def dump_datasets(datasets, context):
         except:
             print(json.dumps(dataset, indent=2, sort_keys=True))
             raise
+        filename = f"{DCATDIR}/{compacted['ams:ckan_name']}.json"
         with open(f"{DCATDIR}/{compacted['ams:ckan_name']}.json", 'w') as fh:
             json.dump(compacted, fh, indent=2, sort_keys=True)
 
 
 def ckan2dcat(ckan, context):
+    print(f"Converting {ckan['name']}")
     # context = dict(context)  # dict() because we mutate the context
     # context['@vocab'] = 'https://ckan.org/terms/'
     retval = dcat_ap_ams.DATASET.from_ckan(ckan)

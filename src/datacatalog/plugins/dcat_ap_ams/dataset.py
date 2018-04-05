@@ -46,7 +46,7 @@ DATASET = Object(json_pointer='').add(
 ).add(
     'dcat:landingPage',
     String(
-        title="URL voor meer informatie (optioneel)",
+        title="URL voor meer informatie",
         format='uri',
         json_pointer='/url'
     )
