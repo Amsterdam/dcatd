@@ -255,7 +255,7 @@ def mds_canonicalize(data: dict, id: T.Optional[str]=None) -> dict:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only
-def mds_json_schema() -> dict:
+def mds_json_schema(app) -> dict:
     # language=rst
     """The json schema.
     """

@@ -38,8 +38,9 @@ DATASET = Object(json_pointer='').add(
     )
 ).add(
     'overheidds:doel',
-    Markdown(
+    PlainTextLine(
         title="Doel",
+        required=True,
         description="Geef aan met welk doel deze gegevensset is aangelegd. Waarom bestaat deze gegevensset?",
         json_pointer='/foobar'
     )
@@ -236,7 +237,7 @@ DATASET = Object(json_pointer='').add(
     PlainTextLine(
         title="Eigenaar",
         description="Eigenaar en verantwoordelijke voor de betreffende registratie, ook wel bronhouder genoemd. Bij de overheid is dit het bestuursorgaan of rechtspersoon aan wie bij wettelijk voorschrift de verantwoordelijkheid voor het bijhouden van gegevens in een registratie is opgedragen.",
-        examples=constants.OWNERS,
+        # examples=constants.OWNERS,
         json_pointer='/organization/title'
     )
 ).add(
@@ -295,7 +296,7 @@ DATASET = Object(json_pointer='').add(
     PlainTextLine(
         title="UID",
         description="Unieke identifier",
-        json_pointer='/id'
+        json_pointer='/name'
     )
 )
 

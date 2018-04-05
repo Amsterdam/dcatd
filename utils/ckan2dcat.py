@@ -13,8 +13,8 @@
         python ckan2dcat.py "${DCATD}"
         python resources2distributions.py "${DCATD}files" "${JWT}"
         for d in dcatdata/*.json; do
-          echo -n "${d}..."
-          b=`basename "${id}"`
+          b=`basename "${d}" '.json'`
+          echo -n "${b}..."
           STATUS=$(
             curl --header "Authorization: Bearer ${JWT}" \
               --header "If-None-Match: *" --upload-file "${d}" \
@@ -71,8 +71,8 @@ def dump_datasets(datasets, context):
         except:
             print(json.dumps(dataset, indent=2, sort_keys=True))
             raise
-        filename = f"{DCATDIR}/{compacted['ams:ckan_name']}.json"
-        with open(f"{DCATDIR}/{compacted['ams:ckan_name']}.json", 'w') as fh:
+        filename = f"{DCATDIR}/{compacted['dct:identifier']}.json"
+        with open(filename, 'w') as fh:
             json.dump(compacted, fh, indent=2, sort_keys=True)
 
 
@@ -82,9 +82,11 @@ def ckan2dcat(ckan, context):
     # context['@vocab'] = 'https://ckan.org/terms/'
     retval = dcat_ap_ams.DATASET.from_ckan(ckan)
     retval['@context'] = context
+    retval['overheidds:doel'] = '...'
     retval = dcat_ap_ams.DATASET.canonicalize(retval)
+    if len(retval['dct:identifier']) > 50:
+        retval['dct:identifier'] = retval['dct:identifier'][0:50]
     retval['@id'] = f"ams-dcatd:{retval['dct:identifier']}"
-    retval['ams:ckan_name'] = ckan['name']
     for distribution in retval['dcat:distribution']:
         if 'dct:modified' not in distribution['foaf:isPrimaryTopicOf']:
             distribution['foaf:isPrimaryTopicOf']['dct:modified'] = \

@@ -60,8 +60,16 @@ def mds_canonicalize(data: dict, id: T.Optional[str]=None) -> dict:
 
 
 @_hookimpl
-def mds_json_schema() -> dict:
-    return DATASET.schema
+async def mds_json_schema(app) -> dict:
+    result = DATASET.schema
+    owners = await app.hooks.storage_extract(ptr='/properties/ams:owner', distinct=True)
+    owners = [owner async for owner in owners]
+    result['properties']['ams:owner']['examples'] = owners
+
+    keywords = await app.hooks.storage_extract(ptr='/properties/dcat:keyword/items', distinct=True)
+    keywords = [keyword async for keyword in keywords]
+    result['properties']['dcat:keyword']['items']['examples'] = keywords
+    return result
 
 
 @_hookimpl
