@@ -181,9 +181,9 @@ class Object(Type):
         if not isinstance(data, dict):
             raise TypeError("{}: not a dict".format(data))
         retval = {}
-        for key, value in self.properties:
+        for key, type_ in self.properties:
             if key in data:
-                canonical_value = value.canonicalize(data[key])
+                canonical_value = type_.canonicalize(data[key])
                 if canonical_value is not None:
                     retval[key] = canonical_value
         return retval

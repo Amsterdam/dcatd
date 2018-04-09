@@ -42,6 +42,8 @@ def mds_canonicalize(data: dict, id: T.Optional[str]=None) -> dict:
     retval = jsonld.compact(data, ctx)
     old_id = retval.get('@id')
     retval = DATASET.canonicalize(retval)
+    if 'dcat:distribution' not in retval:
+        retval['dcat:distribution'] = []
     retval['@context'] = ctx
 
     for distribution in retval.get('dcat:distribution', []):
