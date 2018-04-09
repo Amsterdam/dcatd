@@ -90,6 +90,7 @@ setup(
             'aiohttp-devtools'
         ],
         'test': [
+            'mockito',
             'pytest',
             'pytest-cov',
             'pytest-aiohttp',
