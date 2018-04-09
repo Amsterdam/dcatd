@@ -67,7 +67,7 @@ def corpus(event_loop):
     for doc_id, record in _corpus.items():
         c[doc_id] = copy.deepcopy(record)
         c[doc_id]['etag'] = event_loop.run_until_complete(
-            postgres_plugin.storage_create(doc_id, **record)
+            posdtgres_plugin.storage_create(doc_id, **record)
         )
     try:
         yield c

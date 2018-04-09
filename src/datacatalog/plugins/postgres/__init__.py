@@ -140,7 +140,7 @@ async def health_check() -> T.Optional[str]:
 
 
 @_hookimpl
-async def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]]) \
+async def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]] = None) \
         -> T.Tuple[T.Optional[dict], str]:
     # language=rst
     """ Get document and corresponsing etag by id.
