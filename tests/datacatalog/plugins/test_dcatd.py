@@ -1,6 +1,6 @@
 import unittest
 
-from build.lib.datacatalog.plugins.dcat_ap_ams import mds_canonicalize
+from datacatalog.plugins.dcat_ap_ams import mds_canonicalize
 
 
 class TestDcatd(unittest.TestCase):
@@ -10,9 +10,9 @@ class TestDcatd(unittest.TestCase):
         data = {
             "@id": "ams-dcatd:_FlXXpXDa-Ro3Q",
             "dcat:description": "Lijsten en locaties van verschillende "
-                               "zorgvoorzieningen voor ouderen in\nAmsterdam: "
-                               "verpleeg- en verzorgingshuizen, zorg en hulp "
-                               "bij dementie en\ndienstencentra voor ouderen",
+                                "zorgvoorzieningen voor ouderen in\nAmsterdam: "
+                                "verpleeg- en verzorgingshuizen, zorg en hulp "
+                                "bij dementie en\ndienstencentra voor ouderen",
             "dcat:identifier": "_FlXXpXDa-Ro3Q",
             "dcat:title": "Ouderen",
             "dcat:distribution": [
@@ -32,9 +32,9 @@ class TestDcatd(unittest.TestCase):
         expected = {
             'dcat:title': 'Ouderen',
             'dcat:description': 'Lijsten en locaties van verschillende '
-                               'zorgvoorzieningen voor ouderen in\nAmsterdam: '
-                               'verpleeg- en verzorgingshuizen, zorg en hulp '
-                               'bij dementie en\ndienstencentra voor ouderen',
+                                'zorgvoorzieningen voor ouderen in\nAmsterdam: '
+                                'verpleeg- en verzorgingshuizen, zorg en hulp '
+                                'bij dementie en\ndienstencentra voor ouderen',
             'dct:distribution': [
                 {'dct:format': 'application/json'},
                 {'dct:format': 'application/json'},
