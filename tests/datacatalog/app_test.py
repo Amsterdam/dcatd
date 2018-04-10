@@ -2,7 +2,7 @@ from os import path
 
 from aiohttp import FormData
 from aiohttp.test_utils import unittest_run_loop, TestClient
-from mockito import when, unstub, ANY
+from mockito import when, unstub, any
 
 from datacatalog.plugins import postgres as pgpl, swift
 from tests.datacatalog.base_test_case import BaseTestCase
@@ -17,8 +17,7 @@ _VALID_TOKEN = "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjJhZW" \
 _SUT_DOC_ID = '_FlXXpXDa-Ro3Q'
 
 
-class StartupTestCase(BaseTestCase):
-
+class DatasetTestCase(BaseTestCase):
     @unittest_run_loop
     async def test_succesfull_start(self):
         preflight_headers = {
@@ -49,8 +48,6 @@ class StartupTestCase(BaseTestCase):
                 self.assertIn('RANDOM_HEADER_NAME', hdrs, 'Missing header')
                 self.assertIn('ORIGIN', hdrs, 'Missing header')
 
-
-class DatasetTestCase(BaseTestCase):
     @unittest_run_loop
     async def test_dataset_operations(self):
         with open(self._WORKING_PATH + path.sep + 'test.json') as definition:
@@ -155,26 +152,6 @@ class DatasetTestCase(BaseTestCase):
         self.assertEquals(response.status, 204,
                           'Document kon niet worden verwijderd')
 
-    # def tearDown(self):
-    #     async def cleanup():
-    #         try:
-    #             _, etag = await pgpl.storage_retrieve(docid=_SUT_DOC_ID)
-    #         except KeyError:
-    #             # Nothing to clean
-    #             return
-    #
-    #         if etag:
-    #             await pgpl.storage_delete(docid=_SUT_DOC_ID, etags={etag})
-    #
-    #     self.loop.run_until_complete(cleanup())
-
-
-async def returner(value):
-    return value
-
-
-class FilesTestCase(BaseTestCase):
-
     @unittest_run_loop
     async def testUpload(self):
         headers = {
@@ -183,13 +160,16 @@ class FilesTestCase(BaseTestCase):
             'Cache-Control': "no-cache",
         }
 
+        async def returner(value):
+            return value
+
         client = self.client  # type: TestClient
 
         when(swift)._put_file_to_object_store(
-            ANY(str),
+            any(str),
             'application/json',
             any,
-            filename='test_upload.json').thenReturn(returner("asdfadsf"))
+            filename='test_upload.json').thenReturn(returner("randomness"))
 
         with open(self._WORKING_PATH + path.sep + 'test.json', 'rb') as file:
             data = FormData()
@@ -205,3 +185,18 @@ class FilesTestCase(BaseTestCase):
         unstub()
 
         self.assertEquals(response.status, 201, 'File upload mislukt')
+
+    def tearDown(self):
+        async def cleanup():
+            try:
+                _, etag = await pgpl.storage_retrieve(
+                    app=self.app, docid=_SUT_DOC_ID)
+            except KeyError:
+                # Nothing to clean
+                return
+
+            if etag:
+                await pgpl.storage_delete(
+                    app=self.app, docid=_SUT_DOC_ID, etags={etag})
+
+        self.loop.run_until_complete(cleanup())
