@@ -41,9 +41,13 @@ class StartupTestCase(BaseTestCase):
             self.assertEquals(response.status, options_state)
 
             if options_state == 200:
-                self.assertEquals(
-                    'RANDOM_HEADER_NAME,ORIGIN',
-                    response.headers.get('Access-Control-Allow-Headers'))
+                aca_hdr = response.headers.get('Access-Control-Allow-Headers')
+
+                self.assertIsNotNone(aca_hdr, "Missing response headers.")
+
+                hdrs = aca_hdr.split(',')
+                self.assertIn('RANDOM_HEADER_NAME', hdrs, 'Missing header')
+                self.assertIn('ORIGIN', hdrs, 'Missing header')
 
 
 class DatasetTestCase(BaseTestCase):

@@ -14,9 +14,9 @@ storage_postgres:
 
 storage_swift:
   user: ${SWIFT_USER:-catalogus}
-  password: ${SWIFT_PASSWORD:-insecure}
+  password: ${SWIFT_PASSWORD:-kH89vULhmrF.e^GO}
   base_url: ${SWIFT_BASE_URL:-https://e85bcf2124fb4437b1bc6eb75dfc3abf.objectstore.eu/}
-  container: ${SWIFT_CONTAINER:-non_existing}
+  container: ${SWIFT_CONTAINER:-dcatd-test}
 
 web:
   port: ${PORT:-8000}
