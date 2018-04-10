@@ -65,7 +65,7 @@ def initialize(event_loop, app):
 
 
 @pytest.fixture(scope='module', autouse=True)
-def app():
+def app(event_loop):
     return TestApp(pool=None, loop=event_loop, config=config.load())
 
 
@@ -144,7 +144,7 @@ def test_storage_retrieve_with_old_etag(event_loop, corpus, app):
 def test_storage_extract(event_loop, corpus, app):
     # test ids
     async def retrieve_ids():
-        return [doc_id async for doc_id in postgres_plugin.storage_extract('/properties/id')]
+        return [doc_id async for doc_id in postgres_plugin.storage_extract(app, '/properties/id')]
     ids = event_loop.run_until_complete(retrieve_ids())
     assert len(ids) == len(corpus)
     assert len(set(corpus.keys()) - set(ids)) == 0
