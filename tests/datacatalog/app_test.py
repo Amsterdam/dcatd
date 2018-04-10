@@ -151,18 +151,18 @@ class DatasetTestCase(BaseTestCase):
         self.assertEquals(response.status, 204,
                           'Document kon niet worden verwijderd')
 
-    def tearDown(self):
-        async def cleanup():
-            try:
-                _, etag = await pgpl.storage_retrieve(docid=_SUT_DOC_ID)
-            except KeyError:
-                # Nothing to clean
-                return
-
-            if etag:
-                await pgpl.storage_delete(docid=_SUT_DOC_ID, etags={etag})
-
-        self.loop.run_until_complete(cleanup())
+    # def tearDown(self):
+    #     async def cleanup():
+    #         try:
+    #             _, etag = await pgpl.storage_retrieve(docid=_SUT_DOC_ID)
+    #         except KeyError:
+    #             # Nothing to clean
+    #             return
+    #
+    #         if etag:
+    #             await pgpl.storage_delete(docid=_SUT_DOC_ID, etags={etag})
+    #
+    #     self.loop.run_until_complete(cleanup())
 
 
 async def returner(value):
