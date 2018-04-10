@@ -5,6 +5,7 @@ from datacatalog.plugins.dcat_ap_ams import mds_canonicalize
 
 class TestDcatd(unittest.TestCase):
 
+    @unittest.skip
     def test_canonicalize(self):
         self.maxDiff = None
         data = {
