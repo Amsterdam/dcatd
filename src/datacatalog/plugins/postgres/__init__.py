@@ -18,7 +18,6 @@ import jsonpointer
 from aiohttp_extras import conditional
 
 from .languages import ISO_639_1_TO_PG_DICTIONARIES
-_pool: asyncpg.pool.Pool = None
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger('plugin.storage.postgres')
 
@@ -64,12 +63,11 @@ async def initialize(app):
     """ Initialize the plugin.
 
     This function validates the configuration and creates a connection pool.
-    The pool is stored as a module-scoped singleton in _pool.
+    The pool is stored as a module-scoped singleton in app['pool'].
 
     """
-    global _pool
 
-    if _pool is not None:
+    if app.get('pool') is not None:
         # Not failing hard because not sure whether initializing twice is allowed
         _logger.warning("plugin is already intialized, refusing to initialize again")
         return
@@ -94,7 +92,7 @@ async def initialize(app):
     connect_attempt_tries_left = CONNECT_ATTEMPT_MAX_TRIES - 1
     while connect_attempt_tries_left >= 0:
         try:
-            _pool = await asyncpg.create_pool(
+            app['pool'] = await asyncpg.create_pool(
                 user=dbconf['user'],
                 database=dbconf['name'],
                 host=dbconf['host'],
@@ -116,18 +114,18 @@ async def initialize(app):
                 raise
         else:
             break
-    await _pool.execute(_Q_CREATE)
+    await app['pool'].execute(_Q_CREATE)
 
 
 @_hookimpl
 async def deinitialize(app):
     # language=rst
     """ Deinitialize the plugin."""
-    await _pool.close()
+    await app['pool'].close()
 
 
 @_hookimpl
-async def health_check() -> T.Optional[str]:
+async def health_check(app) -> T.Optional[str]:
     # language=rst
     """ Health check.
 
@@ -135,12 +133,12 @@ async def health_check() -> T.Optional[str]:
     :raises Exception: if that's easier than returning a string.
 
     """
-    if (await _pool.fetchval(_Q_HEALTHCHECK)) != 1:
+    if (await app['pool'].fetchval(_Q_HEALTHCHECK)) != 1:
         return 'Postgres connection problem'
 
 
 @_hookimpl
-async def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]] = None) \
+async def storage_retrieve(app: T.Mapping, docid: str, etags: T.Optional[T.Set[str]] = None) \
         -> T.Tuple[T.Optional[dict], str]:
     # language=rst
     """ Get document and corresponsing etag by id.
@@ -154,7 +152,7 @@ async def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]] = None) \
     :raises KeyError: if not found
 
     """
-    record = await _pool.fetchrow(_Q_RETRIEVE_DOC, docid)
+    record = await app['pool'].fetchrow(_Q_RETRIEVE_DOC, docid)
     if record is None:
         raise KeyError()
     if etags and conditional.match_etags(record['etag'], etags, True):
@@ -163,7 +161,7 @@ async def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]] = None) \
 
 
 @_hookimpl
-async def storage_create(docid: str, doc: dict, searchable_text: str,
+async def storage_create(app: T.Mapping, docid: str, doc: dict, searchable_text: str,
                          iso_639_1_code: T.Optional[str]) -> str:
     # language=rst
     """ Store a new document.
@@ -180,14 +178,14 @@ async def storage_create(docid: str, doc: dict, searchable_text: str,
     new_etag = _etag_from_str(new_doc)
     lang = _iso_639_1_code_to_pg(iso_639_1_code)
     try:
-        await _pool.execute(_Q_INSERT_DOC, docid, new_doc, lang, searchable_text, new_etag)
+        await app['pool'].execute(_Q_INSERT_DOC, docid, new_doc, lang, searchable_text, new_etag)
     except asyncpg.exceptions.UniqueViolationError as e:
         raise KeyError from e
     return new_etag
 
 
 @_hookimpl
-async def storage_update(docid: str, doc: dict, searchable_text: str,
+async def storage_update(app: T.Mapping, docid: str, doc: dict, searchable_text: str,
                          etags: T.Set[str], iso_639_1_code: T.Optional[str]) \
         -> str:
     # language=rst
@@ -206,13 +204,13 @@ async def storage_update(docid: str, doc: dict, searchable_text: str,
     new_doc = json.dumps(doc, ensure_ascii=False, sort_keys=True)
     new_etag = _etag_from_str(new_doc)
     lang = _iso_639_1_code_to_pg(iso_639_1_code)
-    if (await _pool.fetchval(_Q_UPDATE_DOC, new_doc, lang, searchable_text, new_etag, docid, list(etags))) is None:
+    if (await app['pool'].fetchval(_Q_UPDATE_DOC, new_doc, lang, searchable_text, new_etag, docid, list(etags))) is None:
         raise ValueError
     return new_etag
 
 
 @_hookimpl
-async def storage_delete(docid: str, etags: T.Set[str]) -> None:
+async def storage_delete(app: T.Mapping, docid: str, etags: T.Set[str]) -> None:
     # language=rst
     """ Delete document only if it has one of the provided Etags.
 
@@ -222,7 +220,7 @@ async def storage_delete(docid: str, etags: T.Set[str]) -> None:
     :raises: KeyError if a document with the given id doesn't exist.
 
     """
-    if (await _pool.fetchval(_Q_DELETE_DOC, docid, etags)) is None:
+    if (await app['pool'].fetchval(_Q_DELETE_DOC, docid, etags)) is None:
         # the operation may fail because either the id doesn't exist or the given
         # etag doesn't match. There's no way to atomically check for both
         # conditions at the same time, apart from a full table lock. However,
@@ -234,7 +232,7 @@ async def storage_delete(docid: str, etags: T.Set[str]) -> None:
 
 
 @_hookimpl
-async def storage_extract(ptr: str, distinct: bool=False) -> T.Generator[str, None, None]:
+async def storage_extract(app: T.Mapping, ptr: str, distinct: bool=False) -> T.Generator[str, None, None]:
     # language=rst
     """Generator to extract values from the stored documents, optionally
     distinct.
@@ -249,7 +247,7 @@ async def storage_extract(ptr: str, distinct: bool=False) -> T.Generator[str, No
     """
     # If the pointer is '/' we should return all documents
     if ptr == '/':
-        async with _pool.acquire() as con:
+        async with app['pool'].acquire() as con:
             async with con.transaction():
                 # use a cursor so we can stream
                 async for row in con.cursor(_Q_RETRIEVE_ALL_DOCS):
@@ -293,7 +291,7 @@ async def storage_extract(ptr: str, distinct: bool=False) -> T.Generator[str, No
             raise ValueError('Element must be either list, object or end of pointer, not: ' + part)
 
     cache = set()
-    async with _pool.acquire() as con:
+    async with app['pool'].acquire() as con:
         async with con.transaction():
             # use a cursor so we can stream
             async for row in con.cursor(_Q_RETRIEVE_ALL_DOCS):
@@ -321,6 +319,7 @@ async def storage_id() -> str:
 
 @_hookimpl
 async def search_search(
+        app: T.Mapping,
         q: str, limit: T.Optional[int],
         offset: T.Optional[int],
         filters: T.Optional[T.Mapping[
@@ -424,7 +423,7 @@ async def search_search(
     # query
     query = ' | '.join("{}:*".format(t) for t in q.split())
 
-    async with _pool.acquire() as con:
+    async with app['pool'].acquire() as con:
         async with con.transaction():
             # use a cursor so we can stream
             sql = _Q_SEARCH_DOCS.format(filters=filterexpr, limit=limitexpr)
