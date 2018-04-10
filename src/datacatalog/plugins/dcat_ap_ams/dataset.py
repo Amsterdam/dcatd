@@ -34,7 +34,8 @@ DATASET = Object(json_pointer='').add(
     List(
         DISTRIBUTION,
         title="Resources",
-        json_pointer='/resources'
+        json_pointer='/resources',
+        default=[]
     )
 ).add(
     'overheidds:doel',

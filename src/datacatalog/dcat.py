@@ -1,4 +1,5 @@
 import typing as T
+import functools
 
 import jsonschema
 
@@ -53,13 +54,17 @@ class Type(object):
 
     # noinspection PyMethodMayBeStatic
     def canonicalize(self, data):
+        if data is None and self.default is not None:
+            return self.default
         return data
 
 
 class List(Type):
-    def __init__(self, item_type: Type, *args,
+    def __init__(self, item_type: Type, *args, required=False, default=None,
                  allow_empty=True, unique_items=None, **kwargs):
-        super().__init__(*args, **kwargs)
+        if default is None and required and allow_empty:
+            default = []
+        super().__init__(*args, required=required, default=default, **kwargs)
         self.item_type = item_type
         self.allow_empty = allow_empty
         self.unique_items = unique_items
@@ -77,7 +82,10 @@ class List(Type):
             retval['minItems'] = 1
         return retval
 
-    def canonicalize(self, data: list) -> list:
+    def canonicalize(self, data: T.Optional[list]) -> T.Optional[list]:
+        data = super().canonicalize(data)
+        if data is None:
+            return None
         if not isinstance(data, list):
             raise TypeError("{}: not a list".format(data))
         retval = []
@@ -178,6 +186,9 @@ class Object(Type):
         return retval if len(retval) > 0 else None
 
     def canonicalize(self, data: dict):
+        data = super().canonicalize(data)
+        if data is None:
+            return None
         if not isinstance(data, dict):
             raise TypeError("{}: not a dict".format(data))
         retval = {}
@@ -213,6 +224,9 @@ class String(Type):
         return data
 
     def canonicalize(self, data: str):
+        data = super().canonicalize(data)
+        if data is None:
+            return None
         if not isinstance(data, str):
             raise TypeError("{}: not a string".format(data))
         retval = data.strip()
@@ -230,7 +244,10 @@ class Date(String):
         assert format is None and pattern is None
         super().__init__(*args, format='date', pattern=r'^\d\d\d\d-[01]\d-[0-3]\d(?:T[012]\d:[0-5]\d:[0-5]\d(?:\.\d+)?)?(?:Z|[01]\d(?::[0-5]\d)?)?$', **kwargs)
 
-    def canonicalize(self, data: str) -> str:
+    def canonicalize(self, data: str) -> T.Optional[str]:
+        data = super().canonicalize(data)
+        if data is None:
+            return None
         if not isinstance(data, str):
             raise TypeError("{}: not a string".format(data))
         return data[:10]
@@ -258,12 +275,6 @@ class Enum(String):
 
     def full_text_search_representation(self, data: str):
         return self.dict[data]
-
-    def canonicalize(self, data: str) -> T.Optional[str]:
-        keys = {v[0] for v in self.values}
-        if data in keys:
-            return data
-        return None if len(data) == 0 else data
 
 
 class Integer(Type):
@@ -293,10 +304,13 @@ class Integer(Type):
         return str(data) if isinstance(data, int) else None
 
     def canonicalize(self, data):
+        data = super().canonicalize(data)
+        if data is None:
+            return None
         if isinstance(data, int):
             return data
         if isinstance(data, str):
-            retval = int(data)
+            retval = int(data.strip())
             if len(str(retval)) != len(data):
                 raise ValueError("{}: not an integer".format(data))
             return retval

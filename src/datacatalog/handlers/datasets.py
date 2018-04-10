@@ -215,7 +215,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     ctx_json = json.dumps(ctx)
 
     response = web.StreamResponse()
-    response.content_type = 'application/json'
+    response.content_type = request['best_content_type']
     response.enable_compression()
     first = True
     await response.prepare(request)

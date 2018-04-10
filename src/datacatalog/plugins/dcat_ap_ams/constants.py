@@ -433,4 +433,3 @@ DCT_FORMATS = [
     ('application/xml', "XML"),
     ('application/octet-stream', "Anders"),
 ]
-
