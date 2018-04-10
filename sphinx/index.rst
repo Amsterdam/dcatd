@@ -3,9 +3,8 @@
 .. toctree::
     :hidden:
 
-    dev_docs
-    plugins
-    schemas
+    apidoc/datacatalog
+    openapi
     sphinx_101
     todo_list
     License <license>

@@ -28,7 +28,7 @@ def initialize_sync(app):
 
     """
     # validate configuration
-    with pkg_resources.resource_stream(__name__, 'swift_config_schema.yml') as s:
+    with pkg_resources.resource_stream(__name__, 'config_schema.yml') as s:
         schema = yaml.load(s)
     app.config.validate(schema)
     global _BASE_URL, _AUTHORIZATION

@@ -1,7 +1,3 @@
-# IntelliJ:
-/.idea/**
-/*.iml
-
 # Python ephemerals:
 **/__pycache__/
 **/*.pyc
@@ -12,6 +8,7 @@
 /sphinx/.doctrees/
 /sphinx/*.inv
 /sphinx/*.inv.txt
+/sphinx/apidoc/
 /docs/
 
 # Test and Example side-effects:

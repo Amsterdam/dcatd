@@ -175,7 +175,7 @@ html_theme_options = {
     'collapse_navigation': False,
     #'display_version': True,
     'display_version': False,
-    #'navigation_depth': 4,
+    #'navigation_depth': 99,
     #'prev_next_buttons_location': 'bottom',
     'canonical_url': 'https://amsterdam.github.io/aiohttp_openapi_haljson/',
 }

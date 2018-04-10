@@ -1,7 +1,7 @@
-.. _schemas:
+.. _openapi:
 
-JSON Schemas and OpenAPI definitions
-====================================
+OpenAPI definitions
+===================
 
 JSON Schema Validation v04 has the following built-in formats for strings:
 
