@@ -45,6 +45,7 @@ setup(
         'datacatalog.handlers': ['*.yml'],
         'datacatalog.plugins': ['*.yml'],
         'datacatalog.plugins.postgres': ['*.yml'],
+        'datacatalog.plugins.swift': ['*.yml'],
     },
 
 
