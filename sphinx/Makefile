@@ -30,6 +30,7 @@ clean:
 invclean:
 	@$(RM) *.inv *.inv.txt
 
+
 gh-pages: docs
 	[ -d gh-pages ] || git clone --branch gh-pages --single-branch $(GITORIGIN) gh-pages
 	cd gh-pages && { [ "`echo *`" = '*' ] || git rm -rf *; }

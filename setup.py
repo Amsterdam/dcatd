@@ -70,7 +70,7 @@ setup(
         'whoosh',
         # @evert: Why this specific version? --PvB
         # Evert says: Just remove it and see what happens.
-        'cryptography==2.1.2',
+        'cryptography',
 
         # for postgres storage plugin
         'asyncpg', # postgres plugin

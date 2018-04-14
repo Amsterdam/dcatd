@@ -20,31 +20,44 @@ cov: cleanpy
 	$(PYTEST) $(PYTEST_COV_OPTS)
 
 
-testdep:
-	pip3 install --quiet --upgrade --upgrade-strategy eager -e .[test] && echo 'OK' || echo 'FAILED'
-
-
 testclean: cleanpy
 	@$(RM) .cache .coverage
 
 
-# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-# ┃ Installing, building, running ┃
-# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-
-install: cleanpy
-	@echo -n 'Installing... '
-	@pip3 install --quiet --upgrade --upgrade-strategy eager -e . && echo 'OK' || echo 'FAILED'
+# ┏━━━━━━━━━━━━━━━━━━━┓
+# ┃ Building, running ┃
+# ┗━━━━━━━━━━━━━━━━━━━┛
 
 dist: cleanpy
 	$(PYTHON) setup.py sdist
 
+
 upload: cleanpy
 	$(PYTHON) setup.py sdist upload
+
 
 example: cleanpy
 	@echo Starting example server
 	@CONFIG_PATH=./examples/running/config.yml python -m datacatalog.main
+
+
+# ┏━━━━━━━━━━━━━━┓
+# ┃ Dependencies ┃
+# ┗━━━━━━━━━━━━━━┛
+
+rundeps: cleanpy
+	@echo -n 'Installing... '
+	@pip3 install --quiet --upgrade --upgrade-strategy eager -e . && echo 'OK' || echo 'FAILED'
+
+
+testdeps:
+	@echo -n 'Installing with test dependencies... '
+	@pip3 install --quiet --upgrade --upgrade-strategy eager -e .[test] && echo 'OK' || echo 'FAILED'
+
+
+alldeps:
+	@echo -n 'Installing with all dependencies... '
+	@pip3 install --quiet --upgrade --upgrade-strategy eager -e .[dev,docs,test] && echo 'OK' || echo 'FAILED'
 
 
 # ┏━━━━━━━━━━━━━┓
@@ -55,7 +68,8 @@ cleanpy:
 	@echo Removing pyc and pyo files
 	@find . -type f -name '*.py[co]' -exec rm {} \;
 
-clean:
+
+clean: cleanpy
 	@# From running pytest:
 	$(RM) .coverage .cache
 
