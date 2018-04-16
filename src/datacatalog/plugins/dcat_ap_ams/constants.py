@@ -419,7 +419,6 @@ DCT_FORMATS = [
     ('n/a', ''),
     ('text/csv', "CSV"),
     ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', "DOCX"),
-    ('application/vnd.ms-excel', "MS Excel"),
     ('application/vnd.geo+json', "GeoJSON"),
     ('application/gml+xml', "GML"),
     ('text/html', "HTML"),
@@ -427,6 +426,7 @@ DCT_FORMATS = [
     ('application/pdf', "PDF"),
     ('image/png', "PNG"),
     ('application/zip; format="shp"', "SHP"),
+    ('application/vnd.ms-excel', "XLS"),
     ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', "XLSX"),
     # application/xml is the prefered media type for XML documents. RFC7303
     # defines text/xml as merely an alias of application/xml.
