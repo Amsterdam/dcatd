@@ -317,7 +317,7 @@ async def storage_id() -> str:
 
 
 @_hookimpl
-async def search_search(
+def search_search(
         app: T.Mapping,
         q: str, limit: T.Optional[int],
         offset: T.Optional[int],
@@ -330,7 +330,7 @@ async def search_search(
             ]
         ]],
         iso_639_1_code: T.Optional[str]
-) -> T.Generator[T.Tuple[str, dict], None, None]:
+) -> T.AsyncGenerator[T.Tuple[str, dict], None]:
     # language=rst
     """ Search.
 
@@ -346,14 +346,13 @@ async def search_search(
 
     """
 
-    filterexpr, lang, limitexpr, offset, query = _prepare_query(filters, iso_639_1_code, limit, offset, q)
+    filterexpr, lang, limitexpr, offset, query = _prepare_query(filters, iso_639_1_code, q, limit, offset)
     return _execute_search_query(filterexpr, lang, limitexpr, offset, query)
 
 
 @_hookimpl
-async def search_search_count(
-        q: str, limit: T.Optional[int],
-        offset: T.Optional[int],
+def search_search_count(
+        q: str,
         filters: T.Optional[T.Mapping[
             str, # a JSON pointer
             T.Mapping[
@@ -363,7 +362,7 @@ async def search_search_count(
             ]
         ]],
         iso_639_1_code: T.Optional[str]
-) -> int:
+) -> T.Awaitable:
     # language=rst
     """ Return the number of search results.
 
@@ -379,8 +378,8 @@ async def search_search_count(
 
     """
 
-    filterexpr, lang, limitexpr, offset, query = _prepare_query(filters, iso_639_1_code, limit, offset, q)
-    yield _execute_search_count_query(filterexpr, lang, query)
+    filterexpr, lang, limitexpr, offset, query = _prepare_query(filters, iso_639_1_code, q)
+    return _execute_search_count_query(filterexpr, lang, query)
 
 
 async def _execute_search_query(filterexpr, lang, limitexpr, offset, query):
@@ -397,10 +396,10 @@ async def _execute_search_count_query(filterexpr, lang, query):
     async with _pool.acquire() as con:
         async with con.transaction():
             count_stmt = await con.prepare(_Q_SEARCH_DOCS_COUNT.format(filters=filterexpr))
-            yield await count_stmt.fetchval(lang, query)
+            return await count_stmt.fetchval(lang, query)
 
 
-def _prepare_query(filters, iso_639_1_code, limit, offset, q):
+def _prepare_query(filters, iso_639_1_code, q, limit=None, offset=None):
     def to_expr(ptr: str, value: T.Any) -> str:
         """Create a filterexpression from a json pointer and value."""
         try:

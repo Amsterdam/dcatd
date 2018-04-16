@@ -45,6 +45,15 @@ _corpus = {
 }
 
 
+_corpus_expected_unfiltered_result_count = {
+    'dutch_dataset1': 2,
+    'dutch_dataset2': 2,
+    'english_dataset1': 2,
+    'english_dataset2': 2,
+    'unspecified_language_dataset1': 1,
+}
+
+
 class TestApp(dict):
     def __init__(self, pool, loop, config):
         self.pool = pool
@@ -191,8 +200,21 @@ def test_search_search(event_loop, corpus, app):
 
 
 def test_search_search_count(event_loop, corpus):
-    #Todo: implement me
-    pass
+    # search on query
+    def search(record):
+        q = record['searchable_text']
+        return postgres_plugin.search_search_count(q, None, record['iso_639_1_code'])
+    for doc_id, record in corpus.items():
+        count = event_loop.run_until_complete(search(record))
+        assert count == _corpus_expected_unfiltered_result_count[doc_id]
+
+    # filtered search
+    def search(record):
+        filters = {'/properties/id': {'eq': record['doc']['id']}}
+        return postgres_plugin.search_search_count('', filters, record['iso_639_1_code'])
+    for doc_id, record in corpus.items():
+        count = event_loop.run_until_complete(search(record))
+        assert count == 1
 
 
 def test_storage_delete(event_loop, corpus, app):

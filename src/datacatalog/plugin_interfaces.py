@@ -197,7 +197,7 @@ def search_search(
         ]
     ]],
     iso_639_1_code: T.Optional[str]
-) -> T.Generator[T.Tuple[str, dict], None, None]:
+) -> T.AsyncGenerator[T.Tuple[str, dict], None]:
     # language=rst
     """ Search.
 
@@ -217,8 +217,7 @@ def search_search(
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
 def search_search_count(
-    q: str, limit: T.Optional[int],
-    offset: T.Optional[int],
+    q: str,
     filters: T.Optional[T.Mapping[
         str, # a JSON pointer
         T.Mapping[
@@ -228,7 +227,7 @@ def search_search_count(
         ]
     ]],
     iso_639_1_code: T.Optional[str]
-) -> int:
+) -> T.Awaitable:
     # language=rst
     """ Search.
 
