@@ -217,6 +217,7 @@ def search_search(
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
 def search_search_count(
+    app: T.Mapping,
     q: str,
     filters: T.Optional[T.Mapping[
         str, # a JSON pointer

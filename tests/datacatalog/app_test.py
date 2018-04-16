@@ -112,6 +112,7 @@ class DatasetTestCase(BaseTestCase):
         self.assertEquals(response.status, 200,
                           'Geen match resulteert in !200 state')
 
+        print(await response.text())
         response_json = await response.json()
 
         self.assertEquals(response_json['dcat:dataset'], [],

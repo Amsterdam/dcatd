@@ -317,7 +317,7 @@ async def storage_id() -> str:
 
 
 @_hookimpl
-def search_search(
+async def search_search(
         app: T.Mapping,
         q: str, limit: T.Optional[int],
         offset: T.Optional[int],
@@ -334,6 +334,8 @@ def search_search(
     # language=rst
     """ Search.
 
+    :param app: the application object, which, in this case, is only used for
+        its namespace-like mapping interface.
     :param q: the query
     :param limit: maximum hits to be returned
     :param offset: offset in resultset
@@ -345,13 +347,14 @@ def search_search(
         not recognized, or if the offset is invalid.
 
     """
-
     filterexpr, lang, limitexpr, offset, query = _prepare_query(filters, iso_639_1_code, q, limit, offset)
-    return _execute_search_query(filterexpr, lang, limitexpr, offset, query)
+    async for i in _execute_search_query(app, filterexpr, lang, limitexpr, offset, query):
+        yield i
 
 
 @_hookimpl
-def search_search_count(
+async def search_search_count(
+        app: T.Mapping,
         q: str,
         filters: T.Optional[T.Mapping[
             str, # a JSON pointer
@@ -366,6 +369,8 @@ def search_search_count(
     # language=rst
     """ Return the number of search results.
 
+    :param app: the application object, which, in this case, is only used for
+        its namespace-like mapping interface.
     :param q: the query
     :param limit: maximum hits to be returned
     :param offset: offset in resultset
@@ -379,11 +384,11 @@ def search_search_count(
     """
 
     filterexpr, lang, limitexpr, offset, query = _prepare_query(filters, iso_639_1_code, q)
-    return _execute_search_count_query(filterexpr, lang, query)
+    return await _execute_search_count_query(app, filterexpr, lang, query)
 
 
-async def _execute_search_query(filterexpr, lang, limitexpr, offset, query):
-    async with _pool.acquire() as con:
+async def _execute_search_query(app, filterexpr, lang, limitexpr, offset, query):
+    async with app['pool'].acquire() as con:
         async with con.transaction():
             # use a cursor so we can stream
             stmt = await con.prepare(
@@ -392,8 +397,8 @@ async def _execute_search_query(filterexpr, lang, limitexpr, offset, query):
                 yield row['id'], json.loads(row['doc']),
 
 
-async def _execute_search_count_query(filterexpr, lang, query):
-    async with _pool.acquire() as con:
+async def _execute_search_count_query(app, filterexpr, lang, query):
+    async with app['pool'].acquire() as con:
         async with con.transaction():
             count_stmt = await con.prepare(_Q_SEARCH_DOCS_COUNT.format(filters=filterexpr))
             return await count_stmt.fetchval(lang, query)
