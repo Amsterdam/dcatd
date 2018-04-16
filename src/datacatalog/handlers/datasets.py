@@ -227,7 +227,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     await response.write(b',"dcat:dataset":[')
 
     async for docid, doc in await resultiterator:
-        canonical_doc = hooks.mds_canonicalize(doc, docid)
+        canonical_doc = await hooks.mds_canonicalize(data=doc, id=docid)
         keepers = {'@id', 'dct:identifier', 'dct:title', 'dct:description',
                    'dcat:keyword', 'foaf:isPrimaryTopicOf', 'dcat:distribution',
                    'dcat:theme'}
