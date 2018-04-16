@@ -27,6 +27,8 @@ class Application(web.Application):
         # Initialize config:
         self._config = config.load()
 
+        self._pool = None
+
         # set app properties
         path = urllib.parse.urlparse(self._config['web']['baseurl']).path
         if len(path) == 0 or path[-1] != '/':
@@ -73,6 +75,10 @@ class Application(web.Application):
     @property
     def config(self) -> config.ConfigDict:
         return self._config
+
+    @property
+    def pool(self):
+        return self._pool
 
     @property
     def pm(self) -> aiopluggy.PluginManager:

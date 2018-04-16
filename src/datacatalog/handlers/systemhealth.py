@@ -11,7 +11,7 @@ async def get(request):
 
     """
     errors = []
-    for result in await request.app.hooks.health_check():
+    for result in await request.app.hooks.health_check(app=request.app):
         try:
             value = result.value
             if value is not None:

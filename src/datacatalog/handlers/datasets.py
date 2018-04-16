@@ -51,7 +51,7 @@ async def get(request: web.Request):
     # now we know the etag is either None or a set
     try:
         doc, etag = await request.app.hooks.storage_retrieve(
-            docid=docid, etags=etag_if_none_match
+            app=request.app, docid=docid, etags=etag_if_none_match
         )
     except KeyError:
         raise web.HTTPNotFound()
@@ -125,8 +125,9 @@ async def put(request: web.Request):
             )
         try:
             new_etag = await hooks.storage_update(
-                docid=docid, doc=canonical_doc, searchable_text=searchable_text,
-                etags=etag_if_match, iso_639_1_code="nl"
+                app=request.app, docid=docid, doc=canonical_doc,
+                searchable_text=searchable_text, etags=etag_if_match,
+                iso_639_1_code="nl"
             )
         except ValueError:
             raise web.HTTPPreconditionFailed()
@@ -139,8 +140,8 @@ async def put(request: web.Request):
         )
     try:
         new_etag = await hooks.storage_create(
-            docid=docid, doc=canonical_doc, searchable_text=searchable_text,
-            iso_639_1_code="nl"
+            app=request.app, docid=docid, doc=canonical_doc,
+            searchable_text=searchable_text, iso_639_1_code="nl"
         )
     except KeyError:
         raise web.HTTPPreconditionFailed()
@@ -158,7 +159,8 @@ async def delete(request: web.Request):
             text='Must provide a If-Match header containing one or more ETags.'
         )
     try:
-        await request.app.hooks.storage_delete(docid=given_id, etags=etag_if_match)
+        await request.app.hooks.storage_delete(
+            app=request.app, docid=given_id, etags=etag_if_match)
     except KeyError:
         raise web.HTTPNotFound()
     return web.Response(status=204, content_type='text/plain')
@@ -207,8 +209,8 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
         offset = int(offset)
 
     resultiterator = hooks.search_search(
-        q=full_text_query, limit=limit, offset=offset, filters=filters,
-        iso_639_1_code='nl'
+        app=request.app, q=full_text_query, limit=limit, offset=offset,
+        filters=filters, iso_639_1_code='nl'
     )
 
     ctx = await hooks.mds_context()
@@ -296,8 +298,8 @@ async def post_collection(request: web.Request):
     )
     try:
         new_etag = await hooks.storage_create(
-            docid=docid, doc=canonical_doc, searchable_text=searchable_text,
-            iso_639_1_code="nl"
+            app=request.app, docid=docid, doc=canonical_doc,
+            searchable_text=searchable_text, iso_639_1_code="nl"
         )
     except KeyError:
         raise web.HTTPBadRequest(

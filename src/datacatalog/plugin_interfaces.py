@@ -50,7 +50,7 @@ def deinitialize(app) -> None:
 
 # noinspection PyUnusedLocal
 @hookspec
-def health_check() -> T.Optional[str]:
+def health_check(app) -> T.Optional[str]:
     # language=rst
     """Health check.
 
@@ -67,7 +67,7 @@ def health_check() -> T.Optional[str]:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]]) \
+def storage_retrieve(app, docid: str, etags: T.Optional[T.Set[str]]) \
         -> T.Tuple[T.Optional[dict], str]:
     # language=rst
     """ Get document and corresponsing etag by id.
@@ -85,7 +85,7 @@ def storage_retrieve(docid: str, etags: T.Optional[T.Set[str]]) \
 
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_create(docid: str, doc: dict, searchable_text: str,
+def storage_create(app, docid: str, doc: dict, searchable_text: str,
                    iso_639_1_code: T.Optional[str]) -> str:
     # language=rst
     """ Store a new document.
@@ -102,7 +102,7 @@ def storage_create(docid: str, doc: dict, searchable_text: str,
 
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_update(docid: str, doc: dict, searchable_text: str,
+def storage_update(app, docid: str, doc: dict, searchable_text: str,
                    etags: T.Set[str], iso_639_1_code: T.Optional[str]) \
         -> str:
     # language=rst
@@ -122,7 +122,7 @@ def storage_update(docid: str, doc: dict, searchable_text: str,
 
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_delete(docid: str, etags: T.Set[str]) -> None:
+def storage_delete(app, docid: str, etags: T.Set[str]) -> None:
     # language=rst
     """ Delete document only if it has one of the provided Etags.
 
@@ -136,7 +136,7 @@ def storage_delete(docid: str, etags: T.Set[str]) -> None:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_extract(ptr: str, distinct: bool=False) -> T.Generator[str, None, None]:
+def storage_extract(app, ptr: str, distinct: bool=False) -> T.Generator[str, None, None]:
     # language=rst
     """Generator to extract values from the stored documents, optionally
     distinct.
@@ -185,12 +185,13 @@ def storage_id() -> str:
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
 def search_search(
+    app,
     q: str, limit: T.Optional[int],
     offset: T.Optional[int],
     filters: T.Optional[T.Mapping[
-        str, # a JSON pointer
+        str,  # a JSON pointer
         T.Mapping[
-            str, # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``
+            str,  # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``
             # a string, or a set of strings if the comparator is ``in``
             T.Union[str, T.Set[str]]
         ]
