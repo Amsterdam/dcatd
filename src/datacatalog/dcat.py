@@ -229,7 +229,7 @@ class String(Type):
             return None
         if not isinstance(data, str):
             raise TypeError("{}: not a string".format(data))
-        retval = data.strip()
+        retval = data.strip().replace('\r\n', '\n')
         return retval if len(retval) > 0 or self.allow_empty else None
 
 

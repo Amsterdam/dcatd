@@ -86,13 +86,13 @@ class String(FromCKANMixin, dcat.String):
 
 
 class Markdown(String):
-    def __init__(self, *args, format=None, from_=None, **kwargs):
+    def __init__(self, *args, format=None, from_='markdown', **kwargs):
         assert format is None
         super().__init__(*args, **kwargs)
         self.from_ = from_
 
     def from_ckan(self, data: dict) -> T.Optional[str]:
-        original = super().from_ckan(data)
+        original = super().canonicalize(super().from_ckan(data))
         if original is None:
             return None
         if self.from_ is None:
