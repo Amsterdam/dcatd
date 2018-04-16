@@ -270,7 +270,8 @@ DATASET = Object(json_pointer='').add(
         ),
         title="Tags",
         unique_items=True,
-        json_pointer='/tags'
+        json_pointer='/tags',
+        default=[]
         # description="Geef een aantal trefwoorden, die van toepassing zijn op de gegevensset, zodat de gegevensset gevonden kan worden."
     )
 ).add(

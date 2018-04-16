@@ -8,9 +8,10 @@ import typing as T
 from aiohttp import web
 from pyld import jsonld
 
-from datacatalog import authorization
 from aiohttp_extras import conditional
 from aiohttp_extras.content_negotiation import produces_content_types
+
+from datacatalog import authorization
 
 _DCAT_ID_KEY = '@id'
 _DCAT_DCT_ID_KEY = 'http://purl.org/dc/terms/identifier'
@@ -224,26 +225,24 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     await response.write(b',"dcat:dataset":[')
 
     async for docid, doc in await resultiterator:
-        expanded_doc = jsonld.expand(doc)[0]
-        docurl = f"{_datasets_url(request)}/{docid}"
-        resultdoc = {
-            _DCAT_ID_KEY: docurl,
-            _DCAT_DCT_ID_KEY: [{'@value': docid}],
-            _DCAT_DCT_TITLE_KEY: expanded_doc.get(_DCAT_DCT_TITLE_KEY, ''),
-            _DCAT_DCT_DESCRIPTION_KEY: expanded_doc.get(_DCAT_DCT_DESCRIPTION_KEY, ''),
-            _DCAT_DCAT_KEYWORD_KEY: expanded_doc.get(_DCAT_DCAT_KEYWORD_KEY, []),
-            _DCAT_DCAT_DISTRIBUTION_KEY: [
-                {_DCAT_DCT_FORMAT_KEY: d[_DCAT_DCT_FORMAT_KEY]}
-                for d in expanded_doc.get(_DCAT_DCAT_DISTRIBUTION_KEY, [])
-            ]
-        }
-        compacted_doc = jsonld.compact(resultdoc, ctx)
-        del compacted_doc['@context']
+        canonical_doc = hooks.mds_canonicalize(doc, docid)
+        keepers = {'@id', 'dct:identifier', 'dct:title', 'dct:description',
+                   'dcat:keyword', 'foaf:isPrimaryTopicOf', 'dcat:distribution',
+                   'dcat:theme'}
+        for key in list(canonical_doc.keys()):
+            if key not in keepers:
+                del canonical_doc[key]
+        keepers = {'dct:format', 'ams:resourceType', 'ams:distributionType',
+                   'ams:serviceType'}
+        for d in canonical_doc.get('dcat:distribution', []):
+            for key in list(d.keys()):
+                if key not in keepers:
+                    del d[key]
         if not first:
             await response.write(b',')
         else:
             first = False
-        await response.write(json.dumps(compacted_doc).encode())
+        await response.write(json.dumps(canonical_doc).encode())
 
     await response.write(b']}')
     await response.write_eof()
