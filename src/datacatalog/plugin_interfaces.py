@@ -207,7 +207,38 @@ def search_search(
     :param filters: mapping of JSON pointer -> value, used to filter on some
         value.
     :param iso_639_1_code: the language of the query
-    :returns: A generator over the search results (id, doc)
+    :returns: A generator over the search results (id, doc, metadata)
+    :raises: ValueError if filter syntax is invalid, if the ISO 639-1 code is
+        not recognized, or if the offset is invalid.
+
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_only.required
+def search_search_count(
+    q: str, limit: T.Optional[int],
+    offset: T.Optional[int],
+    filters: T.Optional[T.Mapping[
+        str, # a JSON pointer
+        T.Mapping[
+            str, # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``
+            # a string, or a set of strings if the comparator is ``in``
+            T.Union[str, T.Set[str]]
+        ]
+    ]],
+    iso_639_1_code: T.Optional[str]
+) -> int:
+    # language=rst
+    """ Search.
+
+    :param q: the query
+    :param limit: maximum hits to be returned
+    :param offset: offset in resultset
+    :param filters: mapping of JSON pointer -> value, used to filter on some
+        value.
+    :param iso_639_1_code: the language of the query
+    :returns: The number of documents matched
     :raises: ValueError if filter syntax is invalid, if the ISO 639-1 code is
         not recognized, or if the offset is invalid.
 

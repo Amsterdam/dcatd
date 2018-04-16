@@ -190,6 +190,11 @@ def test_search_search(event_loop, corpus, app):
             assert docid == doc_id
 
 
+def test_search_search_count(event_loop, corpus):
+    #Todo: implement me
+    pass
+
+
 def test_storage_delete(event_loop, corpus, app):
     for doc_id, record in corpus.items():
         event_loop.run_until_complete(

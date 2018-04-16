@@ -19,6 +19,7 @@ CONTEXT = MappingProxyType({
     'overheidds': 'http://standaarden.overheid.nl/owms/terms/ds#',
     'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
+    'void': 'http://rdfs.org/ns/void#',
     'skos': 'http://www.w3.org/2004/02/skos/core#',
     'theme': 'ams:theme#',
     'time': 'http://www.w3.org/2006/time#',

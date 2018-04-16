@@ -214,6 +214,11 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
         filters=filters, iso_639_1_code='nl'
     )
 
+    nr_of_search_results = hooks.search_search_count(
+        q=full_text_query, limit=limit, offset=offset, filters=filters,
+        iso_639_1_code='nl'
+    )
+
     ctx = await hooks.mds_context()
     ctx_json = json.dumps(ctx)
 
@@ -224,6 +229,8 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     await response.prepare(request)
     await response.write(b'{"@context":')
     await response.write(ctx_json.encode())
+    await response.write(b', "void:documents": ')
+    await response.write(str(nr_of_search_results))
     await response.write(b',"dcat:dataset":[')
 
     async for docid, doc in await resultiterator:

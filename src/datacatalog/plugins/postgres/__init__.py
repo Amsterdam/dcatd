@@ -46,15 +46,14 @@ _Q_INSERT_DOC = 'INSERT INTO "dataset" (id, doc, searchable_text, lang, etag) VA
 _Q_UPDATE_DOC = 'UPDATE "dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=ANY($6) RETURNING id'
 _Q_DELETE_DOC = 'DELETE FROM "dataset" WHERE id=$1 AND etag=ANY($2) RETURNING id'
 _Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "dataset"'
-_Q_SEARCH_DOCS = """
-SELECT id, doc, ts_rank_cd(searchable_text, query) AS rank 
+_Q_SEARCH_DOCS_BASE = """
 FROM "dataset", to_tsquery($1, $2) query
 WHERE (''=$2::varchar OR searchable_text @@ query) {filters}
 AND ('simple'=$1::varchar OR lang=$1::varchar)
-ORDER BY rank DESC
-{limit}
-OFFSET $3;
 """
+_Q_SEARCH_DOCS = f"SELECT id, doc, ts_rank_cd(searchable_text, query) AS rank " \
+                 f"{_Q_SEARCH_DOCS_BASE} ORDER BY rank DESC {{limit}} OFFSET $3;"
+_Q_SEARCH_DOCS_COUNT = f"SELECT count(*) {_Q_SEARCH_DOCS_BASE};"
 
 
 @_hookimpl
@@ -347,6 +346,61 @@ async def search_search(
 
     """
 
+    filterexpr, lang, limitexpr, offset, query = _prepare_query(filters, iso_639_1_code, limit, offset, q)
+    return _execute_search_query(filterexpr, lang, limitexpr, offset, query)
+
+
+@_hookimpl
+async def search_search_count(
+        q: str, limit: T.Optional[int],
+        offset: T.Optional[int],
+        filters: T.Optional[T.Mapping[
+            str, # a JSON pointer
+            T.Mapping[
+                str, # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``
+                # a string, or a set of strings if the comparator is ``in``
+                T.Union[str, T.Set[str]]
+            ]
+        ]],
+        iso_639_1_code: T.Optional[str]
+) -> int:
+    # language=rst
+    """ Return the number of search results.
+
+    :param q: the query
+    :param limit: maximum hits to be returned
+    :param offset: offset in resultset
+    :param filters: mapping of JSON pointer -> value, used to filter on some
+        value.
+    :param iso_639_1_code: the language of the query
+    :returns: The number of results
+    :raises: ValueError if filter syntax is invalid, if the ISO 639-1 code is
+        not recognized, or if the offset is invalid.
+
+    """
+
+    filterexpr, lang, limitexpr, offset, query = _prepare_query(filters, iso_639_1_code, limit, offset, q)
+    yield _execute_search_count_query(filterexpr, lang, query)
+
+
+async def _execute_search_query(filterexpr, lang, limitexpr, offset, query):
+    async with _pool.acquire() as con:
+        async with con.transaction():
+            # use a cursor so we can stream
+            stmt = await con.prepare(
+                _Q_SEARCH_DOCS.format(filters=filterexpr, limit=limitexpr))
+            async for row in stmt.cursor(lang, query, offset):
+                yield row['id'], json.loads(row['doc']),
+
+
+async def _execute_search_count_query(filterexpr, lang, query):
+    async with _pool.acquire() as con:
+        async with con.transaction():
+            count_stmt = await con.prepare(_Q_SEARCH_DOCS_COUNT.format(filters=filterexpr))
+            yield await count_stmt.fetchval(lang, query)
+
+
+def _prepare_query(filters, iso_639_1_code, limit, offset, q):
     def to_expr(ptr: str, value: T.Any) -> str:
         """Create a filterexpression from a json pointer and value."""
         try:
@@ -362,7 +416,8 @@ async def search_search(
                 return parse_obj()
             elif nxt == 'items':
                 return parse_list()
-            raise ValueError('Child must be either list, object or end of pointer, not: ' + nxt)
+            raise ValueError('Child must be either list, '
+                             'object or end of pointer, not: ' + nxt)
 
         def parse_obj() -> str:
             if len(parts) == 0:
@@ -393,10 +448,10 @@ async def search_search(
     lang = 'simple'
     if iso_639_1_code is not None:
         if iso_639_1_code not in ISO_639_1_TO_PG_DICTIONARIES:
-            raise ValueError('invalid ISO 639-1 language code: ' + iso_639_1_code)
+            raise ValueError(
+                'invalid ISO 639-1 language code: ' + iso_639_1_code)
         else:
             lang = ISO_639_1_TO_PG_DICTIONARIES[iso_639_1_code]
-
     # Interpret the filters (to_expr calls json.dumps on both the json pointers
     # and corresponding values, so we don't escape separately and use a format
     # string).
@@ -405,30 +460,26 @@ async def search_search(
         for ptr, filter in filters.items():
             for op, val in filter.items():
                 if op != 'eq' and op != 'in':
-                    raise NotImplementedError('Postgres plugin only supports "eq" and "in" filter operators')
+                    raise NotImplementedError(
+                        'Postgres plugin only supports '
+                        '"eq" and "in" filter operators')
                 if op == "eq":
-                    filterexprs.append(" AND doc @> '" + to_expr(ptr, val) + "'")
+                    filterexprs.append(
+                        " AND doc @> '" + to_expr(ptr, val) + "'")
                 elif op == "in":
-                    orexpr = ' OR '.join("doc @> '" + to_expr(ptr, v) + "'" for v in val)
+                    orexpr = ' OR '.join(
+                        "doc @> '" + to_expr(ptr, v) + "'" for v in val)
                     filterexprs.append(' AND (' + orexpr + ')')
     filterexpr = ''.join(filterexprs)
-
     # Paging
     limitexpr = ''
     if limit is not None:
         limitexpr = 'LIMIT {:d}'.format(limit)  # will raise ValueError if !int
     if offset is None:
         offset = 0
-
     # query
     query = ' | '.join("{}:*".format(t) for t in q.split())
-
-    async with app['pool'].acquire() as con:
-        async with con.transaction():
-            # use a cursor so we can stream
-            sql = _Q_SEARCH_DOCS.format(filters=filterexpr, limit=limitexpr)
-            async for row in con.cursor(sql, lang, query, offset):
-                yield row['id'], json.loads(row['doc'])
+    return filterexpr, lang, limitexpr, offset, query
 
 
 def _etag_from_str(s: str) -> str:
