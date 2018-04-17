@@ -45,11 +45,20 @@ _corpus = {
 }
 
 
+_corpus_expected_unfiltered_result_count = {
+    'dutch_dataset1': 2,
+    'dutch_dataset2': 2,
+    'english_dataset1': 2,
+    'english_dataset2': 2,
+    'unspecified_language_dataset1': 1,
+}
+
+
 class TestApp(dict):
-    def __init__(self, pool, loop, config):
-        self.pool = pool
+    def __init__(self, loop, config):
         self.loop = loop
         self.config = config
+        loop.run_until_complete(postgres_plugin.initialize(self))
 
 
 @pytest.yield_fixture(scope='module')
@@ -66,7 +75,7 @@ def initialize(event_loop, app):
 
 @pytest.fixture(scope='module', autouse=True)
 def app(event_loop):
-    return TestApp(pool=None, loop=event_loop, config=config.load())
+    return TestApp(loop=event_loop, config=config.load())
 
 
 @pytest.yield_fixture(scope='function')
@@ -188,6 +197,25 @@ def test_search_search(event_loop, corpus, app):
         for docid, doc in event_loop.run_until_complete(search(record)):
             assert doc == record['doc']
             assert docid == doc_id
+
+
+def test_search_search_count(event_loop, corpus):
+    application = app(event_loop)
+    # search on query
+    def search(record):
+        q = record['searchable_text']
+        return postgres_plugin.search_search_count(application, q, None, record['iso_639_1_code'])
+    for doc_id, record in corpus.items():
+        count = event_loop.run_until_complete(search(record))
+        assert count == _corpus_expected_unfiltered_result_count[doc_id]
+
+    # filtered search
+    def search(record):
+        filters = {'/properties/id': {'eq': record['doc']['id']}}
+        return postgres_plugin.search_search_count(application, '', filters, record['iso_639_1_code'])
+    for doc_id, record in corpus.items():
+        count = event_loop.run_until_complete(search(record))
+        assert count == 1
 
 
 def test_storage_delete(event_loop, corpus, app):
