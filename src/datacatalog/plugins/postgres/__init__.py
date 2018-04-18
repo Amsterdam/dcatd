@@ -350,11 +350,11 @@ async def search_search(
                 p = jsonpointer.JsonPointer(facet)
             except jsonpointer.JsonPointerException:
                 raise ValueError('Cannot parse pointer')
+            if facet not in result_info:
+                result_info[facet] = {}
             ptr_parts = p.parts
             for value in _extract_values(i[1], ptr_parts):
                 value = str(value)
-                if facet not in result_info:
-                    result_info[facet] = {}
                 if value not in result_info[facet]:
                     result_info[facet][value] = 1
                 else:
