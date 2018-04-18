@@ -185,9 +185,11 @@ def storage_id() -> str:
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
 def search_search(
-    app,
-    q: str, limit: T.Optional[int],
-    offset: T.Optional[int],
+    app, q: str,
+    facets_out: T.MutableMapping,
+    facets_in: T.Optional[T.Iterable[str]]=None,
+    limit: T.Optional[int]=None,
+    offset: T.Optional[int]=None,
     filters: T.Optional[T.Mapping[
         str,  # a JSON pointer
         T.Mapping[
@@ -195,13 +197,17 @@ def search_search(
             # a string, or a set of strings if the comparator is ``in``
             T.Union[str, T.Set[str]]
         ]
-    ]],
-    iso_639_1_code: T.Optional[str]
+    ]]=None,
+    iso_639_1_code: T.Optional[str]=None
 ) -> T.AsyncGenerator[T.Tuple[str, dict], None]:
     # language=rst
     """ Search.
 
+    :param app: global dictionary
     :param q: the query
+    :param facets_out: mapping in which all encountered facets in the result set are
+        put
+    :param facets_in: a list of facets to return and count
     :param limit: maximum hits to be returned
     :param offset: offset in resultset
     :param filters: mapping of JSON pointer -> value, used to filter on some

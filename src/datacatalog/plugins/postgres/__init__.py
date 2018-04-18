@@ -19,7 +19,7 @@ from aiohttp_extras import conditional
 
 from .languages import ISO_639_1_TO_PG_DICTIONARIES
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
-_logger = logging.getLogger('plugin.storage.postgres')
+_logger = logging.getLogger(__name__)
 
 CONNECT_ATTEMPT_INTERVAL_SECS = 2
 CONNECT_ATTEMPT_MAX_TRIES = 5
@@ -68,8 +68,8 @@ async def initialize(app):
 
     if app.get('pool') is not None:
         # Not failing hard because not sure whether initializing twice is allowed
-        _logger.warning("plugin is already intialized, refusing to initialize again")
-        return
+        _logger.warning("Plugin is already intialized. Deinitializing before proceeding.")
+        await deinitialize(app)
 
     # validate configuration
     with pkg_resources.resource_stream(__name__, 'config_schema.yml') as s:
@@ -121,6 +121,7 @@ async def deinitialize(app):
     # language=rst
     """ Deinitialize the plugin."""
     await app['pool'].close()
+    del app['pool']
 
 
 @_hookimpl
@@ -230,6 +231,35 @@ async def storage_delete(app: T.Mapping, docid: str, etags: T.Set[str]) -> None:
         raise ValueError
 
 
+def _extract_values(elm, ptr_parts, ptr_idx=0):
+    """Recursive generator that yields all values that may live under the
+    given JSON pointer."""
+    if ptr_idx == len(ptr_parts):
+        yield elm
+        return
+    part = ptr_parts[ptr_idx]
+    if part == 'properties':
+        if ptr_idx == len(ptr_parts) - 1:
+            raise ValueError('Properties must be followed by property name')
+        key = ptr_parts[ptr_idx+1]
+        if type(elm) is not dict:
+            _logger.debug('Expected obj with key {}, got {}'.format(key, type(elm)))
+        elif key in elm:
+            for e in _extract_values(elm[key], ptr_parts, ptr_idx + 2):
+                yield e
+        else:
+            _logger.debug('Obj does not have key {}'.format(key))
+    elif part == 'items':
+        if type(elm) is not list:
+            _logger.debug('Expected array, got {}'.format(repr(elm)))
+        else:
+            for item in elm:
+                for e in _extract_values(item, ptr_parts, ptr_idx + 1):
+                    yield e
+    else:
+        raise ValueError('Element must be either list, object or end of pointer, not: ' + part)
+
+
 @_hookimpl
 async def storage_extract(app: T.Mapping, ptr: str, distinct: bool=False) -> T.Generator[str, None, None]:
     # language=rst
@@ -259,35 +289,6 @@ async def storage_extract(app: T.Mapping, ptr: str, distinct: bool=False) -> T.G
     except jsonpointer.JsonPointerException:
         raise ValueError('Cannot parse pointer')
     ptr_parts = p.parts
-    num_parts = len(ptr_parts)
-
-    def values(ptr_idx, elm):
-        """Recursive generator that yields all values that may live under the
-        given JSON pointer."""
-        if ptr_idx == num_parts:
-            yield elm
-            return
-        part = ptr_parts[ptr_idx]
-        if part == 'properties':
-            if ptr_idx == num_parts-1:
-                raise ValueError('Properties must be followed by property name')
-            key = ptr_parts[ptr_idx+1]
-            if type(elm) is not dict:
-                _logger.debug('Expected obj with key {}, got {}'.format(key, type(elm)))
-            elif key in elm:
-                for e in values(ptr_idx+2, elm[key]):
-                    yield e
-            else:
-                _logger.debug('Obj does not have key {}'.format(key))
-        elif part == 'items':
-            if type(elm) is not list:
-                _logger.debug('Expected array, got {}'.format(type(elm)))
-            else:
-                for item in elm:
-                    for e in values(ptr_idx+1, item):
-                        yield e
-        else:
-            raise ValueError('Element must be either list, object or end of pointer, not: ' + part)
 
     cache = set()
     async with app['pool'].acquire() as con:
@@ -295,7 +296,7 @@ async def storage_extract(app: T.Mapping, ptr: str, distinct: bool=False) -> T.G
             # use a cursor so we can stream
             async for row in con.cursor(_Q_RETRIEVE_ALL_DOCS):
                 doc = json.loads(row['doc'])
-                for elm in values(0, doc):
+                for elm in _extract_values(doc, ptr_parts):
                     if not distinct or elm not in cache:
                         yield elm
                         if distinct:
@@ -318,33 +319,25 @@ async def storage_id() -> str:
 
 @_hookimpl
 async def search_search(
-        app: T.Mapping,
-        q: str, limit: T.Optional[int],
-        offset: T.Optional[int],
-        filters: T.Optional[T.Mapping[
-            str, # a JSON pointer
-            T.Mapping[
-                str, # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``
-                # a string, or a set of strings if the comparator is ``in``
-                T.Union[str, T.Set[str]]
-            ]
-        ]],
-        iso_639_1_code: T.Optional[str]
+    app, q: str,
+    facets_out: T.MutableMapping,
+    facets_in: T.Optional[T.Iterable[str]]=None,
+    limit: T.Optional[int]=None,
+    offset: T.Optional[int]=None,
+    filters: T.Optional[T.Mapping[
+        str,  # a JSON pointer
+        T.Mapping[
+            str,  # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``
+            # a string, or a set of strings if the comparator is ``in``
+            T.Union[str, T.Set[str]]
+        ]
+    ]]=None,
+    iso_639_1_code: T.Optional[str]=None
 ) -> T.AsyncGenerator[T.Tuple[str, dict], None]:
     # language=rst
     """ Search.
 
-    :param app: the application object, which, in this case, is only used for
-        its namespace-like mapping interface.
-    :param q: the query
-    :param limit: maximum hits to be returned
-    :param offset: offset in resultset
-    :param filters: mapping of JSON pointer -> value, used to filter on some
-        value.
-    :param iso_639_1_code: the language of the query
-    :returns: A generator over the search results (id, doc)
-    :raises: ValueError if filter syntax is invalid, if the ISO 639-1 code is
-        not recognized, or if the offset is invalid.
+    See :func:`datacatalog.plugin_interfaces.search_search`
 
     """
     filterexpr, lang, limitexpr, offset, query = _prepare_query(filters, iso_639_1_code, q, limit, offset)

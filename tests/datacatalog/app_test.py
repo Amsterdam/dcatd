@@ -1,7 +1,7 @@
 from os import path
 
 from aiohttp import FormData
-from aiohttp.test_utils import unittest_run_loop, TestClient
+from aiohttp.test_utils import unittest_run_loop
 from mockito import when, unstub, any
 
 from datacatalog.plugins import postgres as pgpl, swift
@@ -112,7 +112,6 @@ class DatasetTestCase(BaseTestCase):
         self.assertEquals(response.status, 200,
                           'Geen match resulteert in !200 state')
 
-        print(await response.text())
         response_json = await response.json()
 
         self.assertEquals(response_json['dcat:dataset'], [],
@@ -164,7 +163,7 @@ class DatasetTestCase(BaseTestCase):
         async def returner(value):
             return value
 
-        client = self.client  # type: TestClient
+        client = self.client
 
         when(swift)._put_file_to_object_store(
             any(str),

@@ -18,7 +18,10 @@ os.environ['CONFIG_PATH'] = os.path.dirname(
 
 _corpus = {
     'dutch_dataset1': {
-        'doc': {'id': 'dutch_dataset1'},
+        'doc': {
+            'id': 'dutch_dataset1',
+            'keywords': ['foo', 'bar']
+        },
         'searchable_text': 'dit is de eerste nederlandse dataset',
         'iso_639_1_code': 'nl'
     },
@@ -54,8 +57,9 @@ _corpus_expected_unfiltered_result_count = {
 }
 
 
-class TestApp(dict):
+class MockApp(dict):
     def __init__(self, loop, config):
+        super().__init__()
         self.loop = loop
         self.config = config
         loop.run_until_complete(postgres_plugin.initialize(self))
@@ -75,7 +79,7 @@ def initialize(event_loop, app):
 
 @pytest.fixture(scope='module', autouse=True)
 def app(event_loop):
-    return TestApp(loop=event_loop, config=config.load())
+    return MockApp(loop=event_loop, config=config.load())
 
 
 @pytest.yield_fixture(scope='function')
@@ -186,7 +190,7 @@ def test_search_search(event_loop, corpus, app):
             assert doc == record['doc']
             assert docid == doc_id
 
-    # filtered search
+    # filtered search on object property:
     async def search(record):
         filters = {'/properties/id': {'eq': record['doc']['id']}}
         return [r async for r in postgres_plugin.search_search(
@@ -197,6 +201,17 @@ def test_search_search(event_loop, corpus, app):
         for docid, doc in event_loop.run_until_complete(search(record)):
             assert doc == record['doc']
             assert docid == doc_id
+
+    # filtered search on array item:
+    async def search():
+        filters = {'/properties/keywords/items': {'eq': 'foo'}}
+        return [r async for r in postgres_plugin.search_search(
+            app=app, q='', limit=1, offset=None, filters=filters,
+            iso_639_1_code='nl')]
+
+    results = event_loop.run_until_complete(search())
+    assert len(results) == 1
+    assert results[0][0] == 'dutch_dataset1'
 
 
 def test_search_search_count(event_loop, corpus):

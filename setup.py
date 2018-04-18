@@ -99,7 +99,9 @@ setup(
     },
     # To keep PyCharm from complaining about missing requirements:
     tests_require=[
+        'mockito',
         'pytest',
+        'pytest-cov',
         'pytest-aiohttp',
     ],
 )
