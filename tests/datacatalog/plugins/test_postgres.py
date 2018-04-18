@@ -26,7 +26,10 @@ _corpus = {
         'iso_639_1_code': 'nl'
     },
     'dutch_dataset2': {
-        'doc': {'id': 'dutch_dataset2'},
+        'doc': {
+            'id': 'dutch_dataset2',
+            'keywords': ['foo', 'baz']
+        },
         'searchable_text': 'dit is de tweede nederlandse dataset',
         'iso_639_1_code': 'nl'
     },
@@ -45,15 +48,6 @@ _corpus = {
         'searchable_text': 'isto pode ser escrito em qualquer idioma',
         'iso_639_1_code': None
     },
-}
-
-
-_corpus_expected_unfiltered_result_count = {
-    'dutch_dataset1': 2,
-    'dutch_dataset2': 2,
-    'english_dataset1': 2,
-    'english_dataset2': 2,
-    'unspecified_language_dataset1': 1,
 }
 
 
@@ -182,55 +176,45 @@ def test_search_search(event_loop, corpus, app):
     async def search(record):
         q = record['searchable_text']
         return [r async for r in postgres_plugin.search_search(
-            app=app, q=q, limit=1, offset=None, filters=None,
+            app=app, q=q, result_info={}, limit=1, filters=None,
             iso_639_1_code=record['iso_639_1_code'])]
 
-    for doc_id, record in corpus.items():
-        for docid, doc in event_loop.run_until_complete(search(record)):
-            assert doc == record['doc']
-            assert docid == doc_id
+    for corpus_id, corpus_doc in corpus.items():
+        for docid, doc in event_loop.run_until_complete(search(corpus_doc)):
+            assert doc == corpus_doc['doc']
+            assert docid == corpus_id
 
     # filtered search on object property:
     async def search(record):
         filters = {'/properties/id': {'eq': record['doc']['id']}}
         return [r async for r in postgres_plugin.search_search(
-            app=app, q='', limit=1, offset=None, filters=filters,
+            app=app, q='', result_info={},
+            limit=1, filters=filters,
             iso_639_1_code=record['iso_639_1_code'])]
 
-    for doc_id, record in corpus.items():
-        for docid, doc in event_loop.run_until_complete(search(record)):
-            assert doc == record['doc']
-            assert docid == doc_id
+    for corpus_id, corpus_doc in corpus.items():
+        results = event_loop.run_until_complete(search(corpus_doc))
+        for docid, doc in results:
+            assert doc == corpus_doc['doc']
+            assert docid == corpus_id
 
     # filtered search on array item:
     async def search():
         filters = {'/properties/keywords/items': {'eq': 'foo'}}
+        result_info = {}
         return [r async for r in postgres_plugin.search_search(
-            app=app, q='', limit=1, offset=None, filters=filters,
-            iso_639_1_code='nl')]
+            app=app, q='', result_info=result_info,
+            facets=['/properties/keywords/items'],
+            limit=1, filters=filters,
+            iso_639_1_code='nl')], result_info
 
-    results = event_loop.run_until_complete(search())
+    results, result_info = event_loop.run_until_complete(search())
+    assert result_info == {
+        '/': 2,
+        '/properties/keywords/items': {'foo': 2, 'bar': 1, 'baz': 1}
+    }
     assert len(results) == 1
     assert results[0][0] == 'dutch_dataset1'
-
-
-def test_search_search_count(event_loop, corpus):
-    application = app(event_loop)
-    # search on query
-    def search(record):
-        q = record['searchable_text']
-        return postgres_plugin.search_search_count(application, q, None, record['iso_639_1_code'])
-    for doc_id, record in corpus.items():
-        count = event_loop.run_until_complete(search(record))
-        assert count == _corpus_expected_unfiltered_result_count[doc_id]
-
-    # filtered search
-    def search(record):
-        filters = {'/properties/id': {'eq': record['doc']['id']}}
-        return postgres_plugin.search_search_count(application, '', filters, record['iso_639_1_code'])
-    for doc_id, record in corpus.items():
-        count = event_loop.run_until_complete(search(record))
-        assert count == 1
 
 
 def test_storage_delete(event_loop, corpus, app):

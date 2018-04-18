@@ -286,6 +286,7 @@ components:
       description: >-
         Intentionally left blank. Replaced by the actual schema at runtime.
     dcat-doc-list:
+      # TODO: This schema is not accurate.
       type: array
       items:
         type: string

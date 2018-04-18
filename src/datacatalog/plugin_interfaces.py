@@ -186,10 +186,9 @@ def storage_id() -> str:
 @hookspec.first_only.required
 def search_search(
     app, q: str,
-    facets_out: T.MutableMapping,
-    facets_in: T.Optional[T.Iterable[str]]=None,
-    limit: T.Optional[int]=None,
-    offset: T.Optional[int]=None,
+    result_info: T.MutableMapping,
+    facets: T.Optional[T.Iterable[str]]=None,
+    limit: T.Optional[int]=None, offset: T.Optional[int]=0,
     filters: T.Optional[T.Mapping[
         str,  # a JSON pointer
         T.Mapping[
@@ -205,46 +204,15 @@ def search_search(
 
     :param app: global dictionary
     :param q: the query
-    :param facets_out: mapping in which all encountered facets in the result set are
+    :param result_info: mapping in which all encountered facets in the result set are
         put
-    :param facets_in: a list of facets to return and count
+    :param facets: a list of facets to return and count
     :param limit: maximum hits to be returned
     :param offset: offset in resultset
     :param filters: mapping of JSON pointer -> value, used to filter on some
         value.
     :param iso_639_1_code: the language of the query
     :returns: A generator over the search results (id, doc, metadata)
-    :raises: ValueError if filter syntax is invalid, if the ISO 639-1 code is
-        not recognized, or if the offset is invalid.
-
-    """
-
-
-# noinspection PyUnusedLocal
-@hookspec.first_only.required
-def search_search_count(
-    app: T.Mapping,
-    q: str,
-    filters: T.Optional[T.Mapping[
-        str, # a JSON pointer
-        T.Mapping[
-            str, # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``
-            # a string, or a set of strings if the comparator is ``in``
-            T.Union[str, T.Set[str]]
-        ]
-    ]],
-    iso_639_1_code: T.Optional[str]
-) -> T.Awaitable:
-    # language=rst
-    """ Search.
-
-    :param q: the query
-    :param limit: maximum hits to be returned
-    :param offset: offset in resultset
-    :param filters: mapping of JSON pointer -> value, used to filter on some
-        value.
-    :param iso_639_1_code: the language of the query
-    :returns: The number of documents matched
     :raises: ValueError if filter syntax is invalid, if the ISO 639-1 code is
         not recognized, or if the offset is invalid.
 

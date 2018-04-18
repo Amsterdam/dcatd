@@ -46,14 +46,13 @@ _Q_INSERT_DOC = 'INSERT INTO "dataset" (id, doc, searchable_text, lang, etag) VA
 _Q_UPDATE_DOC = 'UPDATE "dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=ANY($6) RETURNING id'
 _Q_DELETE_DOC = 'DELETE FROM "dataset" WHERE id=$1 AND etag=ANY($2) RETURNING id'
 _Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "dataset"'
-_Q_SEARCH_DOCS_BASE = """
+_Q_SEARCH_DOCS = """
+SELECT id, doc, ts_rank_cd(searchable_text, query) AS rank
 FROM "dataset", to_tsquery($1, $2) query
 WHERE (''=$2::varchar OR searchable_text @@ query) {filters}
 AND ('simple'=$1::varchar OR lang=$1::varchar)
+ORDER BY rank DESC;
 """
-_Q_SEARCH_DOCS = f"SELECT id, doc, ts_rank_cd(searchable_text, query) AS rank " \
-                 f"{_Q_SEARCH_DOCS_BASE} ORDER BY rank DESC {{limit}} OFFSET $3;"
-_Q_SEARCH_DOCS_COUNT = f"SELECT count(*) {_Q_SEARCH_DOCS_BASE};"
 
 
 @_hookimpl
@@ -320,10 +319,9 @@ async def storage_id() -> str:
 @_hookimpl
 async def search_search(
     app, q: str,
-    facets_out: T.MutableMapping,
-    facets_in: T.Optional[T.Iterable[str]]=None,
-    limit: T.Optional[int]=None,
-    offset: T.Optional[int]=None,
+    result_info: T.MutableMapping,
+    facets: T.Optional[T.Iterable[str]]=None,
+    limit: T.Optional[int]=None, offset: int=0,
     filters: T.Optional[T.Mapping[
         str,  # a JSON pointer
         T.Mapping[
@@ -335,69 +333,50 @@ async def search_search(
     iso_639_1_code: T.Optional[str]=None
 ) -> T.AsyncGenerator[T.Tuple[str, dict], None]:
     # language=rst
-    """ Search.
+    """ Search
 
     See :func:`datacatalog.plugin_interfaces.search_search`
 
     """
-    filterexpr, lang, limitexpr, offset, query = _prepare_query(filters, iso_639_1_code, q, limit, offset)
-    async for i in _execute_search_query(app, filterexpr, lang, limitexpr, offset, query):
-        yield i
+    if facets is None:
+        facets = []
+    if limit is not None:
+        limit += offset
+    row_index = 0
+    filterexpr, lang, query = _prepare_query(filters, iso_639_1_code, q)
+    async for i in _execute_search_query(app, filterexpr, lang, query):
+        for facet in facets:
+            try:
+                p = jsonpointer.JsonPointer(facet)
+            except jsonpointer.JsonPointerException:
+                raise ValueError('Cannot parse pointer')
+            ptr_parts = p.parts
+            for value in _extract_values(i[1], ptr_parts):
+                value = str(value)
+                if facet not in result_info:
+                    result_info[facet] = {}
+                if value not in result_info[facet]:
+                    result_info[facet][value] = 1
+                else:
+                    result_info[facet][value] += 1
+        if row_index >= offset and (limit is None or row_index < limit):
+            yield i
+        row_index += 1
+    result_info['/'] = row_index
 
 
-@_hookimpl
-async def search_search_count(
-        app: T.Mapping,
-        q: str,
-        filters: T.Optional[T.Mapping[
-            str, # a JSON pointer
-            T.Mapping[
-                str, # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``
-                # a string, or a set of strings if the comparator is ``in``
-                T.Union[str, T.Set[str]]
-            ]
-        ]],
-        iso_639_1_code: T.Optional[str]
-) -> T.Awaitable:
-    # language=rst
-    """ Return the number of search results.
-
-    :param app: the application object, which, in this case, is only used for
-        its namespace-like mapping interface.
-    :param q: the query
-    :param limit: maximum hits to be returned
-    :param offset: offset in resultset
-    :param filters: mapping of JSON pointer -> value, used to filter on some
-        value.
-    :param iso_639_1_code: the language of the query
-    :returns: The number of results
-    :raises: ValueError if filter syntax is invalid, if the ISO 639-1 code is
-        not recognized, or if the offset is invalid.
-
-    """
-
-    filterexpr, lang, limitexpr, offset, query = _prepare_query(filters, iso_639_1_code, q)
-    return await _execute_search_count_query(app, filterexpr, lang, query)
-
-
-async def _execute_search_query(app, filterexpr, lang, limitexpr, offset, query):
+async def _execute_search_query(app, filterexpr, lang, query):
     async with app['pool'].acquire() as con:
         async with con.transaction():
             # use a cursor so we can stream
             stmt = await con.prepare(
-                _Q_SEARCH_DOCS.format(filters=filterexpr, limit=limitexpr))
-            async for row in stmt.cursor(lang, query, offset):
+                _Q_SEARCH_DOCS.format(filters=filterexpr)
+            )
+            async for row in stmt.cursor(lang, query):
                 yield row['id'], json.loads(row['doc']),
 
 
-async def _execute_search_count_query(app, filterexpr, lang, query):
-    async with app['pool'].acquire() as con:
-        async with con.transaction():
-            count_stmt = await con.prepare(_Q_SEARCH_DOCS_COUNT.format(filters=filterexpr))
-            return await count_stmt.fetchval(lang, query)
-
-
-def _prepare_query(filters, iso_639_1_code, q, limit=None, offset=None):
+def _prepare_query(filters, iso_639_1_code, q):
     def to_expr(ptr: str, value: T.Any) -> str:
         """Create a filterexpression from a json pointer and value."""
         try:
@@ -468,15 +447,8 @@ def _prepare_query(filters, iso_639_1_code, q, limit=None, offset=None):
                         "doc @> '" + to_expr(ptr, v) + "'" for v in val)
                     filterexprs.append(' AND (' + orexpr + ')')
     filterexpr = ''.join(filterexprs)
-    # Paging
-    limitexpr = ''
-    if limit is not None:
-        limitexpr = 'LIMIT {:d}'.format(limit)  # will raise ValueError if !int
-    if offset is None:
-        offset = 0
-    # query
     query = ' | '.join("{}:*".format(t) for t in q.split())
-    return filterexpr, lang, limitexpr, offset, query
+    return filterexpr, lang, query
 
 
 def _etag_from_str(s: str) -> str:

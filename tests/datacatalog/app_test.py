@@ -129,7 +129,7 @@ class DatasetTestCase(BaseTestCase):
             'ouderen in\nAmsterdam: verpleeg- en verzorgingshuizen, zorg en '
             'hulp bij dementie en\ndienstencentra voor ouderen',
 
-            'Leeg resultaat verwacht'
+            'Ander resultaat verwacht'
         )
 
         response = await self.client.request(
