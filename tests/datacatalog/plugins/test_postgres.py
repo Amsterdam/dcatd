@@ -56,6 +56,7 @@ _corpus_expected_unfiltered_result_count = {
 
 class TestApp(dict):
     def __init__(self, loop, config):
+        super().__init__()
         self.loop = loop
         self.config = config
         loop.run_until_complete(postgres_plugin.initialize(self))

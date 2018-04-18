@@ -19,7 +19,7 @@ from aiohttp_extras import conditional
 
 from .languages import ISO_639_1_TO_PG_DICTIONARIES
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
-_logger = logging.getLogger('plugin.storage.postgres')
+_logger = logging.getLogger(__name__)
 
 CONNECT_ATTEMPT_INTERVAL_SECS = 2
 CONNECT_ATTEMPT_MAX_TRIES = 5
