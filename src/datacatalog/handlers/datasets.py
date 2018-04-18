@@ -205,17 +205,24 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     limit = query.get('limit', None)
     if limit is not None:
         limit = int(limit)
-    offset = query.get('offset', None)
+    offset = query.get('offset', 0)
     if offset is not None:
         offset = int(offset)
 
-    resultiterator = hooks.search_search(
-        app=request.app, q=full_text_query, limit=limit, offset=offset,
+    result_info = {}
+    resultiterator = await hooks.search_search(
+        app=request.app, q=full_text_query,
+        result_info=result_info,
+        facets=[
+            '/properties/dcat:distribution/items/properties/ams:resourceType',
+            '/properties/dcat:distribution/items/properties/dct:format',
+            '/properties/dcat:distribution/items/properties/ams:distributionType',
+            '/properties/dcat:distribution/items/properties/dct:serviceType',
+            '/properties/dcat:keyword/items',
+            '/properties/dcat:theme/items'
+        ],
+        limit=limit, offset=offset,
         filters=filters, iso_639_1_code='nl'
-    )
-
-    nr_of_search_results = await hooks.search_search_count(
-        app=request.app, q=full_text_query, filters=filters, iso_639_1_code='nl'
     )
 
     ctx = await hooks.mds_context()
@@ -228,11 +235,9 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     await response.prepare(request)
     await response.write(b'{"@context":')
     await response.write(ctx_json.encode())
-    await response.write(b', "void:documents": ')
-    await response.write(str(nr_of_search_results).encode())
     await response.write(b',"dcat:dataset":[')
 
-    async for docid, doc in await resultiterator:
+    async for docid, doc in resultiterator:
         canonical_doc = await hooks.mds_canonicalize(data=doc, id=docid)
         keepers = {'@id', 'dct:identifier', 'dct:title', 'dct:description',
                    'dcat:keyword', 'foaf:isPrimaryTopicOf', 'dcat:distribution',
@@ -252,7 +257,13 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
             first = False
         await response.write(json.dumps(canonical_doc).encode())
 
-    await response.write(b']}')
+    await response.write(b']')
+    await response.write(b', "void:documents": ')
+    await response.write(str(result_info['/']).encode())
+    del result_info['/']
+    await response.write(b', "ams:facet_info": ')
+    await response.write(json.dumps(result_info).encode())
+    await response.write(b'}')
     await response.write_eof()
     return response
 
