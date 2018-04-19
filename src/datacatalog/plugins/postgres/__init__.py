@@ -7,6 +7,7 @@ import hashlib
 import json
 import logging
 import pkg_resources
+import re
 import secrets
 import typing as T
 import yaml
@@ -27,15 +28,25 @@ _DEFAULT_CONNECTION_TIMEOUT = 60
 _DEFAULT_MIN_POOL_SIZE = 0
 _DEFAULT_MAX_POOL_SIZE = 5
 _DEFAULT_MAX_INACTIVE_CONNECTION_LIFETIME = 5.0
+_FACETS = [
+    '/properties/dcat:distribution/items/properties/ams:resourceType',
+    '/properties/dcat:distribution/items/properties/dct:format',
+    '/properties/dcat:distribution/items/properties/ams:distributionType',
+    '/properties/dcat:distribution/items/properties/ams:serviceType',
+    '/properties/dcat:keyword/items',
+    '/properties/dcat:theme/items',
+    '/properties/ams:owner'
+]
 
 _Q_CREATE = '''
 CREATE TABLE IF NOT EXISTS "dataset" (
-    "id" character varying(50) PRIMARY KEY,
+    "id" character varying(254) PRIMARY KEY,
     "doc" jsonb NOT NULL,
     "etag" character varying(254) NOT NULL,
     "searchable_text" tsvector,
     "lang" character varying(20)
 );
+CREATE MATERIALIZED VIEW IF NOT EXISTS "facet" AS ({facets});
 CREATE INDEX IF NOT EXISTS "idx_id_etag" ON "dataset" ("id", "etag");
 CREATE INDEX IF NOT EXISTS "idx_full_text_search" ON "dataset" USING gin ("searchable_text");
 CREATE INDEX IF NOT EXISTS "idx_json_docs" ON "dataset" USING gin ("doc" jsonb_path_ops);
@@ -63,6 +74,34 @@ WHERE (''=$2::varchar OR "searchable_text" @@ query) {filters}
 AND ('simple'=$1::varchar OR "lang"=$1::varchar)
 ORDER BY "rank" DESC
 '''
+
+
+def _facets(facets):
+    REGEX = re.compile(r'/properties/([^/]+)(/items)?')
+    selects = []
+    for facet in facets:
+        cursor = 0
+        query = 'doc'
+        while cursor < len(facet):
+            match = REGEX.match(facet[cursor:])
+            assert match is not None
+            cursor += len(match.group(0))
+            if cursor < len(facet):
+                # Not the last group:
+                if match.group(2) == '/items':
+                    query = "jsonb_array_elements(%s->'%s')" % (query, match.group(1))
+                else:
+                    query = "%s->'%s'" % (query, match.group(1))
+            else:
+                # Last group:
+                if match.group(2) == '/items':
+                    query = "jsonb_array_elements_text(%s->'%s')" % (query, match.group(1))
+                else:
+                    query = "%s->>'%s'" % (query, match.group(1))
+        selects.append(
+            f'''SELECT "id", '{facet}' AS "facet", {query} AS "value" FROM "dataset"'''
+        )
+    return '\nUNION '.join(selects)
 
 
 @_hookimpl
@@ -122,7 +161,7 @@ async def initialize(app):
                 raise
         else:
             break
-    await app['pool'].execute(_Q_CREATE)
+    await app['pool'].execute(_Q_CREATE.format(facets=_facets(_FACETS)))
 
 
 @_hookimpl
