@@ -28,31 +28,41 @@ _DEFAULT_MIN_POOL_SIZE = 0
 _DEFAULT_MAX_POOL_SIZE = 5
 _DEFAULT_MAX_INACTIVE_CONNECTION_LIFETIME = 5.0
 
-_Q_CREATE = """
+_Q_CREATE = '''
 CREATE TABLE IF NOT EXISTS "dataset" (
-    id character varying(50) PRIMARY KEY,
-    doc jsonb NOT NULL,
-    etag character varying(254) NOT NULL,
-    searchable_text tsvector,
-    lang character varying(20)
+    "id" character varying(50) PRIMARY KEY,
+    "doc" jsonb NOT NULL,
+    "etag" character varying(254) NOT NULL,
+    "searchable_text" tsvector,
+    "lang" character varying(20)
 );
-CREATE INDEX IF NOT EXISTS idx_id_etag ON "dataset" (id, etag);
-CREATE INDEX IF NOT EXISTS idx_full_text_search ON "dataset" USING gin (searchable_text);
-CREATE INDEX IF NOT EXISTS idx_json_docs ON "dataset" USING gin (doc jsonb_path_ops);
-"""
+CREATE INDEX IF NOT EXISTS "idx_id_etag" ON "dataset" ("id", "etag");
+CREATE INDEX IF NOT EXISTS "idx_full_text_search" ON "dataset" USING gin ("searchable_text");
+CREATE INDEX IF NOT EXISTS "idx_json_docs" ON "dataset" USING gin ("doc" jsonb_path_ops);
+'''
 _Q_HEALTHCHECK = 'SELECT 1'
-_Q_RETRIEVE_DOC = 'SELECT doc, etag FROM "dataset" WHERE id = $1'
-_Q_INSERT_DOC = 'INSERT INTO "dataset" (id, doc, searchable_text, lang, etag) VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
-_Q_UPDATE_DOC = 'UPDATE "dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=ANY($6) RETURNING id'
-_Q_DELETE_DOC = 'DELETE FROM "dataset" WHERE id=$1 AND etag=ANY($2) RETURNING id'
-_Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "dataset"'
-_Q_SEARCH_DOCS = """
-SELECT id, doc, ts_rank_cd(searchable_text, query) AS rank
+_Q_RETRIEVE_DOC = 'SELECT "doc", "etag" FROM "dataset" WHERE "id" = $1'
+_Q_INSERT_DOC = '''
+INSERT INTO "dataset" ("id", "doc", "searchable_text", "lang", "etag") 
+VALUES ($1, $2, to_tsvector($3, $4), $3, $5)
+'''
+_Q_UPDATE_DOC = '''
+UPDATE "dataset" 
+SET "doc"=$1, "searchable_text"=to_tsvector($2, $3), "lang"=$2, "etag"=$4 
+WHERE "id"=$5 AND "etag"=ANY($6) RETURNING "id"
+'''
+_Q_DELETE_DOC = 'DELETE FROM "dataset" WHERE "id"=$1 AND "etag"=ANY($2) RETURNING "id"'
+_Q_RETRIEVE_ALL_DOCS = '''
+SELECT "doc" FROM "dataset" 
+ORDER BY "doc"->'foaf:isPrimaryTopicOf'->>'dct:issued' DESC
+'''
+_Q_SEARCH_DOCS = '''
+SELECT "id", "doc", ts_rank_cd("searchable_text", query) AS "rank"
 FROM "dataset", to_tsquery($1, $2) query
-WHERE (''=$2::varchar OR searchable_text @@ query) {filters}
-AND ('simple'=$1::varchar OR lang=$1::varchar)
-ORDER BY rank DESC;
-"""
+WHERE (''=$2::varchar OR "searchable_text" @@ query) {filters}
+AND ('simple'=$1::varchar OR "lang"=$1::varchar)
+ORDER BY "rank" DESC
+'''
 
 
 @_hookimpl
