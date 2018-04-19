@@ -41,7 +41,7 @@ CONTEXT = MappingProxyType({
 
 
 THEMES = [
-    ('theme:none', "Geen thema"),
+    ('theme:other', "Overig"),
     ('theme:bestuur-en-organisatie', "Bestuur en organisatie"),
     ('theme:bevolking', "Bevolking"),
     ('theme:dienstverlening', "Dienstverlening"),
