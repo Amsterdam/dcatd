@@ -219,7 +219,8 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
             '/properties/dcat:distribution/items/properties/ams:distributionType',
             '/properties/dcat:distribution/items/properties/dct:serviceType',
             '/properties/dcat:keyword/items',
-            '/properties/dcat:theme/items'
+            '/properties/dcat:theme/items',
+            '/properties/dcat:owner'
         ],
         limit=limit, offset=offset,
         filters=filters, iso_639_1_code='nl'
@@ -241,7 +242,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
         canonical_doc = await hooks.mds_canonicalize(data=doc, id=docid)
         keepers = {'@id', 'dct:identifier', 'dct:title', 'dct:description',
                    'dcat:keyword', 'foaf:isPrimaryTopicOf', 'dcat:distribution',
-                   'dcat:theme'}
+                   'dcat:theme', 'dcat:owner'}
         for key in list(canonical_doc.keys()):
             if key not in keepers:
                 del canonical_doc[key]
