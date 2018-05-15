@@ -58,7 +58,7 @@ _Q_LIST_DOCS = """
 SELECT id, doc
 FROM "dataset"
 WHERE ('simple'=$1::varchar OR lang=$1::varchar) {filters}
-ORDER BY {sortexpression} ASC;
+ORDER BY {sortexpression} DESC;
 """
 
 
