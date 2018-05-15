@@ -7,7 +7,6 @@ import hashlib
 import json
 import logging
 import pkg_resources
-import re
 import secrets
 import typing as T
 import yaml
@@ -19,6 +18,7 @@ import jsonpointer
 from aiohttp_extras import conditional
 
 from .languages import ISO_639_1_TO_PG_DICTIONARIES
+
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger(__name__)
 
@@ -28,15 +28,6 @@ _DEFAULT_CONNECTION_TIMEOUT = 60
 _DEFAULT_MIN_POOL_SIZE = 0
 _DEFAULT_MAX_POOL_SIZE = 5
 _DEFAULT_MAX_INACTIVE_CONNECTION_LIFETIME = 5.0
-_FACETS = [
-    '/properties/dcat:distribution/items/properties/ams:resourceType',
-    '/properties/dcat:distribution/items/properties/dct:format',
-    '/properties/dcat:distribution/items/properties/ams:distributionType',
-    '/properties/dcat:distribution/items/properties/ams:serviceType',
-    '/properties/dcat:keyword/items',
-    '/properties/dcat:theme/items',
-    '/properties/ams:owner'
-]
 
 _Q_CREATE = '''
 CREATE TABLE IF NOT EXISTS "dataset" (
@@ -46,62 +37,29 @@ CREATE TABLE IF NOT EXISTS "dataset" (
     "searchable_text" tsvector,
     "lang" character varying(20)
 );
-CREATE MATERIALIZED VIEW IF NOT EXISTS "facet" AS ({facets});
 CREATE INDEX IF NOT EXISTS "idx_id_etag" ON "dataset" ("id", "etag");
 CREATE INDEX IF NOT EXISTS "idx_full_text_search" ON "dataset" USING gin ("searchable_text");
 CREATE INDEX IF NOT EXISTS "idx_json_docs" ON "dataset" USING gin ("doc" jsonb_path_ops);
 '''
 _Q_HEALTHCHECK = 'SELECT 1'
-_Q_RETRIEVE_DOC = 'SELECT "doc", "etag" FROM "dataset" WHERE "id" = $1'
-_Q_INSERT_DOC = '''
-INSERT INTO "dataset" ("id", "doc", "searchable_text", "lang", "etag") 
-VALUES ($1, $2, to_tsvector($3, $4), $3, $5)
-'''
-_Q_UPDATE_DOC = '''
-UPDATE "dataset" 
-SET "doc"=$1, "searchable_text"=to_tsvector($2, $3), "lang"=$2, "etag"=$4 
-WHERE "id"=$5 AND "etag"=ANY($6) RETURNING "id"
-'''
-_Q_DELETE_DOC = 'DELETE FROM "dataset" WHERE "id"=$1 AND "etag"=ANY($2) RETURNING "id"'
-_Q_RETRIEVE_ALL_DOCS = '''
-SELECT "doc" FROM "dataset" 
-ORDER BY "doc"->'foaf:isPrimaryTopicOf'->>'dct:issued' DESC
-'''
-_Q_SEARCH_DOCS = '''
-SELECT "id", "doc", ts_rank_cd("searchable_text", query) AS "rank"
+_Q_RETRIEVE_DOC = 'SELECT doc, etag FROM "dataset" WHERE id = $1'
+_Q_INSERT_DOC = 'INSERT INTO "dataset" (id, doc, searchable_text, lang, etag) VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
+_Q_UPDATE_DOC = 'UPDATE "dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=ANY($6) RETURNING id'
+_Q_DELETE_DOC = 'DELETE FROM "dataset" WHERE id=$1 AND etag=ANY($2) RETURNING id'
+_Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "dataset"'
+_Q_SEARCH_DOCS = """
+SELECT id, doc, ts_rank_cd(searchable_text, query) AS rank
 FROM "dataset", to_tsquery($1, $2) query
-WHERE (''=$2::varchar OR "searchable_text" @@ query) {filters}
-AND ('simple'=$1::varchar OR "lang"=$1::varchar)
-ORDER BY "rank" DESC
-'''
-
-
-def _facets(facets):
-    REGEX = re.compile(r'/properties/([^/]+)(/items)?')
-    selects = []
-    for facet in facets:
-        cursor = 0
-        query = 'doc'
-        while cursor < len(facet):
-            match = REGEX.match(facet[cursor:])
-            assert match is not None
-            cursor += len(match.group(0))
-            if cursor < len(facet):
-                # Not the last group:
-                if match.group(2) == '/items':
-                    query = "jsonb_array_elements(%s->'%s')" % (query, match.group(1))
-                else:
-                    query = "%s->'%s'" % (query, match.group(1))
-            else:
-                # Last group:
-                if match.group(2) == '/items':
-                    query = "jsonb_array_elements_text(%s->'%s')" % (query, match.group(1))
-                else:
-                    query = "%s->>'%s'" % (query, match.group(1))
-        selects.append(
-            f'''SELECT "id", '{facet}' AS "facet", {query} AS "value" FROM "dataset"'''
-        )
-    return '\nUNION '.join(selects)
+WHERE (''=$2::varchar OR searchable_text @@ query) {filters}
+AND ('simple'=$1::varchar OR lang=$1::varchar)
+ORDER BY rank DESC;
+"""
+_Q_LIST_DOCS = """
+SELECT id, doc
+FROM "dataset"
+WHERE ('simple'=$1::varchar OR lang=$1::varchar) {filters}
+ORDER BY doc->>'{sortproperty}' ASC;
+"""
 
 
 @_hookimpl
@@ -161,7 +119,7 @@ async def initialize(app):
                 raise
         else:
             break
-    await app['pool'].execute(_Q_CREATE.format(facets=_facets(_FACETS)))
+    await app['pool'].execute(_Q_CREATE)
 
 
 @_hookimpl
@@ -367,7 +325,7 @@ async def storage_id() -> str:
 
 @_hookimpl
 async def search_search(
-    app, q: str,
+    app, q: str, sortproperty: str,
     result_info: T.MutableMapping,
     facets: T.Optional[T.Iterable[str]]=None,
     limit: T.Optional[int]=None, offset: int=0,
@@ -387,45 +345,77 @@ async def search_search(
     See :func:`datacatalog.plugin_interfaces.search_search`
 
     """
+    # parse facets, if any
     if facets is None:
         facets = []
-    if limit is not None:
-        limit += offset
+    else:
+        try:
+            facets = [(f, jsonpointer.JsonPointer(f)) for f in facets]
+        except jsonpointer.JsonPointerException:
+            raise ValueError('Cannot parse pointer')
+    # interpret the filters
+    filterexpr = _to_pg_json_filterexpression(filters)
+    # interpret the language
+    lang = _to_pg_lang(iso_639_1_code)
+    # init paging parameters
+    start, end = offset, offset+limit if limit is not None else float('inf')
+    # keep track of the current row index
     row_index = 0
-    filterexpr, lang, query = _prepare_query(filters, iso_639_1_code, q)
-    async for i in _execute_search_query(app, filterexpr, lang, query):
-        for facet in facets:
-            try:
-                p = jsonpointer.JsonPointer(facet)
-            except jsonpointer.JsonPointerException:
-                raise ValueError('Cannot parse pointer')
+    # if we have a query we should perform a free-text search ordered by
+    # relevance, otherwise we should do a sorted listing.
+    if len(q) > 0:
+        result_iterator = _execute_search_query(app, filterexpr, lang, q)
+    else:
+        result_iterator = _execute_list_query(app, filterexpr, lang, sortproperty)
+    # now iterate over the results
+    async for docid, doc in result_iterator:
+        # update the result info
+        for facet, ptr in facets:
             if facet not in result_info:
                 result_info[facet] = {}
-            ptr_parts = p.parts
-            for value in _extract_values(i[1], ptr_parts):
+            ptr_parts = ptr.parts
+            for value in _extract_values(doc, ptr_parts):
                 value = str(value)
                 if value not in result_info[facet]:
                     result_info[facet][value] = 1
                 else:
                     result_info[facet][value] += 1
-        if row_index >= offset and (limit is None or row_index < limit):
-            yield i
+        # yield the result if it falls within the current page
+        if start <= row_index < end:
+            yield (docid, doc)
+
         row_index += 1
+    # store the total amount of documents in the result info
     result_info['/'] = row_index
 
 
-async def _execute_search_query(app, filterexpr, lang, query):
+async def _execute_list_query(app, filterexpr: str, lang: str, sortproperty: str):
     async with app['pool'].acquire() as con:
+        # use a cursor so we can stream
         async with con.transaction():
-            # use a cursor so we can stream
+            stmt = await con.prepare(
+                _Q_LIST_DOCS.format(filters=filterexpr, sortproperty=sortproperty)
+            )
+            async for row in stmt.cursor(lang):
+                yield row['id'], json.loads(row['doc'])
+
+
+async def _execute_search_query(app, filterexpr: str, lang: str, q: str):
+    query = _to_pg_json_query(q)
+    async with app['pool'].acquire() as con:
+        # use a cursor so we can stream
+        async with con.transaction():
             stmt = await con.prepare(
                 _Q_SEARCH_DOCS.format(filters=filterexpr)
             )
             async for row in stmt.cursor(lang, query):
-                yield row['id'], json.loads(row['doc']),
+                yield row['id'], json.loads(row['doc'])
 
 
-def _prepare_query(filters, iso_639_1_code, q):
+def _to_pg_json_filterexpression(filters: T.Optional[dict]) -> str:
+    if filters is None:
+        return ''
+
     def to_expr(ptr: str, value: T.Any) -> str:
         """Create a filterexpression from a json pointer and value."""
         try:
@@ -469,35 +459,36 @@ def _prepare_query(filters, iso_639_1_code, q):
         # anything else must be a complex type (object or list)
         return parse_complex_type()
 
-    # Interpret the language
-    lang = 'simple'
-    if iso_639_1_code is not None:
-        if iso_639_1_code not in ISO_639_1_TO_PG_DICTIONARIES:
-            raise ValueError(
-                'invalid ISO 639-1 language code: ' + iso_639_1_code)
-        else:
-            lang = ISO_639_1_TO_PG_DICTIONARIES[iso_639_1_code]
-    # Interpret the filters (to_expr calls json.dumps on both the json pointers
-    # and corresponding values, so we don't escape separately and use a format
-    # string).
+    # Interpret the filters
     filterexprs = []
-    if filters:
-        for ptr, filter in filters.items():
-            for op, val in filter.items():
-                if op != 'eq' and op != 'in':
-                    raise NotImplementedError(
-                        'Postgres plugin only supports '
-                        '"eq" and "in" filter operators')
-                if op == "eq":
-                    filterexprs.append(
-                        " AND doc @> '" + to_expr(ptr, val) + "'")
-                elif op == "in":
-                    orexpr = ' OR '.join(
-                        "doc @> '" + to_expr(ptr, v) + "'" for v in val)
-                    filterexprs.append(' AND (' + orexpr + ')')
-    filterexpr = ''.join(filterexprs)
-    query = ' | '.join("{}:*".format(t) for t in q.split())
-    return filterexpr, lang, query
+    for ptr, filter in filters.items():
+        for op, val in filter.items():
+            if op != 'eq' and op != 'in':
+                raise NotImplementedError(
+                    'Postgres plugin only supports '
+                    '"eq" and "in" filter operators')
+            if op == "eq":
+                filterexprs.append(
+                    " AND doc @> '" + to_expr(ptr, val) + "'")
+            elif op == "in":
+                orexpr = ' OR '.join(
+                    "doc @> '" + to_expr(ptr, v) + "'" for v in val
+                )
+                filterexprs.append(' AND (' + orexpr + ')')
+    return ''.join(filterexprs)
+
+
+def _to_pg_lang(iso_639_1_code: str) -> str:
+    if iso_639_1_code is None:
+        return 'simple'
+    if iso_639_1_code not in ISO_639_1_TO_PG_DICTIONARIES:
+        raise ValueError(
+            'invalid ISO 639-1 language code: ' + iso_639_1_code)
+    return ISO_639_1_TO_PG_DICTIONARIES[iso_639_1_code]
+
+
+def _to_pg_json_query(q: str) -> str:
+    return ' | '.join("{}:*".format(t) for t in q.split())
 
 
 def _etag_from_str(s: str) -> str:
