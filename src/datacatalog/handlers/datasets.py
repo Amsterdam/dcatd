@@ -219,7 +219,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
             '/properties/dcat:distribution/items/properties/ams:resourceType',
             '/properties/dcat:distribution/items/properties/dct:format',
             '/properties/dcat:distribution/items/properties/ams:distributionType',
-            '/properties/dcat:distribution/items/properties/dct:serviceType',
+            '/properties/dcat:distribution/items/properties/ams:serviceType',
             '/properties/dcat:keyword/items',
             '/properties/dcat:theme/items',
             '/properties/ams:owner'
