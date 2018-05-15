@@ -185,7 +185,7 @@ def storage_id() -> str:
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
 def search_search(
-    app, q: str, sortproperty: str,
+    app, q: str, sortpath: T.List[str],
     result_info: T.MutableMapping,
     facets: T.Optional[T.Iterable[str]]=None,
     limit: T.Optional[int]=None, offset: T.Optional[int]=0,

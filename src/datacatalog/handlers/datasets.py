@@ -14,13 +14,6 @@ from aiohttp_extras.content_negotiation import produces_content_types
 from datacatalog import authorization
 
 _DCAT_ID_KEY = '@id'
-_DCAT_DCT_ID_KEY = 'http://purl.org/dc/terms/identifier'
-_DCAT_DCT_DESCRIPTION_KEY = 'http://purl.org/dc/terms/description'
-_DCAT_DCT_ISSUED_KEY = 'http://purl.org/dc/terms/issued'
-_DCAT_DCT_TITLE_KEY = 'http://purl.org/dc/terms/title'
-_DCAT_DCT_FORMAT_KEY = 'http://purl.org/dc/terms/format'
-_DCAT_DCAT_KEYWORD_KEY = 'http://www.w3.org/ns/dcat#keyword'
-_DCAT_DCAT_DISTRIBUTION_KEY = 'http://www.w3.org/ns/dcat#distribution'
 _FACET_QUERY_KEY = re.compile(
     r'(?:/properties/[^/=~<>]+(?:/items)?)+'
 )
@@ -213,7 +206,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     result_info = {}
     resultiterator = await hooks.search_search(
         app=request.app, q=full_text_query,
-        sortproperty=_DCAT_DCT_ISSUED_KEY,
+        sortpath=['foaf:isPrimaryTopicOf', 'dct:issued'],
         result_info=result_info,
         facets=[
             '/properties/dcat:distribution/items/properties/ams:resourceType',
@@ -259,9 +252,6 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
         else:
             first = False
         await response.write(json.dumps(canonical_doc).encode())
-
-    # make sure facet filters are sorted by value
-
 
     await response.write(b']')
     await response.write(b', "void:documents": ')

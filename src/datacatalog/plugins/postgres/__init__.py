@@ -58,7 +58,7 @@ _Q_LIST_DOCS = """
 SELECT id, doc
 FROM "dataset"
 WHERE ('simple'=$1::varchar OR lang=$1::varchar) {filters}
-ORDER BY doc->>'{sortproperty}' ASC;
+ORDER BY {sortexpression} ASC;
 """
 
 
@@ -325,7 +325,7 @@ async def storage_id() -> str:
 
 @_hookimpl
 async def search_search(
-    app, q: str, sortproperty: str,
+    app, q: str, sortpath: T.List[str],
     result_info: T.MutableMapping,
     facets: T.Optional[T.Iterable[str]]=None,
     limit: T.Optional[int]=None, offset: int=0,
@@ -366,7 +366,7 @@ async def search_search(
     if len(q) > 0:
         result_iterator = _execute_search_query(app, filterexpr, lang, q)
     else:
-        result_iterator = _execute_list_query(app, filterexpr, lang, sortproperty)
+        result_iterator = _execute_list_query(app, filterexpr, lang, sortpath)
     # now iterate over the results
     async for docid, doc in result_iterator:
         # update the result info
@@ -389,12 +389,20 @@ async def search_search(
     result_info['/'] = row_index
 
 
-async def _execute_list_query(app, filterexpr: str, lang: str, sortproperty: str):
+async def _execute_list_query(app, filterexpr: str, lang: str, sortpath: T.List[str]):
+    if len(sortpath) == 0:
+        raise ValueError('Sortpath should not be empty')
+    sortexpr = 'doc->'
+    for p in sortpath[:-1]:
+        sortexpr += "'" + p + "'->"
+    sortexpr += ">'" + sortpath[-1] + "'"
+    _logger.warning(sortpath)
+    _logger.warning(sortexpr)
     async with app['pool'].acquire() as con:
         # use a cursor so we can stream
         async with con.transaction():
             stmt = await con.prepare(
-                _Q_LIST_DOCS.format(filters=filterexpr, sortproperty=sortproperty)
+                _Q_LIST_DOCS.format(filters=filterexpr, sortexpression=sortexpr)
             )
             async for row in stmt.cursor(lang):
                 yield row['id'], json.loads(row['doc'])
