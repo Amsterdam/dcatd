@@ -253,10 +253,12 @@ sets.</p>
 </div>
 <div class="section" id="update-documentation">
 <h2>Update documentation<a class="headerlink" href="#update-documentation" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># this doesn&#39;t seem to work</span>
-pip install Sphinx sphinx_rtd_theme sphinx_autodoc_typehints
-<span class="nb">cd</span> sphinx
-make gh-pages
+<p>Requires Sphinx plus extras:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install Sphinx sphinx_rtd_theme sphinx_autodoc_typehints
+</pre></div>
+</div>
+<p>Run the command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make -C sphinx gh-pages
 </pre></div>
 </div>
 </div>
