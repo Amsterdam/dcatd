@@ -1,0 +1,38 @@
+datacatalog.handlers package
+============================
+
+Submodules
+----------
+
+datacatalog.handlers.datasets module
+------------------------------------
+
+.. automodule:: datacatalog.handlers.datasets
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.handlers.openapi module
+-----------------------------------
+
+.. automodule:: datacatalog.handlers.openapi
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.handlers.systemhealth module
+----------------------------------------
+
+.. automodule:: datacatalog.handlers.systemhealth
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: datacatalog.handlers
+    :members:
+    :undoc-members:
+    :show-inheritance:

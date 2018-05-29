@@ -8,14 +8,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Handlers &mdash; datacatalog-core 0.1 documentation</title>
+  <title>datacatalog.plugins.swift package &mdash; datacatalog-core 0.1 documentation</title>
   
 
   
   
   
   
-    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/api/handlers.html"/>
+    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/apidoc/datacatalog.plugins.swift.html"/>
   
 
   
@@ -27,29 +27,20 @@
   
 
   
-  
     <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="datacatalog-core 0.1 documentation" href="../index.html"/>
-        <link rel="up" title="API Docs" href="../api_docs.html"/>
-        <link rel="next" title="Plugins" href="plugins.html"/>
-        <link rel="prev" title="Application" href="application.html"/> 
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="OpenAPI definitions" href="../openapi.html" />
+    <link rel="prev" title="datacatalog.plugins.postgres package" href="datacatalog.plugins.postgres.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -89,26 +80,37 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../api_docs.html">API Docs</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="application.html">Application</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Handlers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plugins.html">Plugins</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="plugins.html#interfaces">Interfaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="plugins.html#default-plugins">Default Plugins</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="datacatalog.html">datacatalog package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="datacatalog.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="datacatalog.handlers.html">datacatalog.handlers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.datasets">datacatalog.handlers.datasets module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.openapi">datacatalog.handlers.openapi module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.systemhealth">datacatalog.handlers.systemhealth module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="reference internal" href="datacatalog.plugins.html">datacatalog.plugins package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="datacatalog.plugins.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.html#module-datacatalog.plugins">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../plugins.html">Writing Plugins</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../plugins.html#plugin-initialization-and-tear-down">Plugin initialization and tear-down</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../plugins.html#default-plugins">Default Plugins</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../plugins.html#filestorageplugin">FileStoragePlugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../plugins.html#inmemorysearchplugin">InMemorySearchPlugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.application">datacatalog.application module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.authorization">datacatalog.authorization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.config">datacatalog.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.cors">datacatalog.cors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.dcat">datacatalog.dcat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.jwks">datacatalog.jwks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.main">datacatalog.main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.openapi">datacatalog.openapi module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.plugin_interfaces">datacatalog.plugin_interfaces module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog">Module contents</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../schemas.html">JSON Schemas and OpenAPI definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../openapi.html">OpenAPI definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sphinx_101.html">Sphinx 101</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../sphinx_101.html#rest-formatting">ReST formatting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../sphinx_101.html#roles-added-by-sphinx">Roles added by Sphinx</a></li>
@@ -183,7 +185,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">datacatalog-core</a>
@@ -191,9 +193,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -216,15 +219,17 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../api_docs.html">API Docs</a> &raquo;</li>
+          <li><a href="datacatalog.html">datacatalog package</a> &raquo;</li>
         
-      <li>Handlers</li>
+          <li><a href="datacatalog.plugins.html">datacatalog.plugins package</a> &raquo;</li>
+        
+      <li>datacatalog.plugins.swift package</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/api/handlers.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/apidoc/datacatalog.plugins.swift.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -237,71 +242,55 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="handlers">
-<span id="id1"></span><h1>Handlers<a class="headerlink" href="#handlers" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-datacatalog.handlers.action_api"></span><dl class="class">
-<dt id="datacatalog.handlers.action_api.Facet">
-<em class="property">class </em><code class="descname">Facet</code><a class="reference internal" href="../_modules/datacatalog/handlers/action_api.html#Facet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.handlers.action_api.Facet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/enum.html#enum.Enum" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></a></p>
-<p>An enumeration.</p>
-<dl class="attribute">
-<dt id="datacatalog.handlers.action_api.Facet._member_type_">
-<code class="descname">_member_type_</code><a class="headerlink" href="#datacatalog.handlers.action_api.Facet._member_type_" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference external" href="https://docs.python.org/3.6/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-</dd></dl>
+  <div class="section" id="datacatalog-plugins-swift-package">
+<h1>datacatalog.plugins.swift package<a class="headerlink" href="#datacatalog-plugins-swift-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-datacatalog.plugins.swift">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-datacatalog.plugins.swift" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="datacatalog.plugins.swift._put_file_to_object_store">
+<code class="descname">_put_file_to_object_store</code><span class="sig-paren">(</span><em>uuid</em>, <em>content_type</em>, <em>data</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/swift.html#_put_file_to_object_store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.swift._put_file_to_object_store" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-</dd></dl>
-
-<dl class="class">
-<dt id="datacatalog.handlers.action_api.SearchParam">
-<em class="property">class </em><code class="descname">SearchParam</code><a class="reference internal" href="../_modules/datacatalog/handlers/action_api.html#SearchParam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.handlers.action_api.SearchParam" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/enum.html#enum.Enum" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></a></p>
-<p>An enumeration.</p>
-<dl class="attribute">
-<dt id="datacatalog.handlers.action_api.SearchParam._member_type_">
-<code class="descname">_member_type_</code><a class="headerlink" href="#datacatalog.handlers.action_api.SearchParam._member_type_" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference external" href="https://docs.python.org/3.6/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
-</dd></dl>
-
+<dl class="function">
+<dt id="datacatalog.plugins.swift.initialize_sync">
+<code class="descname">initialize_sync</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/swift.html#initialize_sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.swift.initialize_sync" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the plugin.</p>
+<ul class="simple">
+<li>validates the configuration loaded by <code class="xref py py-obj docutils literal notranslate"><span class="pre">app</span></code>;</li>
+<li>initializes <code class="xref py py-obj docutils literal notranslate"><span class="pre">_BASE_URL</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">_AUTHORIZATION</span></code>;</li>
+<li>registers a new endpoint <code class="docutils literal notranslate"><span class="pre">/files</span></code> in the HTTP service.</li>
+</ul>
 </dd></dl>
 
 <dl class="function">
-<dt id="datacatalog.handlers.action_api.handle">
-<code class="descname">handle</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/handlers/action_api.html#handle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.handlers.action_api.handle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handle the action API calls package_search en package_show.</p>
+<dt id="datacatalog.plugins.swift.post">
+<code class="descname">post</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/swift.html#post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.swift.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>POST handler for <code class="docutils literal notranslate"><span class="pre">/files</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Response</span></code></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
-<span class="target" id="module-datacatalog.handlers.index"></span><dl class="function">
-<dt id="datacatalog.handlers.index.handle">
-<code class="descname">handle</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/handlers/index.html#handle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.handlers.index.handle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handle the index request</p>
-</dd></dl>
-
-<span class="target" id="module-datacatalog.handlers.systemhealth"></span><dl class="function">
-<dt id="datacatalog.handlers.systemhealth.handle">
-<code class="descname">handle</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/handlers/systemhealth.html#handle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.handlers.systemhealth.handle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handle the system health check.</p>
-<p>Any failure in the systems that the catalog depends upon should result in a
-status 503 (ie. <code class="xref py py-obj docutils literal"><span class="pre">aiohttp.web.HTTPServiceUnavailable</span></code>). If all systems are go
-status 200 is returned</p>
-</dd></dl>
-
+</div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="plugins.html" class="btn btn-neutral float-right" title="Plugins" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../openapi.html" class="btn btn-neutral float-right" title="OpenAPI definitions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="application.html" class="btn btn-neutral" title="Application" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="datacatalog.plugins.postgres.html" class="btn btn-neutral" title="datacatalog.plugins.postgres package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -314,7 +303,7 @@ status 200 is returned</p>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -333,6 +322,7 @@ status 200 is returned</p>
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
             VERSION:'0.1',
+            LANGUAGE:'en',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -350,14 +340,11 @@ status 200 is returned</p>
     <script type="text/javascript" src="../_static/js/theme.js"></script>
   
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

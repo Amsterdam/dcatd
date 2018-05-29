@@ -1,0 +1,649 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>datacatalog.handlers.datasets &mdash; datacatalog-core 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/_modules/datacatalog/handlers/datasets.html"/>
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> datacatalog-core
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc/datacatalog.html">datacatalog package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html">datacatalog.handlers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.datasets">datacatalog.handlers.datasets module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.openapi">datacatalog.handlers.openapi module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.systemhealth">datacatalog.handlers.systemhealth module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../apidoc/datacatalog.plugins.html">datacatalog.plugins package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.plugins.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.plugins.html#module-datacatalog.plugins">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.application">datacatalog.application module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.authorization">datacatalog.authorization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.config">datacatalog.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.cors">datacatalog.cors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.dcat">datacatalog.dcat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.jwks">datacatalog.jwks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.main">datacatalog.main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.openapi">datacatalog.openapi module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.plugin_interfaces">datacatalog.plugin_interfaces module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../openapi.html">OpenAPI definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sphinx_101.html">Sphinx 101</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../sphinx_101.html#rest-formatting">ReST formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../sphinx_101.html#roles-added-by-sphinx">Roles added by Sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../sphinx_101.html#directives">Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../sphinx_101.html#google-style-docstrings">Google-style docstrings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../sphinx_101.html#autodoc">Autodoc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../sphinx_101.html#intersphinx">Intersphinx</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo_list.html">Todo list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#definitions">1. Definitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#contributor">1.1. “Contributor”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#contributor-version">1.2. “Contributor Version”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#contribution">1.3. “Contribution”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#covered-software">1.4. “Covered Software”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#incompatible-with-secondary-licenses">1.5. “Incompatible With Secondary Licenses”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#executable-form">1.6. “Executable Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#id1">1.8. “License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#licensable">1.9. “Licensable”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#modifications">1.10. “Modifications”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#patent-claims-of-a-contributor">1.11. “Patent Claims” of a Contributor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#secondary-license">1.12. “Secondary License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#source-code-form">1.13. “Source Code Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#you-or-your">1.14. “You” (or “Your”)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#license-grants-and-conditions">2. License Grants and Conditions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#grants">2.1. Grants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#effective-date">2.2. Effective Date</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#limitations-on-grant-scope">2.3. Limitations on Grant Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#subsequent-licenses">2.4. Subsequent Licenses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#representation">2.5. Representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#fair-use">2.6. Fair Use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#conditions">2.7. Conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#responsibilities">3. Responsibilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#distribution-of-source-form">3.1. Distribution of Source Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#distribution-of-executable-form">3.2. Distribution of Executable Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#distribution-of-a-larger-work">3.3. Distribution of a Larger Work</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#notices">3.4. Notices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#application-of-additional-terms">3.5. Application of Additional Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#inability-to-comply-due-to-statute-or-regulation">4. Inability to Comply Due to Statute or Regulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#termination">5. Termination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#disclaimer-of-warranty">6. Disclaimer of Warranty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#limitation-of-liability">7. Limitation of Liability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#litigation">8. Litigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#miscellaneous">9. Miscellaneous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#versions-of-the-license">10. Versions of the License</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#new-versions">10.1. New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#effect-of-new-versions">10.2. Effect of New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#modified-versions">10.3. Modified Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#distributing-source-code-form-that-is-incompatible-with-secondary-licenses">10.4. Distributing Source Code Form that is Incompatible With Secondary Licenses</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#exhibit-a-source-code-form-license-notice">Exhibit A - Source Code Form License Notice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#exhibit-b-incompatible-with-secondary-licenses-notice">Exhibit B - “Incompatible With Secondary Licenses” Notice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">datacatalog-core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>datacatalog.handlers.datasets</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for datacatalog.handlers.datasets</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">json.decoder</span>
+<span class="c1"># import os.path</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">T</span>
+<span class="c1"># import urllib.parse</span>
+
+<span class="kn">from</span> <span class="nn">aiohttp</span> <span class="k">import</span> <span class="n">web</span>
+<span class="kn">from</span> <span class="nn">pyld</span> <span class="k">import</span> <span class="n">jsonld</span>
+
+<span class="kn">from</span> <span class="nn">aiohttp_extras</span> <span class="k">import</span> <span class="n">conditional</span>
+<span class="kn">from</span> <span class="nn">aiohttp_extras.content_negotiation</span> <span class="k">import</span> <span class="n">produces_content_types</span>
+
+<span class="kn">from</span> <span class="nn">datacatalog</span> <span class="k">import</span> <span class="n">authorization</span>
+
+<span class="n">_DCAT_ID_KEY</span> <span class="o">=</span> <span class="s1">&#39;@id&#39;</span>
+<span class="n">_FACET_QUERY_KEY</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="sa">r</span><span class="s1">&#39;(?:/properties/[^/=~&lt;&gt;]+(?:/items)?)+&#39;</span>
+<span class="p">)</span>
+<span class="n">_FACET_QUERY_VALUE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="sa">r</span><span class="s1">&#39;(in|eq|gt|lt|ge|le)=(.*)&#39;</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">S</span>
+<span class="p">)</span>
+<span class="n">_COMMA_SEPARATED_SEGMENT</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="sa">r</span><span class="s1">&#39;(?:</span><span class="se">\\</span><span class="s1">.|[^,</span><span class="se">\\</span><span class="s1">])+&#39;</span>
+<span class="p">)</span>
+<span class="n">_ESCAPED_CHARACTER</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">(.)&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="_add_blank_node_identifiers_to"><a class="viewcode-back" href="../../../apidoc/datacatalog.handlers.html#datacatalog.handlers.datasets._add_blank_node_identifiers_to">[docs]</a><span class="k">def</span> <span class="nf">_add_blank_node_identifiers_to</span><span class="p">(</span><span class="n">distributions</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">distribution</span> <span class="ow">in</span> <span class="n">distributions</span><span class="p">:</span>
+        <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">distribution</span><span class="p">[</span><span class="s1">&#39;@id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;_:d</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get"><a class="viewcode-back" href="../../../apidoc/datacatalog.handlers.html#datacatalog.handlers.datasets.get">[docs]</a><span class="nd">@produces_content_types</span><span class="p">(</span><span class="s1">&#39;application/ld+json&#39;</span><span class="p">,</span> <span class="s1">&#39;application/json&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">Request</span><span class="p">):</span>
+    <span class="n">docid</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">match_info</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span>
+    <span class="n">etag_if_none_match</span> <span class="o">=</span> <span class="n">conditional</span><span class="o">.</span><span class="n">parse_if_header</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span> <span class="n">conditional</span><span class="o">.</span><span class="n">HEADER_IF_NONE_MATCH</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">etag_if_none_match</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+            <span class="n">body</span><span class="o">=</span><span class="s1">&#39;Endpoint does not support * in the If-None-Match header.&#39;</span>
+        <span class="p">)</span>
+    <span class="c1"># now we know the etag is either None or a set</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">doc</span><span class="p">,</span> <span class="n">etag</span> <span class="o">=</span> <span class="k">await</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">storage_retrieve</span><span class="p">(</span>
+            <span class="n">app</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">docid</span><span class="o">=</span><span class="n">docid</span><span class="p">,</span> <span class="n">etags</span><span class="o">=</span><span class="n">etag_if_none_match</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPNotFound</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">304</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Etag&#39;</span><span class="p">:</span> <span class="n">etag</span><span class="p">})</span>
+    <span class="n">expanded_doc</span> <span class="o">=</span> <span class="n">jsonld</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">doc</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">canonical_doc</span> <span class="o">=</span> <span class="k">await</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">mds_canonicalize</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">expanded_doc</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">docid</span><span class="p">)</span>
+    <span class="n">_add_blank_node_identifiers_to</span><span class="p">(</span><span class="n">canonical_doc</span><span class="p">[</span><span class="s1">&#39;dcat:distribution&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">json_response</span><span class="p">(</span><span class="n">canonical_doc</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;Etag&#39;</span><span class="p">:</span> <span class="n">etag</span><span class="p">,</span> <span class="s1">&#39;content_type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/ld+json&#39;</span>
+    <span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="put"><a class="viewcode-back" href="../../../apidoc/datacatalog.handlers.html#datacatalog.handlers.datasets.put">[docs]</a><span class="nd">@authorization</span><span class="o">.</span><span class="n">authorize</span><span class="p">()</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">Request</span><span class="p">):</span>
+    <span class="n">hooks</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">hooks</span>
+    <span class="c1"># Grab the document from the request body and canonicalize it.</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="k">await</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;invalid json&#39;</span><span class="p">)</span>
+    <span class="n">canonical_doc</span> <span class="o">=</span> <span class="k">await</span> <span class="n">hooks</span><span class="o">.</span><span class="n">mds_canonicalize</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">doc</span><span class="p">)</span>
+
+    <span class="c1"># Make sure the docid in the path corresponds to the ids given in the</span>
+    <span class="c1"># document, if any. The assumption is that request.path (which corresponds</span>
+    <span class="c1"># to the path part of the incoming HTTP request) is the path as seen by</span>
+    <span class="c1"># the client. This is not necessarily true.</span>
+    <span class="n">docid</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">match_info</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span>
+    <span class="n">docurl</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;ams-dcatd:</span><span class="si">{docid}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="s1">&#39;@id&#39;</span> <span class="ow">in</span> <span class="n">canonical_doc</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">canonical_doc</span><span class="p">[</span><span class="s1">&#39;@id&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">docurl</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Invalid @id: </span><span class="si">{}</span><span class="s1"> != </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">canonical_doc</span><span class="p">[</span><span class="s1">&#39;@id&#39;</span><span class="p">],</span> <span class="n">docurl</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">del</span> <span class="n">canonical_doc</span><span class="p">[</span><span class="n">_DCAT_ID_KEY</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;dct:identifier&#39;</span> <span class="ow">in</span> <span class="n">canonical_doc</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">canonical_doc</span><span class="p">[</span><span class="s1">&#39;dct:identifier&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">docid</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Invalid dct:identifier: </span><span class="si">{}</span><span class="s1"> != </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">canonical_doc</span><span class="p">[</span><span class="s1">&#39;dct:identifier&#39;</span><span class="p">],</span> <span class="n">docid</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">del</span> <span class="n">canonical_doc</span><span class="p">[</span><span class="s1">&#39;dct:identifier&#39;</span><span class="p">]</span>
+    <span class="c1"># Let the metadata plugin grab the full-text search representation</span>
+    <span class="n">searchable_text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">hooks</span><span class="o">.</span><span class="n">mds_full_text_search_representation</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">canonical_doc</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Figure out the mode (insert / update) of the request.</span>
+    <span class="n">etag_if_match</span> <span class="o">=</span> <span class="n">conditional</span><span class="o">.</span><span class="n">parse_if_header</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span> <span class="n">conditional</span><span class="o">.</span><span class="n">HEADER_IF_MATCH</span>
+    <span class="p">)</span>
+    <span class="n">etag_if_none_match</span> <span class="o">=</span> <span class="n">conditional</span><span class="o">.</span><span class="n">parse_if_header</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span> <span class="n">conditional</span><span class="o">.</span><span class="n">HEADER_IF_NONE_MATCH</span>
+    <span class="p">)</span>
+    <span class="c1"># Can&#39;t accept a value in both headers</span>
+    <span class="k">if</span> <span class="n">etag_if_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">etag_if_none_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+            <span class="n">body</span><span class="o">=</span><span class="s1">&#39;Endpoint supports either If-Match or If-None-Match in a &#39;</span>
+                 <span class="s1">&#39;single request, not both&#39;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># If-Match: {etag, ...} is for updates</span>
+    <span class="k">if</span> <span class="n">etag_if_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">etag_if_match</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+                <span class="n">body</span><span class="o">=</span><span class="s1">&#39;Endpoint does not support If-Match: *. Must provide one &#39;</span>
+                     <span class="s1">&#39;or more Etags.&#39;</span>
+            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">new_etag</span> <span class="o">=</span> <span class="k">await</span> <span class="n">hooks</span><span class="o">.</span><span class="n">storage_update</span><span class="p">(</span>
+                <span class="n">app</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">docid</span><span class="o">=</span><span class="n">docid</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">canonical_doc</span><span class="p">,</span>
+                <span class="n">searchable_text</span><span class="o">=</span><span class="n">searchable_text</span><span class="p">,</span> <span class="n">etags</span><span class="o">=</span><span class="n">etag_if_match</span><span class="p">,</span>
+                <span class="n">iso_639_1_code</span><span class="o">=</span><span class="s2">&quot;nl&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPPreconditionFailed</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">204</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Etag&#39;</span><span class="p">:</span> <span class="n">new_etag</span><span class="p">})</span>
+
+    <span class="c1"># If-None-Match: * is for creates</span>
+    <span class="k">if</span> <span class="n">etag_if_none_match</span> <span class="o">!=</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+            <span class="n">body</span><span class="o">=</span><span class="s1">&#39;For inserts of new documents, provide If-None-Match: *&#39;</span>
+        <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">new_etag</span> <span class="o">=</span> <span class="k">await</span> <span class="n">hooks</span><span class="o">.</span><span class="n">storage_create</span><span class="p">(</span>
+            <span class="n">app</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">docid</span><span class="o">=</span><span class="n">docid</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">canonical_doc</span><span class="p">,</span>
+            <span class="n">searchable_text</span><span class="o">=</span><span class="n">searchable_text</span><span class="p">,</span> <span class="n">iso_639_1_code</span><span class="o">=</span><span class="s2">&quot;nl&quot;</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPPreconditionFailed</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span>
+        <span class="n">status</span><span class="o">=</span><span class="mi">201</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Etag&#39;</span><span class="p">:</span> <span class="n">new_etag</span><span class="p">},</span> <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/plain&#39;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="delete"><a class="viewcode-back" href="../../../apidoc/datacatalog.handlers.html#datacatalog.handlers.datasets.delete">[docs]</a><span class="nd">@authorization</span><span class="o">.</span><span class="n">authorize</span><span class="p">()</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">Request</span><span class="p">):</span>
+    <span class="n">given_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">match_info</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span>
+    <span class="n">etag_if_match</span> <span class="o">=</span> <span class="n">conditional</span><span class="o">.</span><span class="n">parse_if_header</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">conditional</span><span class="o">.</span><span class="n">HEADER_IF_MATCH</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">etag_if_match</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">etag_if_match</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Must provide a If-Match header containing one or more ETags.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">storage_delete</span><span class="p">(</span>
+            <span class="n">app</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">docid</span><span class="o">=</span><span class="n">given_id</span><span class="p">,</span> <span class="n">etags</span><span class="o">=</span><span class="n">etag_if_match</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPNotFound</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">204</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/plain&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_collection"><a class="viewcode-back" href="../../../apidoc/datacatalog.handlers.html#datacatalog.handlers.datasets.get_collection">[docs]</a><span class="nd">@produces_content_types</span><span class="p">(</span><span class="s1">&#39;application/ld+json&#39;</span><span class="p">,</span> <span class="s1">&#39;application/json&#39;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_collection</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">web</span><span class="o">.</span><span class="n">StreamResponse</span><span class="p">:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot;Handler for ``/datasets``&quot;&quot;&quot;</span>
+    <span class="n">hooks</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">hooks</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">query</span>
+
+    <span class="c1"># Extract facet filters:</span>
+    <span class="n">filters</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">query</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_FACET_QUERY_KEY</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+            <span class="n">filters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">match</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_FACET_QUERY_VALUE</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">query</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Unknown comparator in query parameter &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">key</span>
+            <span class="p">)</span>
+        <span class="n">comparator</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">comparator</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Multiple facet filters for facet </span><span class="si">%s</span><span class="s2"> with comparator </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+                     <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">comparator</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">comparator</span> <span class="o">==</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">_csv_decode_line</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+                    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Value of query parameter &#39;</span><span class="si">%s</span><span class="s2">&#39; is not a CSV encoded list of strings; see RFC4180&quot;</span> <span class="o">%</span> <span class="n">key</span>
+                <span class="p">)</span>
+        <span class="n">filters</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">comparator</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="n">full_text_query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;limit&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">limit</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;offset&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span>
+
+    <span class="n">result_info</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">resultiterator</span> <span class="o">=</span> <span class="k">await</span> <span class="n">hooks</span><span class="o">.</span><span class="n">search_search</span><span class="p">(</span>
+        <span class="n">app</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">full_text_query</span><span class="p">,</span>
+        <span class="n">sortpath</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;foaf:isPrimaryTopicOf&#39;</span><span class="p">,</span> <span class="s1">&#39;dct:issued&#39;</span><span class="p">],</span>
+        <span class="n">result_info</span><span class="o">=</span><span class="n">result_info</span><span class="p">,</span>
+        <span class="n">facets</span><span class="o">=</span><span class="p">[</span>
+            <span class="s1">&#39;/properties/dcat:distribution/items/properties/ams:resourceType&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/properties/dcat:distribution/items/properties/dct:format&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/properties/dcat:distribution/items/properties/ams:distributionType&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/properties/dcat:distribution/items/properties/ams:serviceType&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/properties/dcat:keyword/items&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/properties/dcat:theme/items&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;/properties/ams:owner&#39;</span>
+        <span class="p">],</span>
+        <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">,</span>
+        <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span> <span class="n">iso_639_1_code</span><span class="o">=</span><span class="s1">&#39;nl&#39;</span>
+    <span class="p">)</span>
+
+    <span class="n">ctx</span> <span class="o">=</span> <span class="k">await</span> <span class="n">hooks</span><span class="o">.</span><span class="n">mds_context</span><span class="p">()</span>
+    <span class="n">ctx_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">StreamResponse</span><span class="p">()</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="n">request</span><span class="p">[</span><span class="s1">&#39;best_content_type&#39;</span><span class="p">]</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">enable_compression</span><span class="p">()</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;{&quot;@context&quot;:&#39;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ctx_json</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+    <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;,&quot;dcat:dataset&quot;:[&#39;</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">for</span> <span class="n">docid</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">resultiterator</span><span class="p">:</span>
+        <span class="n">canonical_doc</span> <span class="o">=</span> <span class="k">await</span> <span class="n">hooks</span><span class="o">.</span><span class="n">mds_canonicalize</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">docid</span><span class="p">)</span>
+        <span class="n">keepers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;@id&#39;</span><span class="p">,</span> <span class="s1">&#39;dct:identifier&#39;</span><span class="p">,</span> <span class="s1">&#39;dct:title&#39;</span><span class="p">,</span> <span class="s1">&#39;dct:description&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;dcat:keyword&#39;</span><span class="p">,</span> <span class="s1">&#39;foaf:isPrimaryTopicOf&#39;</span><span class="p">,</span> <span class="s1">&#39;dcat:distribution&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;dcat:theme&#39;</span><span class="p">,</span> <span class="s1">&#39;ams:owner&#39;</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">canonical_doc</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keepers</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">canonical_doc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">keepers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dct:format&#39;</span><span class="p">,</span> <span class="s1">&#39;ams:resourceType&#39;</span><span class="p">,</span> <span class="s1">&#39;ams:distributionType&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;ams:serviceType&#39;</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">canonical_doc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dcat:distribution&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keepers</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">first</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">canonical_doc</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+    <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;]&#39;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;, &quot;void:documents&quot;: &#39;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">result_info</span><span class="p">[</span><span class="s1">&#39;/&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+    <span class="k">del</span> <span class="n">result_info</span><span class="p">[</span><span class="s1">&#39;/&#39;</span><span class="p">]</span>
+    <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;, &quot;ams:facet_info&quot;: &#39;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result_info</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+    <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;}&#39;</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">write_eof</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">response</span></div>
+
+
+<div class="viewcode-block" id="post_collection"><a class="viewcode-back" href="../../../apidoc/datacatalog.handlers.html#datacatalog.handlers.datasets.post_collection">[docs]</a><span class="nd">@authorization</span><span class="o">.</span><span class="n">authorize</span><span class="p">()</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">post_collection</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">Request</span><span class="p">):</span>
+    <span class="n">hooks</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">hooks</span>
+    <span class="n">datasets_url</span> <span class="o">=</span> <span class="n">_datasets_url</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="c1"># Grab the document from the request body and canonicalize it.</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="k">await</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;invalid json&#39;</span><span class="p">)</span>
+    <span class="n">canonical_doc</span> <span class="o">=</span> <span class="k">await</span> <span class="n">hooks</span><span class="o">.</span><span class="n">mds_canonicalize</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">doc</span><span class="p">)</span>
+
+    <span class="n">docurl</span> <span class="o">=</span> <span class="n">canonical_doc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;@id&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">docurl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">canonical_doc</span><span class="p">[</span><span class="s1">&#39;@id&#39;</span><span class="p">]</span>
+
+    <span class="n">docid</span> <span class="o">=</span> <span class="n">canonical_doc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dct:identifier&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">docid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">canonical_doc</span><span class="p">[</span><span class="s1">&#39;dct:identifier&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">docid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">collection_url_plus_docid</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;ams-dcatd:</span><span class="si">{docid}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">docurl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">docurl</span> <span class="o">=</span> <span class="n">collection_url_plus_docid</span>
+        <span class="k">elif</span> <span class="n">docurl</span> <span class="o">!=</span> <span class="n">collection_url_plus_docid</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> != </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">docurl</span><span class="p">,</span> <span class="n">collection_url_plus_docid</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">docurl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">docurl</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">datasets_url</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{_DCAT_ID_KEY}</span><span class="s2"> must start with </span><span class="si">{datasets_url}</span><span class="s2">/&quot;</span>
+            <span class="p">)</span>
+        <span class="n">docid</span> <span class="o">=</span> <span class="n">docurl</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">datasets_url</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(?:%[a-f0-9]</span><span class="si">{2}</span><span class="s2">|[-\w:@!$&amp;&#39;()*+,;=.~])+&quot;</span><span class="p">,</span> <span class="n">docid</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;Illegal value for </span><span class="si">{_DCAT_ID_KEY}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">docid</span> <span class="o">=</span> <span class="k">await</span> <span class="n">hooks</span><span class="o">.</span><span class="n">storage_id</span><span class="p">()</span>
+        <span class="n">docurl</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{datasets_url}</span><span class="s2">/</span><span class="si">{docid}</span><span class="s2">&quot;</span>
+    <span class="c1"># Let the metadata plugin grab the full-text search representation</span>
+    <span class="n">searchable_text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">hooks</span><span class="o">.</span><span class="n">mds_full_text_search_representation</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">canonical_doc</span>
+    <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">new_etag</span> <span class="o">=</span> <span class="k">await</span> <span class="n">hooks</span><span class="o">.</span><span class="n">storage_create</span><span class="p">(</span>
+            <span class="n">app</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="p">,</span> <span class="n">docid</span><span class="o">=</span><span class="n">docid</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">canonical_doc</span><span class="p">,</span>
+            <span class="n">searchable_text</span><span class="o">=</span><span class="n">searchable_text</span><span class="p">,</span> <span class="n">iso_639_1_code</span><span class="o">=</span><span class="s2">&quot;nl&quot;</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPBadRequest</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Document with id </span><span class="si">{}</span><span class="s1"> already exists&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">docid</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span>
+        <span class="n">status</span><span class="o">=</span><span class="mi">201</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Etag&#39;</span><span class="p">:</span> <span class="n">new_etag</span><span class="p">,</span> <span class="s1">&#39;Location&#39;</span><span class="p">:</span> <span class="n">docurl</span><span class="p">},</span>
+        <span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;text/plain&#39;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_datasets_url"><a class="viewcode-back" href="../../../apidoc/datacatalog.handlers.html#datacatalog.handlers.datasets._datasets_url">[docs]</a><span class="k">def</span> <span class="nf">_datasets_url</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">Request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;web&#39;</span><span class="p">][</span><span class="s1">&#39;baseurl&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;datasets&#39;</span></div>
+
+
+<div class="viewcode-block" id="_csv_decode_line"><a class="viewcode-back" href="../../../apidoc/datacatalog.handlers.html#datacatalog.handlers.datasets._csv_decode_line">[docs]</a><span class="k">def</span> <span class="nf">_csv_decode_line</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">([</span><span class="n">s</span><span class="p">])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">reader</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">Error</span><span class="p">,</span> <span class="ne">StopIteration</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="_split_comma_separated_stringset"><a class="viewcode-back" href="../../../apidoc/datacatalog.handlers.html#datacatalog.handlers.datasets._split_comma_separated_stringset">[docs]</a><span class="k">def</span> <span class="nf">_split_comma_separated_stringset</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">len_s</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">retval</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">while</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="n">len_s</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">s</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;,&#39;</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">matches</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_COMMA_SEPARATED_SEGMENT</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">matches</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+        <span class="n">retval</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">_ESCAPED_CHARACTER</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\1&#39;</span><span class="p">,</span> <span class="n">match</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">retval</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Gemeente Amsterdam.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

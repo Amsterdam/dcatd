@@ -1,7 +1,7 @@
-.. _schemas:
+.. _openapi:
 
-JSON Schemas and OpenAPI definitions
-====================================
+OpenAPI definitions
+===================
 
 JSON Schema Validation v04 has the following built-in formats for strings:
 
@@ -25,3 +25,5 @@ Additionally, we use the following format identifiers:
 - ``"line"``: A single line of text, ie. not including any new-line characters.
 
 - ``"rst"``: reStructuredText
+
+- ``"full-date"``: as defined by :rfc:`3339`, section 5.6.

@@ -1,0 +1,662 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>datacatalog.dcat &mdash; datacatalog-core 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/_modules/datacatalog/dcat.html"/>
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> datacatalog-core
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc/datacatalog.html">datacatalog package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html">datacatalog.handlers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.datasets">datacatalog.handlers.datasets module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.openapi">datacatalog.handlers.openapi module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.systemhealth">datacatalog.handlers.systemhealth module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../apidoc/datacatalog.plugins.html">datacatalog.plugins package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.plugins.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.plugins.html#module-datacatalog.plugins">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.application">datacatalog.application module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.authorization">datacatalog.authorization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.config">datacatalog.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.cors">datacatalog.cors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.dcat">datacatalog.dcat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.jwks">datacatalog.jwks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.main">datacatalog.main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.openapi">datacatalog.openapi module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.plugin_interfaces">datacatalog.plugin_interfaces module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../openapi.html">OpenAPI definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sphinx_101.html">Sphinx 101</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#rest-formatting">ReST formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#roles-added-by-sphinx">Roles added by Sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#directives">Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#google-style-docstrings">Google-style docstrings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#autodoc">Autodoc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#intersphinx">Intersphinx</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../todo_list.html">Todo list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#definitions">1. Definitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#contributor">1.1. “Contributor”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#contributor-version">1.2. “Contributor Version”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#contribution">1.3. “Contribution”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#covered-software">1.4. “Covered Software”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#incompatible-with-secondary-licenses">1.5. “Incompatible With Secondary Licenses”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#executable-form">1.6. “Executable Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#id1">1.8. “License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#licensable">1.9. “Licensable”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#modifications">1.10. “Modifications”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#patent-claims-of-a-contributor">1.11. “Patent Claims” of a Contributor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#secondary-license">1.12. “Secondary License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#source-code-form">1.13. “Source Code Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#you-or-your">1.14. “You” (or “Your”)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#license-grants-and-conditions">2. License Grants and Conditions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#grants">2.1. Grants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#effective-date">2.2. Effective Date</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#limitations-on-grant-scope">2.3. Limitations on Grant Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#subsequent-licenses">2.4. Subsequent Licenses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#representation">2.5. Representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#fair-use">2.6. Fair Use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#conditions">2.7. Conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#responsibilities">3. Responsibilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distribution-of-source-form">3.1. Distribution of Source Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distribution-of-executable-form">3.2. Distribution of Executable Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distribution-of-a-larger-work">3.3. Distribution of a Larger Work</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#notices">3.4. Notices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#application-of-additional-terms">3.5. Application of Additional Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#inability-to-comply-due-to-statute-or-regulation">4. Inability to Comply Due to Statute or Regulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#termination">5. Termination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#disclaimer-of-warranty">6. Disclaimer of Warranty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#limitation-of-liability">7. Limitation of Liability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#litigation">8. Litigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#miscellaneous">9. Miscellaneous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#versions-of-the-license">10. Versions of the License</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#new-versions">10.1. New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#effect-of-new-versions">10.2. Effect of New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#modified-versions">10.3. Modified Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distributing-source-code-form-that-is-incompatible-with-secondary-licenses">10.4. Distributing Source Code Form that is Incompatible With Secondary Licenses</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#exhibit-a-source-code-form-license-notice">Exhibit A - Source Code Form License Notice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#exhibit-b-incompatible-with-secondary-licenses-notice">Exhibit B - “Incompatible With Secondary Licenses” Notice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">datacatalog-core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>datacatalog.dcat</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for datacatalog.dcat</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">T</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="kn">import</span> <span class="nn">jsonschema</span>
+
+
+<div class="viewcode-block" id="Type"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Type">[docs]</a><span class="k">class</span> <span class="nc">Type</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">examples</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">write_only</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">required</span> <span class="o">=</span> <span class="n">required</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">examples</span> <span class="o">=</span> <span class="n">examples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="nb">format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="n">read_only</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_only</span> <span class="o">=</span> <span class="n">write_only</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">examples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;examples&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">examples</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;format&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_only</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;readOnly&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_only</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_only</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;writeOnly&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_only</span>
+        <span class="k">return</span> <span class="n">retval</span>
+
+<div class="viewcode-block" id="Type.full_text_search_representation"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Type.full_text_search_representation">[docs]</a>    <span class="k">def</span> <span class="nf">full_text_search_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Type.validate"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Type.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Validate the data.</span>
+
+<span class="sd">        :returns: the Type for which validation succeeded. See also</span>
+<span class="sd">            :meth:`OneOf.validate`</span>
+<span class="sd">        :rtype: Type</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">jsonschema</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="c1"># noinspection PyMethodMayBeStatic</span>
+<div class="viewcode-block" id="Type.canonicalize"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Type.canonicalize">[docs]</a>    <span class="k">def</span> <span class="nf">canonicalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span>
+        <span class="k">return</span> <span class="n">data</span></div></div>
+
+
+<div class="viewcode-block" id="List"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.List">[docs]</a><span class="k">class</span> <span class="nc">List</span><span class="p">(</span><span class="n">Type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">allow_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique_items</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">required</span> <span class="ow">and</span> <span class="n">allow_empty</span><span class="p">:</span>
+            <span class="n">default</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="n">required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_type</span> <span class="o">=</span> <span class="n">item_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_empty</span> <span class="o">=</span> <span class="n">allow_empty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unique_items</span> <span class="o">=</span> <span class="n">unique_items</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>
+        <span class="n">retval</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;array&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;items&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_type</span><span class="o">.</span><span class="n">schema</span>
+        <span class="p">})</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_items</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;uniqueItems&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_items</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_empty</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;minItems&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">retval</span>
+
+<div class="viewcode-block" id="List.canonicalize"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.List.canonicalize">[docs]</a>    <span class="k">def</span> <span class="nf">canonicalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">canonicalize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: not a list&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">datum</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_type</span><span class="o">.</span><span class="n">canonicalize</span><span class="p">(</span><span class="n">datum</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">retval</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">retval</span></div>
+
+<div class="viewcode-block" id="List.full_text_search_representation"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.List.full_text_search_representation">[docs]</a>    <span class="k">def</span> <span class="nf">full_text_search_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Iterable</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;We must check whether the given data is really a list, jsonld may</span>
+<span class="sd">        flatten lists.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">item_type</span><span class="o">.</span><span class="n">full_text_search_representation</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">])</span>
+            <span class="k">return</span> <span class="n">retval</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_type</span><span class="o">.</span><span class="n">full_text_search_representation</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="OneOf"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.OneOf">[docs]</a><span class="k">class</span> <span class="nc">OneOf</span><span class="p">(</span><span class="n">Type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">types</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">types</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">types</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>
+        <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;oneOf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">schema</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">retval</span>
+
+<div class="viewcode-block" id="OneOf.validate"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.OneOf.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
+        <span class="k">for</span> <span class="nb">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">jsonschema</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>
+                <span class="k">return</span> <span class="nb">type</span>
+            <span class="k">except</span> <span class="n">jsonschema</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">raise</span> <span class="n">jsonschema</span><span class="o">.</span><span class="n">ValidationError</span><span class="p">(</span><span class="s2">&quot;Not valid for any type&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OneOf.full_text_search_representation"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.OneOf.full_text_search_representation">[docs]</a>    <span class="k">def</span> <span class="nf">full_text_search_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="OneOf.canonicalize"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.OneOf.canonicalize">[docs]</a>    <span class="k">def</span> <span class="nf">canonicalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">canonicalize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Object"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Object">[docs]</a><span class="k">class</span> <span class="nc">Object</span><span class="p">(</span><span class="n">Type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">property_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">value</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Object.add"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Object.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+        <span class="nb">property</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">before</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">property</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">insert_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">insert_position</span><span class="p">,</span> <span class="nb">property</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>
+        <span class="n">retval</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;properties&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">schema</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;x-order&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">]</span>
+        <span class="p">})</span>
+        <span class="n">required</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span> <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">required</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">required</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;required&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">required</span>
+        <span class="k">return</span> <span class="n">retval</span>
+
+<div class="viewcode-block" id="Object.full_text_search_representation"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Object.full_text_search_representation">[docs]</a>    <span class="k">def</span> <span class="nf">full_text_search_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">ftsr</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">value</span><span class="o">.</span><span class="n">full_text_search_representation</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span>
+        <span class="p">)</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ftsr</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">retval</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Object.canonicalize"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Object.canonicalize">[docs]</a>    <span class="k">def</span> <span class="nf">canonicalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">canonicalize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: not a dict&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">canonical_value</span> <span class="o">=</span> <span class="n">type_</span><span class="o">.</span><span class="n">canonicalize</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">canonical_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">retval</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">canonical_value</span>
+        <span class="k">return</span> <span class="n">retval</span></div></div>
+
+
+<div class="viewcode-block" id="String"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.String">[docs]</a><span class="k">class</span> <span class="nc">String</span><span class="p">(</span><span class="n">Type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="n">pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">=</span> <span class="n">max_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_empty</span> <span class="o">=</span> <span class="n">allow_empty</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>
+        <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;pattern&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;maxLength&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_empty</span><span class="p">:</span>
+            <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;minLength&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">retval</span>
+
+<div class="viewcode-block" id="String.full_text_search_representation"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.String.full_text_search_representation">[docs]</a>    <span class="k">def</span> <span class="nf">full_text_search_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="String.canonicalize"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.String.canonicalize">[docs]</a>    <span class="k">def</span> <span class="nf">canonicalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">canonicalize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: not a string&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">retval</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_empty</span> <span class="k">else</span> <span class="kc">None</span></div></div>
+
+
+<div class="viewcode-block" id="PlainTextLine"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.PlainTextLine">[docs]</a><span class="k">class</span> <span class="nc">PlainTextLine</span><span class="p">(</span><span class="n">String</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">pattern</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;^[^\n\r]*?\S[^\n\r]*$&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Date"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Date">[docs]</a><span class="k">class</span> <span class="nc">Date</span><span class="p">(</span><span class="n">String</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pattern</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;^\d\d\d\d-[01]\d-[0-3]\d(?:T[012]\d:[0-5]\d:[0-5]\d(?:\.\d+)?)?(?:Z|[01]\d(?::[0-5]\d)?)?$&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Date.canonicalize"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Date.canonicalize">[docs]</a>    <span class="k">def</span> <span class="nf">canonicalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">canonicalize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: not a string&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="Language"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Language">[docs]</a><span class="k">class</span> <span class="nc">Language</span><span class="p">(</span><span class="n">String</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pattern</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;lang&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;^(?:lang1:\w\w|lang2:\w\w\w)$&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Enum"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Enum">[docs]</a><span class="k">class</span> <span class="nc">Enum</span><span class="p">(</span><span class="n">String</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">allow_empty</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">allow_empty</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>
+        <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;enum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+        <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;enumNames&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">retval</span>
+
+<div class="viewcode-block" id="Enum.full_text_search_representation"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Enum.full_text_search_representation">[docs]</a>    <span class="k">def</span> <span class="nf">full_text_search_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">[</span><span class="n">data</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="Integer"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Integer">[docs]</a><span class="k">class</span> <span class="nc">Integer</span><span class="p">(</span><span class="n">Type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">multipleOf</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">maximum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclusiveMaximum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">minimum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclusiveMinimum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multipleOf</span> <span class="o">=</span> <span class="n">multipleOf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maximum</span> <span class="o">=</span> <span class="n">maximum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exclusiveMaximum</span> <span class="o">=</span> <span class="n">exclusiveMaximum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minimum</span> <span class="o">=</span> <span class="n">minimum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exclusiveMinimum</span> <span class="o">=</span> <span class="n">exclusiveMinimum</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">retval</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>
+        <span class="n">retval</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;number&#39;</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;multipleOf&#39;</span><span class="p">,</span> <span class="s1">&#39;maximum&#39;</span><span class="p">,</span> <span class="s1">&#39;exclusiveMaximum&#39;</span><span class="p">,</span> <span class="s1">&#39;minimum&#39;</span><span class="p">,</span> <span class="s1">&#39;exclusiveMinimum&#39;</span><span class="p">}:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+                <span class="n">retval</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">retval</span>
+
+<div class="viewcode-block" id="Integer.full_text_search_representation"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Integer.full_text_search_representation">[docs]</a>    <span class="k">def</span> <span class="nf">full_text_search_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Any</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Integer.canonicalize"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.dcat.Integer.canonicalize">[docs]</a>    <span class="k">def</span> <span class="nf">canonicalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">canonicalize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">retval</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: not an integer&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">retval</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: not an integer&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div></div>
+
+
+<span class="n">DISTRIBUTION</span> <span class="o">=</span> <span class="n">Object</span><span class="p">()</span>
+<span class="n">DISTRIBUTION</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:title&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">())</span>
+<span class="n">DISTRIBUTION</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:description&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">())</span>
+<span class="n">DISTRIBUTION</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:issued&#39;</span><span class="p">,</span> <span class="n">Date</span><span class="p">())</span>
+<span class="n">DISTRIBUTION</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:modified&#39;</span><span class="p">,</span> <span class="n">Date</span><span class="p">())</span>
+<span class="n">DISTRIBUTION</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:license&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">())</span>
+<span class="n">DISTRIBUTION</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:rights&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">())</span>
+<span class="n">DISTRIBUTION</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dcat:accessURL&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;uri&#39;</span><span class="p">))</span>
+<span class="n">DISTRIBUTION</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dcat:downloadURL&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;uri&#39;</span><span class="p">))</span>
+<span class="n">DISTRIBUTION</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dcat:mediaType&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;^[-\w.]+/[-\w.]+$&#39;</span><span class="p">))</span>
+<span class="n">DISTRIBUTION</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:format&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">())</span>
+<span class="n">DISTRIBUTION</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dcat:byteSize&#39;</span><span class="p">,</span> <span class="n">Integer</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+
+<span class="n">VCARD</span> <span class="o">=</span> <span class="n">Object</span><span class="p">()</span>
+<span class="n">VCARD</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;vcard:fn&#39;</span><span class="p">,</span> <span class="n">PlainTextLine</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+
+<span class="n">FOAF_AGENT</span> <span class="o">=</span> <span class="n">Object</span><span class="p">()</span>
+<span class="n">FOAF_AGENT</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;foaf:name&#39;</span><span class="p">,</span> <span class="n">PlainTextLine</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+
+<span class="n">DATASET</span> <span class="o">=</span> <span class="n">Object</span><span class="p">()</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:title&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">())</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:description&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">())</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:issued&#39;</span><span class="p">,</span> <span class="n">Date</span><span class="p">())</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:modified&#39;</span><span class="p">,</span> <span class="n">Date</span><span class="p">())</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:identifier&#39;</span><span class="p">,</span> <span class="n">PlainTextLine</span><span class="p">())</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dcat:keyword&#39;</span><span class="p">,</span> <span class="n">List</span><span class="p">(</span><span class="n">PlainTextLine</span><span class="p">()))</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:language&#39;</span><span class="p">,</span> <span class="n">Language</span><span class="p">())</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dcat:contactPoint&#39;</span><span class="p">,</span> <span class="n">VCARD</span><span class="p">)</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:Temporal&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">())</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:Spatial&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">())</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:accrualPeriodicity&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">())</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dcat:landingPage&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;uri&#39;</span><span class="p">))</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dcat:theme&#39;</span><span class="p">,</span> <span class="n">String</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s1">&#39;uri&#39;</span><span class="p">))</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dct:publisher&#39;</span><span class="p">,</span> <span class="n">FOAF_AGENT</span><span class="p">)</span>
+<span class="n">DATASET</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;dcat:distribution&#39;</span><span class="p">,</span> <span class="n">DISTRIBUTION</span><span class="p">)</span>
+
+
+<span class="c1"># import json</span>
+<span class="c1"># print(json.dumps(</span>
+<span class="c1">#     DATASET.schema,</span>
+<span class="c1">#     indent=&#39;  &#39;, sort_keys=True</span>
+<span class="c1"># ))</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Gemeente Amsterdam.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1399 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>datacatalog package &mdash; datacatalog-core 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/apidoc/datacatalog.html"/>
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="datacatalog.handlers package" href="datacatalog.handlers.html" />
+    <link rel="prev" title="Core of the Data Catalog Project" href="../index.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> datacatalog-core
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">datacatalog package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datacatalog.handlers.html">datacatalog.handlers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.datasets">datacatalog.handlers.datasets module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.openapi">datacatalog.handlers.openapi module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.systemhealth">datacatalog.handlers.systemhealth module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="datacatalog.plugins.html">datacatalog.plugins package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.html#module-datacatalog.plugins">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-datacatalog.application">datacatalog.application module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-datacatalog.authorization">datacatalog.authorization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-datacatalog.config">datacatalog.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-datacatalog.cors">datacatalog.cors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-datacatalog.dcat">datacatalog.dcat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-datacatalog.jwks">datacatalog.jwks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-datacatalog.main">datacatalog.main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-datacatalog.openapi">datacatalog.openapi module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-datacatalog.plugin_interfaces">datacatalog.plugin_interfaces module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-datacatalog">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../openapi.html">OpenAPI definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sphinx_101.html">Sphinx 101</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../sphinx_101.html#rest-formatting">ReST formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sphinx_101.html#roles-added-by-sphinx">Roles added by Sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sphinx_101.html#directives">Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sphinx_101.html#google-style-docstrings">Google-style docstrings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sphinx_101.html#autodoc">Autodoc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sphinx_101.html#intersphinx">Intersphinx</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../todo_list.html">Todo list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#definitions">1. Definitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#contributor">1.1. “Contributor”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#contributor-version">1.2. “Contributor Version”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#contribution">1.3. “Contribution”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#covered-software">1.4. “Covered Software”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#incompatible-with-secondary-licenses">1.5. “Incompatible With Secondary Licenses”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#executable-form">1.6. “Executable Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#id1">1.8. “License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#licensable">1.9. “Licensable”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#modifications">1.10. “Modifications”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#patent-claims-of-a-contributor">1.11. “Patent Claims” of a Contributor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#secondary-license">1.12. “Secondary License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#source-code-form">1.13. “Source Code Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#you-or-your">1.14. “You” (or “Your”)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#license-grants-and-conditions">2. License Grants and Conditions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#grants">2.1. Grants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#effective-date">2.2. Effective Date</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#limitations-on-grant-scope">2.3. Limitations on Grant Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#subsequent-licenses">2.4. Subsequent Licenses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#representation">2.5. Representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#fair-use">2.6. Fair Use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#conditions">2.7. Conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#responsibilities">3. Responsibilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#distribution-of-source-form">3.1. Distribution of Source Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#distribution-of-executable-form">3.2. Distribution of Executable Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#distribution-of-a-larger-work">3.3. Distribution of a Larger Work</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#notices">3.4. Notices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#application-of-additional-terms">3.5. Application of Additional Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#inability-to-comply-due-to-statute-or-regulation">4. Inability to Comply Due to Statute or Regulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#termination">5. Termination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#disclaimer-of-warranty">6. Disclaimer of Warranty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#limitation-of-liability">7. Limitation of Liability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#litigation">8. Litigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#miscellaneous">9. Miscellaneous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#versions-of-the-license">10. Versions of the License</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#new-versions">10.1. New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#effect-of-new-versions">10.2. Effect of New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#modified-versions">10.3. Modified Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../license.html#distributing-source-code-form-that-is-incompatible-with-secondary-licenses">10.4. Distributing Source Code Form that is Incompatible With Secondary Licenses</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#exhibit-a-source-code-form-license-notice">Exhibit A - Source Code Form License Notice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../license.html#exhibit-b-incompatible-with-secondary-licenses-notice">Exhibit B - “Incompatible With Secondary Licenses” Notice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">datacatalog-core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>datacatalog package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/apidoc/datacatalog.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="datacatalog-package">
+<h1>datacatalog package<a class="headerlink" href="#datacatalog-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datacatalog.handlers.html">datacatalog.handlers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.handlers.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.datasets">datacatalog.handlers.datasets module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.openapi">datacatalog.handlers.openapi module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.systemhealth">datacatalog.handlers.systemhealth module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="datacatalog.plugins.html">datacatalog.plugins package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.plugins.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html">datacatalog.plugins.dcat_ap_ams package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#module-datacatalog.plugins.dcat_ap_ams.constants">datacatalog.plugins.dcat_ap_ams.constants module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#module-datacatalog.plugins.dcat_ap_ams.dataset">datacatalog.plugins.dcat_ap_ams.dataset module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#module-datacatalog.plugins.dcat_ap_ams.distribution">datacatalog.plugins.dcat_ap_ams.distribution module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#module-datacatalog.plugins.dcat_ap_ams.fieldtypes">datacatalog.plugins.dcat_ap_ams.fieldtypes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#module-datacatalog.plugins.dcat_ap_ams.logger">datacatalog.plugins.dcat_ap_ams.logger module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#module-datacatalog.plugins.dcat_ap_ams">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="datacatalog.plugins.postgres.html">datacatalog.plugins.postgres package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.postgres.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.postgres.html#module-datacatalog.plugins.postgres.languages">datacatalog.plugins.postgres.languages module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.postgres.html#module-datacatalog.plugins.postgres">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="datacatalog.plugins.swift.html">datacatalog.plugins.swift package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.swift.html#module-datacatalog.plugins.swift">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.plugins.html#module-datacatalog.plugins">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-datacatalog.application">
+<span id="datacatalog-application-module"></span><h2>datacatalog.application module<a class="headerlink" href="#module-datacatalog.application" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="datacatalog.application.Application">
+<em class="property">class </em><code class="descname">Application</code><span class="sig-paren">(</span><em>*args</em>, <em>middlewares=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/application.html#Application"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.application.Application" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">aiohttp.web_app.Application</span></code></p>
+<p>The Application.</p>
+<dl class="attribute">
+<dt id="datacatalog.application.Application._abc_cache">
+<code class="descname">_abc_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#datacatalog.application.Application._abc_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.application.Application._abc_negative_cache">
+<code class="descname">_abc_negative_cache</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#datacatalog.application.Application._abc_negative_cache" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.application.Application._abc_negative_cache_version">
+<code class="descname">_abc_negative_cache_version</code><em class="property"> = 82</em><a class="headerlink" href="#datacatalog.application.Application._abc_negative_cache_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.application.Application._abc_registry">
+<code class="descname">_abc_registry</code><em class="property"> = &lt;_weakrefset.WeakSet object&gt;</em><a class="headerlink" href="#datacatalog.application.Application._abc_registry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="datacatalog.application.Application._initialize_sync">
+<code class="descname">_initialize_sync</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/application.html#Application._initialize_sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.application.Application._initialize_sync" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="datacatalog.application.Application._load_plugins">
+<code class="descname">_load_plugins</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/application.html#Application._load_plugins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.application.Application._load_plugins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.application.Application.config">
+<code class="descname">config</code><a class="headerlink" href="#datacatalog.application.Application.config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.application.Application.hooks">
+<code class="descname">hooks</code><a class="headerlink" href="#datacatalog.application.Application.hooks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.application.Application.pm">
+<code class="descname">pm</code><a class="headerlink" href="#datacatalog.application.Application.pm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.application.Application.pool">
+<code class="descname">pool</code><a class="headerlink" href="#datacatalog.application.Application.pool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.application._on_cleanup">
+<code class="descname">_on_cleanup</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/application.html#_on_cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.application._on_cleanup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.application._on_startup">
+<code class="descname">_on_startup</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/application.html#_on_startup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.application._on_startup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.application._resolve_plugin_path">
+<code class="descname">_resolve_plugin_path</code><span class="sig-paren">(</span><em>fq_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/application.html#_resolve_plugin_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.application._resolve_plugin_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve the path to a plugin (module, class, or instance).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fq_name</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – The fully qualified name of a module, class or instance.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#ModuleNotFoundError" title="(in Python v3.6)"><strong>ModuleNotFoundError</strong></a> – if the module could not be found</li>
+<li><a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#AttributeError" title="(in Python v3.6)"><strong>AttributeError</strong></a> – if the plugin could not be found in the module</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-datacatalog.authorization">
+<span id="datacatalog-authorization-module"></span><h2>datacatalog.authorization module<a class="headerlink" href="#module-datacatalog.authorization" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="datacatalog.authorization._enforce_all_of">
+<code class="descname">_enforce_all_of</code><span class="sig-paren">(</span><em>request</em>, <em>security_requirements</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/authorization.html#_enforce_all_of"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.authorization._enforce_all_of" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/functions.html#bool" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.authorization._extract_api_key_info">
+<code class="descname">_extract_api_key_info</code><span class="sig-paren">(</span><em>request</em>, <em>security_scheme</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/authorization.html#_extract_api_key_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.authorization._extract_api_key_info" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Any" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.authorization._extract_authz_info">
+<code class="descname">_extract_authz_info</code><span class="sig-paren">(</span><em>request</em>, <em>security_definitions</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/authorization.html#_extract_authz_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.authorization._extract_authz_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.authorization._extract_scopes">
+<code class="descname">_extract_scopes</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/authorization.html#_extract_scopes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.authorization._extract_scopes" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Set" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[~T]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.authorization._get_path_spec">
+<code class="descname">_get_path_spec</code><span class="sig-paren">(</span><em>paths</em>, <em>path</em>, <em>method=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/authorization.html#_get_path_spec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.authorization._get_path_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapted from swagger-parser library.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.authorization.authorize">
+<code class="descname">authorize</code><span class="sig-paren">(</span><em>p_method=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/authorization.html#authorize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.authorization.authorize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.authorization.enforce_one_of">
+<code class="descname">enforce_one_of</code><span class="sig-paren">(</span><em>request</em>, <em>security_requirements</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/authorization.html#enforce_one_of"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.authorization.enforce_one_of" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.authorization.middleware">
+<code class="descname">middleware</code><span class="sig-paren">(</span><em>app</em>, <em>handler</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/authorization.html#middleware"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.authorization.middleware" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-datacatalog.config">
+<span id="datacatalog-config-module"></span><h2>datacatalog.config module<a class="headerlink" href="#module-datacatalog.config" title="Permalink to this headline">¶</a></h2>
+<p>Module that loads the configuration settings for all our services.</p>
+<dl class="envvar">
+<dt id="envvar-CONFIG_PATH">
+<code class="descname">CONFIG_PATH</code><a class="headerlink" href="#envvar-CONFIG_PATH" title="Permalink to this definition">¶</a></dt>
+<dd><p>If set, the configuration is loaded from this path.</p>
+</dd></dl>
+
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">config</span>
+<span class="n">CONFIG</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;working_directory&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<dl class="data">
+<dt id="datacatalog.config.DEFAULT_CONFIG_PATHS">
+<code class="descname">DEFAULT_CONFIG_PATHS</code><a class="headerlink" href="#datacatalog.config.DEFAULT_CONFIG_PATHS" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Vartype:</th><td class="field-body">list[<a class="reference external" href="https://docs.python.org/3.6/library/pathlib.html#pathlib.Path" title="(in Python v3.6)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+<p>By default, this variable is initialized with:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="file docutils literal notranslate"><span class="pre">/etc/dcatd.yml</span></code></li>
+<li><code class="file docutils literal notranslate"><span class="pre">./config.yml</span></code></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="datacatalog.config.ConfigDict">
+<em class="property">class </em><code class="descname">ConfigDict</code><a class="reference internal" href="../_modules/datacatalog/config.html#ConfigDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.config.ConfigDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+<dl class="method">
+<dt id="datacatalog.config.ConfigDict.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>schema</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/config.html#ConfigDict.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.config.ConfigDict.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate this config dict using the JSON schema given in <code class="docutils literal notranslate"><span class="pre">schema</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#datacatalog.config.ConfigError" title="datacatalog.config.ConfigError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ConfigError</span></code></a> – if schema validation failed</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="datacatalog.config.ConfigError">
+<em class="property">exception </em><code class="descname">ConfigError</code><a class="reference internal" href="../_modules/datacatalog/config.html#ConfigError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.config.ConfigError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#Exception" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Configuration Error</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Documentation: When is this error raised?</p>
+</div>
+</dd></dl>
+
+<dl class="data">
+<dt>
+<code class="descname">DEFAULT_CONFIG_PATHS</code><em class="property"> = [PosixPath('/etc/dcatd.yml'), PosixPath('config.yml')]</em></dt>
+<dd><p>List of locations to look for a configuration file.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="datacatalog.config._TemplateWithDefaults">
+<em class="property">class </em><code class="descname">_TemplateWithDefaults</code><span class="sig-paren">(</span><em>template</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/config.html#_TemplateWithDefaults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.config._TemplateWithDefaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/string.html#string.Template" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">string.Template</span></code></a></p>
+<p>String template that supports Bash-style default values for interpolation.</p>
+<p>Copied from <a class="reference external" href="https://github.com/docker/compose/blob/master/compose/config/interpolation.py">Docker Compose</a></p>
+<dl class="attribute">
+<dt id="datacatalog.config._TemplateWithDefaults.idpattern">
+<code class="descname">idpattern</code><em class="property"> = '[_a-z][_a-z0-9]*(?::?-[^}]+)?'</em><a class="headerlink" href="#datacatalog.config._TemplateWithDefaults.idpattern" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.config._TemplateWithDefaults.pattern">
+<code class="descname">pattern</code><em class="property"> = re.compile('\n    \\$(?:\n      (?P&lt;escaped&gt;\\$) |   # Escape sequence of two delimiters\n      (?P&lt;named&gt;[_a-z][_a-z0-9]*(?::?-[^}]+)?)      |   # delimiter and a Python identifier\n      {(?P&lt;braced&gt;[_a-z][_a-, re.IGNORECASE|re.VERBOSE)</em><a class="headerlink" href="#datacatalog.config._TemplateWithDefaults.pattern" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="datacatalog.config._TemplateWithDefaults.substitute">
+<code class="descname">substitute</code><span class="sig-paren">(</span><em>**kws</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/config.html#_TemplateWithDefaults.substitute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.config._TemplateWithDefaults.substitute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.config._config_path">
+<code class="descname">_config_path</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/config.html#_config_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.config._config_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines which path to use for the configuration file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#FileNotFoundError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a> – if no config file could be found at any location.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/pathlib.html#pathlib.Path" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.config._config_schema">
+<code class="descname">_config_schema</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/config.html#_config_schema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.config._config_schema" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Mapping" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[~KT, +VT_co]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.config._interpolate">
+<code class="descname">_interpolate</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/config.html#_interpolate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.config._interpolate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Substitute environment variables.</p>
+<p>Recursively find string-type values in the given <code class="docutils literal notranslate"><span class="pre">config</span></code>,
+and try to substitute them with values from <a class="reference external" href="https://docs.python.org/3.6/library/os.html#os.environ" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">os.environ</span></code></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If a substituted value is a string containing only digits (i.e.
+<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str.isdigit" title="(in Python v3.6)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">str.isdigit()</span></code></a> is True), then this function will cast
+it to an integer.  It does not try to do any other type conversion.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – configuration mapping</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.config._load_yaml">
+<code class="descname">_load_yaml</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/config.html#_load_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.config._load_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the config file from <code class="docutils literal notranslate"><span class="pre">path</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><code class="xref py py-exc docutils literal notranslate"><span class="pre">yaml.YAMLError</span></code> – syntax error in YAML.</li>
+<li><a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#KeyError" title="(in Python v3.6)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">KeyError</span></code></a> – Required environment value not found.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.config.load">
+<code class="descname">load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/config.html#load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.config.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load and validate the configuration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#datacatalog.config.ConfigDict" title="datacatalog.config.ConfigDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigDict</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-datacatalog.cors">
+<span id="datacatalog-cors-module"></span><h2>datacatalog.cors module<a class="headerlink" href="#module-datacatalog.cors" title="Permalink to this headline">¶</a></h2>
+<p>CORS handling.</p>
+<p>Everything in this file was copied and adapted from aiolibs-cors, which does not
+support <a class="reference external" href="http://aiohttp.readthedocs.io/en/stable/structures.html#module-aiohttp" title="(in aiohttp v3.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aiohttp</span></code></a> &gt;= 3.x yet.</p>
+<dl class="function">
+<dt id="datacatalog.cors._parse_request_headers">
+<code class="descname">_parse_request_headers</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/cors.html#_parse_request_headers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.cors._parse_request_headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse Access-Control-Request-Headers header or the preflight request</p>
+<p>Returns set of headers in upper case.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.cors._parse_request_method">
+<code class="descname">_parse_request_method</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/cors.html#_parse_request_method"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.cors._parse_request_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse Access-Control-Request-Method header of the preflight request</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.cors.on_response_prepare">
+<code class="descname">on_response_prepare</code><span class="sig-paren">(</span><em>request</em>, <em>response</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/cors.html#on_response_prepare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.cors.on_response_prepare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Non-preflight CORS request response processor. Adapted from aiolibs-cors.
+If request is done on CORS-enabled route, process request parameters
+and set appropriate CORS response headers.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.cors.preflight_handler">
+<code class="descname">preflight_handler</code><span class="sig-paren">(</span><em>*allowed_methods</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/cors.html#preflight_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.cors.preflight_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-datacatalog.dcat">
+<span id="datacatalog-dcat-module"></span><h2>datacatalog.dcat module<a class="headerlink" href="#module-datacatalog.dcat" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="datacatalog.dcat.Date">
+<em class="property">class </em><code class="descname">Date</code><span class="sig-paren">(</span><em>*args</em>, <em>format=None</em>, <em>pattern=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datacatalog.dcat.String" title="datacatalog.dcat.String"><code class="xref py py-class docutils literal notranslate"><span class="pre">datacatalog.dcat.String</span></code></a></p>
+<dl class="method">
+<dt id="datacatalog.dcat.Date.canonicalize">
+<code class="descname">canonicalize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Date.canonicalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Date.canonicalize" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="datacatalog.dcat.Enum">
+<em class="property">class </em><code class="descname">Enum</code><span class="sig-paren">(</span><em>values</em>, <em>*args</em>, <em>allow_empty=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Enum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Enum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datacatalog.dcat.String" title="datacatalog.dcat.String"><code class="xref py py-class docutils literal notranslate"><span class="pre">datacatalog.dcat.String</span></code></a></p>
+<dl class="method">
+<dt id="datacatalog.dcat.Enum.full_text_search_representation">
+<code class="descname">full_text_search_representation</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Enum.full_text_search_representation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Enum.full_text_search_representation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.dcat.Enum.schema">
+<code class="descname">schema</code><a class="headerlink" href="#datacatalog.dcat.Enum.schema" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="datacatalog.dcat.Integer">
+<em class="property">class </em><code class="descname">Integer</code><span class="sig-paren">(</span><em>*args</em>, <em>multipleOf=None</em>, <em>maximum=None</em>, <em>exclusiveMaximum=None</em>, <em>minimum=None</em>, <em>exclusiveMinimum=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Integer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Integer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datacatalog.dcat.Type" title="datacatalog.dcat.Type"><code class="xref py py-class docutils literal notranslate"><span class="pre">datacatalog.dcat.Type</span></code></a></p>
+<dl class="method">
+<dt id="datacatalog.dcat.Integer.canonicalize">
+<code class="descname">canonicalize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Integer.canonicalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Integer.canonicalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="datacatalog.dcat.Integer.full_text_search_representation">
+<code class="descname">full_text_search_representation</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Integer.full_text_search_representation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Integer.full_text_search_representation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.dcat.Integer.schema">
+<code class="descname">schema</code><a class="headerlink" href="#datacatalog.dcat.Integer.schema" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="datacatalog.dcat.Language">
+<em class="property">class </em><code class="descname">Language</code><span class="sig-paren">(</span><em>*args</em>, <em>format=None</em>, <em>pattern=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Language"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Language" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datacatalog.dcat.String" title="datacatalog.dcat.String"><code class="xref py py-class docutils literal notranslate"><span class="pre">datacatalog.dcat.String</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="datacatalog.dcat.List">
+<em class="property">class </em><code class="descname">List</code><span class="sig-paren">(</span><em>item_type</em>, <em>*args</em>, <em>required=False</em>, <em>default=None</em>, <em>allow_empty=True</em>, <em>unique_items=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#List"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.List" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datacatalog.dcat.Type" title="datacatalog.dcat.Type"><code class="xref py py-class docutils literal notranslate"><span class="pre">datacatalog.dcat.Type</span></code></a></p>
+<dl class="method">
+<dt id="datacatalog.dcat.List.canonicalize">
+<code class="descname">canonicalize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#List.canonicalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.List.canonicalize" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#list" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="datacatalog.dcat.List.full_text_search_representation">
+<code class="descname">full_text_search_representation</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#List.full_text_search_representation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.List.full_text_search_representation" title="Permalink to this definition">¶</a></dt>
+<dd><p>We must check whether the given data is really a list, jsonld may
+flatten lists.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.dcat.List.schema">
+<code class="descname">schema</code><a class="headerlink" href="#datacatalog.dcat.List.schema" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="datacatalog.dcat.Object">
+<em class="property">class </em><code class="descname">Object</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datacatalog.dcat.Type" title="datacatalog.dcat.Type"><code class="xref py py-class docutils literal notranslate"><span class="pre">datacatalog.dcat.Type</span></code></a></p>
+<dl class="method">
+<dt id="datacatalog.dcat.Object.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>name</em>, <em>value</em>, <em>before=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Object.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Object.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="datacatalog.dcat.Object.canonicalize">
+<code class="descname">canonicalize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Object.canonicalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Object.canonicalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="datacatalog.dcat.Object.full_text_search_representation">
+<code class="descname">full_text_search_representation</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Object.full_text_search_representation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Object.full_text_search_representation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.dcat.Object.property_names">
+<code class="descname">property_names</code><a class="headerlink" href="#datacatalog.dcat.Object.property_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.dcat.Object.schema">
+<code class="descname">schema</code><a class="headerlink" href="#datacatalog.dcat.Object.schema" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="datacatalog.dcat.OneOf">
+<em class="property">class </em><code class="descname">OneOf</code><span class="sig-paren">(</span><em>*types</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#OneOf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.OneOf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datacatalog.dcat.Type" title="datacatalog.dcat.Type"><code class="xref py py-class docutils literal notranslate"><span class="pre">datacatalog.dcat.Type</span></code></a></p>
+<dl class="method">
+<dt id="datacatalog.dcat.OneOf.canonicalize">
+<code class="descname">canonicalize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#OneOf.canonicalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.OneOf.canonicalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="datacatalog.dcat.OneOf.full_text_search_representation">
+<code class="descname">full_text_search_representation</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#OneOf.full_text_search_representation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.OneOf.full_text_search_representation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.dcat.OneOf.schema">
+<code class="descname">schema</code><a class="headerlink" href="#datacatalog.dcat.OneOf.schema" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="datacatalog.dcat.OneOf.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#OneOf.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.OneOf.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate the data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the Type for which validation succeeded. See also
+<a class="reference internal" href="#datacatalog.dcat.OneOf.validate" title="datacatalog.dcat.OneOf.validate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">OneOf.validate()</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#datacatalog.dcat.Type" title="datacatalog.dcat.Type">Type</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="datacatalog.dcat.PlainTextLine">
+<em class="property">class </em><code class="descname">PlainTextLine</code><span class="sig-paren">(</span><em>*args</em>, <em>pattern=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#PlainTextLine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.PlainTextLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datacatalog.dcat.String" title="datacatalog.dcat.String"><code class="xref py py-class docutils literal notranslate"><span class="pre">datacatalog.dcat.String</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="datacatalog.dcat.String">
+<em class="property">class </em><code class="descname">String</code><span class="sig-paren">(</span><em>*args</em>, <em>pattern=None</em>, <em>max_length=None</em>, <em>allow_empty=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#String"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.String" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datacatalog.dcat.Type" title="datacatalog.dcat.Type"><code class="xref py py-class docutils literal notranslate"><span class="pre">datacatalog.dcat.Type</span></code></a></p>
+<dl class="method">
+<dt id="datacatalog.dcat.String.canonicalize">
+<code class="descname">canonicalize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#String.canonicalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.String.canonicalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="datacatalog.dcat.String.full_text_search_representation">
+<code class="descname">full_text_search_representation</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#String.full_text_search_representation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.String.full_text_search_representation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.dcat.String.schema">
+<code class="descname">schema</code><a class="headerlink" href="#datacatalog.dcat.String.schema" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="datacatalog.dcat.Type">
+<em class="property">class </em><code class="descname">Type</code><span class="sig-paren">(</span><em>*args</em>, <em>title=None</em>, <em>description=None</em>, <em>required=False</em>, <em>default=None</em>, <em>examples=None</em>, <em>format=None</em>, <em>read_only=None</em>, <em>write_only=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/functions.html#object" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="method">
+<dt id="datacatalog.dcat.Type.canonicalize">
+<code class="descname">canonicalize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Type.canonicalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Type.canonicalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="datacatalog.dcat.Type.full_text_search_representation">
+<code class="descname">full_text_search_representation</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Type.full_text_search_representation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Type.full_text_search_representation" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.dcat.Type.schema">
+<code class="descname">schema</code><a class="headerlink" href="#datacatalog.dcat.Type.schema" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="datacatalog.dcat.Type.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/dcat.html#Type.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.dcat.Type.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate the data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the Type for which validation succeeded. See also
+<a class="reference internal" href="#datacatalog.dcat.OneOf.validate" title="datacatalog.dcat.OneOf.validate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">OneOf.validate()</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#datacatalog.dcat.Type" title="datacatalog.dcat.Type">Type</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datacatalog.jwks">
+<span id="datacatalog-jwks-module"></span><h2>datacatalog.jwks module<a class="headerlink" href="#module-datacatalog.jwks" title="Permalink to this headline">¶</a></h2>
+<p>Helper module to handle JWKS stuff.</p>
+<p>This module provides only one method: <a class="reference internal" href="#datacatalog.jwks.load" title="datacatalog.jwks.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a>, which may raise a
+<a class="reference internal" href="#datacatalog.jwks.JWKError" title="datacatalog.jwks.JWKError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">JWKError</span></code></a>.</p>
+<dl class="exception">
+<dt id="datacatalog.jwks.JWKError">
+<em class="property">exception </em><code class="descname">JWKError</code><a class="reference internal" href="../_modules/datacatalog/jwks.html#JWKError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.jwks.JWKError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#Exception" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Error raised when parsing a JWKSet fails.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.jwks.MappingProxyType">
+<code class="descname">MappingProxyType</code><a class="headerlink" href="#datacatalog.jwks.MappingProxyType" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">builtins.mappingproxy</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.jwks._Key">
+<code class="descname">_Key</code><a class="headerlink" href="#datacatalog.jwks._Key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Immutable type for key storage</p>
+<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">datacatalog.jwks.Key</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="datacatalog.jwks._KeySet">
+<code class="descname">_KeySet</code><a class="headerlink" href="#datacatalog.jwks._KeySet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Immutable type for key sets</p>
+<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">datacatalog.jwks.KeySet</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.jwks._load_ecdsa">
+<code class="descname">_load_ecdsa</code><span class="sig-paren">(</span><em>key</em>, <em>is_verifier</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/jwks.html#_load_ecdsa"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.jwks._load_ecdsa" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.jwks.default_backend">
+<code class="descname">default_backend</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cryptography/hazmat/backends.html#default_backend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.jwks.default_backend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.jwks.load">
+<code class="descname">load</code><span class="sig-paren">(</span><em>jwks</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/jwks.html#load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.jwks.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a JWKSet and return a dictionary that maps key IDs on keys.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>jwks</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><em>str</em></a>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference internal" href="#datacatalog.jwks.JWKError" title="datacatalog.jwks.JWKError"><strong>JWKError</strong></a> – when parsing fails</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-datacatalog.main">
+<span id="datacatalog-main-module"></span><h2>datacatalog.main module<a class="headerlink" href="#module-datacatalog.main" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="datacatalog.main.main">
+<code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/main.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.main.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-datacatalog.openapi">
+<span id="datacatalog-openapi-module"></span><h2>datacatalog.openapi module<a class="headerlink" href="#module-datacatalog.openapi" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-datacatalog.plugin_interfaces">
+<span id="datacatalog-plugin-interfaces-module"></span><h2>datacatalog.plugin_interfaces module<a class="headerlink" href="#module-datacatalog.plugin_interfaces" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.deinitialize">
+<code class="descname">deinitialize</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#deinitialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.deinitialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the application shuts down.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>app</strong> – the <code class="xref py py-class docutils literal notranslate"><span class="pre">Application</span></code> object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.health_check">
+<code class="descname">health_check</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#health_check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.health_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Health check.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">If unhealthy, a string describing the problem, otherwise <code class="docutils literal notranslate"><span class="pre">None</span></code>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#Exception" title="(in Python v3.6)"><strong>Exception</strong></a> – if that’s easier than returning a string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.initialize">
+<code class="descname">initialize</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called by the plugin-manager when the event loop starts.</p>
+<p>If your plugin needs to do some initialization even before the event loop
+starts, you’ll need to do this in <a class="reference internal" href="#datacatalog.plugin_interfaces.initialize_sync" title="datacatalog.plugin_interfaces.initialize_sync"><code class="xref py py-func docutils literal notranslate"><span class="pre">initialize_sync()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>app</strong> – the <code class="xref py py-class docutils literal notranslate"><span class="pre">Application</span></code> object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.initialize_sync">
+<code class="descname">initialize_sync</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#initialize_sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.initialize_sync" title="Permalink to this definition">¶</a></dt>
+<dd><p>The first method to be called by the plugin-manager.</p>
+<p>If your plugin needs to do some <em>asynchronous</em> initialization, try
+<a class="reference internal" href="#datacatalog.plugin_interfaces.initialize" title="datacatalog.plugin_interfaces.initialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">initialize()</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>app</strong> – the <code class="xref py py-class docutils literal notranslate"><span class="pre">Application</span></code> object.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal notranslate"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.mds_canonicalize">
+<code class="descname">mds_canonicalize</code><span class="sig-paren">(</span><em>data</em>, <em>id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#mds_canonicalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.mds_canonicalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Canonicalize the given document according to this schema.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dict with canonicalized entries</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.mds_context">
+<code class="descname">mds_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#mds_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.mds_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context of the metadata schema.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.mds_full_text_search_representation">
+<code class="descname">mds_full_text_search_representation</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#mds_full_text_search_representation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.mds_full_text_search_representation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Full text search representation of the given data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.mds_json_schema">
+<code class="descname">mds_json_schema</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#mds_json_schema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.mds_json_schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>The json schema.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.mds_name">
+<code class="descname">mds_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#mds_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.mds_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The schema this plugin provides.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a string that is safe for use in a URL segment; ie. every string
+that matches regular expression
+<code class="docutils literal notranslate"><span class="pre">^(?:%[a-f0-9]{2}|[-\w:&#64;!$&amp;'()*+,;=.~])*$</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.search_search">
+<code class="descname">search_search</code><span class="sig-paren">(</span><em>app</em>, <em>q</em>, <em>sortpath</em>, <em>result_info</em>, <em>facets=None</em>, <em>limit=None</em>, <em>offset=0</em>, <em>filters=None</em>, <em>iso_639_1_code=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#search_search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.search_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>app</strong> – global dictionary</li>
+<li><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the query</li>
+<li><strong>sortproperty</strong> – the property to sort by. Must be a top-level object property.</li>
+<li><strong>result_info</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Mutablemapping</span></code>[~KT, ~VT]) – mapping in which all encountered facets in the result set are
+put</li>
+<li><strong>facets</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Iterable" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]) – a list of facets to return and count</li>
+<li><strong>limit</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – maximum hits to be returned</li>
+<li><strong>offset</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#int" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – offset in resultset</li>
+<li><strong>filters</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Mapping" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Mapping" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Union" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Set" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]]]]) – mapping of JSON pointer -&gt; value, used to filter on some
+value.</li>
+<li><strong>iso_639_1_code</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the language of the query</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-class docutils literal notranslate"><span class="pre">Asyncgenerator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>], <code class="docutils literal notranslate"><span class="pre">None</span></code>]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A generator over the search results (id, doc, metadata)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">ValueError if filter syntax is invalid, if the ISO 639-1 code is
+not recognized, or if the offset is invalid.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.storage_create">
+<code class="descname">storage_create</code><span class="sig-paren">(</span><em>app</em>, <em>docid</em>, <em>doc</em>, <em>searchable_text</em>, <em>iso_639_1_code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#storage_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.storage_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store a new document.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>docid</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the ID under which to store this document. May or may not
+already exist in the data store.</li>
+<li><strong>doc</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – the document to store; a “JSON dictionary”.</li>
+<li><strong>searchable_text</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – this will be indexed for free-text search.</li>
+<li><strong>iso_639_1_code</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the language of the document.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">new ETag</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">KeyError if the docid already exists.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.storage_delete">
+<code class="descname">storage_delete</code><span class="sig-paren">(</span><em>app</em>, <em>docid</em>, <em>etags</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#storage_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.storage_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete document only if it has one of the provided Etags.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>docid</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the ID of the document to delete.</li>
+<li><strong>etags</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Set" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the last known ETags of this document.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first">ValueError if none of the given etags match the stored etag.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first">KeyError if a document with the given id doesn’t exist.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.storage_extract">
+<code class="descname">storage_extract</code><span class="sig-paren">(</span><em>app</em>, <em>ptr</em>, <em>distinct=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#storage_extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.storage_extract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator to extract values from the stored documents, optionally
+distinct.</p>
+<p>Used to, for example, get a list of all tags or ids in the system. Or to
+get all documents stored in the system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ptr</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – JSON pointer to the element.</li>
+<li><strong>distinct</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/functions.html#bool" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Return only distinct values.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first">ValueError if filter syntax is invalid.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Generator" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.storage_id">
+<code class="descname">storage_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#storage_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.storage_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>New unique identifier.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.storage_retrieve">
+<code class="descname">storage_retrieve</code><span class="sig-paren">(</span><em>app</em>, <em>docid</em>, <em>etags</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#storage_retrieve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.storage_retrieve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get document and corresponsing etag by id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>docid</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – document id</li>
+<li><strong>etags</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Set" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]) – None, or a set of Etags</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>], <a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A tuple. The first element is either the document or None if the
+document’s Etag corresponds to one of the given etags. The second
+element is the current etag.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.6/library/exceptions.html#KeyError" title="(in Python v3.6)"><strong>KeyError</strong></a> – if not found</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugin_interfaces.storage_update">
+<code class="descname">storage_update</code><span class="sig-paren">(</span><em>app</em>, <em>docid</em>, <em>doc</em>, <em>searchable_text</em>, <em>etags</em>, <em>iso_639_1_code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugin_interfaces.html#storage_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugin_interfaces.storage_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the document with the given ID only if it has one of the provided Etags.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>docid</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the ID under which to store this document. May or may not
+already exist in the data store.</li>
+<li><strong>doc</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – the document to store; a “JSON dictionary”.</li>
+<li><strong>searchable_text</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – this will be indexed for free-text search.</li>
+<li><strong>etags</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Set" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – one or more Etags.</li>
+<li><strong>iso_639_1_code</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – the language of the document.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">new ETag</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first">ValueError if none of the given etags match the stored etag.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">KeyError if the docid doesn’t exist.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-datacatalog">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-datacatalog" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="datacatalog.handlers.html" class="btn btn-neutral float-right" title="datacatalog.handlers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral" title="Core of the Data Catalog Project" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Gemeente Amsterdam.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

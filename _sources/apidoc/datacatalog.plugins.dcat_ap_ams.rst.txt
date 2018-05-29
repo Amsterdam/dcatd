@@ -1,0 +1,54 @@
+datacatalog.plugins.dcat_ap_ams package
+=======================================
+
+Submodules
+----------
+
+datacatalog.plugins.dcat_ap_ams.constants module
+------------------------------------------------
+
+.. automodule:: datacatalog.plugins.dcat_ap_ams.constants
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.plugins.dcat_ap_ams.dataset module
+----------------------------------------------
+
+.. automodule:: datacatalog.plugins.dcat_ap_ams.dataset
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.plugins.dcat_ap_ams.distribution module
+---------------------------------------------------
+
+.. automodule:: datacatalog.plugins.dcat_ap_ams.distribution
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.plugins.dcat_ap_ams.fieldtypes module
+-------------------------------------------------
+
+.. automodule:: datacatalog.plugins.dcat_ap_ams.fieldtypes
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.plugins.dcat_ap_ams.logger module
+---------------------------------------------
+
+.. automodule:: datacatalog.plugins.dcat_ap_ams.logger
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: datacatalog.plugins.dcat_ap_ams
+    :members:
+    :undoc-members:
+    :show-inheritance:

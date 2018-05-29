@@ -1,0 +1,538 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>datacatalog.config &mdash; datacatalog-core 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/_modules/datacatalog/config.html"/>
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> datacatalog-core
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc/datacatalog.html">datacatalog package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html">datacatalog.handlers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.datasets">datacatalog.handlers.datasets module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.openapi">datacatalog.handlers.openapi module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.systemhealth">datacatalog.handlers.systemhealth module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../apidoc/datacatalog.plugins.html">datacatalog.plugins package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.plugins.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.plugins.html#module-datacatalog.plugins">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.application">datacatalog.application module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.authorization">datacatalog.authorization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.config">datacatalog.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.cors">datacatalog.cors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.dcat">datacatalog.dcat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.jwks">datacatalog.jwks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.main">datacatalog.main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.openapi">datacatalog.openapi module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.plugin_interfaces">datacatalog.plugin_interfaces module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../openapi.html">OpenAPI definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sphinx_101.html">Sphinx 101</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#rest-formatting">ReST formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#roles-added-by-sphinx">Roles added by Sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#directives">Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#google-style-docstrings">Google-style docstrings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#autodoc">Autodoc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#intersphinx">Intersphinx</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../todo_list.html">Todo list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#definitions">1. Definitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#contributor">1.1. “Contributor”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#contributor-version">1.2. “Contributor Version”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#contribution">1.3. “Contribution”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#covered-software">1.4. “Covered Software”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#incompatible-with-secondary-licenses">1.5. “Incompatible With Secondary Licenses”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#executable-form">1.6. “Executable Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#id1">1.8. “License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#licensable">1.9. “Licensable”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#modifications">1.10. “Modifications”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#patent-claims-of-a-contributor">1.11. “Patent Claims” of a Contributor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#secondary-license">1.12. “Secondary License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#source-code-form">1.13. “Source Code Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#you-or-your">1.14. “You” (or “Your”)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#license-grants-and-conditions">2. License Grants and Conditions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#grants">2.1. Grants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#effective-date">2.2. Effective Date</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#limitations-on-grant-scope">2.3. Limitations on Grant Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#subsequent-licenses">2.4. Subsequent Licenses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#representation">2.5. Representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#fair-use">2.6. Fair Use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#conditions">2.7. Conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#responsibilities">3. Responsibilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distribution-of-source-form">3.1. Distribution of Source Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distribution-of-executable-form">3.2. Distribution of Executable Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distribution-of-a-larger-work">3.3. Distribution of a Larger Work</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#notices">3.4. Notices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#application-of-additional-terms">3.5. Application of Additional Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#inability-to-comply-due-to-statute-or-regulation">4. Inability to Comply Due to Statute or Regulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#termination">5. Termination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#disclaimer-of-warranty">6. Disclaimer of Warranty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#limitation-of-liability">7. Limitation of Liability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#litigation">8. Litigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#miscellaneous">9. Miscellaneous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#versions-of-the-license">10. Versions of the License</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#new-versions">10.1. New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#effect-of-new-versions">10.2. Effect of New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#modified-versions">10.3. Modified Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distributing-source-code-form-that-is-incompatible-with-secondary-licenses">10.4. Distributing Source Code Form that is Incompatible With Secondary Licenses</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#exhibit-a-source-code-form-license-notice">Exhibit A - Source Code Form License Notice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#exhibit-b-incompatible-with-secondary-licenses-notice">Exhibit B - “Incompatible With Secondary Licenses” Notice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">datacatalog-core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>datacatalog.config</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for datacatalog.config</h1><div class="highlight"><pre>
+<span></span><span class="c1"># language=rst</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module that loads the configuration settings for all our services.</span>
+
+<span class="sd">..  envvar:: CONFIG_PATH</span>
+
+<span class="sd">    If set, the configuration is loaded from this path.</span>
+
+<span class="sd">Example usage::</span>
+
+<span class="sd">    from . import config</span>
+<span class="sd">    CONFIG = config.load()</span>
+<span class="sd">    os.chdir(CONFIG[&#39;working_directory&#39;])</span>
+
+
+<span class="sd">..  py:data:: DEFAULT_CONFIG_PATHS</span>
+
+<span class="sd">    :vartype: list[`pathlib.Path`]</span>
+
+<span class="sd">    By default, this variable is initialized with:</span>
+
+<span class="sd">        -   :file:`/etc/dcatd.yml`</span>
+<span class="sd">        -   :file:`./config.yml`</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># stdlib imports:</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">logging.config</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">T</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">ChainMap</span>
+
+<span class="c1"># external dependencies:</span>
+<span class="kn">import</span> <span class="nn">jsonschema</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="k">import</span> <span class="n">resource_stream</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;datacatalog&#39;</span><span class="p">)</span>
+
+
+<span class="n">_CONFIG_SCHEMA_RESOURCE</span> <span class="o">=</span> <span class="s1">&#39;config_schema.yml&#39;</span>
+
+
+<span class="n">DEFAULT_CONFIG_PATHS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/etc&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;dcatd.yml&#39;</span><span class="p">,</span>
+    <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;config.yml&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;List of locations to look for a configuration file.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="ConfigDict"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.config.ConfigDict">[docs]</a><span class="k">class</span> <span class="nc">ConfigDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<div class="viewcode-block" id="ConfigDict.validate"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.config.ConfigDict.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+        <span class="c1"># language=rst</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate this config dict using the JSON schema given in ``schema``.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ConfigError: if schema validation failed</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">jsonschema</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">jsonschema</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">SchemaError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">(</span><span class="s2">&quot;Invalid JSON schema definition.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="n">jsonschema</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">(</span><span class="s2">&quot;Schema validation failed.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div></div>
+
+
+<div class="viewcode-block" id="ConfigError"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.config.ConfigError">[docs]</a><span class="k">class</span> <span class="nc">ConfigError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot;Configuration Error</span>
+
+<span class="sd">    .. todo:: Documentation: When is this error raised?</span>
+
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="_config_schema"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.config._config_schema">[docs]</a><span class="k">def</span> <span class="nf">_config_schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Mapping</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">resource_stream</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">_CONFIG_SCHEMA_RESOURCE</span><span class="p">)</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;Couldn&#39;t load bundled config_schema &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span>
+            <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">(</span><span class="n">error_msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_CONFIG_SCHEMA_RESOURCE</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span></div>
+
+
+<div class="viewcode-block" id="_load_yaml"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.config._load_yaml">[docs]</a><span class="k">def</span> <span class="nf">_load_yaml</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot;Read the config file from ``path``.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        yaml.YAMLError: syntax error in YAML.</span>
+<span class="sd">        KeyError: Required environment value not found.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;Couldn&#39;t load yaml file &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">(</span><span class="n">error_msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_interpolate</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;Missing required environment variable while loading file &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span>
+            <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">(</span><span class="n">error_msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">()</span> <span class="kn">from</span> <span class="nn">e</span></div>
+
+
+<div class="viewcode-block" id="_interpolate"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.config._interpolate">[docs]</a><span class="k">def</span> <span class="nf">_interpolate</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot;Substitute environment variables.</span>
+
+<span class="sd">    Recursively find string-type values in the given ``config``,</span>
+<span class="sd">    and try to substitute them with values from :data:`os.environ`.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        If a substituted value is a string containing only digits (i.e.</span>
+<span class="sd">        :py:meth:`str.isdigit()` is True), then this function will cast</span>
+<span class="sd">        it to an integer.  It does not try to do any other type conversion.</span>
+
+<span class="sd">    :param config: configuration mapping</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">_TemplateWithDefaults</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;Could not substitute: </span><span class="si">{}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">(</span><span class="n">error_msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;Invalid substitution: </span><span class="si">{}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">(</span><span class="n">error_msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="ow">or</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">interpolate_recursively</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Dict</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">List</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">interpolate</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">interpolate_recursively</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">interpolate_recursively</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">interpolate_recursively</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">config</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="_TemplateWithDefaults"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.config._TemplateWithDefaults">[docs]</a><span class="k">class</span> <span class="nc">_TemplateWithDefaults</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">Template</span><span class="p">):</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    String template that supports Bash-style default values for interpolation.</span>
+
+<span class="sd">    Copied from `Docker Compose</span>
+<span class="sd">    &lt;https://github.com/docker/compose/blob/master/compose/config/interpolation.py&gt;`_</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># string.Template uses cls.idpattern to define identifiers:</span>
+    <span class="n">idpattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;[_a-z][_a-z0-9]*(?::?-[^}]+)?&#39;</span>
+
+    <span class="c1"># Modified from python2.7/string.py</span>
+<div class="viewcode-block" id="_TemplateWithDefaults.substitute"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.config._TemplateWithDefaults.substitute">[docs]</a>    <span class="k">def</span> <span class="nf">substitute</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;descriptor &#39;substitute&#39; of &#39;Template&#39; object &quot;</span>
+                            <span class="s2">&quot;needs an argument&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>  <span class="c1"># allow the &quot;self&quot; keyword be passed</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Too many positional arguments&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">:</span>
+            <span class="n">mapping</span> <span class="o">=</span> <span class="n">kws</span>
+        <span class="k">elif</span> <span class="n">kws</span><span class="p">:</span>
+            <span class="n">mapping</span> <span class="o">=</span> <span class="n">ChainMap</span><span class="p">(</span><span class="n">kws</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mapping</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Helper function for .sub()</span>
+        <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="n">mo</span><span class="p">):</span>
+            <span class="c1"># Check the most common path first.</span>
+            <span class="n">named</span> <span class="o">=</span> <span class="n">mo</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;named&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mo</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;braced&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">named</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;:-&#39;</span> <span class="ow">in</span> <span class="n">named</span><span class="p">:</span>
+                    <span class="n">var</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">named</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s1">&#39;:-&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">or</span> <span class="n">default</span>
+                <span class="k">if</span> <span class="s1">&#39;-&#39;</span> <span class="ow">in</span> <span class="n">named</span><span class="p">:</span>
+                    <span class="n">var</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">named</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">mapping</span><span class="p">[</span><span class="n">named</span><span class="p">]</span>
+                <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">val</span><span class="p">,)</span>
+            <span class="k">if</span> <span class="n">mo</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;escaped&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span>
+            <span class="k">if</span> <span class="n">mo</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;invalid&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_invalid</span><span class="p">(</span><span class="n">mo</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unrecognized named group in pattern&#39;</span><span class="p">,</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">convert</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="_config_path"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.config._config_path">[docs]</a><span class="k">def</span> <span class="nf">_config_path</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot;Determines which path to use for the configuration file.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FileNotFoundError: if no config file could be found at any location.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;CONFIG_PATH&#39;</span><span class="p">))]</span> \
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;CONFIG_PATH&#39;</span><span class="p">)</span> \
+        <span class="k">else</span> <span class="n">DEFAULT_CONFIG_PATHS</span>
+
+    <span class="n">filtered_config_paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">path</span><span class="p">:</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="n">path</span><span class="o">.</span><span class="n">is_file</span><span class="p">(),</span>
+        <span class="n">config_paths</span>
+    <span class="p">))</span>
+
+    <span class="k">if</span> <span class="mi">0</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered_config_paths</span><span class="p">):</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="s1">&#39;No configfile found at </span><span class="si">{}</span><span class="s1">&#39;</span>
+        <span class="n">paths_as_string</span> <span class="o">=</span> <span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">config_paths</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">error_msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">paths_as_string</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">filtered_config_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.config.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ConfigDict</span><span class="p">:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot; Load and validate the configuration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config_path</span> <span class="o">=</span> <span class="n">_config_path</span><span class="p">()</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">_load_yaml</span><span class="p">(</span><span class="n">config_path</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s1">&#39;logging&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ConfigError</span><span class="p">(</span>
+            <span class="s2">&quot;No &#39;logging&#39; entry in config file </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dictConfig</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;logging&#39;</span><span class="p">])</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loaded configuration from &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">config_path</span><span class="p">))</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">_config_schema</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">config</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Gemeente Amsterdam.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

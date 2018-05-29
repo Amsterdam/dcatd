@@ -1,0 +1,19 @@
+datacatalog.plugins package
+===========================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    datacatalog.plugins.dcat_ap_ams
+    datacatalog.plugins.postgres
+    datacatalog.plugins.swift
+
+Module contents
+---------------
+
+.. automodule:: datacatalog.plugins
+    :members:
+    :undoc-members:
+    :show-inheritance:

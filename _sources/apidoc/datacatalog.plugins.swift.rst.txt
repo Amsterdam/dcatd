@@ -1,0 +1,10 @@
+datacatalog.plugins.swift package
+=================================
+
+Module contents
+---------------
+
+.. automodule:: datacatalog.plugins.swift
+    :members:
+    :undoc-members:
+    :show-inheritance:

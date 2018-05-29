@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>datacatalog.cors &mdash; datacatalog-core 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/_modules/datacatalog/cors.html"/>
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> datacatalog-core
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../apidoc/datacatalog.html">datacatalog package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html">datacatalog.handlers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.datasets">datacatalog.handlers.datasets module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.openapi">datacatalog.handlers.openapi module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.systemhealth">datacatalog.handlers.systemhealth module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../apidoc/datacatalog.plugins.html">datacatalog.plugins package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.plugins.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../apidoc/datacatalog.plugins.html#module-datacatalog.plugins">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.application">datacatalog.application module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.authorization">datacatalog.authorization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.config">datacatalog.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.cors">datacatalog.cors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.dcat">datacatalog.dcat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.jwks">datacatalog.jwks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.main">datacatalog.main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.openapi">datacatalog.openapi module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog.plugin_interfaces">datacatalog.plugin_interfaces module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apidoc/datacatalog.html#module-datacatalog">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../openapi.html">OpenAPI definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sphinx_101.html">Sphinx 101</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#rest-formatting">ReST formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#roles-added-by-sphinx">Roles added by Sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#directives">Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#google-style-docstrings">Google-style docstrings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#autodoc">Autodoc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sphinx_101.html#intersphinx">Intersphinx</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../todo_list.html">Todo list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#definitions">1. Definitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#contributor">1.1. “Contributor”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#contributor-version">1.2. “Contributor Version”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#contribution">1.3. “Contribution”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#covered-software">1.4. “Covered Software”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#incompatible-with-secondary-licenses">1.5. “Incompatible With Secondary Licenses”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#executable-form">1.6. “Executable Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#id1">1.8. “License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#licensable">1.9. “Licensable”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#modifications">1.10. “Modifications”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#patent-claims-of-a-contributor">1.11. “Patent Claims” of a Contributor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#secondary-license">1.12. “Secondary License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#source-code-form">1.13. “Source Code Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#you-or-your">1.14. “You” (or “Your”)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#license-grants-and-conditions">2. License Grants and Conditions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#grants">2.1. Grants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#effective-date">2.2. Effective Date</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#limitations-on-grant-scope">2.3. Limitations on Grant Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#subsequent-licenses">2.4. Subsequent Licenses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#representation">2.5. Representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#fair-use">2.6. Fair Use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#conditions">2.7. Conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#responsibilities">3. Responsibilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distribution-of-source-form">3.1. Distribution of Source Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distribution-of-executable-form">3.2. Distribution of Executable Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distribution-of-a-larger-work">3.3. Distribution of a Larger Work</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#notices">3.4. Notices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#application-of-additional-terms">3.5. Application of Additional Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#inability-to-comply-due-to-statute-or-regulation">4. Inability to Comply Due to Statute or Regulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#termination">5. Termination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#disclaimer-of-warranty">6. Disclaimer of Warranty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#limitation-of-liability">7. Limitation of Liability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#litigation">8. Litigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#miscellaneous">9. Miscellaneous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#versions-of-the-license">10. Versions of the License</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#new-versions">10.1. New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#effect-of-new-versions">10.2. Effect of New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#modified-versions">10.3. Modified Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../license.html#distributing-source-code-form-that-is-incompatible-with-secondary-licenses">10.4. Distributing Source Code Form that is Incompatible With Secondary Licenses</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#exhibit-a-source-code-form-license-notice">Exhibit A - Source Code Form License Notice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../license.html#exhibit-b-incompatible-with-secondary-licenses-notice">Exhibit B - “Incompatible With Secondary Licenses” Notice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">datacatalog-core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>datacatalog.cors</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for datacatalog.cors</h1><div class="highlight"><pre>
+<span></span><span class="c1"># language=rst</span>
+<span class="sd">&quot;&quot;&quot; CORS handling.</span>
+
+<span class="sd">Everything in this file was copied and adapted from aiolibs-cors, which does not</span>
+<span class="sd">support `aiohttp` &gt;= 3.x yet.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">aiohttp.hdrs</span> <span class="k">as</span> <span class="nn">hdrs</span>
+<span class="kn">import</span> <span class="nn">aiohttp.web</span> <span class="k">as</span> <span class="nn">web</span>
+
+
+<span class="c1"># Positive response to Access-Control-Allow-Credentials</span>
+<span class="n">_TRUE</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span>
+<span class="c1"># CORS simple response headers:</span>
+<span class="c1"># &lt;http://www.w3.org/TR/cors/#simple-response-header&gt;</span>
+<span class="n">_SIMPLE_RESPONSE_HEADERS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span>
+    <span class="n">hdrs</span><span class="o">.</span><span class="n">CACHE_CONTROL</span><span class="p">,</span>
+    <span class="n">hdrs</span><span class="o">.</span><span class="n">CONTENT_LANGUAGE</span><span class="p">,</span>
+    <span class="n">hdrs</span><span class="o">.</span><span class="n">CONTENT_TYPE</span><span class="p">,</span>
+    <span class="n">hdrs</span><span class="o">.</span><span class="n">EXPIRES</span><span class="p">,</span>
+    <span class="n">hdrs</span><span class="o">.</span><span class="n">LAST_MODIFIED</span><span class="p">,</span>
+    <span class="n">hdrs</span><span class="o">.</span><span class="n">PRAGMA</span>
+<span class="p">])</span>
+
+
+<div class="viewcode-block" id="on_response_prepare"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.cors.on_response_prepare">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">on_response_prepare</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">Request</span><span class="p">,</span>
+                              <span class="n">response</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">StreamResponse</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Non-preflight CORS request response processor. Adapted from aiolibs-cors.</span>
+<span class="sd">    If request is done on CORS-enabled route, process request parameters</span>
+<span class="sd">    and set appropriate CORS response headers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># preflight requests have an own handler</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;OPTIONS&#39;</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="c1"># Processing response of non-preflight CORS-enabled request.</span>
+
+    <span class="c1"># Handle according to part 6.1 of the CORS specification.</span>
+
+    <span class="n">origin</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">hdrs</span><span class="o">.</span><span class="n">ORIGIN</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Terminate CORS according to CORS 6.1.1.</span>
+        <span class="k">return</span>
+
+    <span class="k">assert</span> <span class="n">hdrs</span><span class="o">.</span><span class="n">ACCESS_CONTROL_ALLOW_ORIGIN</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span>
+    <span class="k">assert</span> <span class="n">hdrs</span><span class="o">.</span><span class="n">ACCESS_CONTROL_ALLOW_CREDENTIALS</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span>
+    <span class="k">assert</span> <span class="n">hdrs</span><span class="o">.</span><span class="n">ACCESS_CONTROL_EXPOSE_HEADERS</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span>
+
+    <span class="c1"># Process according to CORS 6.1.4.</span>
+    <span class="c1"># Set exposed headers (server headers exposed to client) before</span>
+    <span class="c1"># setting any other headers.</span>
+    <span class="c1"># Expose all headers that are set in response.</span>
+    <span class="n">exposed_headers</span> <span class="o">=</span> \
+        <span class="nb">frozenset</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="n">_SIMPLE_RESPONSE_HEADERS</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">hdrs</span><span class="o">.</span><span class="n">ACCESS_CONTROL_EXPOSE_HEADERS</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">exposed_headers</span><span class="p">)</span>
+
+    <span class="c1"># Process according to CORS 6.1.3.</span>
+    <span class="c1"># Set allowed origin.</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">hdrs</span><span class="o">.</span><span class="n">ACCESS_CONTROL_ALLOW_ORIGIN</span><span class="p">]</span> <span class="o">=</span> <span class="n">origin</span>
+    <span class="c1"># Set allowed credentials.</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">hdrs</span><span class="o">.</span><span class="n">ACCESS_CONTROL_ALLOW_CREDENTIALS</span><span class="p">]</span> <span class="o">=</span> <span class="n">_TRUE</span></div>
+
+
+<div class="viewcode-block" id="_parse_request_method"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.cors._parse_request_method">[docs]</a><span class="k">def</span> <span class="nf">_parse_request_method</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">Request</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse Access-Control-Request-Method header of the preflight request</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">hdrs</span><span class="o">.</span><span class="n">ACCESS_CONTROL_REQUEST_METHOD</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPForbidden</span><span class="p">(</span>
+            <span class="n">text</span><span class="o">=</span><span class="s2">&quot;CORS preflight request failed: &quot;</span>
+                 <span class="s2">&quot;&#39;Access-Control-Request-Method&#39; header is not specified&quot;</span><span class="p">)</span>
+
+    <span class="c1"># FIXME: validate method string (ABNF: method = token), if parsing</span>
+    <span class="c1"># fails, raise HTTPForbidden.</span>
+
+    <span class="k">return</span> <span class="n">method</span></div>
+
+
+<div class="viewcode-block" id="_parse_request_headers"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.cors._parse_request_headers">[docs]</a><span class="k">def</span> <span class="nf">_parse_request_headers</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">Request</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse Access-Control-Request-Headers header or the preflight request</span>
+
+<span class="sd">    Returns set of headers in upper case.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">hdrs</span><span class="o">.</span><span class="n">ACCESS_CONTROL_REQUEST_HEADERS</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">frozenset</span><span class="p">()</span>
+
+    <span class="c1"># FIXME: validate each header string, if parsing fails, raise</span>
+    <span class="c1"># HTTPForbidden.</span>
+    <span class="c1"># FIXME: check, that headers split and stripped correctly (according</span>
+    <span class="c1"># to ABNF).</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot; </span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">headers</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span>
+    <span class="c1"># pylint: disable=bad-builtin</span>
+    <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">headers</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="preflight_handler"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.cors.preflight_handler">[docs]</a><span class="k">def</span> <span class="nf">preflight_handler</span><span class="p">(</span><span class="o">*</span><span class="n">allowed_methods</span><span class="p">):</span>
+
+    <span class="n">allowed_methods</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">allowed_methods</span><span class="p">)</span>
+    <span class="n">allowed_methods_str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed_methods</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">handler</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">web</span><span class="o">.</span><span class="n">Request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;CORS preflight request handler&quot;&quot;&quot;</span>
+
+        <span class="c1"># Handle according to part 6.2 of the CORS specification.</span>
+
+        <span class="n">origin</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">hdrs</span><span class="o">.</span><span class="n">ORIGIN</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Terminate CORS according to CORS 6.2.1.</span>
+            <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPForbidden</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="s2">&quot;CORS preflight request failed: &quot;</span>
+                     <span class="s2">&quot;origin header is not specified in the request&quot;</span><span class="p">)</span>
+
+        <span class="c1"># CORS 6.2.3. Doing it out of order is not an error.</span>
+        <span class="n">request_method</span> <span class="o">=</span> <span class="n">_parse_request_method</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">request_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_methods</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">web</span><span class="o">.</span><span class="n">HTTPForbidden</span><span class="p">(</span>
+                <span class="n">text</span><span class="o">=</span><span class="s2">&quot;CORS preflight request failed: &quot;</span>
+                     <span class="s2">&quot;Allowed methods are </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">allowed_methods_str</span><span class="p">))</span>
+
+        <span class="c1"># CORS 6.2.4</span>
+        <span class="n">request_headers</span> <span class="o">=</span> <span class="n">_parse_request_headers</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">Response</span><span class="p">()</span>
+
+        <span class="c1"># CORS 6.2.7</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">hdrs</span><span class="o">.</span><span class="n">ACCESS_CONTROL_ALLOW_ORIGIN</span><span class="p">]</span> <span class="o">=</span> <span class="n">origin</span>
+        <span class="c1"># Set allowed credentials.</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">hdrs</span><span class="o">.</span><span class="n">ACCESS_CONTROL_ALLOW_CREDENTIALS</span><span class="p">]</span> <span class="o">=</span> <span class="n">_TRUE</span>
+
+        <span class="c1"># CORS 6.2.9</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">hdrs</span><span class="o">.</span><span class="n">ACCESS_CONTROL_ALLOW_METHODS</span><span class="p">]</span> <span class="o">=</span> <span class="n">allowed_methods_str</span>
+
+        <span class="c1"># CORS 6.2.10</span>
+        <span class="k">if</span> <span class="n">request_headers</span><span class="p">:</span>
+            <span class="c1"># Note: case of the headers in the request is changed, but this</span>
+            <span class="c1"># shouldn&#39;t be a problem, since the headers should be compared in</span>
+            <span class="c1"># the case-insensitive way.</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">hdrs</span><span class="o">.</span><span class="n">ACCESS_CONTROL_ALLOW_HEADERS</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">request_headers</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">response</span>
+    <span class="k">return</span> <span class="n">handler</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Gemeente Amsterdam.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

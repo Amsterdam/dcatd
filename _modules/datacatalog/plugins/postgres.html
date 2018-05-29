@@ -1,0 +1,812 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>datacatalog.plugins.postgres &mdash; datacatalog-core 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/_modules/datacatalog/plugins/postgres.html"/>
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/theme_overrides.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> datacatalog-core
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apidoc/datacatalog.html">datacatalog package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html">datacatalog.handlers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.datasets">datacatalog.handlers.datasets module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.openapi">datacatalog.handlers.openapi module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.systemhealth">datacatalog.handlers.systemhealth module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../apidoc/datacatalog.plugins.html">datacatalog.plugins package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.plugins.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.plugins.html#module-datacatalog.plugins">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.application">datacatalog.application module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.authorization">datacatalog.authorization module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.config">datacatalog.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.cors">datacatalog.cors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.dcat">datacatalog.dcat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.jwks">datacatalog.jwks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.main">datacatalog.main module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.openapi">datacatalog.openapi module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.plugin_interfaces">datacatalog.plugin_interfaces module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../openapi.html">OpenAPI definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sphinx_101.html">Sphinx 101</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../sphinx_101.html#rest-formatting">ReST formatting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../sphinx_101.html#roles-added-by-sphinx">Roles added by Sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../sphinx_101.html#directives">Directives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../sphinx_101.html#google-style-docstrings">Google-style docstrings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../sphinx_101.html#autodoc">Autodoc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../sphinx_101.html#intersphinx">Intersphinx</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo_list.html">Todo list</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#definitions">1. Definitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#contributor">1.1. “Contributor”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#contributor-version">1.2. “Contributor Version”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#contribution">1.3. “Contribution”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#covered-software">1.4. “Covered Software”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#incompatible-with-secondary-licenses">1.5. “Incompatible With Secondary Licenses”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#executable-form">1.6. “Executable Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#id1">1.8. “License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#licensable">1.9. “Licensable”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#modifications">1.10. “Modifications”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#patent-claims-of-a-contributor">1.11. “Patent Claims” of a Contributor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#secondary-license">1.12. “Secondary License”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#source-code-form">1.13. “Source Code Form”</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#you-or-your">1.14. “You” (or “Your”)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#license-grants-and-conditions">2. License Grants and Conditions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#grants">2.1. Grants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#effective-date">2.2. Effective Date</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#limitations-on-grant-scope">2.3. Limitations on Grant Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#subsequent-licenses">2.4. Subsequent Licenses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#representation">2.5. Representation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#fair-use">2.6. Fair Use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#conditions">2.7. Conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#responsibilities">3. Responsibilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#distribution-of-source-form">3.1. Distribution of Source Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#distribution-of-executable-form">3.2. Distribution of Executable Form</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#distribution-of-a-larger-work">3.3. Distribution of a Larger Work</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#notices">3.4. Notices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#application-of-additional-terms">3.5. Application of Additional Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#inability-to-comply-due-to-statute-or-regulation">4. Inability to Comply Due to Statute or Regulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#termination">5. Termination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#disclaimer-of-warranty">6. Disclaimer of Warranty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#limitation-of-liability">7. Limitation of Liability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#litigation">8. Litigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#miscellaneous">9. Miscellaneous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#versions-of-the-license">10. Versions of the License</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#new-versions">10.1. New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#effect-of-new-versions">10.2. Effect of New Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#modified-versions">10.3. Modified Versions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../license.html#distributing-source-code-form-that-is-incompatible-with-secondary-licenses">10.4. Distributing Source Code Form that is Incompatible With Secondary Licenses</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#exhibit-a-source-code-form-license-notice">Exhibit A - Source Code Form License Notice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../license.html#exhibit-b-incompatible-with-secondary-licenses-notice">Exhibit B - “Incompatible With Secondary Licenses” Notice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">datacatalog-core</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>datacatalog.plugins.postgres</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for datacatalog.plugins.postgres</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Postgres storage and search plugin.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pkg_resources</span>
+<span class="kn">import</span> <span class="nn">secrets</span>
+<span class="kn">import</span> <span class="nn">typing</span> <span class="k">as</span> <span class="nn">T</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="kn">import</span> <span class="nn">aiopluggy</span>
+<span class="kn">import</span> <span class="nn">asyncpg.pool</span>
+<span class="kn">import</span> <span class="nn">jsonpointer</span>
+
+<span class="kn">from</span> <span class="nn">aiohttp_extras</span> <span class="k">import</span> <span class="n">conditional</span>
+
+<span class="kn">from</span> <span class="nn">.languages</span> <span class="k">import</span> <span class="n">ISO_639_1_TO_PG_DICTIONARIES</span>
+
+<span class="n">_hookimpl</span> <span class="o">=</span> <span class="n">aiopluggy</span><span class="o">.</span><span class="n">HookimplMarker</span><span class="p">(</span><span class="s1">&#39;datacatalog&#39;</span><span class="p">)</span>
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">CONNECT_ATTEMPT_INTERVAL_SECS</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">CONNECT_ATTEMPT_MAX_TRIES</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">_DEFAULT_CONNECTION_TIMEOUT</span> <span class="o">=</span> <span class="mi">60</span>
+<span class="n">_DEFAULT_MIN_POOL_SIZE</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">_DEFAULT_MAX_POOL_SIZE</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">_DEFAULT_MAX_INACTIVE_CONNECTION_LIFETIME</span> <span class="o">=</span> <span class="mf">5.0</span>
+
+<span class="n">_Q_CREATE</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">CREATE TABLE IF NOT EXISTS &quot;dataset&quot; (</span>
+<span class="s1">    &quot;id&quot; character varying(254) PRIMARY KEY,</span>
+<span class="s1">    &quot;doc&quot; jsonb NOT NULL,</span>
+<span class="s1">    &quot;etag&quot; character varying(254) NOT NULL,</span>
+<span class="s1">    &quot;searchable_text&quot; tsvector,</span>
+<span class="s1">    &quot;lang&quot; character varying(20)</span>
+<span class="s1">);</span>
+<span class="s1">CREATE INDEX IF NOT EXISTS &quot;idx_id_etag&quot; ON &quot;dataset&quot; (&quot;id&quot;, &quot;etag&quot;);</span>
+<span class="s1">CREATE INDEX IF NOT EXISTS &quot;idx_full_text_search&quot; ON &quot;dataset&quot; USING gin (&quot;searchable_text&quot;);</span>
+<span class="s1">CREATE INDEX IF NOT EXISTS &quot;idx_json_docs&quot; ON &quot;dataset&quot; USING gin (&quot;doc&quot; jsonb_path_ops);</span>
+<span class="s1">&#39;&#39;&#39;</span>
+<span class="n">_Q_HEALTHCHECK</span> <span class="o">=</span> <span class="s1">&#39;SELECT 1&#39;</span>
+<span class="n">_Q_RETRIEVE_DOC</span> <span class="o">=</span> <span class="s1">&#39;SELECT doc, etag FROM &quot;dataset&quot; WHERE id = $1&#39;</span>
+<span class="n">_Q_INSERT_DOC</span> <span class="o">=</span> <span class="s1">&#39;INSERT INTO &quot;dataset&quot; (id, doc, searchable_text, lang, etag) VALUES ($1, $2, to_tsvector($3, $4), $3, $5)&#39;</span>
+<span class="n">_Q_UPDATE_DOC</span> <span class="o">=</span> <span class="s1">&#39;UPDATE &quot;dataset&quot; SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=ANY($6) RETURNING id&#39;</span>
+<span class="n">_Q_DELETE_DOC</span> <span class="o">=</span> <span class="s1">&#39;DELETE FROM &quot;dataset&quot; WHERE id=$1 AND etag=ANY($2) RETURNING id&#39;</span>
+<span class="n">_Q_RETRIEVE_ALL_DOCS</span> <span class="o">=</span> <span class="s1">&#39;SELECT doc FROM &quot;dataset&quot;&#39;</span>
+<span class="n">_Q_SEARCH_DOCS</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">SELECT id, doc, ts_rank_cd(searchable_text, query) AS rank</span>
+<span class="s2">FROM &quot;dataset&quot;, to_tsquery($1, $2) query</span>
+<span class="s2">WHERE (&#39;&#39;=$2::varchar OR searchable_text @@ query) </span><span class="si">{filters}</span><span class="s2"></span>
+<span class="s2">AND (&#39;simple&#39;=$1::varchar OR lang=$1::varchar)</span>
+<span class="s2">ORDER BY rank DESC;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">_Q_LIST_DOCS</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">SELECT id, doc</span>
+<span class="s2">FROM &quot;dataset&quot;</span>
+<span class="s2">WHERE (&#39;simple&#39;=$1::varchar OR lang=$1::varchar) </span><span class="si">{filters}</span><span class="s2"></span>
+<span class="s2">ORDER BY </span><span class="si">{sortexpression}</span><span class="s2"> DESC;</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="initialize"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres.initialize">[docs]</a><span class="nd">@_hookimpl</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot; Initialize the plugin.</span>
+
+<span class="sd">    This function validates the configuration and creates a connection pool.</span>
+<span class="sd">    The pool is stored as a module-scoped singleton in app[&#39;pool&#39;].</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pool&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Not failing hard because not sure whether initializing twice is allowed</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Plugin is already intialized. Deinitializing before proceeding.&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">deinitialize</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+    <span class="c1"># validate configuration</span>
+    <span class="k">with</span> <span class="n">pkg_resources</span><span class="o">.</span><span class="n">resource_stream</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="s1">&#39;config_schema.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+    <span class="n">dbconf</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;storage_postgres&#39;</span><span class="p">]</span>
+
+    <span class="c1"># check for optional config</span>
+    <span class="n">conn_timeout</span> <span class="o">=</span> <span class="n">dbconf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;connection_timeout&#39;</span><span class="p">,</span> <span class="n">_DEFAULT_CONNECTION_TIMEOUT</span><span class="p">)</span>
+    <span class="n">min_pool_size</span> <span class="o">=</span> <span class="n">dbconf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;min_pool_size&#39;</span><span class="p">,</span> <span class="n">_DEFAULT_MIN_POOL_SIZE</span><span class="p">)</span>
+    <span class="n">max_pool_size</span> <span class="o">=</span> <span class="n">dbconf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;max_pool_size&#39;</span><span class="p">,</span> <span class="n">_DEFAULT_MAX_POOL_SIZE</span><span class="p">)</span>
+    <span class="n">max_inactive_conn_lifetime</span> <span class="o">=</span> <span class="n">dbconf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s1">&#39;max_inactive_connection_lifetime&#39;</span><span class="p">,</span> <span class="n">_DEFAULT_MAX_INACTIVE_CONNECTION_LIFETIME</span><span class="p">)</span>
+
+    <span class="c1"># create asyncpg engine</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Connecting to database: postgres://</span><span class="si">%s</span><span class="s2">:</span><span class="si">%i</span><span class="s2">/</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                 <span class="n">dbconf</span><span class="p">[</span><span class="s1">&#39;host&#39;</span><span class="p">],</span> <span class="n">dbconf</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">],</span> <span class="n">dbconf</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+
+    <span class="n">connect_attempt_tries_left</span> <span class="o">=</span> <span class="n">CONNECT_ATTEMPT_MAX_TRIES</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="n">connect_attempt_tries_left</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncpg</span><span class="o">.</span><span class="n">create_pool</span><span class="p">(</span>
+                <span class="n">user</span><span class="o">=</span><span class="n">dbconf</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">],</span>
+                <span class="n">database</span><span class="o">=</span><span class="n">dbconf</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
+                <span class="n">host</span><span class="o">=</span><span class="n">dbconf</span><span class="p">[</span><span class="s1">&#39;host&#39;</span><span class="p">],</span>
+                <span class="n">port</span><span class="o">=</span><span class="n">dbconf</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">],</span>
+                <span class="n">password</span><span class="o">=</span><span class="n">dbconf</span><span class="p">[</span><span class="s1">&#39;pass&#39;</span><span class="p">],</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="n">conn_timeout</span><span class="p">,</span>
+                <span class="n">min_size</span><span class="o">=</span><span class="n">min_pool_size</span><span class="p">,</span>
+                <span class="n">max_size</span><span class="o">=</span><span class="n">max_pool_size</span><span class="p">,</span>
+                <span class="n">max_inactive_connection_lifetime</span><span class="o">=</span><span class="n">max_inactive_conn_lifetime</span><span class="p">,</span>
+                <span class="n">loop</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">loop</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ConnectionRefusedError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">connect_attempt_tries_left</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Database not accepting connections. Retrying </span><span class="si">%d</span><span class="s2"> more times.&quot;</span><span class="p">,</span> <span class="n">connect_attempt_tries_left</span><span class="p">)</span>
+                <span class="n">connect_attempt_tries_left</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">CONNECT_ATTEMPT_INTERVAL_SECS</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not connect to the database. Aborting.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">await</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">_Q_CREATE</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="deinitialize"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres.deinitialize">[docs]</a><span class="nd">@_hookimpl</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">deinitialize</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot; Deinitialize the plugin.&quot;&quot;&quot;</span>
+    <span class="k">await</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="health_check"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres.health_check">[docs]</a><span class="nd">@_hookimpl</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">health_check</span><span class="p">(</span><span class="n">app</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot; Health check.</span>
+
+<span class="sd">    :returns: If unhealthy, a string describing the problem, otherwise ``None``.</span>
+<span class="sd">    :raises Exception: if that&#39;s easier than returning a string.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">await</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fetchval</span><span class="p">(</span><span class="n">_Q_HEALTHCHECK</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;Postgres connection problem&#39;</span></div>
+
+
+<div class="viewcode-block" id="storage_retrieve"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres.storage_retrieve">[docs]</a><span class="nd">@_hookimpl</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">storage_retrieve</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">docid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">etags</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
+        <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot; Get document and corresponsing etag by id.</span>
+
+<span class="sd">    :param docid: document id</span>
+<span class="sd">    :param etags: None, or a set of Etags</span>
+<span class="sd">    :returns:</span>
+<span class="sd">        A tuple. The first element is either the document or None if the</span>
+<span class="sd">        document&#39;s Etag corresponds to one of the given etags. The second</span>
+<span class="sd">        element is the current etag.</span>
+<span class="sd">    :raises KeyError: if not found</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">record</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fetchrow</span><span class="p">(</span><span class="n">_Q_RETRIEVE_DOC</span><span class="p">,</span> <span class="n">docid</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">record</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">etags</span> <span class="ow">and</span> <span class="n">conditional</span><span class="o">.</span><span class="n">match_etags</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s1">&#39;etag&#39;</span><span class="p">],</span> <span class="n">etags</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;etag&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s1">&#39;doc&#39;</span><span class="p">]),</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;etag&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="storage_create"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres.storage_create">[docs]</a><span class="nd">@_hookimpl</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">storage_create</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">docid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">searchable_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">iso_639_1_code</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot; Store a new document.</span>
+
+<span class="sd">    :param docid: the ID under which to store this document. May or may not</span>
+<span class="sd">        already exist in the data store.</span>
+<span class="sd">    :param doc: the document to store; a &quot;JSON dictionary&quot;.</span>
+<span class="sd">    :param searchable_text: this will be indexed for free-text search.</span>
+<span class="sd">    :param iso_639_1_code: the language of the document.</span>
+<span class="sd">    :returns: new ETag</span>
+<span class="sd">    :raises: KeyError if the docid already exists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new_doc</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">new_etag</span> <span class="o">=</span> <span class="n">_etag_from_str</span><span class="p">(</span><span class="n">new_doc</span><span class="p">)</span>
+    <span class="n">lang</span> <span class="o">=</span> <span class="n">_iso_639_1_code_to_pg</span><span class="p">(</span><span class="n">iso_639_1_code</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">_Q_INSERT_DOC</span><span class="p">,</span> <span class="n">docid</span><span class="p">,</span> <span class="n">new_doc</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="n">searchable_text</span><span class="p">,</span> <span class="n">new_etag</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">asyncpg</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">UniqueViolationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span> <span class="kn">from</span> <span class="nn">e</span>
+    <span class="k">return</span> <span class="n">new_etag</span></div>
+
+
+<div class="viewcode-block" id="storage_update"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres.storage_update">[docs]</a><span class="nd">@_hookimpl</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">storage_update</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">docid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">searchable_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">etags</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">iso_639_1_code</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> \
+        <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot; Update the document with the given ID only if it has one of the provided Etags.</span>
+
+<span class="sd">    :param docid: the ID under which to store this document. May or may not</span>
+<span class="sd">        already exist in the data store.</span>
+<span class="sd">    :param doc: the document to store; a &quot;JSON dictionary&quot;.</span>
+<span class="sd">    :param searchable_text: this will be indexed for free-text search.</span>
+<span class="sd">    :param etags: one or more Etags.</span>
+<span class="sd">    :param iso_639_1_code: the language of the document.</span>
+<span class="sd">    :returns: new ETag</span>
+<span class="sd">    :raises: ValueError if none of the given etags match the stored etag.</span>
+<span class="sd">    :raises: KeyError if the docid doesn&#39;t exist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new_doc</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">new_etag</span> <span class="o">=</span> <span class="n">_etag_from_str</span><span class="p">(</span><span class="n">new_doc</span><span class="p">)</span>
+    <span class="n">lang</span> <span class="o">=</span> <span class="n">_iso_639_1_code_to_pg</span><span class="p">(</span><span class="n">iso_639_1_code</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">await</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fetchval</span><span class="p">(</span><span class="n">_Q_UPDATE_DOC</span><span class="p">,</span> <span class="n">new_doc</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="n">searchable_text</span><span class="p">,</span> <span class="n">new_etag</span><span class="p">,</span> <span class="n">docid</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">etags</span><span class="p">)))</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span>
+    <span class="k">return</span> <span class="n">new_etag</span></div>
+
+
+<div class="viewcode-block" id="storage_delete"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres.storage_delete">[docs]</a><span class="nd">@_hookimpl</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">storage_delete</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">docid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">etags</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot; Delete document only if it has one of the provided Etags.</span>
+
+<span class="sd">    :param docid: the ID of the document to delete.</span>
+<span class="sd">    :param etags: the last known ETags of this document.</span>
+<span class="sd">    :raises: ValueError if none of the given etags match the stored etag.</span>
+<span class="sd">    :raises: KeyError if a document with the given id doesn&#39;t exist.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">await</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fetchval</span><span class="p">(</span><span class="n">_Q_DELETE_DOC</span><span class="p">,</span> <span class="n">docid</span><span class="p">,</span> <span class="n">etags</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># the operation may fail because either the id doesn&#39;t exist or the given</span>
+        <span class="c1"># etag doesn&#39;t match. There&#39;s no way to atomically check for both</span>
+        <span class="c1"># conditions at the same time, apart from a full table lock. However,</span>
+        <span class="c1"># all scenario&#39;s in which the below, not threat-safe way of identifying</span>
+        <span class="c1"># the cause of failure is not correct, are trivial.</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">etag</span> <span class="o">=</span> <span class="k">await</span> <span class="n">storage_retrieve</span><span class="p">(</span><span class="n">docid</span><span class="p">,</span> <span class="n">etags</span><span class="p">)</span>  <span class="c1"># this may raise a KeyError</span>
+        <span class="k">assert</span> <span class="n">etag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">etags</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span></div>
+
+
+<div class="viewcode-block" id="_extract_values"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres._extract_values">[docs]</a><span class="k">def</span> <span class="nf">_extract_values</span><span class="p">(</span><span class="n">elm</span><span class="p">,</span> <span class="n">ptr_parts</span><span class="p">,</span> <span class="n">ptr_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Recursive generator that yields all values that may live under the</span>
+<span class="sd">    given JSON pointer.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ptr_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ptr_parts</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">elm</span>
+        <span class="k">return</span>
+    <span class="n">part</span> <span class="o">=</span> <span class="n">ptr_parts</span><span class="p">[</span><span class="n">ptr_idx</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">part</span> <span class="o">==</span> <span class="s1">&#39;properties&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ptr_idx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ptr_parts</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Properties must be followed by property name&#39;</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">ptr_parts</span><span class="p">[</span><span class="n">ptr_idx</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Expected obj with key </span><span class="si">{}</span><span class="s1">, got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">elm</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">elm</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">_extract_values</span><span class="p">(</span><span class="n">elm</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">ptr_parts</span><span class="p">,</span> <span class="n">ptr_idx</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">e</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Obj does not have key </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">part</span> <span class="o">==</span> <span class="s1">&#39;items&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Expected array, got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">elm</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">elm</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">_extract_values</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ptr_parts</span><span class="p">,</span> <span class="n">ptr_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="n">e</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Element must be either list, object or end of pointer, not: &#39;</span> <span class="o">+</span> <span class="n">part</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="storage_extract"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres.storage_extract">[docs]</a><span class="nd">@_hookimpl</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">storage_extract</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">ptr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">distinct</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot;Generator to extract values from the stored documents, optionally</span>
+<span class="sd">    distinct.</span>
+
+<span class="sd">    Used to, for example, get a list of all tags or ids in the system. Or to</span>
+<span class="sd">    get all documents stored in the system. If distinct=True then the generator</span>
+<span class="sd">    will cache all values in a set, which may become prohibitively large.</span>
+
+<span class="sd">    :param ptr: JSON pointer to the element.</span>
+<span class="sd">    :param distinct: Return only distinct values.</span>
+<span class="sd">    :raises: ValueError if filter syntax is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If the pointer is &#39;/&#39; we should return all documents</span>
+    <span class="k">if</span> <span class="n">ptr</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span><span class="p">:</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="n">con</span><span class="o">.</span><span class="n">transaction</span><span class="p">():</span>
+                <span class="c1"># use a cursor so we can stream</span>
+                <span class="k">async</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">con</span><span class="o">.</span><span class="n">cursor</span><span class="p">(</span><span class="n">_Q_RETRIEVE_ALL_DOCS</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;doc&#39;</span><span class="p">])</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Otherwise, return the values</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">jsonpointer</span><span class="o">.</span><span class="n">JsonPointer</span><span class="p">(</span><span class="n">ptr</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">jsonpointer</span><span class="o">.</span><span class="n">JsonPointerException</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot parse pointer&#39;</span><span class="p">)</span>
+    <span class="n">ptr_parts</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">parts</span>
+
+    <span class="n">cache</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">con</span><span class="o">.</span><span class="n">transaction</span><span class="p">():</span>
+            <span class="c1"># use a cursor so we can stream</span>
+            <span class="k">async</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">con</span><span class="o">.</span><span class="n">cursor</span><span class="p">(</span><span class="n">_Q_RETRIEVE_ALL_DOCS</span><span class="p">):</span>
+                <span class="n">doc</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;doc&#39;</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">elm</span> <span class="ow">in</span> <span class="n">_extract_values</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">ptr_parts</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">distinct</span> <span class="ow">or</span> <span class="n">elm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">:</span>
+                        <span class="k">yield</span> <span class="n">elm</span>
+                        <span class="k">if</span> <span class="n">distinct</span><span class="p">:</span>
+                            <span class="n">cache</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="storage_id"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres.storage_id">[docs]</a><span class="nd">@_hookimpl</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">storage_id</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot;New unique identifier.</span>
+
+<span class="sd">    Returns a URL-safe random token with 80 bits of entropy, base64 encoded in</span>
+<span class="sd">    ~13 characters. Given the birthday paradox this should be safe upto about</span>
+<span class="sd">    10 bilion (2^35) entries, when the probability of collisions is</span>
+<span class="sd">    approximately 0.05% (p=0.0005).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">secrets</span><span class="o">.</span><span class="n">token_urlsafe</span><span class="p">(</span><span class="n">nbytes</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="search_search"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres.search_search">[docs]</a><span class="nd">@_hookimpl</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">search_search</span><span class="p">(</span>
+    <span class="n">app</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sortpath</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">result_info</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">,</span>
+    <span class="n">facets</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">filters</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>  <span class="c1"># a JSON pointer</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span>
+            <span class="nb">str</span><span class="p">,</span>  <span class="c1"># a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``</span>
+            <span class="c1"># a string, or a set of strings if the comparator is ``in``</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+        <span class="p">]</span>
+    <span class="p">]]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">iso_639_1_code</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">.</span><span class="n">AsyncGenerator</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="c1"># language=rst</span>
+    <span class="sd">&quot;&quot;&quot; Search</span>
+
+<span class="sd">    See :func:`datacatalog.plugin_interfaces.search_search`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># parse facets, if any</span>
+    <span class="k">if</span> <span class="n">facets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">facets</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">facets</span> <span class="o">=</span> <span class="p">[(</span><span class="n">f</span><span class="p">,</span> <span class="n">jsonpointer</span><span class="o">.</span><span class="n">JsonPointer</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">facets</span><span class="p">]</span>
+        <span class="k">except</span> <span class="n">jsonpointer</span><span class="o">.</span><span class="n">JsonPointerException</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot parse pointer&#39;</span><span class="p">)</span>
+    <span class="c1"># interpret the filters</span>
+    <span class="n">filterexpr</span> <span class="o">=</span> <span class="n">_to_pg_json_filterexpression</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+    <span class="c1"># interpret the language</span>
+    <span class="n">lang</span> <span class="o">=</span> <span class="n">_to_pg_lang</span><span class="p">(</span><span class="n">iso_639_1_code</span><span class="p">)</span>
+    <span class="c1"># init paging parameters</span>
+    <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">offset</span><span class="p">,</span> <span class="n">offset</span><span class="o">+</span><span class="n">limit</span> <span class="k">if</span> <span class="n">limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+    <span class="c1"># keep track of the current row index</span>
+    <span class="n">row_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># if we have a query we should perform a free-text search ordered by</span>
+    <span class="c1"># relevance, otherwise we should do a sorted listing.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">result_iterator</span> <span class="o">=</span> <span class="n">_execute_search_query</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">filterexpr</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result_iterator</span> <span class="o">=</span> <span class="n">_execute_list_query</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">filterexpr</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="n">sortpath</span><span class="p">)</span>
+    <span class="c1"># now iterate over the results</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">docid</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">result_iterator</span><span class="p">:</span>
+        <span class="c1"># update the result info</span>
+        <span class="k">for</span> <span class="n">facet</span><span class="p">,</span> <span class="n">ptr</span> <span class="ow">in</span> <span class="n">facets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">facet</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result_info</span><span class="p">:</span>
+                <span class="n">result_info</span><span class="p">[</span><span class="n">facet</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">ptr_parts</span> <span class="o">=</span> <span class="n">ptr</span><span class="o">.</span><span class="n">parts</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">_extract_values</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">ptr_parts</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result_info</span><span class="p">[</span><span class="n">facet</span><span class="p">]:</span>
+                    <span class="n">result_info</span><span class="p">[</span><span class="n">facet</span><span class="p">][</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result_info</span><span class="p">[</span><span class="n">facet</span><span class="p">][</span><span class="n">value</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># yield the result if it falls within the current page</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="o">&lt;=</span> <span class="n">row_index</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">(</span><span class="n">docid</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span>
+
+        <span class="n">row_index</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="c1"># store the total amount of documents in the result info</span>
+    <span class="n">result_info</span><span class="p">[</span><span class="s1">&#39;/&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row_index</span></div>
+
+
+<div class="viewcode-block" id="_execute_list_query"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres._execute_list_query">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">_execute_list_query</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">filterexpr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sortpath</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sortpath</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Sortpath should not be empty&#39;</span><span class="p">)</span>
+    <span class="n">sortexpr</span> <span class="o">=</span> <span class="s1">&#39;doc-&gt;&#39;</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sortpath</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">sortexpr</span> <span class="o">+=</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">p</span> <span class="o">+</span> <span class="s2">&quot;&#39;-&gt;&quot;</span>
+    <span class="n">sortexpr</span> <span class="o">+=</span> <span class="s2">&quot;&gt;&#39;&quot;</span> <span class="o">+</span> <span class="n">sortpath</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">sortpath</span><span class="p">)</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">sortexpr</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="c1"># use a cursor so we can stream</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">con</span><span class="o">.</span><span class="n">transaction</span><span class="p">():</span>
+            <span class="n">stmt</span> <span class="o">=</span> <span class="k">await</span> <span class="n">con</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span>
+                <span class="n">_Q_LIST_DOCS</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="n">filterexpr</span><span class="p">,</span> <span class="n">sortexpression</span><span class="o">=</span><span class="n">sortexpr</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">async</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">stmt</span><span class="o">.</span><span class="n">cursor</span><span class="p">(</span><span class="n">lang</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;doc&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="_execute_search_query"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres._execute_search_query">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">_execute_search_query</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">filterexpr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="n">_to_pg_json_query</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span> <span class="k">as</span> <span class="n">con</span><span class="p">:</span>
+        <span class="c1"># use a cursor so we can stream</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">con</span><span class="o">.</span><span class="n">transaction</span><span class="p">():</span>
+            <span class="n">stmt</span> <span class="o">=</span> <span class="k">await</span> <span class="n">con</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span>
+                <span class="n">_Q_SEARCH_DOCS</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="n">filterexpr</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">async</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">stmt</span><span class="o">.</span><span class="n">cursor</span><span class="p">(</span><span class="n">lang</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;doc&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="_to_pg_json_filterexpression"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres._to_pg_json_filterexpression">[docs]</a><span class="k">def</span> <span class="nf">_to_pg_json_filterexpression</span><span class="p">(</span><span class="n">filters</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">filters</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">to_expr</span><span class="p">(</span><span class="n">ptr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a filterexpression from a json pointer and value.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">jsonpointer</span><span class="o">.</span><span class="n">JsonPointer</span><span class="p">(</span><span class="n">ptr</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">jsonpointer</span><span class="o">.</span><span class="n">JsonPointerException</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot parse pointer&#39;</span><span class="p">)</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">parts</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">parse_complex_type</span><span class="p">():</span>
+            <span class="n">nxt</span> <span class="o">=</span> <span class="n">parts</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">nxt</span> <span class="o">==</span> <span class="s1">&#39;properties&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">parse_obj</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">nxt</span> <span class="o">==</span> <span class="s1">&#39;items&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">parse_list</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Child must be either list, &#39;</span>
+                             <span class="s1">&#39;object or end of pointer, not: &#39;</span> <span class="o">+</span> <span class="n">nxt</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">parse_obj</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Properties must be followed by property name&#39;</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">parts</span><span class="o">.</span><span class="n">popleft</span><span class="p">())</span>
+            <span class="c1"># either end-of-pointer primitive...</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;{&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+            <span class="c1"># or a complex type</span>
+            <span class="k">return</span> <span class="s1">&#39;{&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="n">parse_complex_type</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+
+        <span class="k">def</span> <span class="nf">parse_list</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="c1"># either end-of-pointer primitive...</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span>
+            <span class="c1"># or a complex type</span>
+            <span class="k">return</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="n">parse_complex_type</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span>
+
+        <span class="c1"># base case: query json document with solely a single primitive</span>
+        <span class="c1"># (string, int, bool, ...)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+
+        <span class="c1"># anything else must be a complex type (object or list)</span>
+        <span class="k">return</span> <span class="n">parse_complex_type</span><span class="p">()</span>
+
+    <span class="c1"># Interpret the filters</span>
+    <span class="n">filterexprs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ptr</span><span class="p">,</span> <span class="nb">filter</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">op</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">filter</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">op</span> <span class="o">!=</span> <span class="s1">&#39;eq&#39;</span> <span class="ow">and</span> <span class="n">op</span> <span class="o">!=</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                    <span class="s1">&#39;Postgres plugin only supports &#39;</span>
+                    <span class="s1">&#39;&quot;eq&quot; and &quot;in&quot; filter operators&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;eq&quot;</span><span class="p">:</span>
+                <span class="n">filterexprs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="s2">&quot; AND doc @&gt; &#39;&quot;</span> <span class="o">+</span> <span class="n">to_expr</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">op</span> <span class="o">==</span> <span class="s2">&quot;in&quot;</span><span class="p">:</span>
+                <span class="n">orexpr</span> <span class="o">=</span> <span class="s1">&#39; OR &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="s2">&quot;doc @&gt; &#39;&quot;</span> <span class="o">+</span> <span class="n">to_expr</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">val</span>
+                <span class="p">)</span>
+                <span class="n">filterexprs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; AND (&#39;</span> <span class="o">+</span> <span class="n">orexpr</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filterexprs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_to_pg_lang"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres._to_pg_lang">[docs]</a><span class="k">def</span> <span class="nf">_to_pg_lang</span><span class="p">(</span><span class="n">iso_639_1_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">iso_639_1_code</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;simple&#39;</span>
+    <span class="k">if</span> <span class="n">iso_639_1_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ISO_639_1_TO_PG_DICTIONARIES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;invalid ISO 639-1 language code: &#39;</span> <span class="o">+</span> <span class="n">iso_639_1_code</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ISO_639_1_TO_PG_DICTIONARIES</span><span class="p">[</span><span class="n">iso_639_1_code</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="_to_pg_json_query"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres._to_pg_json_query">[docs]</a><span class="k">def</span> <span class="nf">_to_pg_json_query</span><span class="p">(</span><span class="n">q</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s1">&#39; | &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">:*&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">q</span><span class="o">.</span><span class="n">split</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="_etag_from_str"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres._etag_from_str">[docs]</a><span class="k">def</span> <span class="nf">_etag_from_str</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha3_224</span><span class="p">()</span>
+    <span class="n">h</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+    <span class="k">return</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">digest</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span></div>
+
+
+<div class="viewcode-block" id="_iso_639_1_code_to_pg"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres._iso_639_1_code_to_pg">[docs]</a><span class="k">def</span> <span class="nf">_iso_639_1_code_to_pg</span><span class="p">(</span><span class="n">iso_639_1_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="c1"># we use the simple dictionary for ISO 639-1 language codes we don&#39;t know</span>
+    <span class="k">if</span> <span class="n">iso_639_1_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ISO_639_1_TO_PG_DICTIONARIES</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">iso_639_1_code</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;invalid ISO 639-1 language code: &#39;</span> <span class="o">+</span> <span class="n">iso_639_1_code</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;simple&#39;</span>
+    <span class="k">return</span> <span class="n">ISO_639_1_TO_PG_DICTIONARIES</span><span class="p">[</span><span class="n">iso_639_1_code</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Gemeente Amsterdam.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

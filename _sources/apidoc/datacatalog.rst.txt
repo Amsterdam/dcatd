@@ -1,0 +1,94 @@
+datacatalog package
+===================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    datacatalog.handlers
+    datacatalog.plugins
+
+Submodules
+----------
+
+datacatalog.application module
+------------------------------
+
+.. automodule:: datacatalog.application
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.authorization module
+--------------------------------
+
+.. automodule:: datacatalog.authorization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.config module
+-------------------------
+
+.. automodule:: datacatalog.config
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.cors module
+-----------------------
+
+.. automodule:: datacatalog.cors
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.dcat module
+-----------------------
+
+.. automodule:: datacatalog.dcat
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.jwks module
+-----------------------
+
+.. automodule:: datacatalog.jwks
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.main module
+-----------------------
+
+.. automodule:: datacatalog.main
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.openapi module
+--------------------------
+
+.. automodule:: datacatalog.openapi
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+datacatalog.plugin_interfaces module
+------------------------------------
+
+.. automodule:: datacatalog.plugin_interfaces
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: datacatalog
+    :members:
+    :undoc-members:
+    :show-inheritance:

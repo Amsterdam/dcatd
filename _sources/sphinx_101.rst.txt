@@ -82,6 +82,26 @@ Python cross-referencing:
         :exc:
         :obj:
 
+Python info field lists:
+    .. code-block:: rst
+
+        :param str sender: The person sending the message
+        :param priority: The priority of the message, can be a number 1-5
+        :return: the message id
+        :rtype: int or None
+        :raises ValueError: if the message_body exceeds 160 characters
+        :raises TypeError: if the message_body is not a basestring
+
+        :type priority: integer or None
+        :type priorities: list(int)
+        :type priorities: list[int]
+        :type mapping: dict(str, int)
+        :type mapping: dict[str, int]
+        :type point: tuple(float, float)
+        :type point: tuple[float, float]
+
+    Multiple types in a type field will be linked automatically if separated by
+    the word “or”.
 
 Directives
 ----------
