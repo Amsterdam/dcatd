@@ -9,9 +9,36 @@ sets.
 The latest documentation can always be found `here <https://amsterdam.github.io/dcatd/>`_.
 
 
-How to run locally
+Contributing
 ------------------
+
+First create and activate a virtualenv. Then install all dependencies:
+
 ::
 
+    make alldeps
+
+
+Example server
+###########
+
+::
+
+    docker-compose up -d database
     make example
 
+
+Running tests
+##########
+
+::
+
+    docker-compose up -d database
+    make test
+
+or
+
+::
+
+    docker-compose up -d database
+    make cov
