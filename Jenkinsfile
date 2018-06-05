@@ -44,6 +44,14 @@ String BRANCH = "${env.BRANCH_NAME}"
 
 if (BRANCH == "master") {
 
+	node {
+	    stage("Update documentation") {
+            sh "python3 -m venv ./venv && source ./venv/bin/activate &&" +
+               "pip install -e .[docs] && " +
+               "make -C sphinx gh-pages"
+	    }
+	}
+
     node {
         stage('Push acceptance image') {
             tryStep "image tagging", {
@@ -65,7 +73,6 @@ if (BRANCH == "master") {
             }
         }
     }
-
 
     stage('Waiting for approval') {
         slackSend channel: '#ci-channel', color: 'warning', message: 'dcatd service is waiting for Production Release - please confirm'
