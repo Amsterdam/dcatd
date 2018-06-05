@@ -15,6 +15,7 @@ apidoc:
 	$(SPHINXAPIDOC) --force --module-first --no-toc --private -o "$(SOURCEDIR)/apidoc" ../src/datacatalog
 
 
+
 docs: apidoc
 	$(SPHINXBUILD) -b html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS)
 	touch $(BUILDDIR)/.nojekyll
@@ -39,3 +40,5 @@ gh-pages: docs
 	  git add * && \
 	  git commit -m "Update from branch ''$(GITBRANCH)'" && \
 	  git push
+	cd ..
+	rm -rf gh-pages
