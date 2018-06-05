@@ -1,0 +1,12 @@
+utils
+=====
+
+Submodules
+----------
+
+utils module
+------------
+
+.. automodule:: util/ckan2dcat.py
+	:members:
+	:undoc-members:

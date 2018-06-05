@@ -85,12 +85,10 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.datasets">datacatalog.handlers.datasets module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.openapi">datacatalog.handlers.openapi module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers.systemhealth">datacatalog.handlers.systemhealth module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.handlers.html#module-datacatalog.handlers">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../apidoc/datacatalog.plugins.html">datacatalog.plugins package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.plugins.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../apidoc/datacatalog.plugins.html#module-datacatalog.plugins">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -105,7 +103,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.main">datacatalog.main module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.openapi">datacatalog.openapi module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog.plugin_interfaces">datacatalog.plugin_interfaces module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../apidoc/datacatalog.html#module-datacatalog">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../openapi.html">OpenAPI definitions</a></li>
@@ -356,7 +353,20 @@
                 <span class="k">raise</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">break</span>
-    <span class="k">await</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">_Q_CREATE</span><span class="p">)</span></div>
+    <span class="k">while</span> <span class="n">connect_attempt_tries_left</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">app</span><span class="p">[</span><span class="s1">&#39;pool&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">_Q_CREATE</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ConnectionRefusedError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">connect_attempt_tries_left</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Database not accepting connections. Retrying </span><span class="si">%d</span><span class="s2"> more times.&quot;</span><span class="p">,</span> <span class="n">connect_attempt_tries_left</span><span class="p">)</span>
+                <span class="n">connect_attempt_tries_left</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">CONNECT_ATTEMPT_INTERVAL_SECS</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not connect to the database. Aborting.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Successfully connected to postgres.&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="deinitialize"><a class="viewcode-back" href="../../../apidoc/datacatalog.plugins.postgres.html#datacatalog.plugins.postgres.deinitialize">[docs]</a><span class="nd">@_hookimpl</span>

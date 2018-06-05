@@ -1,43 +1,48 @@
-datacatalog.plugins.dcat_ap_ams package
-=======================================
+datacatalog.plugins.dcat\_ap\_ams package
+=========================================
+
+.. automodule:: datacatalog.plugins.dcat_ap_ams
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Submodules
 ----------
 
-datacatalog.plugins.dcat_ap_ams.constants module
-------------------------------------------------
+datacatalog.plugins.dcat\_ap\_ams.constants module
+--------------------------------------------------
 
 .. automodule:: datacatalog.plugins.dcat_ap_ams.constants
     :members:
     :undoc-members:
     :show-inheritance:
 
-datacatalog.plugins.dcat_ap_ams.dataset module
-----------------------------------------------
+datacatalog.plugins.dcat\_ap\_ams.dataset module
+------------------------------------------------
 
 .. automodule:: datacatalog.plugins.dcat_ap_ams.dataset
     :members:
     :undoc-members:
     :show-inheritance:
 
-datacatalog.plugins.dcat_ap_ams.distribution module
----------------------------------------------------
+datacatalog.plugins.dcat\_ap\_ams.distribution module
+-----------------------------------------------------
 
 .. automodule:: datacatalog.plugins.dcat_ap_ams.distribution
     :members:
     :undoc-members:
     :show-inheritance:
 
-datacatalog.plugins.dcat_ap_ams.fieldtypes module
--------------------------------------------------
+datacatalog.plugins.dcat\_ap\_ams.fieldtypes module
+---------------------------------------------------
 
 .. automodule:: datacatalog.plugins.dcat_ap_ams.fieldtypes
     :members:
     :undoc-members:
     :show-inheritance:
 
-datacatalog.plugins.dcat_ap_ams.logger module
----------------------------------------------
+datacatalog.plugins.dcat\_ap\_ams.logger module
+-----------------------------------------------
 
 .. automodule:: datacatalog.plugins.dcat_ap_ams.logger
     :members:
@@ -45,10 +50,3 @@ datacatalog.plugins.dcat_ap_ams.logger module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: datacatalog.plugins.dcat_ap_ams
-    :members:
-    :undoc-members:
-    :show-inheritance:

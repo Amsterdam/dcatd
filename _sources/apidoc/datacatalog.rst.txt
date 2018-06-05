@@ -1,6 +1,11 @@
 datacatalog package
 ===================
 
+.. automodule:: datacatalog
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -76,8 +81,8 @@ datacatalog.openapi module
     :undoc-members:
     :show-inheritance:
 
-datacatalog.plugin_interfaces module
-------------------------------------
+datacatalog.plugin\_interfaces module
+-------------------------------------
 
 .. automodule:: datacatalog.plugin_interfaces
     :members:
@@ -85,10 +90,3 @@ datacatalog.plugin_interfaces module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: datacatalog
-    :members:
-    :undoc-members:
-    :show-inheritance:

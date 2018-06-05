@@ -1,6 +1,11 @@
 datacatalog.handlers package
 ============================
 
+.. automodule:: datacatalog.handlers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -29,10 +34,3 @@ datacatalog.handlers.systemhealth module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: datacatalog.handlers
-    :members:
-    :undoc-members:
-    :show-inheritance:

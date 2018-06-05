@@ -87,12 +87,10 @@
 <li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.datasets">datacatalog.handlers.datasets module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.openapi">datacatalog.handlers.openapi module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.systemhealth">datacatalog.handlers.systemhealth module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3 current"><a class="reference internal" href="datacatalog.plugins.html">datacatalog.plugins package</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="datacatalog.plugins.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.html#module-datacatalog.plugins">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -107,7 +105,6 @@
 <li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.main">datacatalog.main module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.openapi">datacatalog.openapi module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.plugin_interfaces">datacatalog.plugin_interfaces module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../openapi.html">OpenAPI definitions</a></li>
@@ -242,8 +239,96 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="datacatalog-plugins-dcat-ap-ams-package">
-<h1>datacatalog.plugins.dcat_ap_ams package<a class="headerlink" href="#datacatalog-plugins-dcat-ap-ams-package" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-datacatalog.plugins.dcat_ap_ams">
+<span id="datacatalog-plugins-dcat-ap-ams-package"></span><h1>datacatalog.plugins.dcat_ap_ams package<a class="headerlink" href="#module-datacatalog.plugins.dcat_ap_ams" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="datacatalog.plugins.dcat_ap_ams.context">
+<code class="descname">context</code><span class="sig-paren">(</span><em>base_url=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.context" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugins.dcat_ap_ams.initialize_sync">
+<code class="descname">initialize_sync</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#initialize_sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.initialize_sync" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugins.dcat_ap_ams.mds_canonicalize">
+<code class="descname">mds_canonicalize</code><span class="sig-paren">(</span><em>data</em>, <em>id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#mds_canonicalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.mds_canonicalize" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – </li>
+<li><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – <p>Can be one of three values:</p>
+<ol class="arabic">
+<li><code class="docutils literal notranslate"><span class="pre">None</span></code>: do nothing with the <code class="docutils literal notranslate"><span class="pre">&#64;id</span></code> or <code class="docutils literal notranslate"><span class="pre">dct:identifier</span></code> fields.</li>
+<li><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> (the empty string): remove the <code class="docutils literal notranslate"><span class="pre">&#64;id</span></code> or <code class="docutils literal notranslate"><span class="pre">dct:identifier</span></code> fields.</li>
+<li><code class="docutils literal notranslate"><span class="pre">str</span></code> (non-empty string): set the <code class="docutils literal notranslate"><span class="pre">&#64;id</span></code> or <code class="docutils literal notranslate"><span class="pre">dct:identifier</span></code> fields.</li>
+</ol>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugins.dcat_ap_ams.mds_context">
+<code class="descname">mds_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#mds_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.mds_context" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugins.dcat_ap_ams.mds_full_text_search_representation">
+<code class="descname">mds_full_text_search_representation</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#mds_full_text_search_representation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.mds_full_text_search_representation" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugins.dcat_ap_ams.mds_json_schema">
+<code class="descname">mds_json_schema</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#mds_json_schema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.mds_json_schema" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="datacatalog.plugins.dcat_ap_ams.mds_name">
+<code class="descname">mds_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#mds_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.mds_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -415,97 +500,6 @@ e.g. <a class="reference external" href="https://docs.python.org/3.6/library/std
 </div>
 <div class="section" id="module-datacatalog.plugins.dcat_ap_ams.logger">
 <span id="datacatalog-plugins-dcat-ap-ams-logger-module"></span><h2>datacatalog.plugins.dcat_ap_ams.logger module<a class="headerlink" href="#module-datacatalog.plugins.dcat_ap_ams.logger" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-datacatalog.plugins.dcat_ap_ams">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-datacatalog.plugins.dcat_ap_ams" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="datacatalog.plugins.dcat_ap_ams.context">
-<code class="descname">context</code><span class="sig-paren">(</span><em>base_url=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.context" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="datacatalog.plugins.dcat_ap_ams.initialize_sync">
-<code class="descname">initialize_sync</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#initialize_sync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.initialize_sync" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="datacatalog.plugins.dcat_ap_ams.mds_canonicalize">
-<code class="descname">mds_canonicalize</code><span class="sig-paren">(</span><em>data</em>, <em>id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#mds_canonicalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.mds_canonicalize" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – </li>
-<li><strong>id</strong> (<a class="reference external" href="https://docs.python.org/3.6/library/typing.html#typing.Optional" title="(in Python v3.6)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – <p>Can be one of three values:</p>
-<ol class="arabic">
-<li><code class="docutils literal notranslate"><span class="pre">None</span></code>: do nothing with the <code class="docutils literal notranslate"><span class="pre">&#64;id</span></code> or <code class="docutils literal notranslate"><span class="pre">dct:identifier</span></code> fields.</li>
-<li><code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> (the empty string): remove the <code class="docutils literal notranslate"><span class="pre">&#64;id</span></code> or <code class="docutils literal notranslate"><span class="pre">dct:identifier</span></code> fields.</li>
-<li><code class="docutils literal notranslate"><span class="pre">str</span></code> (non-empty string): set the <code class="docutils literal notranslate"><span class="pre">&#64;id</span></code> or <code class="docutils literal notranslate"><span class="pre">dct:identifier</span></code> fields.</li>
-</ol>
-</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="datacatalog.plugins.dcat_ap_ams.mds_context">
-<code class="descname">mds_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#mds_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.mds_context" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="datacatalog.plugins.dcat_ap_ams.mds_full_text_search_representation">
-<code class="descname">mds_full_text_search_representation</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#mds_full_text_search_representation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.mds_full_text_search_representation" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#str" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="datacatalog.plugins.dcat_ap_ams.mds_json_schema">
-<code class="descname">mds_json_schema</code><span class="sig-paren">(</span><em>app</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#mds_json_schema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.mds_json_schema" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3.6/library/stdtypes.html#dict" title="(in Python v3.6)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="datacatalog.plugins.dcat_ap_ams.mds_name">
-<code class="descname">mds_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/datacatalog/plugins/dcat_ap_ams.html#mds_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datacatalog.plugins.dcat_ap_ams.mds_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </div>
 </div>
 

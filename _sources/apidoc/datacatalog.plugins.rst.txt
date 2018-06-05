@@ -1,6 +1,11 @@
 datacatalog.plugins package
 ===========================
 
+.. automodule:: datacatalog.plugins
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Subpackages
 -----------
 
@@ -10,10 +15,3 @@ Subpackages
     datacatalog.plugins.postgres
     datacatalog.plugins.swift
 
-Module contents
----------------
-
-.. automodule:: datacatalog.plugins
-    :members:
-    :undoc-members:
-    :show-inheritance:
