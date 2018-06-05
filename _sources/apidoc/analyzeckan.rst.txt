@@ -1,0 +1,7 @@
+analyzeckan module
+==================
+
+.. automodule:: analyzeckan
+    :members:
+    :undoc-members:
+    :show-inheritance:

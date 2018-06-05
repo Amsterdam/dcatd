@@ -4,6 +4,7 @@
     :hidden:
 
     apidoc/datacatalog
+    utils
     openapi
     sphinx_101
     todo_list

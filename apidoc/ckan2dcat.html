@@ -8,14 +8,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>datacatalog.plugins package &mdash; datacatalog-core 0.1 documentation</title>
+  <title>ckan2dcat module &mdash; datacatalog-core 0.1 documentation</title>
   
 
   
   
   
   
-    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/apidoc/datacatalog.plugins.html"/>
+    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/apidoc/ckan2dcat.html"/>
   
 
   
@@ -31,9 +31,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="datacatalog.plugins.dcat_ap_ams package" href="datacatalog.plugins.dcat_ap_ams.html" />
-    <link rel="prev" title="datacatalog.handlers package" href="datacatalog.handlers.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -79,9 +77,9 @@
               
             
             
-              <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="datacatalog.html">datacatalog package</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="datacatalog.html#subpackages">Subpackages</a><ul class="current">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="datacatalog.html">datacatalog package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datacatalog.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="datacatalog.handlers.html">datacatalog.handlers package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.datasets">datacatalog.handlers.datasets module</a></li>
@@ -89,8 +87,8 @@
 <li class="toctree-l4"><a class="reference internal" href="datacatalog.handlers.html#module-datacatalog.handlers.systemhealth">datacatalog.handlers.systemhealth module</a></li>
 </ul>
 </li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">datacatalog.plugins package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datacatalog.plugins.html">datacatalog.plugins package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="datacatalog.plugins.html#subpackages">Subpackages</a></li>
 </ul>
 </li>
 </ul>
@@ -107,9 +105,13 @@
 <li class="toctree-l2"><a class="reference internal" href="datacatalog.html#module-datacatalog.plugin_interfaces">datacatalog.plugin_interfaces module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../utils.html">utils namespace</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../utils.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../utils.html#module-../utils.ckan2dcat">utils.ckan2dcat module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils namespace</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#utils-analyzeckan-module">utils.analyzeckan module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#utils-canonicalize-module">utils.canonicalize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#utils-ckan2dcat-module">utils.ckan2dcat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#utils-dumpckan-module">utils.dumpckan module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#utils-resources2distributions-module">utils.resources2distributions module</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../openapi.html">OpenAPI definitions</a></li>
@@ -221,15 +223,13 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="datacatalog.html">datacatalog package</a> &raquo;</li>
-        
-      <li>datacatalog.plugins package</li>
+      <li>ckan2dcat module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/apidoc/datacatalog.plugins.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/apidoc/ckan2dcat.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -242,30 +242,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-datacatalog.plugins">
-<span id="datacatalog-plugins-package"></span><h1>datacatalog.plugins package<a class="headerlink" href="#module-datacatalog.plugins" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html">datacatalog.plugins.dcat_ap_ams package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#module-datacatalog.plugins.dcat_ap_ams.constants">datacatalog.plugins.dcat_ap_ams.constants module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#module-datacatalog.plugins.dcat_ap_ams.dataset">datacatalog.plugins.dcat_ap_ams.dataset module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#module-datacatalog.plugins.dcat_ap_ams.distribution">datacatalog.plugins.dcat_ap_ams.distribution module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#module-datacatalog.plugins.dcat_ap_ams.fieldtypes">datacatalog.plugins.dcat_ap_ams.fieldtypes module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datacatalog.plugins.dcat_ap_ams.html#module-datacatalog.plugins.dcat_ap_ams.logger">datacatalog.plugins.dcat_ap_ams.logger module</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="datacatalog.plugins.postgres.html">datacatalog.plugins.postgres package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="datacatalog.plugins.postgres.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datacatalog.plugins.postgres.html#module-datacatalog.plugins.postgres.languages">datacatalog.plugins.postgres.languages module</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="datacatalog.plugins.swift.html">datacatalog.plugins.swift package</a></li>
-</ul>
-</div>
-</div>
+  <div class="section" id="ckan2dcat-module">
+<h1>ckan2dcat module<a class="headerlink" href="#ckan2dcat-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
@@ -273,15 +251,6 @@
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="datacatalog.plugins.dcat_ap_ams.html" class="btn btn-neutral float-right" title="datacatalog.plugins.dcat_ap_ams package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="datacatalog.handlers.html" class="btn btn-neutral" title="datacatalog.handlers package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

@@ -1,0 +1,7 @@
+resources2distributions module
+==============================
+
+.. automodule:: resources2distributions
+    :members:
+    :undoc-members:
+    :show-inheritance:

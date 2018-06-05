@@ -1,10 +1,12 @@
-utils
-=====
+utils namespace
+===============
 
 Submodules
 ----------
 
-utils module
-------------
+utils.ckan2dcat module
+----------------------
 
-.. autodoc:: ckan2dcat
+.. module:: ../utils.ckan2dcat
+
+

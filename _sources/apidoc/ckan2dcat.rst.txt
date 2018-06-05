@@ -1,0 +1,7 @@
+ckan2dcat module
+================
+
+.. automodule:: ckan2dcat
+    :members:
+    :undoc-members:
+    :show-inheritance:

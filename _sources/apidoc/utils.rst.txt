@@ -1,12 +1,44 @@
-utils
-=====
+utils namespace
+===============
 
 Submodules
 ----------
 
+utils.analyzeckan module
+------------------------
+
+.. automodule:: utils.analyzeckan
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+utils.canonicalize module
+-------------------------
+
+.. automodule:: utils.canonicalize
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+utils.ckan2dcat module
+----------------------
+
+.. automodule:: utils.ckan2dcat
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+utils.dumpckan module
+---------------------
+
+.. automodule:: utils.dumpckan
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 utils module
 ------------
 
-.. automodule:: util/ckan2dcat.py
-	:members:
-	:undoc-members:
+.. module:: ../../utils
+
+
