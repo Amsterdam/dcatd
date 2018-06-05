@@ -42,6 +42,17 @@ Example server
     docker-compose up -d database
     make example
 
+See: http://localhost:8000/openapi and http://localhost:8000/datasets
+
+You could even go one further and also spin up the Amsterdam Swagger UI:
+::
+
+    docker-compose up -d database swagger-ui
+    make example
+
+
+Apart from the urls mentioned above you also can
+access http://localhost:8686/swagger-ui/?url=http://localhost:8000/openapi
 
 Running tests
 #############
@@ -58,10 +69,26 @@ or
     docker-compose up -d database
     make cov
 
-Update documentation
+
+How to run in docker
 --------------------
 
-Requires Sphinx plus extras:
+Requires Docker (duh)
+
+Example server
+##############
+
+::
+
+    docker-compose up -d
+
+That's it.
+
+See: http://localhost:8001/openapi , http://localhost:8001/datasets
+and http://localhost:8686/swagger-ui/?url=http://localhost:8001/openapi
+
+(Example server in docker is accessable through port 8001, while the locally
+running example runs on port 8000)
 
 ::
 

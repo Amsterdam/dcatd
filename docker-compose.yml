@@ -2,7 +2,7 @@ version: "3.0"
 services:
 
   database:
-    image: postgres:9.5
+    image: postgres:10
     ports:
       - "5433:5432"
     environment:
@@ -18,13 +18,14 @@ services:
     volumes:
       - ./examples/running/config.yml:/etc/dcatd.yml
     ports:
-      - "8000:8000"
+      - "8001:8000"
     environment:
       DB_DATABASE: datacatalog
       DB_USER: datacatalog
       DB_PASSWORD: datacatalog
       DB_HOST: database
       DB_PORT: 5432
+      BASEURL: "http://localhost:8001/"
       SWIFT_PASSWORD: insecure
       SWIFT_CONTAINER: dcatd_acc
     command: ["python", "-m", "datacatalog.main"]
