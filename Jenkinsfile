@@ -44,12 +44,14 @@ String BRANCH = "${env.BRANCH_NAME}"
 
 if (BRANCH == "master") {
 
+	/*
 	node {
 	    stage("Update documentation") {
             sh "pip install Sphinx sphinx_rtd_theme sphinx_autodoc_typehints && " +
                "make -C sphinx gh-pages"
 	    }
 	}
+	*/
 
     node {
         stage('Push acceptance image') {
