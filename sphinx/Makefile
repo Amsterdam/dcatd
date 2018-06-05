@@ -8,7 +8,7 @@ AUTOBUILD     := sphinx-autobuild
 SOURCEDIR     := .
 BUILDDIR      := ../docs
 GITORIGIN     = "$$(git remote show -n origin | grep 'Fetch URL:' | grep -o 'git@.*')"
-GITBRANCH     = "$$(git branch | grep '^\* ' | sed 's/^\* //')"
+GITBRANCH     := $(shell git branch | grep '^\* ' | sed 's/^\* //')
 
 
 apidoc:
@@ -37,5 +37,5 @@ gh-pages: docs
 	cd ../docs && cp -a * ../sphinx/gh-pages
 	cd gh-pages && \
 	  git add * && \
-	  git commit -m 'Update from branch $(GITBRANCH)' && \
+	  git commit -m "Update from branch ''$(GITBRANCH)'" && \
 	  git push
