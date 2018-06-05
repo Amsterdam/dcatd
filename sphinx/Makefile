@@ -1,4 +1,4 @@
-.PHONY: docs server clean invclean gh-pages
+.PHONY: apidoc docs server clean invclean gh-pages
 
 RM            := rm -rf
 SPHINXOPTS    := -d .doctrees
