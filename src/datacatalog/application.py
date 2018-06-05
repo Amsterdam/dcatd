@@ -65,6 +65,7 @@ class Application(web.Application):
 
         self._load_plugins()
         self._initialize_sync()
+        logger.info("Application initialized")
 
     def _initialize_sync(self):
         results = self.hooks.initialize_sync(app=self)

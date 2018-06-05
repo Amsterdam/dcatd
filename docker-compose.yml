@@ -18,15 +18,13 @@ services:
     volumes:
       - ./examples/running/config.yml:/etc/dcatd.yml
     ports:
-      - "8122:8000"
+      - "8000:8000"
     environment:
       DB_DATABASE: datacatalog
       DB_USER: datacatalog
       DB_PASSWORD: datacatalog
       DB_HOST: database
       DB_PORT: 5432
-      PORT: 8122
-      BASEURL: http://localhost:8122/
       SWIFT_PASSWORD: insecure
       SWIFT_CONTAINER: dcatd_acc
     command: ["python", "-m", "datacatalog.main"]

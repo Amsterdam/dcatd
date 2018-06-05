@@ -119,7 +119,20 @@ async def initialize(app):
                 raise
         else:
             break
-    await app['pool'].execute(_Q_CREATE)
+    while connect_attempt_tries_left >= 0:
+        try:
+            await app['pool'].execute(_Q_CREATE)
+        except ConnectionRefusedError:
+            if connect_attempt_tries_left > 0:
+                _logger.warning("Database not accepting connections. Retrying %d more times.", connect_attempt_tries_left)
+                connect_attempt_tries_left -= 1
+                await asyncio.sleep(CONNECT_ATTEMPT_INTERVAL_SECS)
+            else:
+                _logger.error("Could not connect to the database. Aborting.")
+                raise
+        else:
+            break
+    _logger.info("Successfully connected to postgres.")
 
 
 @_hookimpl
