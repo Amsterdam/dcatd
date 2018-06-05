@@ -46,8 +46,7 @@ if (BRANCH == "master") {
 
 	node {
 	    stage("Update documentation") {
-            sh "python3 -m venv ./venv && source ./venv/bin/activate &&" +
-               "pip install -e .[docs] && " +
+            sh "pip install Sphinx sphinx_rtd_theme sphinx_autodoc_typehints && " +
                "make -C sphinx gh-pages"
 	    }
 	}
