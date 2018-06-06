@@ -8,8 +8,6 @@ from aiohttp import helpers, web
 import aiohttp
 import aiopluggy
 
-from datacatalog import authorization
-
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger(__name__)
 
@@ -67,7 +65,6 @@ async def _put_file_to_object_store(uuid: str, content_type: str, data,
                 raise web.HTTPBadGateway()
 
 
-@authorization.authorize()
 async def post(request: web.Request) -> web.Response:
     # language=rst
     """POST handler for ``/files``"""

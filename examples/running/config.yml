@@ -21,7 +21,7 @@ storage_swift:
 web:
   port: ${PORT:-8000}
   baseurl: ${BASEURL:-http://localhost:8000/}
-  allow_cors: false
+  allow_cors: true
 
 jwks: >
   {

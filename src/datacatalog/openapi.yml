@@ -274,6 +274,20 @@ paths:
               description: Location of the uploaded distribution.
               schema:
                 type: string
+  /openapi:
+    get:
+      description: >-
+        Get the OpenAPI specification.
+      responses:
+        200:
+          description: Success.
+  /system/health:
+    get:
+      description: >-
+        System health.
+      responses:
+        200:
+          description: Plain text description of current system status.
 
 
 components:

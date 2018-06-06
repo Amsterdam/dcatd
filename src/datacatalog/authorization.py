@@ -2,7 +2,6 @@ import logging
 import re
 import typing as T
 import urllib.parse
-import functools
 
 from aiohttp import web
 import jwt
@@ -77,17 +76,28 @@ async def _extract_authz_info(request: web.Request,
 
 
 async def middleware(app: web.Application, handler):
+    openapi = app['openapi']
+    baseurl = app.config['web']['baseurl']
+    base_path = urllib.parse.urlparse(baseurl).path
+    path_offset = len(base_path)
+    if path_offset > 0 and base_path[-1] == '/':
+        path_offset -= 1
+    paths = openapi['paths']
+
     async def middleware_handler(request: web.Request) -> web.Response:
-        openapi = app['openapi']
-        security_definitions = openapi['components']['securitySchemes']
-        request['authz_info'] = await _extract_authz_info(request, security_definitions)
+        req_path = request.rel_url.raw_path[path_offset:]
+        method = request.method
+        path, pathspec = _get_path_spec(paths, req_path, method.lower())
+
+        if path is not None and 'security' in pathspec:
+            await _enforce_one_of(request, pathspec['security'])
 
         return await handler(request)
     return middleware_handler
 
 
-async def enforce_one_of(request: web.Request,
-                         security_requirements: T.List[T.Dict[
+async def _enforce_one_of(request: web.Request,
+                          security_requirements: T.List[T.Dict[
                              str, T.Optional[T.Iterable]]
                          ]):
     for security_requirement in security_requirements:
@@ -102,8 +112,9 @@ async def _enforce_all_of(request: web.Request,
                           ]) -> bool:
     openapi = request.app['openapi']
     security_definitions = openapi['components']['securitySchemes']
+    all_authz_info = await _extract_authz_info(request, security_definitions)
     for requirement, scopes in security_requirements.items():
-        authz_info = request['authz_info'][requirement]
+        authz_info = all_authz_info[requirement]
         security_type = security_definitions[requirement]['type']
         if security_type == 'oauth2':
             if len(set(scopes) - authz_info) > 0:
@@ -115,32 +126,6 @@ async def _enforce_all_of(request: web.Request,
             _logger.error('Unexpected security type: %s' % security_type)
             raise web.HTTPInternalServerError()
     return True
-
-
-def authorize(p_method=None):
-    def decorator(f: T.Callable):
-        @functools.wraps(f)
-        async def wrapper(request, *args, **kwargs):
-            openapi = request.app['openapi']
-
-            baseurl = request.app.config['web']['baseurl']
-            base_path = urllib.parse.urlparse(baseurl).path
-
-            path_offset = len(base_path)
-            if path_offset > 0 and base_path[-1] == '/':
-                path_offset -= 1
-
-            paths = openapi['paths']
-            req_path = request.rel_url.raw_path[path_offset:]
-            method = p_method or request.method
-
-            path, pathspec = _get_path_spec(paths, req_path, method.lower())
-            assert path is not None
-            if 'security' in pathspec:
-                await enforce_one_of(request, pathspec['security'])
-            return await f(request, *args, **kwargs)
-        return wrapper
-    return decorator
 
 
 def _get_path_spec(paths: dict, path: str, method: str=None) -> T.Optional[T.Tuple[str, str]]:
