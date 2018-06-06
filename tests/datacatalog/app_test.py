@@ -25,28 +25,15 @@ class DatasetTestCase(BaseTestCase):
             'Access-Control-Request-Headers': 'origin, random_header_name',
             'Origin': 'http://localhost'
         }
-        for endpoint, expected_text, options_state in [
-            ("/datasets", '"dcat:dataset":[]', 200),
-            ("/openapi", '"openapi": "3.0.0"', 200),
-            ("/system/health", "systemhealth is OK", 405),
+        for endpoint, expected_text in [
+            ("/datasets", '"dcat:dataset":[]'),
+            ("/openapi", '"openapi": "3.0.0"'),
+            ("/system/health", "systemhealth is OK"),
         ]:
             response = await self.client.request("GET", endpoint)
             text = await response.text()
             self.assertEquals(response.status, 200)
             self.assertIn(expected_text, text)
-
-            response = await self.client.request(
-                "OPTIONS", endpoint, headers=preflight_headers)
-            self.assertEquals(response.status, options_state)
-
-            if options_state == 200:
-                aca_hdr = response.headers.get('Access-Control-Allow-Headers')
-
-                self.assertIsNotNone(aca_hdr, "Missing response headers.")
-
-                hdrs = aca_hdr.split(',')
-                self.assertIn('RANDOM_HEADER_NAME', hdrs, 'Missing header')
-                self.assertIn('ORIGIN', hdrs, 'Missing header')
 
     @unittest_run_loop
     async def test_dataset_operations(self):
