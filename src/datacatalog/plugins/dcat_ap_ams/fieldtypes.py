@@ -117,7 +117,7 @@ CONTACT_POINT = Object(
     'vcard:fn',
     PlainTextLine(
         description="Geef de naam van de contactpersoon voor eventuele vragen over de inhoud en kwaliteit van de gegevens.",
-        title="Inhoudelijke contactpersoon",
+        title="Inhoudelijk contactpersoon",
         required=True,
         json_pointer='/contact_name'
     )
@@ -125,14 +125,14 @@ CONTACT_POINT = Object(
     'vcard:hasEmail',
     String(
         format='email',
-        title="E-mail inhoudelijke contactpersoon",
+        title="E-mail inhoudelijk contactpersoon",
         json_pointer='/contact_email'
     )
 ).add(
     'vcard:hasURL',
     String(
         format='uri',
-        title="Website inhoudelijke contactpersoon",
+        title="Website inhoudelijk contactpersoon",
         # description="Website inhoudelijk contactpersoon"
         json_pointer='/contact_uri'
     )
@@ -146,7 +146,7 @@ DCT_PUBLISHER = Object(
 ).add(
     'foaf:name',
     PlainTextLine(
-        title="Technische contactpersoon",
+        title="Technisch contactpersoon",
         description="Geef de naam van de contactpersoon voor technische vragen over de aanlevering. Dit kan dezelfde contactpersoon zijn als voor de inhoudelijke vragen.",
         required=True,
         json_pointer='/publisher'
@@ -155,7 +155,7 @@ DCT_PUBLISHER = Object(
     'foaf:mbox',
     String(
         format='email',
-        title="E-mail technische contactpersoon",
+        title="E-mail technisch contactpersoon",
         # description="Email technisch contactpersoon"
         json_pointer='/publisher_email'
     )
@@ -163,7 +163,7 @@ DCT_PUBLISHER = Object(
     'foaf:homepage',
     String(
         format='uri',
-        title="Website technische contactpersoon",
+        title="Website technisch contactpersoon",
         # description="Website technisch contactpersoon"
         json_pointer='/publisher_uri'
     )
