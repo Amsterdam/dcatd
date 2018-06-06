@@ -90,6 +90,61 @@ and http://localhost:8686/swagger-ui/?url=http://localhost:8001/openapi
 (Example server in docker is accessable through port 8001, while the locally
 running example runs on port 8000)
 
+Bootstrap your setup with data
+------------------------------
+
+You can import CKAN data into the DCAT-API to bootstrap your install with data
+
+PUT-ting and DELETE-ing data via the API require authorisation.
+
+In the context of Amsterdam City Data can obtiain a JWT from the swagger-ui
+(http://localhost:8686/swagger-ui/?url=http://localhost:8000/openapi); export it to JWT:
+(For more information see: https://hub.docker.com/r/amsterdam/oauth2swaggerui/ )
+
+::
+
+    export JWT='<JWT>'
+
+Define your local API, and the source CKAN (point to the root of the API of CKAN):
+
+::
+
+    export DCATD='http://localhost:8000/'   # or :8001 , see above
+    export CKAN='https://demo.ckan.org/api' # or for instance https://api.data.amsterdam.nl/catalogus/api
+
+Then use the scripts in the utils directory to import data
+
+Remark: this is highly localized for the Amsterdam CKAN instance and will fail beyond the first step
+when using CKAN demo data.
+
+Currently this also will fail on the `resources2distributions` step, but you will end up with at least a
+somewhat filled database
+
+::
+
+	cd utils
+
+    python dumpckan.py "${CKAN}"
+    python ckan2dcat.py "${DCATD}"
+    python resources2distributions.py "${DCATD}files" "${JWT}"
+    for d in dcatdata/*.json; do
+      b=`basename "${d}" '.json'`
+      echo -n "${b}..."
+      STATUS=$(
+        curl --header "Authorization: Bearer ${JWT}" \
+          --header "If-None-Match: *" --upload-file "${d}" \
+          --silent --output /dev/stderr --write-out "%{http_code}" \
+          "${DCATD}datasets/${b}"
+      )
+      [ "$STATUS" -eq 201 ] && echo "OK" && rm "${d}" || echo "FAILED: $STATUS"
+    done
+
+
+Update documentation
+--------------------
+
+Requires Sphinx plus extras:
+
 ::
 
     pip install -e .[docs]

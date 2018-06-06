@@ -3,8 +3,6 @@ import pathlib
 import pprint
 import re
 
-import jsonpointer
-
 PACKAGE_DIR = 'ckandata'
 
 packages = []
