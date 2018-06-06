@@ -409,8 +409,6 @@ async def _execute_list_query(app, filterexpr: str, lang: str, sortpath: T.List[
     for p in sortpath[:-1]:
         sortexpr += "'" + p + "'->"
     sortexpr += ">'" + sortpath[-1] + "'"
-    _logger.warning(sortpath)
-    _logger.warning(sortexpr)
     async with app['pool'].acquire() as con:
         # use a cursor so we can stream
         async with con.transaction():
