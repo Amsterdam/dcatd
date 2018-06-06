@@ -58,6 +58,7 @@ setup(
     ],
     install_requires=[
         'aiohttp',
+        'aiohttp_cors',
         'aiopluggy',
         'bleach',
         'datapunt_config_loader',

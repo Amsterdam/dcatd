@@ -44,6 +44,9 @@ definitions:
       baseurl:
         type: string
         pattern: '/$'
+      allow_cors:
+        type: boolean
+        default: false
     required:
     - port
     - baseurl

@@ -3,9 +3,10 @@ import urllib.parse
 import logging
 
 from aiohttp import web
+import aiohttp_cors
 import aiopluggy
 
-from . import authorization, config, cors, handlers, jwks, openapi, plugin_interfaces
+from . import authorization, config, handlers, jwks, openapi, plugin_interfaces
 
 logger = logging.getLogger(__name__)
 
@@ -40,20 +41,14 @@ class Application(web.Application):
         # set routes
         self.router.add_get(path + 'datasets', handlers.datasets.get_collection)
         self.router.add_post(path + 'datasets', handlers.datasets.post_collection)
-        self.router.add_route('OPTIONS', path + 'datasets', cors.preflight_handler('POST', 'GET'))
 
         self.router.add_get(path + 'datasets/{dataset}', handlers.datasets.get)
         self.router.add_put(path + 'datasets/{dataset}', handlers.datasets.put)
         self.router.add_delete(path + 'datasets/{dataset}', handlers.datasets.delete)
-        self.router.add_route('OPTIONS', path + 'datasets/{dataset}', cors.preflight_handler('GET', 'DELETE', 'PUT'))
 
         self.router.add_get(path + 'openapi', handlers.openapi.get)
-        self.router.add_route('OPTIONS', path + 'openapi', cors.preflight_handler('GET'))
 
         self.router.add_get(path + 'system/health', handlers.systemhealth.get)
-
-        # TEMPORARY FIX
-        self.router.add_route('OPTIONS', path + 'files', cors.preflight_handler('POST'))
 
         # Load and initialize plugins:
         self._pm = aiopluggy.PluginManager('datacatalog')
@@ -61,11 +56,21 @@ class Application(web.Application):
 
         self.on_startup.append(_on_startup)
         self.on_cleanup.append(_on_cleanup)
-        self.on_response_prepare.append(cors.on_response_prepare)
 
         self._load_plugins()
         self._initialize_sync()
-        logger.info("Application initialized")
+
+        # CORS
+        # this must be done after initialize_sync: plugins may register new
+        # routes during setup and our allow_cors applies to all routes.
+        if 'allow_cors' in self._config['web'] and self._config['web']['allow_cors']:
+            cors = aiohttp_cors.setup(self, defaults={
+                '*': aiohttp_cors.ResourceOptions(
+                    expose_headers="*", allow_headers="*"
+                ),
+            })
+            for route in list(self.router.routes()):
+                cors.add(route)
 
     def _initialize_sync(self):
         results = self.hooks.initialize_sync(app=self)
