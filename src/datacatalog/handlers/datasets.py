@@ -194,10 +194,20 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     full_text_query = query.get('q', '').strip()
     limit = query.get('limit', None)
     if limit is not None:
-        limit = int(limit)
+        try:
+            limit = int(limit)
+        except ValueError:
+            raise web.HTTPBadRequest(
+                text="Invalid limit value %s" % limit
+            )
     offset = query.get('offset', 0)
     if offset is not None:
-        offset = int(offset)
+        try:
+            offset = int(offset)
+        except ValueError:
+            raise web.HTTPBadRequest(
+                text="Invalid offset value %s" % offset
+            )
 
     result_info = {}
     resultiterator = await hooks.search_search(
