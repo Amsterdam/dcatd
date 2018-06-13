@@ -30,7 +30,7 @@ class Type(object):
         if self.default is not None:
             retval['default'] = self.default
         if self.sys_defined is not None:
-            retval['sys_defined'] = self.sys_defined
+            retval['sysDefined'] = self.sys_defined
         if self.examples is not None:
             retval['examples'] = self.examples
         if self.format is not None:
@@ -58,10 +58,11 @@ class Type(object):
     # noinspection PyMethodMayBeStatic
     def canonicalize(self, data):
         revert_to_default = data is None and self.default is not None
-        sys_override = self.sys_defined is not None and self.sys_defined is True
+        #   Currently for sys-defined values the default is used (can be callable)
+        sys_override = self.sys_defined is True
 
         if revert_to_default or sys_override:
-            return self.default
+            return self.default() if callable(self.default) else self.default
         return data
 
 
