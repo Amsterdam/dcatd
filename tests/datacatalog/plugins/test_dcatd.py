@@ -1,4 +1,5 @@
 import unittest
+import datetime
 
 from datacatalog.plugins.dcat_ap_ams import mds_canonicalize
 
@@ -82,3 +83,37 @@ class TestDcatd(unittest.TestCase):
 
         canonicalized = mds_canonicalize(data)
         self.assertDictEqual(canonicalized, expected)
+
+    def test_canonicalize_modifieddate(self):
+        this_date = datetime.date.today().strftime('%Y-%m-%d')
+        past_date = '2006-12-13'
+        data = {
+            "@id": "ams-dcatd:_FlXXpXDa-Ro3Q",
+            "dcat:identifier": "_FlXXpXDa-Ro3Q",
+            "dcat:distribution": [
+                {"dct:format": "application/json"},
+                {"dct:format": "application/json"},
+                {"dct:format": "text/html"}
+            ],
+            "foaf:isPrimaryTopicOf": {'dct:issued': past_date}
+        }
+
+        canonicalized = mds_canonicalize(data)
+
+        self.assertIn('dct:modified', canonicalized["foaf:isPrimaryTopicOf"])
+        self.assertEqual(canonicalized["foaf:isPrimaryTopicOf"]['dct:modified'], this_date)
+
+        for distribution in data['dcat:distribution']:
+            self.assertNotIn('dct:modified', distribution)
+
+        for distribution in canonicalized['dcat:distribution']:
+            self.assertIn('dct:modified', distribution)
+            self.assertEqual(distribution['dct:modified'], this_date)
+
+        for distribution in data['dcat:distribution']:
+            distribution['dct:modified'] = past_date
+
+        canonicalized = mds_canonicalize(data)
+
+        for distribution in canonicalized['dcat:distribution']:
+            self.assertEqual(distribution['dct:modified'], this_date)

@@ -7,13 +7,14 @@ import jsonschema
 class Type(object):
     def __init__(self, *args, title=None, description=None, required=False,
                  default=None, examples=None, format=None, read_only=None,
-                 write_only=None, **kwargs):
+                 write_only=None, sys_defined=None, **kwargs):
         if len(args) > 0 or len(kwargs) > 0:
             raise ValueError()
         self.title = title
         self.description = description
         self.required = required
         self.default = default
+        self.sys_defined = sys_defined
         self.examples = examples
         self.format = format
         self.read_only = read_only
@@ -28,6 +29,8 @@ class Type(object):
             retval['description'] = self.description
         if self.default is not None:
             retval['default'] = self.default
+        if self.sys_defined is not None:
+            retval['sys_defined'] = self.sys_defined
         if self.examples is not None:
             retval['examples'] = self.examples
         if self.format is not None:
@@ -54,7 +57,10 @@ class Type(object):
 
     # noinspection PyMethodMayBeStatic
     def canonicalize(self, data):
-        if data is None and self.default is not None:
+        revert_to_default = data is None and self.default is not None
+        sys_override = self.sys_defined is not None and self.sys_defined is True
+
+        if revert_to_default or sys_override:
             return self.default
         return data
 
@@ -193,10 +199,15 @@ class Object(Type):
             raise TypeError("{}: not a dict".format(data))
         retval = {}
         for key, type_ in self.properties:
-            if key in data:
+            canonical_value = None
+
+            if type_.sys_defined is True:
+                canonical_value = type_.canonicalize(None)
+            elif key in data:
                 canonical_value = type_.canonicalize(data[key])
-                if canonical_value is not None:
-                    retval[key] = canonical_value
+
+            if canonical_value is not None:
+                retval[key] = canonical_value
         return retval
 
 

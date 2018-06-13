@@ -188,6 +188,7 @@ DATASET_CATALOG_RECORD = Object(
         title="Wijzigingsdatum",
         description="De datum waarop deze beschrijving van de gegevensset voor het laatst is gewijzigd",
         default=datetime.date.today().isoformat(),
+        sys_defined=True,
         required=True,
         json_pointer='/metadata_modified'
     )

@@ -130,6 +130,7 @@ DISTRIBUTION = Object(json_pointer='').add(
         title="Verversingsdatum",
         description="De datum waarop de inhoud van deze link voor het laatst is geactualiseerd.",
         default=datetime.date.today().isoformat(),
+        sys_defined=True,
         json_pointer='/last_modified'
     )
 ).add(
@@ -170,6 +171,7 @@ DISTRIBUTION = Object(json_pointer='').add(
             title="Wijzigingsdatum",
             description="De datum waarop deze beschrijving van de gegevensset voor het laatst is gewijzigd",
             default=datetime.date.today().isoformat(),
+            sys_defined=True,
             required=True,
             json_pointer='/last_modified'
         )
