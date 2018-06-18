@@ -28,7 +28,7 @@ class Type(object):
         if self.description is not None:
             retval['description'] = self.description
         if self.default is not None:
-            retval['default'] = self.default
+            retval['default'] = self.default() if callable(self.default) else self.default
         if self.sys_defined is not None:
             retval['sysDefined'] = self.sys_defined
         if self.examples is not None:

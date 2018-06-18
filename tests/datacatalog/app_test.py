@@ -20,11 +20,6 @@ _SUT_DOC_ID = '_FlXXpXDa-Ro3Q'
 class DatasetTestCase(BaseTestCase):
     @unittest_run_loop
     async def test_succesfull_start(self):
-        preflight_headers = {
-            'Access-Control-Request-Method': 'GET',
-            'Access-Control-Request-Headers': 'origin, random_header_name',
-            'Origin': 'http://localhost'
-        }
         for endpoint, expected_text in [
             ("/datasets", '"dcat:dataset":[]'),
             ("/openapi", '"openapi": "3.0.0"'),

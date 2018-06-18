@@ -2,7 +2,7 @@ storage_postgres:
   name: ${DB_DATABASE:-datacatalog}
   host: ${DB_HOST:-localhost}
   pass: ${DB_PASS:-datacatalog}
-  port: ${DB_PORT:-5432}
+  port: ${DB_PORT:-5433}
   user: ${DB_USER:-datacatalog}
 
 
