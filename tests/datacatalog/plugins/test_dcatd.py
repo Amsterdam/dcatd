@@ -107,8 +107,7 @@ class TestDcatd(unittest.TestCase):
             self.assertNotIn('dct:modified', distribution)
 
         for distribution in canonicalized['dcat:distribution']:
-            self.assertIn('dct:modified', distribution)
-            self.assertEqual(distribution['dct:modified'], this_date)
+            self.assertNotIn('dct:modified', distribution)
 
         for distribution in data['dcat:distribution']:
             distribution['dct:modified'] = past_date
@@ -116,4 +115,4 @@ class TestDcatd(unittest.TestCase):
         canonicalized = mds_canonicalize(data)
 
         for distribution in canonicalized['dcat:distribution']:
-            self.assertEqual(distribution['dct:modified'], this_date)
+            self.assertEqual(distribution['dct:modified'], past_date)

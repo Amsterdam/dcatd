@@ -57,7 +57,7 @@ class Type(object):
 
     # noinspection PyMethodMayBeStatic
     def canonicalize(self, data):
-        revert_to_default = data is None and self.default is not None
+        revert_to_default = data is None and self.required is not None
         #   Currently for sys-defined values the default is used (can be callable)
         sys_override = self.sys_defined is True
 
