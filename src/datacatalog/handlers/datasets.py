@@ -11,6 +11,8 @@ from pyld import jsonld
 from aiohttp_extras import conditional
 from aiohttp_extras.content_negotiation import produces_content_types
 
+from datacatalog.dcat import Direction
+
 _DCAT_ID_KEY = '@id'
 _FACET_QUERY_KEY = re.compile(
     r'(?:/properties/[^/=~<>]+(?:/items)?)+'
@@ -65,7 +67,7 @@ async def put(request: web.Request):
         doc = await request.json()
     except json.decoder.JSONDecodeError:
         raise web.HTTPBadRequest(text='invalid json')
-    canonical_doc = await hooks.mds_canonicalize(data=doc)
+    canonical_doc = await hooks.mds_canonicalize(data=doc, direction=Direction.PUT)
 
     # Make sure the docid in the path corresponds to the ids given in the
     # document, if any. The assumption is that request.path (which corresponds
@@ -278,7 +280,7 @@ async def post_collection(request: web.Request):
         doc = await request.json()
     except json.decoder.JSONDecodeError:
         raise web.HTTPBadRequest(text='invalid json')
-    canonical_doc = await hooks.mds_canonicalize(data=doc)
+    canonical_doc = await hooks.mds_canonicalize(data=doc, direction=Direction.PUT)
 
     docurl = canonical_doc.get('@id')
     if docurl is not None:

@@ -1,6 +1,7 @@
 import unittest
 import datetime
 
+from datacatalog.dcat import Direction
 from datacatalog.plugins.dcat_ap_ams import mds_canonicalize
 
 
@@ -116,3 +117,17 @@ class TestDcatd(unittest.TestCase):
 
         for distribution in canonicalized['dcat:distribution']:
             self.assertEqual(distribution['dct:modified'], past_date)
+
+        with_past_date = canonicalized
+        with_past_date["foaf:isPrimaryTopicOf"]['dct:modified'] = past_date
+
+        canonicalized = mds_canonicalize(with_past_date)
+        self.assertEqual(canonicalized["foaf:isPrimaryTopicOf"]['dct:modified'], past_date)
+
+        canonicalized = mds_canonicalize(with_past_date, direction=Direction.PUT)
+        self.assertEqual(canonicalized["foaf:isPrimaryTopicOf"]['dct:modified'], this_date)
+
+
+
+
+

@@ -3,6 +3,8 @@ import typing as T
 from aiopluggy import HookimplMarker
 from pyld import jsonld
 
+from datacatalog.dcat import Direction
+
 from .constants import CONTEXT
 from .dataset import DATASET
 
@@ -24,7 +26,7 @@ def mds_name():
 
 
 @_hookimpl
-def mds_canonicalize(data: dict, id: T.Optional[str]=None) -> dict:
+def mds_canonicalize(data: dict, id: T.Optional[str]=None, direction: Direction=Direction.GET) -> dict:
     # language=rst
     """
 
@@ -35,13 +37,14 @@ def mds_canonicalize(data: dict, id: T.Optional[str]=None) -> dict:
         #.  ``""`` (the empty string): remove the ``@id`` or ``dct:identifier`` fields.
         #.  ``str`` (non-empty string): set the ``@id`` or ``dct:identifier`` fields.
 
+    :param direction: direction of the
     """
     ctx = context()
     # The expansion is implicitly done in jsonld.compact() below.
     # data = jsonld.expand(data)
     retval = jsonld.compact(data, ctx)
     old_id = retval.get('@id')
-    retval = DATASET.canonicalize(retval)
+    retval = DATASET.canonicalize(retval, direction=direction)
     if 'dcat:distribution' not in retval:
         retval['dcat:distribution'] = []
     retval['@context'] = ctx

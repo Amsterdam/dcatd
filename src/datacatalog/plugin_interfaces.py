@@ -2,6 +2,8 @@ import typing as T
 
 from aiopluggy import HookspecMarker
 
+from datacatalog.dcat import Direction
+
 hookspec = HookspecMarker('datacatalog')
 
 
@@ -251,7 +253,7 @@ def mds_name() -> str:
 
 
 @hookspec.first_only
-def mds_canonicalize(data: dict, id: T.Optional[str]=None) -> dict:
+def mds_canonicalize(data: dict, id: T.Optional[str]=None, direction: Direction=Direction.GET) -> dict:
     # language=rst
     """Canonicalize the given document according to this schema.
 

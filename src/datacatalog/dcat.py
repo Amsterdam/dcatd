@@ -1,7 +1,13 @@
 import typing as T
 import functools
+from enum import Enum
 
 import jsonschema
+
+
+class Direction(Enum):
+    GET = 0
+    PUT = 1
 
 
 class Type(object):
@@ -56,10 +62,10 @@ class Type(object):
         return self
 
     # noinspection PyMethodMayBeStatic
-    def canonicalize(self, data):
+    def canonicalize(self, data, direction=Direction.GET):
         revert_to_default = data is None and self.required is not None
         #   Currently for sys-defined values the default is used (can be callable)
-        sys_override = self.sys_defined is True
+        sys_override = self.sys_defined is True and direction is Direction.PUT
 
         if revert_to_default or sys_override:
             return self.default() if callable(self.default) else self.default
@@ -89,15 +95,15 @@ class List(Type):
             retval['minItems'] = 1
         return retval
 
-    def canonicalize(self, data: T.Optional[list]) -> T.Optional[list]:
-        data = super().canonicalize(data)
+    def canonicalize(self, data: T.Optional[list], **kwargs) -> T.Optional[list]:
+        data = super().canonicalize(data, **kwargs)
         if data is None:
             return None
         if not isinstance(data, list):
             raise TypeError("{}: not a list".format(data))
         retval = []
         for datum in data:
-            value = self.item_type.canonicalize(datum)
+            value = self.item_type.canonicalize(datum, **kwargs)
             if value is not None:
                 retval.append(value)
         return retval
@@ -137,8 +143,8 @@ class OneOf(Type):
     def full_text_search_representation(self, data: T.Any):
         raise NotImplementedError()
 
-    def canonicalize(self, data: T.Any):
-        return self.validate(data).canonicalize(data)
+    def canonicalize(self, data: T.Any, **kwargs):
+        return self.validate(data).canonicalize(data, **kwargs)
 
 
 class Object(Type):
@@ -192,8 +198,8 @@ class Object(Type):
         retval = '\n\n'.join(v for v in ftsr if v is not None)
         return retval if len(retval) > 0 else None
 
-    def canonicalize(self, data: dict):
-        data = super().canonicalize(data)
+    def canonicalize(self, data: dict, **kwargs):
+        data = super().canonicalize(data, **kwargs)
         if data is None:
             return None
         if not isinstance(data, dict):
@@ -203,9 +209,10 @@ class Object(Type):
             canonical_value = None
 
             if type_.sys_defined is True:
-                canonical_value = type_.canonicalize(None)
+                type_data = data[key] if key in data else None
+                canonical_value = type_.canonicalize(type_data, **kwargs)
             elif key in data:
-                canonical_value = type_.canonicalize(data[key])
+                canonical_value = type_.canonicalize(data[key], **kwargs)
 
             if canonical_value is not None:
                 retval[key] = canonical_value
@@ -235,8 +242,8 @@ class String(Type):
     def full_text_search_representation(self, data: str):
         return data
 
-    def canonicalize(self, data: str):
-        data = super().canonicalize(data)
+    def canonicalize(self, data: str, **kwargs):
+        data = super().canonicalize(data, **kwargs)
         if data is None:
             return None
         if not isinstance(data, str):
@@ -256,8 +263,8 @@ class Date(String):
         assert format is None and pattern is None
         super().__init__(*args, format='date', pattern=r'^\d\d\d\d-[01]\d-[0-3]\d(?:T[012]\d:[0-5]\d:[0-5]\d(?:\.\d+)?)?(?:Z|[01]\d(?::[0-5]\d)?)?$', **kwargs)
 
-    def canonicalize(self, data: str) -> T.Optional[str]:
-        data = super().canonicalize(data)
+    def canonicalize(self, data: str, **kwargs) -> T.Optional[str]:
+        data = super().canonicalize(data, **kwargs)
         if data is None:
             return None
         if not isinstance(data, str):
@@ -315,8 +322,8 @@ class Integer(Type):
     def full_text_search_representation(self, data: T.Any):
         return str(data) if isinstance(data, int) else None
 
-    def canonicalize(self, data):
-        data = super().canonicalize(data)
+    def canonicalize(self, data, **kwargs):
+        data = super().canonicalize(data, **kwargs)
         if data is None:
             return None
         if isinstance(data, int):
