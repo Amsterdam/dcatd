@@ -39,7 +39,7 @@ DATASET = Object(json_pointer='').add(
     )
 ).add(
     'overheidds:doel',
-    PlainTextLine(
+    Markdown(
         title="Doel",
         required=True,
         description="Geef aan met welk doel deze gegevensset is aangelegd. Waarom bestaat deze gegevensset?",
