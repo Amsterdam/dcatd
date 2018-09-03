@@ -2,13 +2,15 @@ version: "3.0"
 services:
 
   database:
-    image: postgres:10
+    image: amsterdam/postgres
     ports:
       - "5433:5432"
     environment:
-      POSTGRES_DB: datacatalog
-      POSTGRES_USER: datacatalog
-      POSTGRES_PASSWORD: datacatalog
+      POSTGRES_DB: dcatd
+      POSTGRES_USER: dcatd
+      POSTGRES_PASSWORD: dcatd
+    volumes:
+        - "~/.ssh/datapunt.key:/root/.ssh/datapunt.key"
 
   example:
     build:
@@ -20,9 +22,9 @@ services:
     ports:
       - "8001:8000"
     environment:
-      DB_DATABASE: datacatalog
-      DB_USER: datacatalog
-      DB_PASSWORD: datacatalog
+      DB_DATABASE: dcatd
+      DB_USER: dcatd
+      DB_PASSWORD: dcatd
       DB_HOST: database
       DB_PORT: 5432
       BASEURL: "http://localhost:8001/"
@@ -37,9 +39,9 @@ services:
     depends_on:
       - database
     environment:
-      DB_DATABASE: datacatalog
-      DB_USER: datacatalog
-      DB_PASSWORD: datacatalog
+      DB_DATABASE: dcatd
+      DB_USER: dcatd
+      DB_PASSWORD: dcatd
       DB_HOST: database
       DB_PORT: 5432
       SWIFT_PASSWORD: insecure

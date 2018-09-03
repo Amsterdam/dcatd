@@ -6,11 +6,11 @@ plugins:
 primarySchema: dcat-ap-ams
 
 storage_postgres:
-  name: ${DB_DATABASE:-datacatalog}
+  name: ${DB_DATABASE:-dcatd}
   host: ${DB_HOST:-localhost}
-  pass: ${DB_PASS:-datacatalog}
+  pass: ${DB_PASS:-dcatd}
   port: ${DB_PORT:-5433}
-  user: ${DB_USER:-datacatalog}
+  user: ${DB_USER:-dcatd}
 
 storage_swift:
   user: ${SWIFT_USER:-catalogus}
