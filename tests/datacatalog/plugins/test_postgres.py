@@ -226,6 +226,6 @@ def test_storage_delete(event_loop, corpus, app):
 
 
 def test_to_pg_json_query():
-    assert postgres_plugin._to_pg_json_query("Veer 1") == "Veer:* | 1:*"
+    assert postgres_plugin._to_pg_json_query("Veer 1") == "Veer:* & 1:*"
     assert postgres_plugin._to_pg_json_query("'s") == "[\\']s:*"
-    assert postgres_plugin._to_pg_json_query("'s-Gravelandse Veer 1") == "[\\']s-Gravelandse:* | Veer:* | 1:*"
+    assert postgres_plugin._to_pg_json_query("'s-Gravelandse Veer 1") == "[\\']s-Gravelandse:* & Veer:* & 1:*"
