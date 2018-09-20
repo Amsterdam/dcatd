@@ -1,6 +1,7 @@
 import csv
 import json.decoder
 # import os.path
+import logging
 import re
 import typing as T
 # import urllib.parse
@@ -12,6 +13,8 @@ from aiohttp_extras import conditional
 from aiohttp_extras.content_negotiation import produces_content_types
 
 from datacatalog.dcat import Direction
+
+logger = logging.getLogger('datacatalog')
 
 _DCAT_ID_KEY = '@id'
 _FACET_QUERY_KEY = re.compile(
@@ -31,6 +34,14 @@ def _add_blank_node_identifiers_to(distributions: T.Iterable[dict]) -> None:
     for distribution in distributions:
         counter += 1
         distribution['@id'] = "_:d{}".format(counter)
+
+
+def _add_persistent_links_to(prefix, distributions: T.Iterable[dict]) -> None:
+    for distribution in distributions:
+        m = re.search('https://[a-f0-9]{32}.objectstore.eu/dcatd', distribution.get('dcat:accessURL', ''))
+        if m and '@selector' in distribution:
+            selector = distribution['@selector']
+            distribution['dcat:persistentURL'] = f'{prefix}%3A{selector}'
 
 
 @produces_content_types('application/ld+json', 'application/json')
@@ -54,7 +65,25 @@ async def get(request: web.Request):
         return web.Response(status=304, headers={'Etag': etag})
     expanded_doc = jsonld.expand(doc)[0]
     canonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc, id=docid)
+
+    # TODO : the following code can be removed if for every dataset selectors were added
+    selectors_added = await _add_distribution_selectors(request.app, doc)
+    if selectors_added > 0:
+        hooks = request.app.hooks
+        # Let the metadata plugin grab the full-text search representation
+        searchable_text = await hooks.mds_full_text_search_representation(
+            data=canonical_doc
+        )
+
+        new_etag = await hooks.storage_update(
+            app=request.app, docid=docid, doc=canonical_doc,
+            searchable_text=searchable_text, etags={etag},
+            iso_639_1_code="nl")
+        etag = new_etag
+        logger.debug(f'Added {selectors_added} selectors for {docid}')
+
     _add_blank_node_identifiers_to(canonical_doc['dcat:distribution'])
+    _add_persistent_links_to(_datasets_url(request) + f'/link/{docid}', canonical_doc['dcat:distribution'])
     return web.json_response(canonical_doc, headers={
         'Etag': etag, 'content_type': 'application/ld+json'
     })
@@ -109,6 +138,9 @@ async def put(request: web.Request):
             body='Endpoint supports either If-Match or If-None-Match in a '
                  'single request, not both'
         )
+
+    # Add selector to distributions
+    await _add_distribution_selectors(request.app, canonical_doc)
 
     # If-Match: {etag, ...} is for updates
     if etag_if_match is not None:
@@ -272,6 +304,33 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     return response
 
 
+async def link_redirect(request: web.Request):
+    selector = request.match_info['selector']
+    etag_if_none_match = conditional.parse_if_header(
+        request, conditional.HEADER_IF_NONE_MATCH
+    )
+    if etag_if_none_match == '*':
+        raise web.HTTPBadRequest(
+            body='Endpoint does not support * in the If-None-Match header.'
+        )
+
+    (docid, selector) = selector.split(':')
+
+    try:
+        doc, etag = await request.app.hooks.storage_retrieve(
+            app=request.app, docid=docid, etags=etag_if_none_match
+        )
+        resource_url = None
+        for distribution in doc.get('dcat:distribution', []):
+            if distribution['@selector'] == selector:
+                resource_url = distribution['dcat:accessURL']
+    except KeyError:
+        raise web.HTTPNotFound()
+    if doc is None or resource_url is None:
+        return web.Response(status=304, headers={'Etag': etag})
+    raise web.HTTPMovedPermanently(location=resource_url)
+
+
 async def post_collection(request: web.Request):
     hooks = request.app.hooks
     datasets_url = _datasets_url(request)
@@ -315,6 +374,9 @@ async def post_collection(request: web.Request):
     searchable_text = await hooks.mds_full_text_search_representation(
         data=canonical_doc
     )
+    # Add selector to distributions
+    await _add_distribution_selectors(request.app, canonical_doc)
+
     try:
         new_etag = await hooks.storage_create(
             app=request.app, docid=docid, doc=canonical_doc,
@@ -356,3 +418,24 @@ def _split_comma_separated_stringset(s: str) -> T.Optional[T.Set[str]]:
         pos = pos + len(match)
         retval.add(_ESCAPED_CHARACTER.sub(r'\1', match))
     return retval
+
+
+async def _add_distribution_selectors(app, data: dict) -> int:
+    all_selectors = set()
+    to_be_added = 0
+    for distribution in data.get('dcat:distribution', []):
+        if '@selector' in distribution:
+            all_selectors.add(distribution['@selector'])
+        else:
+            to_be_added += 1
+    if to_be_added == 0:
+        return 0
+    for distribution in data.get('dcat:distribution', []):
+        if '@selector' not in distribution:
+            selector_found = False
+            while not selector_found:
+                distribution['@selector'] = await app.hooks.storage_id()
+                if distribution['@selector'] not in all_selectors:
+                    all_selectors.add(distribution['@selector'])
+                    selector_found = True
+    return to_be_added

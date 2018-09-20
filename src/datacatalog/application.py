@@ -21,6 +21,7 @@ class Application(web.Application):
         # add required middlewares
         middlewares.extend([
             web.normalize_path_middleware(),  # todo: needed?
+            # Make comment from the following line to disable authentication for local testing
             authorization.middleware
         ])
         super().__init__(*args, middlewares=middlewares, **kwargs)
@@ -45,6 +46,7 @@ class Application(web.Application):
         self.router.add_get(path + 'datasets/{dataset}', handlers.datasets.get)
         self.router.add_put(path + 'datasets/{dataset}', handlers.datasets.put)
         self.router.add_delete(path + 'datasets/{dataset}', handlers.datasets.delete)
+        self.router.add_get(path + 'datasets/link/{selector}', handlers.datasets.link_redirect)
 
         self.router.add_get(path + 'openapi', handlers.openapi.get)
 

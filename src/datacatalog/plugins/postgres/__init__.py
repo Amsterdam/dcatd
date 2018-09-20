@@ -41,6 +41,9 @@ CREATE INDEX IF NOT EXISTS "idx_id_etag" ON "dataset" ("id", "etag");
 CREATE INDEX IF NOT EXISTS "idx_full_text_search" ON "dataset" USING gin ("searchable_text");
 CREATE INDEX IF NOT EXISTS "idx_json_docs" ON "dataset" USING gin ("doc" jsonb_path_ops);
 '''
+
+# TODO: er kunnen meerdere resource per endpoint zijn. Daarom werkt dit niet. Er moet een extra tabel komen met selectors per accessURL
+
 _Q_HEALTHCHECK = 'SELECT 1'
 _Q_RETRIEVE_DOC = 'SELECT doc, etag FROM "dataset" WHERE id = $1'
 _Q_INSERT_DOC = 'INSERT INTO "dataset" (id, doc, searchable_text, lang, etag) VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'

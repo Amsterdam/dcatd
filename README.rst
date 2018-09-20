@@ -149,7 +149,7 @@ create the dcatd_latest.gz link. However this is currently not the case. That is
 why we need to copy manually with :
 
     scp admin.datapunt.amsterdam.nl:/mnt/backup_postgres/dcatd_2018-09-03.gz /tmp/
-    docker cp  /tmp/dcatd_2018-09-03.gz  81adf880164c:/tmp/dcatd_latest.gz
+    docker cp  /tmp/dcatd_2018-09-03.gz  dcatd_database_1:/tmp/dcatd_latest.gz
 
 Here 81adf880164c is the docker container. 
 
