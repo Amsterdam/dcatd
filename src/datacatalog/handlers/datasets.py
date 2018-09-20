@@ -41,7 +41,7 @@ def _add_persistent_links_to(prefix, distributions: T.Iterable[dict]) -> None:
         m = re.search('https://[a-f0-9]{32}.objectstore.eu/dcatd', distribution.get('dcat:accessURL', ''))
         if m and '@selector' in distribution:
             selector = distribution['@selector']
-            distribution['dcat:persistentURL'] = f'{prefix}%3A{selector}'
+            distribution['@persistentURL'] = f'{prefix}%3A{selector}'
 
 
 @produces_content_types('application/ld+json', 'application/json')
@@ -66,8 +66,7 @@ async def get(request: web.Request):
     expanded_doc = jsonld.expand(doc)[0]
     canonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc, id=docid)
 
-    # TODO : the following code can be removed if for every dataset selectors were added
-    selectors_added = await _add_distribution_selectors(request.app, doc)
+    selectors_added = await _add_distribution_selectors(request.app, doc, canonical_doc)
     if selectors_added > 0:
         hooks = request.app.hooks
         # Let the metadata plugin grab the full-text search representation
@@ -138,9 +137,6 @@ async def put(request: web.Request):
             body='Endpoint supports either If-Match or If-None-Match in a '
                  'single request, not both'
         )
-
-    # Add selector to distributions
-    await _add_distribution_selectors(request.app, canonical_doc)
 
     # If-Match: {etag, ...} is for updates
     if etag_if_match is not None:
@@ -420,22 +416,28 @@ def _split_comma_separated_stringset(s: str) -> T.Optional[T.Set[str]]:
     return retval
 
 
-async def _add_distribution_selectors(app, data: dict) -> int:
+async def _add_distribution_selectors(app, doc: dict, canonical_doc: dict) -> int:
     all_selectors = set()
     to_be_added = 0
-    for distribution in data.get('dcat:distribution', []):
+    index = 0
+    for distribution in doc.get('dcat:distribution', []):
         if '@selector' in distribution:
             all_selectors.add(distribution['@selector'])
+            canonical_doc['dcat:distribution'][index]['@selector'] = distribution['@selector']
         else:
             to_be_added += 1
+        index += 1
     if to_be_added == 0:
         return 0
-    for distribution in data.get('dcat:distribution', []):
+    index = 0
+    for distribution in doc.get('dcat:distribution', []):
         if '@selector' not in distribution:
             selector_found = False
             while not selector_found:
-                distribution['@selector'] = await app.hooks.storage_id()
-                if distribution['@selector'] not in all_selectors:
-                    all_selectors.add(distribution['@selector'])
+                new_selector = await app.hooks.storage_id()
+                if new_selector not in all_selectors:
+                    canonical_doc['dcat:distribution'][index]['@selector'] = new_selector
                     selector_found = True
+                    all_selectors.add(new_selector)
+        index += 1
     return to_be_added
