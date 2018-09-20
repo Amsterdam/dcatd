@@ -133,6 +133,13 @@ DISTRIBUTION = Object(json_pointer='').add(
         json_pointer='/last_modified'
     )
 ).add(
+    'dct:identifier',
+    PlainTextLine(
+        title="UID",
+        description="Unieke identifier",
+        json_pointer='/name'
+    )
+).add(
     'ams:classification',
     Enum(
         [

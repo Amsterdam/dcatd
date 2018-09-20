@@ -39,8 +39,8 @@ def _add_blank_node_identifiers_to(distributions: T.Iterable[dict]) -> None:
 def _add_persistent_links_to(prefix, distributions: T.Iterable[dict]) -> None:
     for distribution in distributions:
         m = re.search('https://[a-f0-9]{32}.objectstore.eu/dcatd', distribution.get('dcat:accessURL', ''))
-        if m and '@selector' in distribution:
-            selector = distribution['@selector']
+        if m and 'dct:identifier' in distribution:
+            selector = distribution['dct:identifier']
             distribution['@persistentURL'] = f'{prefix}%3A{selector}'
 
 
@@ -66,8 +66,8 @@ async def get(request: web.Request):
     expanded_doc = jsonld.expand(doc)[0]
     canonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc, id=docid)
 
-    selectors_added = await _add_distribution_selectors(request.app, doc, canonical_doc)
-    if selectors_added > 0:
+    identifiers_added = await _add_distribution_identifiers(request.app, canonical_doc)
+    if identifiers_added > 0:
         hooks = request.app.hooks
         # Let the metadata plugin grab the full-text search representation
         searchable_text = await hooks.mds_full_text_search_representation(
@@ -79,7 +79,7 @@ async def get(request: web.Request):
             searchable_text=searchable_text, etags={etag},
             iso_639_1_code="nl")
         etag = new_etag
-        logger.debug(f'Added {selectors_added} selectors for {docid}')
+        logger.debug(f'Added {identifiers_added} identifiers for {docid}')
 
     _add_blank_node_identifiers_to(canonical_doc['dcat:distribution'])
     _add_persistent_links_to(_datasets_url(request) + f'/link/{docid}', canonical_doc['dcat:distribution'])
@@ -123,6 +123,9 @@ async def put(request: web.Request):
     searchable_text = await hooks.mds_full_text_search_representation(
         data=canonical_doc
     )
+    identifiers_added = await _add_distribution_identifiers(request.app, canonical_doc)
+    if identifiers_added > 0:
+        logger.debug(f'Added {identifiers_added} identifiers for {docid}')
 
     # Figure out the mode (insert / update) of the request.
     etag_if_match = conditional.parse_if_header(
@@ -318,7 +321,7 @@ async def link_redirect(request: web.Request):
         )
         resource_url = None
         for distribution in doc.get('dcat:distribution', []):
-            if distribution['@selector'] == selector:
+            if distribution['dct:identifier'] == selector:
                 resource_url = distribution['dcat:accessURL']
     except KeyError:
         raise web.HTTPNotFound()
@@ -370,6 +373,9 @@ async def post_collection(request: web.Request):
     searchable_text = await hooks.mds_full_text_search_representation(
         data=canonical_doc
     )
+    identifiers_added = await _add_distribution_identifiers(request.app, canonical_doc)
+    if identifiers_added > 0:
+        logger.debug(f'Added {identifiers_added} identifiers for {docid}')
 
     try:
         new_etag = await hooks.storage_create(
@@ -414,28 +420,25 @@ def _split_comma_separated_stringset(s: str) -> T.Optional[T.Set[str]]:
     return retval
 
 
-async def _add_distribution_selectors(app, doc: dict, canonical_doc: dict) -> int:
-    all_selectors = set()
+async def _add_distribution_identifiers(app, canonical_doc: dict) -> int:
+    all_identifiers = set()
     to_be_added = 0
-    index = 0
-    for distribution in doc.get('dcat:distribution', []):
-        if '@selector' in distribution:
-            all_selectors.add(distribution['@selector'])
-            canonical_doc['dcat:distribution'][index]['@selector'] = distribution['@selector']
+    for distribution in canonical_doc.get('dcat:distribution', []):
+        if 'dct:identifier' in distribution:
+            all_identifiers.add(distribution['dct:identifier'])
         else:
             to_be_added += 1
-        index += 1
     if to_be_added == 0:
         return 0
     index = 0
-    for distribution in doc.get('dcat:distribution', []):
-        if '@selector' not in distribution:
+    for distribution in canonical_doc.get('dcat:distribution', []):
+        if 'dct:identifier' not in distribution:
             selector_found = False
             while not selector_found:
                 new_selector = await app.hooks.storage_id()
-                if new_selector not in all_selectors:
-                    canonical_doc['dcat:distribution'][index]['@selector'] = new_selector
+                if new_selector not in all_identifiers:
+                    distribution['dct:identifier'] = new_selector
                     selector_found = True
-                    all_selectors.add(new_selector)
+                    all_identifiers.add(new_selector)
         index += 1
     return to_be_added

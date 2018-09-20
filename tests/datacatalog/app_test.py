@@ -27,7 +27,7 @@ class DatasetTestCase(BaseTestCase):
         ]:
             response = await self.client.request("GET", endpoint)
             text = await response.text()
-            self.assertEquals(response.status, 200)
+            self.assertEqual(response.status, 200)
             self.assertIn(expected_text, text)
 
     @unittest_run_loop
@@ -52,32 +52,32 @@ class DatasetTestCase(BaseTestCase):
         response = await self.client.request(
             "POST", "/datasets", data=data, headers=invalid_headers)
 
-        self.assertEquals(response.status, 400,
+        self.assertEqual(response.status, 400,
                           'Verkeerde reactie op verkeer token')
 
         response = await self.client.request(
             "POST", "/datasets", data=data, headers=valid_headers)
 
-        self.assertEquals(response.status, 201, 'Toevoegen dataset mislukt')
+        self.assertEqual(response.status, 201, 'Toevoegen dataset mislukt')
 
         etag = response.headers.get('Etag')
 
         response = await self.client.request(
             "POST", "/datasets", data=data, headers=valid_headers)
 
-        self.assertEquals(
+        self.assertEqual(
             response.status, 400, 'Geen 400 error bij duplicate entry')
 
         response = await self.client.request(
             "GET", f"/datasets/{_SUT_DOC_ID}")
 
-        self.assertEquals(response.headers.get('Etag'), etag,
+        self.assertEqual(response.headers.get('Etag'), etag,
                           'Etag is veranderd')
 
         response = await self.client.request(
             "GET", f"/datasets/{_SUT_DOC_ID}", headers={'If-None-Match': etag})
 
-        self.assertEquals(
+        self.assertEqual(
             response.status, 304,
             'Geen geldige response voor If-none-match request ontvangen')
 
@@ -85,18 +85,18 @@ class DatasetTestCase(BaseTestCase):
             "GET", f"/datasets/{_SUT_DOC_ID}",
             headers={'If-None-Match': 'notanetag'})
 
-        self.assertNotEquals(response.status, 304,
+        self.assertNotEqual(response.status, 304,
                              'Onterechte not modified ontvangen')
 
         response = await self.client.request(
             "GET", f"/datasets", params={'q': 'nonexistent'})
 
-        self.assertEquals(response.status, 200,
+        self.assertEqual(response.status, 200,
                           'Geen match resulteert in !200 state')
 
         response_json = await response.json()
 
-        self.assertEquals(response_json['dcat:dataset'], [],
+        self.assertEqual(response_json['dcat:dataset'], [],
                           'Leeg resultaat verwacht')
 
         response = await self.client.request(
@@ -104,7 +104,7 @@ class DatasetTestCase(BaseTestCase):
 
         response_json = await response.json()
 
-        self.assertEquals(
+        self.assertEqual(
             response_json['dcat:dataset'][0]['dct:description'],
 
             'Lijsten en locaties van verschillende zorgvoorzieningen voor '
@@ -119,19 +119,19 @@ class DatasetTestCase(BaseTestCase):
             headers={**valid_headers, **{'If-Match': 'random'}},
             data=updated_data)
 
-        self.assertEquals(response.status, 400, '')
+        self.assertEqual(response.status, 400, '')
 
         response = await self.client.request(
             "DELETE", f"/datasets/{_SUT_DOC_ID}",
             headers={**valid_headers, **{'If-Match': 'random'}})
 
-        self.assertEquals(response.status, 400, 'Document onterecht verwijderd')
+        self.assertEqual(response.status, 400, 'Document onterecht verwijderd')
 
         response = await self.client.request(
             "DELETE", f"/datasets/{_SUT_DOC_ID}",
             headers={**valid_headers, **{'If-Match': etag}})
 
-        self.assertEquals(response.status, 204,
+        self.assertEqual(response.status, 204,
                           'Document kon niet worden verwijderd')
 
     @unittest_run_loop
@@ -166,7 +166,7 @@ class DatasetTestCase(BaseTestCase):
 
         unstub()
 
-        self.assertEquals(response.status, 201, 'File upload mislukt')
+        self.assertEqual(response.status, 201, 'File upload mislukt')
 
     def tearDown(self):
         async def cleanup():
