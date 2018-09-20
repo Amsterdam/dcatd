@@ -370,8 +370,6 @@ async def post_collection(request: web.Request):
     searchable_text = await hooks.mds_full_text_search_representation(
         data=canonical_doc
     )
-    # Add selector to distributions
-    await _add_distribution_selectors(request.app, canonical_doc)
 
     try:
         new_etag = await hooks.storage_create(
