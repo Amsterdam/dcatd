@@ -42,6 +42,9 @@ def _add_persistent_links_to(prefix, distributions: T.Iterable[dict]) -> None:
         if m and 'dct:identifier' in distribution:
             selector = distribution['dct:identifier']
             distribution['@persistentURL'] = f'{prefix}%3A{selector}'
+        else:
+            distribution['@persistentURL'] = distribution['dcat:accessURL']
+
 
 
 @produces_content_types('application/ld+json', 'application/json')
