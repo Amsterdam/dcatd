@@ -38,13 +38,14 @@ def _add_blank_node_identifiers_to(distributions: T.Iterable[dict]) -> None:
 
 def _add_persistent_links_to(prefix, distributions: T.Iterable[dict]) -> None:
     for distribution in distributions:
-        m = re.search('https://[a-f0-9]{32}.objectstore.eu/dcatd', distribution.get('dcat:accessURL', ''))
-        if m and 'dct:identifier' in distribution:
-            selector = distribution['dct:identifier']
-            distribution['@persistentURL'] = f'{prefix}%3A{selector}'
-        else:
-            distribution['@persistentURL'] = distribution['dcat:accessURL']
-
+        accessURL = distribution.get('dcat:accessURL', '')
+        if accessURL != '':
+            m = re.search('https://[a-f0-9]{32}.objectstore.eu/dcatd', accessURL)
+            if m and 'dct:identifier' in distribution:
+                selector = distribution['dct:identifier']
+                distribution['@persistentURL'] = f'{prefix}%3A{selector}'
+            else:
+                distribution['@persistentURL'] = accessURL
 
 
 @produces_content_types('application/ld+json', 'application/json')
