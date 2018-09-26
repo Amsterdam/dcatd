@@ -6,6 +6,7 @@ from aiohttp import web
 import aiohttp_cors
 import aiopluggy
 
+from datacatalog import startup_actions
 from . import authorization, config, handlers, jwks, openapi, plugin_interfaces
 
 logger = logging.getLogger(__name__)
@@ -112,6 +113,7 @@ async def _on_startup(app):
     for r in results:
         if r.exception is not None:
             raise r.exception
+    await startup_actions.run_startup_actions(app)
 
 
 async def _on_cleanup(app):

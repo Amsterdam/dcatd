@@ -52,6 +52,8 @@ def mds_canonicalize(data: dict, id: T.Optional[str]=None, direction: Direction=
     for distribution in retval.get('dcat:distribution', []):
         if '@id' in distribution:
             del distribution['@id']
+        if Direction == Direction.PUT:
+            pass
     if id == '':
         for item in ['@id', 'dct:identifier']:
             if item in retval:
