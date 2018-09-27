@@ -23,9 +23,9 @@ async def replace_old_identifiers(app):
 
 
 async def add_resource_identifiers(app):
-    datasets = await app.hooks.storage_all(app=app)
+    dataset_iterator = await app.hooks.storage_all(app=app)
     changed = 0
-    async for docid, etag, doc in datasets:
+    async for docid, etag, doc in dataset_iterator:
         canonical_doc = await app.hooks.mds_canonicalize(data=doc, id=docid)
         identifiers_added = await datasets._add_distribution_identifiers(app, canonical_doc)
         if identifiers_added > 0:
