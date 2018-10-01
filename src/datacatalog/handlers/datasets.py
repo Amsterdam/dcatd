@@ -39,14 +39,11 @@ def _add_blank_node_identifiers_to(distributions: T.Iterable[dict]) -> None:
 
 def _add_persistent_links_to(prefix, distributions: T.Iterable[dict]) -> None:
     for distribution in distributions:
-        accessURL = distribution.get('dcat:accessURL', '')
-        if accessURL != '':
-            m = re.search('https://[a-f0-9]{32}.objectstore.eu/dcatd', accessURL)
-            if m and 'dc:identifier' in distribution:
-                selector = distribution['dc:identifier']
-                distribution['@persistentURL'] = f'{prefix}%3A{selector}'
-            else:
-                distribution['@persistentURL'] = accessURL
+        accessURL = distribution.get('dcat:accessURL', None)
+        if accessURL is None or 'dc:identifier' not in distribution:
+            continue
+        selector = distribution['dc:identifier']
+        distribution['ams:purl'] = prefix + distribution['dc:identifier']
 
 
 @produces_content_types('application/ld+json', 'application/json')
@@ -87,7 +84,7 @@ async def get(request: web.Request):
         logger.debug(f'Added {identifiers_added} identifiers for {docid}')
 
     _add_blank_node_identifiers_to(canonical_doc['dcat:distribution'])
-    _add_persistent_links_to(_datasets_url(request) + f'/link/{docid}', canonical_doc['dcat:distribution'])
+    _add_persistent_links_to(_datasets_url(request) + f'/{docid}/purls/', canonical_doc['dcat:distribution'])
     return web.json_response(canonical_doc, headers={
         'Etag': etag, 'content_type': 'application/ld+json'
     })
@@ -312,7 +309,8 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
 
 
 async def link_redirect(request: web.Request):
-    selector = request.match_info['selector']
+    dataset = request.match_info['dataset']
+    distribution = request.match_info['distribution']
     etag_if_none_match = conditional.parse_if_header(
         request, conditional.HEADER_IF_NONE_MATCH
     )
@@ -321,21 +319,23 @@ async def link_redirect(request: web.Request):
             body='Endpoint does not support * in the If-None-Match header.'
         )
 
-    (docid, selector) = selector.split(':')
-
     try:
         doc, etag = await request.app.hooks.storage_retrieve(
-            app=request.app, docid=docid, etags=etag_if_none_match
+            app=request.app, docid=dataset, etags=etag_if_none_match
         )
-        resource_url = None
-        for distribution in doc.get('dcat:distribution', []):
-            if distribution['dc:identifier'] == selector:
-                resource_url = distribution['dcat:accessURL']
     except KeyError:
         raise web.HTTPNotFound()
-    if doc is None or resource_url is None:
-        return web.Response(status=304, headers={'Etag': etag})
-    raise web.HTTPMovedPermanently(location=resource_url)
+    if doc is None:
+        raise web.HTTPNotModified(headers={'ETag': etag})
+    headers = {'ETag': etag}
+    resource_url = None
+    for distribution in doc.get('dcat:distribution', []):
+        if distribution.get('dc:identifier', None) == distribution:
+            resource_url = distribution.get('dcat:accessURL', None)
+            break
+    if resource_url is None:
+        raise web.HTTPNotFound(headers=headers)
+    raise web.HTTPTemporaryRedirect(location=resource_url, headers=headers)
 
 
 async def post_collection(request: web.Request):

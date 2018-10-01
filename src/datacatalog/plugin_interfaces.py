@@ -285,12 +285,14 @@ def mds_context() -> dict:
     """Context of the metadata schema.
     """
 
+
 # noinspection PyUnusedLocal
 @hookspec.first_only
 def check_startup_action(app, name: str) -> bool:
     # language=rst
     """Check if action has been done
     """
+
 
 # noinspection PyUnusedLocal
 @hookspec.first_only
@@ -314,6 +316,7 @@ async def set_new_identifier(app, old_id: str, new_id: str):
     # language=rst
     """Set new identifier
     """
+
 
 # noinspection PyUnusedLocal
 @hookspec.first_only
