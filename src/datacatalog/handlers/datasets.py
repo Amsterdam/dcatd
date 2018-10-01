@@ -42,7 +42,6 @@ def _add_persistent_links_to(prefix, distributions: T.Iterable[dict]) -> None:
         accessURL = distribution.get('dcat:accessURL', None)
         if accessURL is None or 'dc:identifier' not in distribution:
             continue
-        selector = distribution['dc:identifier']
         distribution['ams:purl'] = prefix + distribution['dc:identifier']
 
 
