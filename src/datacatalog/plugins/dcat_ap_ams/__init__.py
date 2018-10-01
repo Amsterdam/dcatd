@@ -48,12 +48,24 @@ def mds_canonicalize(data: dict, id: T.Optional[str]=None, direction: Direction=
     if 'dcat:distribution' not in retval:
         retval['dcat:distribution'] = []
     retval['@context'] = ctx
+    if direction == Direction.GET:
+        if 'overheid:authority' not in retval:
+            retval['overheid:authority'] = 'Amsterdam'
 
     for distribution in retval.get('dcat:distribution', []):
         if '@id' in distribution:
             del distribution['@id']
-        if Direction == Direction.PUT:
-            pass
+        if direction == Direction.PUT:
+            if 'dct:format' in distribution and distribution['ams:distributionType'] != 'file':
+                del distribution['dct:format']
+            if 'dct:byteSize' in distribution and distribution['ams:distributionType'] != 'file':
+                del distribution['dct:byteSize']
+            if 'ams:serviceType' in distribution and distribution['ams:distributionType'] != 'api':
+                del distribution['ams:serviceType']
+        else: # Direction.GET
+            if not 'dct:license' in distribution and 'ams:license' in retval: # Inherit license from dataset
+                distribution['dct:license'] = retval['ams:license']
+
     if id == '':
         for item in ['@id', 'dct:identifier']:
             if item in retval:

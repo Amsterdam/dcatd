@@ -106,6 +106,7 @@ DISTRIBUTION = Object(json_pointer='').add(
                 'gml': 'application/gml+xml',
                 'html': 'text/html',
                 'json': 'application/json',
+                'jpeg': 'image/jpeg',
                 'pdf': 'application/pdf',
                 'png': 'image/png',
                 'shp': 'application/zip; format="shp"',
@@ -133,7 +134,7 @@ DISTRIBUTION = Object(json_pointer='').add(
         json_pointer='/last_modified'
     )
 ).add(
-    'dct:identifier',
+    'dc:identifier',
     PlainTextLine(
         title="UID",
         description="Unieke identifier",

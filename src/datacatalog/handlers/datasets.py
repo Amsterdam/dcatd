@@ -13,6 +13,7 @@ from aiohttp_extras import conditional
 from aiohttp_extras.content_negotiation import produces_content_types
 
 from datacatalog.dcat import Direction
+from datacatalog.handlers.openapi import clear_open_api_cache
 
 logger = logging.getLogger('datacatalog')
 
@@ -41,8 +42,8 @@ def _add_persistent_links_to(prefix, distributions: T.Iterable[dict]) -> None:
         accessURL = distribution.get('dcat:accessURL', '')
         if accessURL != '':
             m = re.search('https://[a-f0-9]{32}.objectstore.eu/dcatd', accessURL)
-            if m and 'dct:identifier' in distribution:
-                selector = distribution['dct:identifier']
+            if m and 'dc:identifier' in distribution:
+                selector = distribution['dc:identifier']
                 distribution['@persistentURL'] = f'{prefix}%3A{selector}'
             else:
                 distribution['@persistentURL'] = accessURL
@@ -160,6 +161,7 @@ async def put(request: web.Request):
             )
         except ValueError:
             raise web.HTTPPreconditionFailed()
+        clear_open_api_cache()
         return web.Response(status=204, headers={'Etag': new_etag})
 
     # If-None-Match: * is for creates
@@ -174,6 +176,7 @@ async def put(request: web.Request):
         )
     except KeyError:
         raise web.HTTPPreconditionFailed()
+    clear_open_api_cache()
     return web.Response(
         status=201, headers={'Etag': new_etag}, content_type='text/plain'
     )
@@ -191,6 +194,7 @@ async def delete(request: web.Request):
             app=request.app, docid=given_id, etags=etag_if_match)
     except KeyError:
         raise web.HTTPNotFound()
+    clear_open_api_cache()
     return web.Response(status=204, content_type='text/plain')
 
 
@@ -285,7 +289,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
             if key not in keepers:
                 del canonical_doc[key]
         keepers = {'dct:format', 'ams:resourceType', 'ams:distributionType',
-                   'ams:serviceType'}
+                   'ams:serviceType', 'dc:identifier'}
         for d in canonical_doc.get('dcat:distribution', []):
             for key in list(d.keys()):
                 if key not in keepers:
@@ -325,7 +329,7 @@ async def link_redirect(request: web.Request):
         )
         resource_url = None
         for distribution in doc.get('dcat:distribution', []):
-            if distribution['dct:identifier'] == selector:
+            if distribution['dc:identifier'] == selector:
                 resource_url = distribution['dcat:accessURL']
     except KeyError:
         raise web.HTTPNotFound()
@@ -390,6 +394,7 @@ async def post_collection(request: web.Request):
         raise web.HTTPBadRequest(
             text='Document with id {} already exists'.format(docid)
         )
+    clear_open_api_cache()
     return web.Response(
         status=201, headers={'Etag': new_etag, 'Location': docurl},
         content_type='text/plain'
@@ -428,20 +433,20 @@ async def _add_distribution_identifiers(app, canonical_doc: dict) -> int:
     all_identifiers = set()
     to_be_added = 0
     for distribution in canonical_doc.get('dcat:distribution', []):
-        if 'dct:identifier' in distribution:
-            all_identifiers.add(distribution['dct:identifier'])
+        if 'dc:identifier' in distribution:
+            all_identifiers.add(distribution['dc:identifier'])
         else:
             to_be_added += 1
     if to_be_added == 0:
         return 0
     index = 0
     for distribution in canonical_doc.get('dcat:distribution', []):
-        if 'dct:identifier' not in distribution:
+        if 'dc:identifier' not in distribution:
             selector_found = False
             while not selector_found:
                 new_selector = await app.hooks.storage_id()
                 if new_selector not in all_identifiers:
-                    distribution['dct:identifier'] = new_selector
+                    distribution['dc:identifier'] = new_selector
                     selector_found = True
                     all_identifiers.add(new_selector)
         index += 1
