@@ -56,12 +56,13 @@ def mds_canonicalize(data: dict, id: T.Optional[str]=None, direction: Direction=
         if '@id' in distribution:
             del distribution['@id']
         if direction == Direction.PUT:
-            if 'dct:format' in distribution and distribution['ams:distributionType'] != 'file':
-                del distribution['dct:format']
-            if 'dct:byteSize' in distribution and distribution['ams:distributionType'] != 'file':
-                del distribution['dct:byteSize']
-            if 'ams:serviceType' in distribution and distribution['ams:distributionType'] != 'api':
-                del distribution['ams:serviceType']
+            if 'ams:distributionType' in distribution:
+                if 'dct:format' in distribution and distribution['ams:distributionType'] != 'file':
+                    del distribution['dct:format']
+                if 'dct:byteSize' in distribution and distribution['ams:distributionType'] != 'file':
+                    del distribution['dct:byteSize']
+                if 'ams:serviceType' in distribution and distribution['ams:distributionType'] != 'api':
+                    del distribution['ams:serviceType']
         else: # Direction.GET
             if not 'dct:license' in distribution and 'ams:license' in retval: # Inherit license from dataset
                 distribution['dct:license'] = retval['ams:license']
