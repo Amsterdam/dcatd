@@ -16,7 +16,7 @@ CONTEXT = MappingProxyType({
     # Volgens dcat-ap-nl '.../term', maar dat kan niet. Zucht...
     # Volgens allerlei andere overheidsdocumenten:
     'overheid': 'http://standaarden.overheid.nl/owms/terms/',
-    # Zelf verzonnen; juiste waarde nog opzoeken [--PvB]
+    # Zelf verzonnen door data.overheid.nl; juiste waarde nog opzoeken [--PvB]
     'overheidds': 'http://standaarden.overheid.nl/owms/terms/ds#',
     'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',

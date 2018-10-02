@@ -44,14 +44,14 @@ async def add_resource_identifiers(app):
     return True
 
 
-startup_actions = [
+_startup_actions = [
     ("replace_old_identifiers", replace_old_identifiers),
     ("add_resource_identifiers", add_resource_identifiers),
 ]
 
 
 async def run_startup_actions(app):
-    for (name, action) in startup_actions:
+    for (name, action) in _startup_actions:
         if not await app.hooks.check_startup_action(app=app, name=name):
             result = await action(app)
             if result:

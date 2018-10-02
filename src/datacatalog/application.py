@@ -47,7 +47,7 @@ class Application(web.Application):
         self.router.add_get(path + 'datasets/{dataset}', handlers.datasets.get)
         self.router.add_put(path + 'datasets/{dataset}', handlers.datasets.put)
         self.router.add_delete(path + 'datasets/{dataset}', handlers.datasets.delete)
-        self.router.add_get(path + 'datasets/link/{selector}', handlers.datasets.link_redirect)
+        self.router.add_get(path + 'datasets/{dataset}/purls/{distribution}', handlers.datasets.link_redirect)
 
         self.router.add_get(path + 'openapi', handlers.openapi.get)
 
