@@ -1,6 +1,7 @@
 import csv
 import json.decoder
 # import os.path
+import logging
 import re
 import typing as T
 # import urllib.parse
@@ -12,6 +13,9 @@ from aiohttp_extras import conditional
 from aiohttp_extras.content_negotiation import produces_content_types
 
 from datacatalog.dcat import Direction
+from datacatalog.handlers.openapi import clear_open_api_cache
+
+logger = logging.getLogger('datacatalog')
 
 _DCAT_ID_KEY = '@id'
 _FACET_QUERY_KEY = re.compile(
@@ -31,6 +35,14 @@ def _add_blank_node_identifiers_to(distributions: T.Iterable[dict]) -> None:
     for distribution in distributions:
         counter += 1
         distribution['@id'] = "_:d{}".format(counter)
+
+
+def _add_persistent_links_to(prefix, distributions: T.Iterable[dict]) -> None:
+    for distribution in distributions:
+        accessURL = distribution.get('dcat:accessURL', None)
+        if accessURL is None or 'dc:identifier' not in distribution:
+            continue
+        distribution['ams:purl'] = prefix + distribution['dc:identifier']
 
 
 @produces_content_types('application/ld+json', 'application/json')
@@ -54,7 +66,24 @@ async def get(request: web.Request):
         return web.Response(status=304, headers={'Etag': etag})
     expanded_doc = jsonld.expand(doc)[0]
     canonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc, id=docid)
+
+    identifiers_added = await _add_distribution_identifiers(request.app, canonical_doc)
+    if identifiers_added > 0:
+        hooks = request.app.hooks
+        # Let the metadata plugin grab the full-text search representation
+        searchable_text = await hooks.mds_full_text_search_representation(
+            data=canonical_doc
+        )
+
+        new_etag = await hooks.storage_update(
+            app=request.app, docid=docid, doc=canonical_doc,
+            searchable_text=searchable_text, etags={etag},
+            iso_639_1_code="nl")
+        etag = new_etag
+        logger.debug(f'Added {identifiers_added} identifiers for {docid}')
+
     _add_blank_node_identifiers_to(canonical_doc['dcat:distribution'])
+    _add_persistent_links_to(_datasets_url(request) + f'/{docid}/purls/', canonical_doc['dcat:distribution'])
     return web.json_response(canonical_doc, headers={
         'Etag': etag, 'content_type': 'application/ld+json'
     })
@@ -95,6 +124,9 @@ async def put(request: web.Request):
     searchable_text = await hooks.mds_full_text_search_representation(
         data=canonical_doc
     )
+    identifiers_added = await _add_distribution_identifiers(request.app, canonical_doc)
+    if identifiers_added > 0:
+        logger.debug(f'Added {identifiers_added} identifiers for {docid}')
 
     # Figure out the mode (insert / update) of the request.
     etag_if_match = conditional.parse_if_header(
@@ -125,6 +157,7 @@ async def put(request: web.Request):
             )
         except ValueError:
             raise web.HTTPPreconditionFailed()
+        clear_open_api_cache()
         return web.Response(status=204, headers={'Etag': new_etag})
 
     # If-None-Match: * is for creates
@@ -139,6 +172,7 @@ async def put(request: web.Request):
         )
     except KeyError:
         raise web.HTTPPreconditionFailed()
+    clear_open_api_cache()
     return web.Response(
         status=201, headers={'Etag': new_etag}, content_type='text/plain'
     )
@@ -156,6 +190,7 @@ async def delete(request: web.Request):
             app=request.app, docid=given_id, etags=etag_if_match)
     except KeyError:
         raise web.HTTPNotFound()
+    clear_open_api_cache()
     return web.Response(status=204, content_type='text/plain')
 
 
@@ -250,7 +285,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
             if key not in keepers:
                 del canonical_doc[key]
         keepers = {'dct:format', 'ams:resourceType', 'ams:distributionType',
-                   'ams:serviceType'}
+                   'ams:serviceType', 'dc:identifier'}
         for d in canonical_doc.get('dcat:distribution', []):
             for key in list(d.keys()):
                 if key not in keepers:
@@ -270,6 +305,36 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     await response.write(b'}')
     await response.write_eof()
     return response
+
+
+async def link_redirect(request: web.Request):
+    dataset = request.match_info['dataset']
+    distribution = request.match_info['distribution']
+    etag_if_none_match = conditional.parse_if_header(
+        request, conditional.HEADER_IF_NONE_MATCH
+    )
+    if etag_if_none_match == '*':
+        raise web.HTTPBadRequest(
+            body='Endpoint does not support * in the If-None-Match header.'
+        )
+
+    try:
+        doc, etag = await request.app.hooks.storage_retrieve(
+            app=request.app, docid=dataset, etags=etag_if_none_match
+        )
+    except KeyError:
+        raise web.HTTPNotFound()
+    if doc is None:
+        raise web.HTTPNotModified(headers={'ETag': etag})
+    headers = {'ETag': etag}
+    resource_url = None
+    for distribution in doc.get('dcat:distribution', []):
+        if distribution.get('dc:identifier', None) == distribution:
+            resource_url = distribution.get('dcat:accessURL', None)
+            break
+    if resource_url is None:
+        raise web.HTTPNotFound(headers=headers)
+    raise web.HTTPTemporaryRedirect(location=resource_url, headers=headers)
 
 
 async def post_collection(request: web.Request):
@@ -315,6 +380,10 @@ async def post_collection(request: web.Request):
     searchable_text = await hooks.mds_full_text_search_representation(
         data=canonical_doc
     )
+    identifiers_added = await _add_distribution_identifiers(request.app, canonical_doc)
+    if identifiers_added > 0:
+        logger.debug(f'Added {identifiers_added} identifiers for {docid}')
+
     try:
         new_etag = await hooks.storage_create(
             app=request.app, docid=docid, doc=canonical_doc,
@@ -324,6 +393,7 @@ async def post_collection(request: web.Request):
         raise web.HTTPBadRequest(
             text='Document with id {} already exists'.format(docid)
         )
+    clear_open_api_cache()
     return web.Response(
         status=201, headers={'Etag': new_etag, 'Location': docurl},
         content_type='text/plain'
@@ -356,3 +426,27 @@ def _split_comma_separated_stringset(s: str) -> T.Optional[T.Set[str]]:
         pos = pos + len(match)
         retval.add(_ESCAPED_CHARACTER.sub(r'\1', match))
     return retval
+
+
+async def _add_distribution_identifiers(app, canonical_doc: dict) -> int:
+    all_identifiers = set()
+    to_be_added = 0
+    for distribution in canonical_doc.get('dcat:distribution', []):
+        if 'dc:identifier' in distribution:
+            all_identifiers.add(distribution['dc:identifier'])
+        else:
+            to_be_added += 1
+    if to_be_added == 0:
+        return 0
+    index = 0
+    for distribution in canonical_doc.get('dcat:distribution', []):
+        if 'dc:identifier' not in distribution:
+            selector_found = False
+            while not selector_found:
+                new_selector = await app.hooks.storage_id()
+                if new_selector not in all_identifiers:
+                    distribution['dc:identifier'] = new_selector
+                    selector_found = True
+                    all_identifiers.add(new_selector)
+        index += 1
+    return to_be_added

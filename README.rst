@@ -44,8 +44,7 @@ Example server
 
 See: http://localhost:8000/openapi and http://localhost:8000/datasets
 
-You could even go one further and also spin up the Amsterdam Swagger UI:
-::
+You could even go one further and also spin up the Amsterdam Swagger UI::
 
     docker-compose up -d database swagger-ui
     make example
@@ -146,12 +145,12 @@ Load production data
 If you need to load production data  in development you can do the following commands
 The first two commands should not be required if database backups would correctly
 create the dcatd_latest.gz link. However this is currently not the case. That is
-why we need to copy manually with :
+why we need to copy manually with::
 
     scp admin.datapunt.amsterdam.nl:/mnt/backup_postgres/dcatd_2018-09-03.gz /tmp/
-    docker cp  /tmp/dcatd_2018-09-03.gz  81adf880164c:/tmp/dcatd_latest.gz
+    docker cp  /tmp/dcatd_2018-09-03.gz  dcatd_database_1:/tmp/dcatd_latest.gz
 
-Here 81adf880164c is the docker container. 
+Here 81adf880164c is the docker container.
 
 Then we can load it in Postgres with :
 

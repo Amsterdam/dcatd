@@ -341,6 +341,7 @@ DISTRIBUTION.add('dct:title', String())
 DISTRIBUTION.add('dct:description', String())
 DISTRIBUTION.add('dct:issued', Date())
 DISTRIBUTION.add('dct:modified', Date())
+DISTRIBUTION.add('dc:identifier', PlainTextLine())
 DISTRIBUTION.add('dct:license', String())
 DISTRIBUTION.add('dct:rights', String())
 DISTRIBUTION.add('dcat:accessURL', String(format='uri'))
@@ -348,6 +349,7 @@ DISTRIBUTION.add('dcat:downloadURL', String(format='uri'))
 DISTRIBUTION.add('dcat:mediaType', String(pattern=r'^[-\w.]+/[-\w.]+$'))
 DISTRIBUTION.add('dct:format', String())
 DISTRIBUTION.add('dcat:byteSize', Integer(minimum=0))
+
 
 
 VCARD = Object()

@@ -41,6 +41,9 @@ CREATE INDEX IF NOT EXISTS "idx_id_etag" ON "dataset" ("id", "etag");
 CREATE INDEX IF NOT EXISTS "idx_full_text_search" ON "dataset" USING gin ("searchable_text");
 CREATE INDEX IF NOT EXISTS "idx_json_docs" ON "dataset" USING gin ("doc" jsonb_path_ops);
 '''
+
+# TODO: er kunnen meerdere resource per endpoint zijn. Daarom werkt dit niet. Er moet een extra tabel komen met selectors per accessURL
+
 _Q_HEALTHCHECK = 'SELECT 1'
 _Q_RETRIEVE_DOC = 'SELECT doc, etag FROM "dataset" WHERE id = $1'
 _Q_INSERT_DOC = 'INSERT INTO "dataset" (id, doc, searchable_text, lang, etag) VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
@@ -60,6 +63,14 @@ FROM "dataset"
 WHERE ('simple'=$1::varchar OR lang=$1::varchar) {filters}
 ORDER BY {sortexpression} DESC;
 """
+
+_Q_CREATE_STARTUP_ACTIONS = '''
+CREATE TABLE IF NOT EXISTS "dcatd_startup_actions" (
+    id SERIAL PRIMARY KEY,
+    action character varying(255) NOT NULL,
+    applied TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+'''
 
 
 @_hookimpl
@@ -122,6 +133,7 @@ async def initialize(app):
     while connect_attempt_tries_left >= 0:
         try:
             await app['pool'].execute(_Q_CREATE)
+            await app['pool'].execute(_Q_CREATE_STARTUP_ACTIONS)
         except ConnectionRefusedError:
             if connect_attempt_tries_left > 0:
                 _logger.warning("Database not accepting connections. Retrying %d more times.", connect_attempt_tries_left)
@@ -508,7 +520,7 @@ def _to_pg_lang(iso_639_1_code: str) -> str:
 
 def _to_pg_json_query(q: str) -> str:
     #   escape single quote (lexeme-demarcator in pg fulltext search) in words
-    words = [t.replace("'", "[\\']") for  t in q.split()]
+    words = [t.replace("'", "[\\']") for t in q.split()]
     return ' & '.join("{}:*".format(w) for w in words)
 
 
@@ -525,3 +537,52 @@ def _iso_639_1_code_to_pg(iso_639_1_code: str) -> str:
             _logger.warning('invalid ISO 639-1 language code: ' + iso_639_1_code)
         return 'simple'
     return ISO_639_1_TO_PG_DICTIONARIES[iso_639_1_code]
+
+
+all_startup_actions = None
+
+@_hookimpl
+async def check_startup_action(app, name:str) -> bool:
+    global all_startup_actions
+    if all_startup_actions is None:
+        _Q = 'SELECT id, action, applied FROM dcatd_startup_actions'
+
+        async with app['pool'].acquire() as con:
+            actions = await con.fetch(_Q)
+            all_startup_actions = set(map(lambda x: x['action'], actions))
+    if name in all_startup_actions:
+        return True
+    else:
+        return False
+
+@_hookimpl
+async def add_startup_action(app, name: str):
+    _Q = 'INSERT INTO "dcatd_startup_actions" (action) VALUES ($1)'
+    async with app['pool'].acquire() as con:
+        await con.execute(_Q, name)
+
+
+@_hookimpl
+async def get_old_identifiers(app):
+    _Q = 'SELECT id FROM dataset WHERE length(id) <> 14 OR LOWER(id) = id'
+    async with app['pool'].acquire() as con:
+        ids = await con.fetch(_Q)
+        return map(lambda x: x['id'], ids)
+
+@_hookimpl
+async def set_new_identifier(app, old_id:str, new_id:str):
+    _Q = 'UPDATE dataset SET id = $1 WHERE id = $2'
+    async with app['pool'].acquire() as con:
+        result = await con.execute(_Q, new_id, old_id)
+        return result
+
+
+@_hookimpl
+async def storage_all(app: T.Mapping) -> T.AsyncGenerator[T.Tuple[str, str, dict], None]:
+    # language=rst
+    _Q = 'SELECT id, etag, doc FROM dataset'
+    async with app['pool'].acquire() as con:
+        async with con.transaction():
+            stmt = await con.prepare(_Q)
+            async for row in stmt.cursor():
+                yield row['id'], row['etag'], json.loads(row['doc'])
