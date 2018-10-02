@@ -328,9 +328,9 @@ async def link_redirect(request: web.Request):
         raise web.HTTPNotModified(headers={'ETag': etag})
     headers = {'ETag': etag}
     resource_url = None
-    for distribution in doc.get('dcat:distribution', []):
-        if distribution.get('dc:identifier', None) == distribution:
-            resource_url = distribution.get('dcat:accessURL', None)
+    for dist in doc.get('dcat:distribution', []):
+        if dist.get('dc:identifier', None) == distribution:
+            resource_url = dist.get('dcat:accessURL', None)
             break
     if resource_url is None:
         raise web.HTTPNotFound(headers=headers)
