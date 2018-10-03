@@ -45,7 +45,9 @@ async def add_resource_identifiers(app):
 
 
 _startup_actions = [
-    ("replace_old_identifiers", replace_old_identifiers),
+#   DISABLE replace_old_identifiers until Service  & Delivery did check if old URL links are still used
+#   and this can be done without too much impact.
+#    ("replace_old_identifiers", replace_old_identifiers),
     ("add_resource_identifiers", add_resource_identifiers),
 ]
 
