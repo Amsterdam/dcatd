@@ -194,6 +194,54 @@ async def delete(request: web.Request):
     return web.Response(status=204, content_type='text/plain')
 
 
+def get_last_modified_date(doc:dict)->str:
+    """
+    Sorteren op, in onderstaande volgorde. Als veld niet gevuld is, dan volgende datum gebruiken:
+
+    verversingsdatum resource: dct:modified
+    wijzigingsdatum resource: primarytopicof: dct:modified
+    publicatiedatum resource: primarytopicof: dct:issued
+    Als een dataset meerdere resources heeft dan de laatste datum nemen.
+    wijzigingsdatum dataset: dct:modified
+    publicatiedatum dataset: dct:issued
+    wijzigingsdatum dataset: primarytopicof: dct:modified
+    publicatiedatum dataset: primarytopicof: dct:issued
+
+    Args:
+        doc:dataset
+
+    Returns:last_modified date to use for sorting
+    """
+    last_modified = ''
+    if 'dcat:distribution' in doc:
+        for resource in doc['dcat:distribution']:
+            if 'dct:modified' in resource and resource['dct:modified'] > last_modified:
+                last_modified = resource['dct:modified']
+        if not last_modified:
+            dct_issued_resource = ''
+            for resource in doc['dcat:distribution']:
+                if 'foaf:isPrimaryTopicOf' in resource:
+                    primary = resource['foaf:isPrimaryTopicOf']
+                    if 'dct:modified' in primary and primary['dct:modified'] > last_modified:
+                        last_modified = primary['dct:modified']
+                    if 'dct_issued' in primary and  primary['dct:issued'] >  dct_issued_resource:
+                        dct_issued_resource = primary['dct:issued']
+            if not last_modified:
+                last_modified = dct_issued_resource
+    if not last_modified:
+        if 'dct:modified' in doc:
+            last_modified = doc['dct:modified']
+        elif 'dct:issued' in doc:
+            last_modified = doc['dct:issued']
+        elif 'foaf:isPrimaryTopicOf' in doc:
+            primary = doc['foaf:isPrimaryTopicOf' ]
+            if 'dct:modified' in primary:
+                last_modified = primary['dct:modified']
+            elif 'dct:issued' in primary:
+                last_modified = primary['dct:issued']
+    return last_modified
+
+
 @produces_content_types('application/ld+json', 'application/json')
 async def get_collection(request: web.Request) -> web.StreamResponse:
     # language=rst
@@ -249,8 +297,8 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     result_info = {}
     resultiterator = await hooks.search_search(
         app=request.app, q=full_text_query,
-        sortpath=['foaf:isPrimaryTopicOf', 'dct:issued'],
         result_info=result_info,
+        sort_field_get=get_last_modified_date,
         facets=[
             '/properties/dcat:distribution/items/properties/ams:resourceType',
             '/properties/dcat:distribution/items/properties/dct:format',

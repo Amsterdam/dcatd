@@ -187,7 +187,7 @@ def storage_id() -> str:
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
 def search_search(
-    app, q: str, sortpath: T.List[str],
+    app, q: str, sort_field_get:T.Callable[[dict], str],
     result_info: T.MutableMapping,
     facets: T.Optional[T.Iterable[str]]=None,
     limit: T.Optional[int]=None, offset: T.Optional[int]=0,
@@ -206,7 +206,7 @@ def search_search(
 
     :param app: global dictionary
     :param q: the query
-    :param sortproperty: the property to sort by. Must be a top-level object property.
+    :param sort_field_get: function to get propererty to sort by.
     :param result_info: mapping in which all encountered facets in the result set are
         put
     :param facets: a list of facets to return and count
