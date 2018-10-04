@@ -60,8 +60,7 @@ ORDER BY rank DESC;
 _Q_LIST_DOCS = """
 SELECT id, doc
 FROM "dataset"
-WHERE ('simple'=$1::varchar OR lang=$1::varchar) {filters}
-ORDER BY {sortexpression} DESC;
+WHERE ('simple'=$1::varchar OR lang=$1::varchar) {filters};
 """
 
 _Q_CREATE_STARTUP_ACTIONS = '''
@@ -350,7 +349,7 @@ async def storage_id() -> str:
 
 @_hookimpl
 async def search_search(
-    app, q: str, sortpath: T.List[str],
+    app, q: str, sort_field_get:T.Callable[[dict], str],
     result_info: T.MutableMapping,
     facets: T.Optional[T.Iterable[str]]=None,
     limit: T.Optional[int]=None, offset: int=0,
@@ -391,7 +390,7 @@ async def search_search(
     if len(q) > 0:
         result_iterator = _execute_search_query(app, filterexpr, lang, q)
     else:
-        result_iterator = _execute_list_query(app, filterexpr, lang, sortpath)
+        result_iterator = _execute_list_query(app, filterexpr, lang, sort_field_get)
     # now iterate over the results
     async for docid, doc in result_iterator:
         # update the result info
@@ -414,21 +413,18 @@ async def search_search(
     result_info['/'] = row_index
 
 
-async def _execute_list_query(app, filterexpr: str, lang: str, sortpath: T.List[str]):
-    if len(sortpath) == 0:
-        raise ValueError('Sortpath should not be empty')
-    sortexpr = 'doc->'
-    for p in sortpath[:-1]:
-        sortexpr += "'" + p + "'->"
-    sortexpr += ">'" + sortpath[-1] + "'"
+async def _execute_list_query(app, filterexpr: str, lang: str, sort_field_get:T.Callable[[dict], str]):
     async with app['pool'].acquire() as con:
-        # use a cursor so we can stream
-        async with con.transaction():
-            stmt = await con.prepare(
-                _Q_LIST_DOCS.format(filters=filterexpr, sortexpression=sortexpr)
-            )
-            async for row in stmt.cursor(lang):
-                yield row['id'], json.loads(row['doc'])
+        records = await con.fetch(_Q_LIST_DOCS.format(filters=filterexpr), lang)
+        results = []
+        for row in records:
+            id = row['id']
+            doc = json.loads(row['doc'])
+            last_modified = sort_field_get(doc)
+            results.append((id, doc, last_modified))
+        results.sort(key=lambda x:x[2], reverse=True)
+        for row in results:
+            yield row[0], row[1]
 
 
 async def _execute_search_query(app, filterexpr: str, lang: str, q: str):
