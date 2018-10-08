@@ -155,10 +155,11 @@ async def deinitialize(app):
 
 
 @_hookimpl
-async def health_check(app) -> T.Optional[str]:
+async def health_check(app: T.Mapping[str, T.Any]) -> T.Optional[str]:
     # language=rst
     """ Health check.
 
+    :param app: the `~datacatalog.application.Application`
     :returns: If unhealthy, a string describing the problem, otherwise ``None``.
     :raises Exception: if that's easier than returning a string.
 
@@ -168,12 +169,12 @@ async def health_check(app) -> T.Optional[str]:
 
 
 @_hookimpl
-async def storage_retrieve(app: T.Mapping, docid: str, etags: T.Optional[T.Set[str]] = None) \
+async def storage_retrieve(app: T.Mapping[str, T.Any], docid: str, etags: T.Optional[T.Set[str]] = None) \
         -> T.Tuple[T.Optional[dict], str]:
     # language=rst
     """ Get document and corresponsing etag by id.
 
-    :param app: the application
+    :param app: the `~datacatalog.application.Application`
     :param docid: document id
     :param etags: None, or a set of Etags
     :returns:
@@ -192,12 +193,12 @@ async def storage_retrieve(app: T.Mapping, docid: str, etags: T.Optional[T.Set[s
 
 
 @_hookimpl
-async def storage_create(app: T.Mapping, docid: str, doc: dict, searchable_text: str,
+async def storage_create(app: T.Mapping[str, T.Any], docid: str, doc: dict, searchable_text: str,
                          iso_639_1_code: T.Optional[str]) -> str:
     # language=rst
     """ Store a new document.
 
-    :param app: the application
+    :param app: the `~datacatalog.application.Application`
     :param docid: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
@@ -217,13 +218,13 @@ async def storage_create(app: T.Mapping, docid: str, doc: dict, searchable_text:
 
 
 @_hookimpl
-async def storage_update(app: T.Mapping, docid: str, doc: dict, searchable_text: str,
+async def storage_update(app: T.Mapping[str, T.Any], docid: str, doc: dict, searchable_text: str,
                          etags: T.Set[str], iso_639_1_code: T.Optional[str]) \
         -> str:
     # language=rst
     """ Update the document with the given ID only if it has one of the provided Etags.
 
-    :param app: the application
+    :param app: the `~datacatalog.application.Application`
     :param docid: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
@@ -243,11 +244,11 @@ async def storage_update(app: T.Mapping, docid: str, doc: dict, searchable_text:
 
 
 @_hookimpl
-async def storage_delete(app: T.Mapping, docid: str, etags: T.Set[str]) -> None:
+async def storage_delete(app: T.Mapping[str, T.Any], docid: str, etags: T.Set[str]) -> None:
     # language=rst
     """ Delete document only if it has one of the provided Etags.
 
-    :param app: the application
+    :param app: the `~datacatalog.application.Application`
     :param docid: the ID of the document to delete.
     :param etags: the last known ETags of this document.
     :raises ValueError: if none of the given etags match the stored etag.
@@ -297,7 +298,7 @@ def _extract_values(elm, ptr_parts, ptr_idx=0):
 
 
 @_hookimpl
-async def storage_extract(app: T.Mapping, ptr: str, distinct: bool=False) -> T.Generator[str, None, None]:
+async def storage_extract(app: T.Mapping[str, T.Any], ptr: str, distinct: bool=False) -> T.Generator[str, None, None]:
     # language=rst
     """Generator to extract values from the stored documents, optionally
     distinct.
@@ -306,7 +307,7 @@ async def storage_extract(app: T.Mapping, ptr: str, distinct: bool=False) -> T.G
     get all documents stored in the system. If distinct=True then the generator
     will cache all values in a set, which may become prohibitively large.
 
-    :param app: the application
+    :param app: the `~datacatalog.application.Application`
     :param ptr: JSON pointer to the element.
     :param distinct: Return only distinct values.
     :raises: ValueError if filter syntax is invalid.
@@ -356,15 +357,16 @@ async def storage_id() -> str:
 
 @_hookimpl
 async def search_search(
-    app, q: str, sort_field_get: T.Callable[[dict], str],
+    app: T.Mapping[str, T.Any], q: str, sort_field_get: T.Callable[[dict], str],
     result_info: T.MutableMapping,
     facets: T.Optional[T.Iterable[str]]=None,
     limit: T.Optional[int]=None, offset: int=0,
     filters: T.Optional[T.Mapping[
         str,  # a JSON pointer
         T.Mapping[
-            str,  # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``
-            # a string, or a set of strings if the comparator is ``in``
+            # a comparator; one of ``eq``, ``in``, ``lt``, ``gt``, ``le`` or ``ge``:
+            str,
+            # a string, or a set of strings if the comparator is ``in``:
             T.Union[str, T.Set[str]]
         ]
     ]]=None,
@@ -547,7 +549,7 @@ all_startup_actions = None
 
 
 @_hookimpl
-async def check_startup_action(app, name: str) -> bool:
+async def check_startup_action(app: T.Mapping[str, T.Any], name: str) -> bool:
     global all_startup_actions
     if all_startup_actions is None:
         _Q = 'SELECT id, action, applied FROM dcatd_startup_actions'
@@ -562,14 +564,14 @@ async def check_startup_action(app, name: str) -> bool:
 
 
 @_hookimpl
-async def add_startup_action(app, name: str):
+async def add_startup_action(app: T.Mapping[str, T.Any], name: str):
     _Q = 'INSERT INTO "dcatd_startup_actions" (action) VALUES ($1)'
     async with app['pool'].acquire() as con:
         await con.execute(_Q, name)
 
 
 @_hookimpl
-async def get_old_identifiers(app):
+async def get_old_identifiers(app: T.Mapping[str, T.Any]):
     _Q = 'SELECT id FROM dataset WHERE length(id) <> 14 OR LOWER(id) = id'
     async with app['pool'].acquire() as con:
         ids = await con.fetch(_Q)
@@ -577,7 +579,7 @@ async def get_old_identifiers(app):
 
 
 @_hookimpl
-async def set_new_identifier(app, old_id: str, new_id: str):
+async def set_new_identifier(app: T.Mapping[str, T.Any], old_id: str, new_id: str):
     _Q = 'UPDATE dataset SET id = $1 WHERE id = $2'
     async with app['pool'].acquire() as con:
         result = await con.execute(_Q, new_id, old_id)
@@ -585,7 +587,7 @@ async def set_new_identifier(app, old_id: str, new_id: str):
 
 
 @_hookimpl
-async def storage_all(app: T.Mapping) -> T.AsyncGenerator[T.Tuple[str, str, dict], None]:
+async def storage_all(app: T.Mapping[str, T.Any]) -> T.AsyncGenerator[T.Tuple[str, str, dict], None]:
     # language=rst
     _Q = 'SELECT id, etag, doc FROM dataset'
     async with app['pool'].acquire() as con:

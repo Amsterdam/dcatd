@@ -74,7 +74,7 @@ def storage_retrieve(app, docid: str, etags: T.Optional[T.Set[str]]) \
     # language=rst
     """ Get document and corresponsing etag by id.
 
-    :param app: the application
+    :param app: the `~datacatalog.application.Application`
     :param docid: document id
     :param etags: None, or a set of Etags
     :returns:
@@ -93,7 +93,7 @@ def storage_create(app, docid: str, doc: dict, searchable_text: str,
     # language=rst
     """ Store a new document.
 
-    :param app: the application
+    :param app: the `~datacatalog.application.Application`
     :param docid: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
@@ -112,7 +112,7 @@ def storage_update(app, docid: str, doc: dict, searchable_text: str,
     # language=rst
     """ Update the document with the given ID only if it has one of the provided Etags.
 
-    :param app: the application
+    :param app: the `~datacatalog.application.Application`
     :param docid: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
@@ -131,7 +131,7 @@ def storage_delete(app, docid: str, etags: T.Set[str]) -> None:
     # language=rst
     """ Delete document only if it has one of the provided Etags.
 
-    :param app: the application
+    :param app: the `~datacatalog.application.Application`
     :param docid: the ID of the document to delete.
     :param etags: the last known ETags of this document.
     :raises: ValueError if none of the given etags match the stored etag.
@@ -150,7 +150,7 @@ def storage_extract(app, ptr: str, distinct: bool=False) -> T.Generator[str, Non
     Used to, for example, get a list of all tags or ids in the system. Or to
     get all documents stored in the system.
 
-    :param app: the application
+    :param app: the `~datacatalog.application.Application`
     :param ptr: JSON pointer to the element.
     :param distinct: Return only distinct values.
     :raises: ValueError if filter syntax is invalid.
@@ -208,7 +208,7 @@ def search_search(
     # language=rst
     """ Search.
 
-    :param app: the application
+    :param app: the `~datacatalog.application.Application`
     :param q: the query
     :param sort_field_get: function to get propererty to sort by.
     :param result_info: mapping in which all encountered facets in the result set are
@@ -324,7 +324,7 @@ async def set_new_identifier(app, old_id: str, new_id: str):
 
 # noinspection PyUnusedLocal
 @hookspec.first_only
-async def storage_all(app: T.Mapping) -> T.AsyncGenerator[T.Tuple[str, str, dict], None]:
+async def storage_all(app: T.Mapping[str, T.Any]) -> T.AsyncGenerator[T.Tuple[str, str, dict], None]:
     # language=rst
     """Get all data
     """

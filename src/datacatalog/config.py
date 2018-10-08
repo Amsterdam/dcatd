@@ -39,7 +39,7 @@ import jsonschema
 import yaml
 from pkg_resources import resource_stream
 
-logger = logging.getLogger('datacatalog')
+logger = logging.getLogger(__name__)
 
 
 _CONFIG_SCHEMA_RESOURCE = 'config_schema.yml'
