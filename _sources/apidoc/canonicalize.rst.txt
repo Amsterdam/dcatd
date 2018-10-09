@@ -1,7 +1,0 @@
-canonicalize module
-===================
-
-.. automodule:: canonicalize
-    :members:
-    :undoc-members:
-    :show-inheritance:

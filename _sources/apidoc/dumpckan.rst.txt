@@ -1,7 +1,0 @@
-dumpckan module
-===============
-
-.. automodule:: dumpckan
-    :members:
-    :undoc-members:
-    :show-inheritance:

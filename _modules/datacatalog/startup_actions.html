@@ -8,14 +8,14 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>datacatalog.main &mdash; datacatalog-core 0.1 documentation</title>
+  <title>datacatalog.startup_actions &mdash; datacatalog-core 0.1 documentation</title>
   
 
   
   
   
   
-    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/_modules/datacatalog/main.html"/>
+    <link rel="canonical" href="https://amsterdam.github.io/aiohttp_openapi_haljson/_modules/datacatalog/startup_actions.html"/>
   
 
   
@@ -232,7 +232,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>datacatalog.main</li>
+      <li>datacatalog.startup_actions</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -247,24 +247,68 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for datacatalog.main</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">asyncio</span>
-
-<span class="kn">from</span> <span class="nn">aiohttp</span> <span class="k">import</span> <span class="n">web</span>
-<span class="kn">import</span> <span class="nn">uvloop</span>
-
-<span class="kn">from</span> <span class="nn">datacatalog</span> <span class="k">import</span> <span class="n">application</span>
+  <h1>Source code for datacatalog.startup_actions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">.handlers</span> <span class="k">import</span> <span class="n">datasets</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.main.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop_policy</span><span class="p">(</span><span class="n">uvloop</span><span class="o">.</span><span class="n">EventLoopPolicy</span><span class="p">())</span>
-    <span class="n">aio_app</span> <span class="o">=</span> <span class="n">application</span><span class="o">.</span><span class="n">Application</span><span class="p">()</span>
-    <span class="n">web</span><span class="o">.</span><span class="n">run_app</span><span class="p">(</span><span class="n">aio_app</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">aio_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;web&#39;</span><span class="p">][</span><span class="s1">&#39;port&#39;</span><span class="p">])</span>
-    <span class="k">return</span> <span class="mi">0</span></div>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
+<div class="viewcode-block" id="replace_old_identifiers"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.startup_actions.replace_old_identifiers">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">replace_old_identifiers</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="n">old_identifiers</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">get_old_identifiers</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">changed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">old_id</span> <span class="ow">in</span> <span class="n">old_identifiers</span><span class="p">:</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">new_id</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">storage_id</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">set_new_identifier</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span> <span class="n">old_id</span><span class="o">=</span><span class="n">old_id</span><span class="p">,</span> <span class="n">new_id</span><span class="o">=</span><span class="n">new_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="s1">&#39;UPDATE 1&#39;</span><span class="p">:</span>
+            <span class="n">changed</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Set new identifiers for </span><span class="si">{changed}</span><span class="s1"> datasets&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">changed</span> <span class="o">==</span> <span class="n">count</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="add_resource_identifiers"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.startup_actions.add_resource_identifiers">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">add_resource_identifiers</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="n">dataset_iterator</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">storage_all</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">)</span>
+    <span class="n">changed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">docid</span><span class="p">,</span> <span class="n">etag</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">dataset_iterator</span><span class="p">:</span>
+        <span class="n">canonical_doc</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">mds_canonicalize</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">docid</span><span class="p">)</span>
+        <span class="n">identifiers_added</span> <span class="o">=</span> <span class="k">await</span> <span class="n">datasets</span><span class="o">.</span><span class="n">_add_distribution_identifiers</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">canonical_doc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">identifiers_added</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Let the metadata plugin grab the full-text search representation</span>
+            <span class="n">searchable_text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">mds_full_text_search_representation</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">canonical_doc</span>
+            <span class="p">)</span>
+            <span class="n">new_etag</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">storage_update</span><span class="p">(</span>
+                <span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span> <span class="n">docid</span><span class="o">=</span><span class="n">docid</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">canonical_doc</span><span class="p">,</span>
+                <span class="n">searchable_text</span><span class="o">=</span><span class="n">searchable_text</span><span class="p">,</span> <span class="n">etags</span><span class="o">=</span><span class="p">{</span><span class="n">etag</span><span class="p">},</span>
+                <span class="n">iso_639_1_code</span><span class="o">=</span><span class="s2">&quot;nl&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Added </span><span class="si">{identifiers_added}</span><span class="s1"> identifiers for </span><span class="si">{docid}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">changed</span> <span class="o">+=</span> <span class="n">identifiers_added</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Set new identifiers for </span><span class="si">{changed}</span><span class="s1"> resources&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<span class="n">_startup_actions</span> <span class="o">=</span> <span class="p">[</span>
+<span class="c1">#   DISABLE replace_old_identifiers until Service  &amp; Delivery did check if old URL links are still used</span>
+<span class="c1">#   and this can be done without too much impact.</span>
+<span class="c1">#    (&quot;replace_old_identifiers&quot;, replace_old_identifiers),</span>
+    <span class="p">(</span><span class="s2">&quot;add_resource_identifiers&quot;</span><span class="p">,</span> <span class="n">add_resource_identifiers</span><span class="p">),</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="run_startup_actions"><a class="viewcode-back" href="../../apidoc/datacatalog.html#datacatalog.startup_actions.run_startup_actions">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">run_startup_actions</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span> <span class="ow">in</span> <span class="n">_startup_actions</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">check_startup_action</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">action</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">hooks</span><span class="o">.</span><span class="n">add_startup_action</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

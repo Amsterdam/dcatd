@@ -6,9 +6,6 @@ datacatalog.plugins package
     :undoc-members:
     :show-inheritance:
 
-Subpackages
------------
-
 .. toctree::
 
     datacatalog.plugins.dcat_ap_ams

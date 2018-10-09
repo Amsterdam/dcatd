@@ -6,11 +6,11 @@ datacatalog.plugins.postgres package
     :undoc-members:
     :show-inheritance:
 
-Submodules
-----------
+Modules
+-------
 
-datacatalog.plugins.postgres.languages module
----------------------------------------------
+languages
+---------
 
 .. automodule:: datacatalog.plugins.postgres.languages
     :members:

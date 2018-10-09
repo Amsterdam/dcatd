@@ -6,27 +6,27 @@ datacatalog.handlers package
     :undoc-members:
     :show-inheritance:
 
-Submodules
-----------
+Modules
+-------
 
-datacatalog.handlers.datasets module
-------------------------------------
+datasets
+--------
 
 .. automodule:: datacatalog.handlers.datasets
     :members:
     :undoc-members:
     :show-inheritance:
 
-datacatalog.handlers.openapi module
------------------------------------
+openapi
+-------
 
 .. automodule:: datacatalog.handlers.openapi
     :members:
     :undoc-members:
     :show-inheritance:
 
-datacatalog.handlers.systemhealth module
-----------------------------------------
+systemhealth
+------------
 
 .. automodule:: datacatalog.handlers.systemhealth
     :members:
