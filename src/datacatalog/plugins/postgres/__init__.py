@@ -173,6 +173,7 @@ async def storage_retrieve(app: T.Mapping, docid: str, etags: T.Optional[T.Set[s
     # language=rst
     """ Get document and corresponsing etag by id.
 
+    :param app: the application
     :param docid: document id
     :param etags: None, or a set of Etags
     :returns:
@@ -196,6 +197,7 @@ async def storage_create(app: T.Mapping, docid: str, doc: dict, searchable_text:
     # language=rst
     """ Store a new document.
 
+    :param app: the application
     :param docid: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
@@ -221,6 +223,7 @@ async def storage_update(app: T.Mapping, docid: str, doc: dict, searchable_text:
     # language=rst
     """ Update the document with the given ID only if it has one of the provided Etags.
 
+    :param app: the application
     :param docid: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
@@ -244,10 +247,11 @@ async def storage_delete(app: T.Mapping, docid: str, etags: T.Set[str]) -> None:
     # language=rst
     """ Delete document only if it has one of the provided Etags.
 
+    :param app: the application
     :param docid: the ID of the document to delete.
     :param etags: the last known ETags of this document.
-    :raises: ValueError if none of the given etags match the stored etag.
-    :raises: KeyError if a document with the given id doesn't exist.
+    :raises ValueError: if none of the given etags match the stored etag.
+    :raises KeyError: if a document with the given id doesn't exist.
 
     """
     if (await app['pool'].fetchval(_Q_DELETE_DOC, docid, etags)) is None:
@@ -256,7 +260,9 @@ async def storage_delete(app: T.Mapping, docid: str, etags: T.Set[str]) -> None:
         # conditions at the same time, apart from a full table lock. However,
         # all scenario's in which the below, not threat-safe way of identifying
         # the cause of failure is not correct, are trivial.
-        _, etag = await storage_retrieve(docid, etags)  # this may raise a KeyError
+        #
+        # TODO: don't call storage_retrieve() directly, but through the plugin manager.
+        _, etag = await storage_retrieve(app, docid, etags)  # this may raise a KeyError
         assert etag not in etags
         raise ValueError
 
@@ -300,6 +306,7 @@ async def storage_extract(app: T.Mapping, ptr: str, distinct: bool=False) -> T.G
     get all documents stored in the system. If distinct=True then the generator
     will cache all values in a set, which may become prohibitively large.
 
+    :param app: the application
     :param ptr: JSON pointer to the element.
     :param distinct: Return only distinct values.
     :raises: ValueError if filter syntax is invalid.
@@ -349,7 +356,7 @@ async def storage_id() -> str:
 
 @_hookimpl
 async def search_search(
-    app, q: str, sort_field_get:T.Callable[[dict], str],
+    app, q: str, sort_field_get: T.Callable[[dict], str],
     result_info: T.MutableMapping,
     facets: T.Optional[T.Iterable[str]]=None,
     limit: T.Optional[int]=None, offset: int=0,
@@ -413,7 +420,8 @@ async def search_search(
     result_info['/'] = row_index
 
 
-async def _execute_list_query(app, filterexpr: str, lang: str, sort_field_get:T.Callable[[dict], str]):
+async def _execute_list_query(app, filterexpr: str, lang: str,
+                              sort_field_get: T.Callable[[dict], str]):
     async with app['pool'].acquire() as con:
         records = await con.fetch(_Q_LIST_DOCS.format(filters=filterexpr), lang)
         results = []
@@ -422,7 +430,7 @@ async def _execute_list_query(app, filterexpr: str, lang: str, sort_field_get:T.
             doc = json.loads(row['doc'])
             last_modified = sort_field_get(doc)
             results.append((id, doc, last_modified))
-        results.sort(key=lambda x:x[2], reverse=True)
+        results.sort(key=lambda x: x[2], reverse=True)
         for row in results:
             yield row[0], row[1]
 
@@ -537,8 +545,9 @@ def _iso_639_1_code_to_pg(iso_639_1_code: str) -> str:
 
 all_startup_actions = None
 
+
 @_hookimpl
-async def check_startup_action(app, name:str) -> bool:
+async def check_startup_action(app, name: str) -> bool:
     global all_startup_actions
     if all_startup_actions is None:
         _Q = 'SELECT id, action, applied FROM dcatd_startup_actions'
@@ -550,6 +559,7 @@ async def check_startup_action(app, name:str) -> bool:
         return True
     else:
         return False
+
 
 @_hookimpl
 async def add_startup_action(app, name: str):
@@ -565,8 +575,9 @@ async def get_old_identifiers(app):
         ids = await con.fetch(_Q)
         return map(lambda x: x['id'], ids)
 
+
 @_hookimpl
-async def set_new_identifier(app, old_id:str, new_id:str):
+async def set_new_identifier(app, old_id: str, new_id: str):
     _Q = 'UPDATE dataset SET id = $1 WHERE id = $2'
     async with app['pool'].acquire() as con:
         result = await con.execute(_Q, new_id, old_id)

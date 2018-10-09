@@ -74,6 +74,7 @@ def storage_retrieve(app, docid: str, etags: T.Optional[T.Set[str]]) \
     # language=rst
     """ Get document and corresponsing etag by id.
 
+    :param app: the application
     :param docid: document id
     :param etags: None, or a set of Etags
     :returns:
@@ -92,6 +93,7 @@ def storage_create(app, docid: str, doc: dict, searchable_text: str,
     # language=rst
     """ Store a new document.
 
+    :param app: the application
     :param docid: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
@@ -110,6 +112,7 @@ def storage_update(app, docid: str, doc: dict, searchable_text: str,
     # language=rst
     """ Update the document with the given ID only if it has one of the provided Etags.
 
+    :param app: the application
     :param docid: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
@@ -128,6 +131,7 @@ def storage_delete(app, docid: str, etags: T.Set[str]) -> None:
     # language=rst
     """ Delete document only if it has one of the provided Etags.
 
+    :param app: the application
     :param docid: the ID of the document to delete.
     :param etags: the last known ETags of this document.
     :raises: ValueError if none of the given etags match the stored etag.
@@ -146,13 +150,13 @@ def storage_extract(app, ptr: str, distinct: bool=False) -> T.Generator[str, Non
     Used to, for example, get a list of all tags or ids in the system. Or to
     get all documents stored in the system.
 
+    :param app: the application
     :param ptr: JSON pointer to the element.
     :param distinct: Return only distinct values.
     :raises: ValueError if filter syntax is invalid.
     """
 
 
-# noinspection PyUnusedLocal
 @hookspec.first_only.required
 def storage_id() -> str:
     # language=rst
@@ -187,7 +191,7 @@ def storage_id() -> str:
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
 def search_search(
-    app, q: str, sort_field_get:T.Callable[[dict], str],
+    app, q: str, sort_field_get: T.Callable[[dict], str],
     result_info: T.MutableMapping,
     facets: T.Optional[T.Iterable[str]]=None,
     limit: T.Optional[int]=None, offset: T.Optional[int]=0,
@@ -204,7 +208,7 @@ def search_search(
     # language=rst
     """ Search.
 
-    :param app: global dictionary
+    :param app: the application
     :param q: the query
     :param sort_field_get: function to get propererty to sort by.
     :param result_info: mapping in which all encountered facets in the result set are
@@ -239,7 +243,6 @@ def search_search(
 #     """
 
 
-# noinspection PyUnusedLocal
 @hookspec.first_only.sync
 def mds_name() -> str:
     # language=rst
@@ -252,6 +255,7 @@ def mds_name() -> str:
     """
 
 
+# noinspection PyUnusedLocal
 @hookspec.first_only
 def mds_canonicalize(data: dict, id: T.Optional[str]=None, direction: Direction=Direction.GET) -> dict:
     # language=rst

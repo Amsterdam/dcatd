@@ -194,7 +194,7 @@ async def delete(request: web.Request):
     return web.Response(status=204, content_type='text/plain')
 
 
-def get_last_modified_date(doc:dict)->str:
+def get_last_modified_date(doc: dict)->str:
     """
     Sorteren op, in onderstaande volgorde. Als veld niet gevuld is, dan volgende datum gebruiken:
 
@@ -224,7 +224,7 @@ def get_last_modified_date(doc:dict)->str:
                     primary = resource['foaf:isPrimaryTopicOf']
                     if 'dct:modified' in primary and primary['dct:modified'] > last_modified:
                         last_modified = primary['dct:modified']
-                    if 'dct_issued' in primary and  primary['dct:issued'] >  dct_issued_resource:
+                    if 'dct_issued' in primary and primary['dct:issued'] > dct_issued_resource:
                         dct_issued_resource = primary['dct:issued']
             if not last_modified:
                 last_modified = dct_issued_resource
@@ -234,7 +234,7 @@ def get_last_modified_date(doc:dict)->str:
         elif 'dct:issued' in doc:
             last_modified = doc['dct:issued']
         elif 'foaf:isPrimaryTopicOf' in doc:
-            primary = doc['foaf:isPrimaryTopicOf' ]
+            primary = doc['foaf:isPrimaryTopicOf']
             if 'dct:modified' in primary:
                 last_modified = primary['dct:modified']
             elif 'dct:issued' in primary:

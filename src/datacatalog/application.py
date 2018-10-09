@@ -14,7 +14,14 @@ logger = logging.getLogger(__name__)
 
 class Application(web.Application):
     # language=rst
-    """The Application.
+    """ The Application.
+
+    .. todo::
+
+        Inheritance from ``web.Application`` is discouraged by aiohttp. This
+        class, with its initializer, must be replaced by an application factory
+        method that builds an application object from ``web.Application``.
+
     """
 
     def __init__(self, *args, middlewares=None, **kwargs):
@@ -145,5 +152,3 @@ def _resolve_plugin_path(fq_name: str):
     for segment in segments[nseg:]:
         result = getattr(result, segment)
     return result
-
-

@@ -235,6 +235,6 @@ def load() -> ConfigDict:
             "No 'logging' entry in config file {}".format(config_path)
         )
     logging.config.dictConfig(config['logging'])
-    logger.info("Loaded configuration from '%s'", os.path.abspath(config_path))
+    logger.info("Loaded configuration from '%s'", os.path.abspath(str(config_path)))
     config.validate(_config_schema())
     return config
