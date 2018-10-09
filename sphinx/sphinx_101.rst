@@ -11,11 +11,7 @@ For details on basic rST formatting, see the :ref:`sphinx:rst-primer`
 
 *   *emphasis*, **strong empasis**, ``code``
 *   *``nesting``* ``*won’t*`` ````work````
-*   *roles* are formatted as ``:rolename:`some text```. RST predefines
-    :emphasis:`emphasis`, :strong:`strong`, :literal:`literal`,
-    :subscript:`subscript`, :superscript:`superscript`, and
-    :title-reference:`title-reference`.
-
+*   *roles* are formatted as ``:rolename:`some text```. See :ref:`roles`
     #.  Numbered lists look like this
 
         1.  or like this, and can be nested,
@@ -41,24 +37,35 @@ For details on basic rST formatting, see the :ref:`sphinx:rst-primer`
     #. ``"``
 
 
-Roles added by Sphinx
----------------------
+.. _roles:
 
-See :doc:`sphinx:markup/inline`.
+Roles
+-----
+
+    All other roles are added by Sphinx
 
 Inline markup:
-    .. code-block:: rst
+    reStructured text:
+        :emphasis:`:emphasis:`, :strong:`:strong:`, :literal:`:literal:`,
+        :subscript:`:subscript:`, :superscript:`:superscript:`,
+        and :title-reference:`:title-reference:`.
 
-        :abbr:
-        :command:
-        :dfn:
-        :file:
-        :kbd:
-        :mimetype:
-        :program:
-        :regexp:
+    extra in Sphinx:
+        :abbr:`:abbr:`, :command:`:command:`, :dfn:`:dfn:`, :file:`:file:`,
+        :guilabel:`:guilabel:`, :kbd:`:kbd:`, :menuselection:`:menuselection:`,
+        :mimetype:`:mimetype:`, :program:`:program:`, :regexp:`:regexp:`,
+        :samp:`:samp:`.
+
+        See :doc:`sphinx:usage/restructuredtext/roles`.
 
 Generic cross-referencing:
+    Syntax:
+        *   ``:role:`target```
+        *   ``:role:`title <target>``` displays ``title`` instead of the title provided by the reference.
+        *   ``:role:`!target``` doesn’t create a reference/hyperlink
+            (bit still includes the title provided by the reference).
+        *   ``:role:`~path.to.target``` only displays the last segment of the target path.
+
     .. code-block:: rst
 
         :any:
@@ -87,12 +94,16 @@ Python info field lists:
 
         :param str sender: The person sending the message
         :param priority: The priority of the message, can be a number 1-5
+        :type priority: integer or None
         :return: the message id
         :rtype: int or None
         :raises ValueError: if the message_body exceeds 160 characters
         :raises TypeError: if the message_body is not a basestring
 
-        :type priority: integer or None
+    Container types can be linked automatically with the following syntax:
+
+    .. code-block:: rst
+
         :type priorities: list(int)
         :type priorities: list[int]
         :type mapping: dict(str, int)
@@ -101,7 +112,8 @@ Python info field lists:
         :type point: tuple[float, float]
 
     Multiple types in a type field will be linked automatically if separated by
-    the word “or”.
+    the word :dfn:`or`.
+
 
 Directives
 ----------
@@ -126,14 +138,13 @@ Directives
 
     Directives are defined by
 
-    *   :ref:`Docutils <sphinx:directives>`
-    *   :doc:`Sphinx <sphinx:markup/index>`, and Sphinx Extensions.
+    *   :ref:`Docutils <sphinx:rst-directives>`;
+    *   :doc:`Sphinx domains <sphinx:usage/restructuredtext/domains>` such as
+        the :ref:`Python domain <sphinx:python-roles>`;
+    *   Sphinx Extensions.
 
 
-See :doc:`sphinx:domains` for ia. the **Python** and **Standard** domains with
-their special directives.
-
-See :doc:`markup/para` for documentation of many handy directives, such as:
+See :doc:`sphinx:usage/restructuredtext/directives` for documentation of many handy directives, such as:
 
 .. code-block:: rst
 
@@ -192,7 +203,7 @@ The following section headers are supported:
 Autodoc
 -------
 
-See :doc:`sphinx:ext/autodoc`.
+See :doc:`sphinx:usage/extensions/autodoc`.
 
 .. code-block:: rst
 

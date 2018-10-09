@@ -18,7 +18,7 @@ _AUTHORIZATION = None
 @_hookimpl
 def initialize_sync(app):
     # language=rst
-    """Initialize the plugin.
+    """ Initialize the plugin.
 
     -  validates the configuration loaded by `app`;
     -  initializes `_BASE_URL` and `_AUTHORIZATION`;

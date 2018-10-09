@@ -1,5 +1,4 @@
 import typing as T
-import functools
 from enum import Enum
 
 import jsonschema
@@ -349,7 +348,6 @@ DISTRIBUTION.add('dcat:downloadURL', String(format='uri'))
 DISTRIBUTION.add('dcat:mediaType', String(pattern=r'^[-\w.]+/[-\w.]+$'))
 DISTRIBUTION.add('dct:format', String())
 DISTRIBUTION.add('dcat:byteSize', Integer(minimum=0))
-
 
 
 VCARD = Object()

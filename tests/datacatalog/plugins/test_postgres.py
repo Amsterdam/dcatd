@@ -170,7 +170,7 @@ def test_storage_extract(event_loop, corpus, app):
     empty = event_loop.run_until_complete(retrieve_nothing())
     assert len(empty) == 0
 
-def get_id_sort_field(doc:dict)->str:
+def get_id_sort_field(doc: dict)->str:
     return doc['@id'] if '@id' in doc else ''
 
 def test_search_search(event_loop, corpus, app):

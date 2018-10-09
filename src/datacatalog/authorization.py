@@ -75,7 +75,7 @@ async def _extract_authz_info(request: web.Request,
     return result
 
 
-async def middleware(app: web.Application, handler):
+async def middleware(app, handler):
     openapi = app['openapi']
     baseurl = app.config['web']['baseurl']
     base_path = urllib.parse.urlparse(baseurl).path

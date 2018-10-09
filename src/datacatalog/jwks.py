@@ -8,6 +8,7 @@ This module provides only one method: :meth:`load`, which may raise a
 import base64
 import collections
 import json
+import sys
 from types import MappingProxyType
 
 from cryptography.hazmat.backends import default_backend
@@ -115,6 +116,5 @@ def _load_ecdsa(key, is_verifier):
     return alg, key
 
 
-import sys
 __all__ = dir(sys.modules[__name__])
 __all__.remove('int_from_bytes')  # To keep Sphinx happy

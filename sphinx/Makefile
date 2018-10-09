@@ -15,10 +15,10 @@ apidoc:
 	$(SPHINXAPIDOC) --force --module-first --no-toc --private -o "$(SOURCEDIR)/apidoc" ../src/datacatalog
 
 
-
 docs: apidoc
 	$(SPHINXBUILD) -b html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS)
 	touch $(BUILDDIR)/.nojekyll
+
 
 server: apidoc
 	@$(AUTOBUILD) "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) --watch ../src --watch ./
