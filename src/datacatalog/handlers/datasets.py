@@ -207,6 +207,13 @@ def get_last_modified_date(doc: dict)->str:
     wijzigingsdatum dataset: primarytopicof: dct:modified
     publicatiedatum dataset: primarytopicof: dct:issued
 
+    Zet als laatse de last_modified_date in dataset->primarytopicof->dct:modified als
+    die niet groter is. Anders gebruik als last_modified dataset->primarytopicof->dct:modified
+
+    Deze waarde wordt getoond in de Frontend. OP deze wijze id de sortering consistent met de weergave in
+    de Frontend, ook als die waardes niet correct worden geupdate.
+
+    TODO: Check gebruik en regels omtrent 'foaf:isPrimaryTopicOf']->'dct:modified' en hoe dit te gebruiken in FE
     Args:
         doc:dataset
 
@@ -239,6 +246,17 @@ def get_last_modified_date(doc: dict)->str:
                 last_modified = primary['dct:modified']
             elif 'dct:issued' in primary:
                 last_modified = primary['dct:issued']
+
+    # Als laatste stap updaten we of de last_modified of 'foaf:isPrimaryTopicOf']->'dct:modified'
+
+    if last_modified:
+        if 'foaf:isPrimaryTopicOf' in doc:
+            primary = doc['foaf:isPrimaryTopicOf']
+            if 'dct:modified' not in primary or last_modified > primary['dct:modified']:
+                primary['dct:modified'] = last_modified
+            elif 'dct:modified' in primary:
+                last_modified = primary['dct:modified']
+
     return last_modified
 
 
