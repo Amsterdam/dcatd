@@ -247,15 +247,16 @@ def get_last_modified_date(doc: dict)->str:
             elif 'dct:issued' in primary:
                 last_modified = primary['dct:issued']
 
-    # Als laatste stap updaten we of de last_modified of 'foaf:isPrimaryTopicOf']->'dct:modified'
-
     if last_modified:
+        # TODO : remove once FrontEnd uses 'ams:sort_modified' for showing
         if 'foaf:isPrimaryTopicOf' in doc:
             primary = doc['foaf:isPrimaryTopicOf']
             if 'dct:modified' not in primary or last_modified > primary['dct:modified']:
                 primary['dct:modified'] = last_modified
             elif 'dct:modified' in primary:
                 last_modified = primary['dct:modified']
+        # END TODO
+        doc['ams:sort_modified'] = last_modified
 
     return last_modified
 
@@ -346,7 +347,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
         canonical_doc = await hooks.mds_canonicalize(data=doc, id=docid)
         keepers = {'@id', 'dct:identifier', 'dct:title', 'dct:description',
                    'dcat:keyword', 'foaf:isPrimaryTopicOf', 'dcat:distribution',
-                   'dcat:theme', 'ams:owner'}
+                   'dcat:theme', 'ams:owner', 'ams:sort_modified'}
         for key in list(canonical_doc.keys()):
             if key not in keepers:
                 del canonical_doc[key]
