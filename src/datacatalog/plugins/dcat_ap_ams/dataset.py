@@ -305,7 +305,7 @@ DATASET = Object(json_pointer='').add(
     Date(
         title="Sort datum",
         json_pointer='',
-        read_only=True,
+        sys_defined=True,
         description="De datum waarop de lijst wordt gesorteerd"
     )
 )
