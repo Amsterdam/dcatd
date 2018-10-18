@@ -1,5 +1,4 @@
 import argparse
-import chardet
 import json
 import os
 from urllib import request
