@@ -300,14 +300,6 @@ DATASET = Object(json_pointer='').add(
         description="Unieke identifier",
         json_pointer='/name'
     )
-).add(
-    'ams:sort_modified',
-    Date(
-        title="Sort datum",
-        json_pointer='',
-        sys_defined=True,
-        description="De datum waarop de lijst wordt gesorteerd"
-    )
 )
 
 

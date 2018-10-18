@@ -44,6 +44,7 @@ def mds_canonicalize(data: dict, id: T.Optional[str]=None, direction: Direction=
     # data = jsonld.expand(data)
     retval = jsonld.compact(data, ctx)
     old_id = retval.get('@id')
+    sort_modified = retval.get('ams:sort_modified', None)
     retval = DATASET.canonicalize(retval, direction=direction)
     if 'dcat:distribution' not in retval:
         retval['dcat:distribution'] = []
@@ -76,6 +77,8 @@ def mds_canonicalize(data: dict, id: T.Optional[str]=None, direction: Direction=
         retval['dct:identifier'] = str(id)
     elif old_id is not None:
         retval['@id'] = old_id
+    if sort_modified is not None:
+        retval['ams:sort_modified'] = sort_modified
     return retval
 
 
