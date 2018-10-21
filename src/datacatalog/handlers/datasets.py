@@ -345,18 +345,18 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
 
     async for docid, doc in resultiterator:
         canonical_doc = await hooks.mds_canonicalize(data=doc, id=docid)
-        keepers = {'@id', 'dct:identifier', 'dct:title', 'dct:description',
-                   'dcat:keyword', 'foaf:isPrimaryTopicOf', 'dcat:distribution',
-                   'dcat:theme', 'ams:owner', 'ams:sort_modified'}
-        for key in list(canonical_doc.keys()):
-            if key not in keepers:
-                del canonical_doc[key]
-        keepers = {'dct:format', 'ams:resourceType', 'ams:distributionType',
-                   'ams:serviceType', 'dc:identifier'}
-        for d in canonical_doc.get('dcat:distribution', []):
-            for key in list(d.keys()):
-                if key not in keepers:
-                    del d[key]
+        # keepers = {'@id', 'dct:identifier', 'dct:title', 'dct:description',
+        #            'dcat:keyword', 'foaf:isPrimaryTopicOf', 'dcat:distribution',
+        #            'dcat:theme', 'ams:owner', 'ams:sort_modified'}
+        # for key in list(canonical_doc.keys()):
+        #     if key not in keepers:
+        #         del canonical_doc[key]
+        # keepers = {'dct:format', 'ams:resourceType', 'ams:distributionType',
+        #            'ams:serviceType', 'dc:identifier'}
+        # for d in canonical_doc.get('dcat:distribution', []):
+        #     for key in list(d.keys()):
+        #         if key not in keepers:
+        #             del d[key]
         if not first:
             await response.write(b',')
         else:
