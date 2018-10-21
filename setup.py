@@ -60,7 +60,9 @@ setup(
         'aiohttp',
         'aiohttp_cors',
         'aiopluggy',
-        'bleach',
+        'asyncpg',  # for postgres plugin
+        'bleach',  # Markdown to text conversion
+        'cryptography',
         'datapunt_config_loader',
         'jsonschema',
         'jsonpointer',
@@ -69,12 +71,6 @@ setup(
         'pyld',
         'PyYaml',
         'whoosh',
-        # @evert: Why this specific version? --PvB
-        # Evert says: Just remove it and see what happens.
-        'cryptography',
-
-        # for postgres storage plugin
-        'asyncpg', # postgres plugin
 
         # Recommended by aiohttp docs:
         'aiodns',    # optional asynchronous DNS client

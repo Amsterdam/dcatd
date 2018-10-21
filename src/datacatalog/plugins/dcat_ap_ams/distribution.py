@@ -1,3 +1,5 @@
+import typing as T
+
 from . import constants
 from .fieldtypes import *
 # from .logger import logger
@@ -10,32 +12,28 @@ def _serviceType_mapping(data: dict) -> T.Optional[str]:
     return ckan_format if ckan_format in ('wms', 'wfs') else 'other'
 
 
-DISTRIBUTION = Object(json_pointer='').add(
+DISTRIBUTION = dcat.Object().add(
     'dct:title',
-    PlainTextLine(
+    dcat.PlainTextLine(
         title="Titel",
-        required=True,
-        json_pointer='/name'
+        required=True
     )
 ).add(
     'dct:description',
     Markdown(
-        from_='html',
-        title="Beschrijving",
-        json_pointer='/description'
+        title="Beschrijving"
     )
 ).add(
     'dcat:accessURL',
-    String(
+    dcat.String(
         format='uri',
         title="URL of upload",
         description="Toegangslink naar de daadwerkelijke gegevensset óf downloadlink om gegevensset te downloaden",
-        required=True,
-        json_pointer='/url'
+        required=True
     )
 ).add(
     'ams:resourceType',
-    Enum(
+    dcat.Enum(
         [
             ('data', "Data"),
             ('doc', "Documentatie"),
@@ -43,39 +41,22 @@ DISTRIBUTION = Object(json_pointer='').add(
             ('app', "Voorbeeldtoepassing")
         ],
         title="Type resource",
-        required=True,
-        json_pointer='/type',
-        mapping=(
-            lambda x: {
-                'Data': 'data',
-                'Documentatie': 'doc',
-                'Weergave': 'vis',
-                'Toepassingen': 'app'
-            }.get(x, 'data')
-        )
+        required=True
     )
 ).add(
     'ams:distributionType',
-    Enum(
+    dcat.Enum(
         [
             ('api', "API/Service"),
             ('file', "Bestand"),
             ('web', "Website")
         ],
         title="Verschijningsvorm",
-        required=True,
-        json_pointer='/resource_type',
-        mapping=(
-            lambda x: {
-                'api': 'api',
-                'file': 'file',
-                'file.upload': 'file'
-            }.get(x, 'file')
-        )
+        required=True
     )
 ).add(
     'ams:serviceType',
-    Enum(
+    dcat.Enum(
         [
             ('atom', "REST: Atom feed"),
             ('rest', "REST: overig"),
@@ -88,99 +69,68 @@ DISTRIBUTION = Object(json_pointer='').add(
             ('other', "Anders")
         ],
         title="Type API/Service",
-        description="Geef het type API of webservice",
-        json_pointer='',
-        mapping=_serviceType_mapping
+        description="Geef het type API of webservice"
     )
 ).add(
     'dct:format',
-    Enum(
+    dcat.Enum(
         constants.DCT_FORMATS,
-        title="Type bestand",
-        json_pointer='/format',
-        mapping=(
-            lambda x: {
-                'csv': 'text/csv',
-                'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'geojson': 'application/vnd.geo+json',
-                'gml': 'application/gml+xml',
-                'html': 'text/html',
-                'json': 'application/json',
-                'jpeg': 'image/jpeg',
-                'pdf': 'application/pdf',
-                'png': 'image/png',
-                'shp': 'application/zip; format="shp"',
-                'xls': 'application/vnd.ms-excel',
-                'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                # application/xml is the prefered media type for XML documents. RFC7303
-                # defines text/xml as merely an alias of application/xml.
-                'xml': 'application/xml'
-            }.get(x.lower(), 'application/octet-stream')
-        )
+        title="Type bestand"
     )
 ).add(
     'ams:layerIdentifier',
-    PlainTextLine(
+    dcat.PlainTextLine(
         title="Interne Kaartlaag ID",
-        description="De Citydata kaartlaag waarmee deze dataset op de kaart getoond kan worden",
-        json_pointer='/foobar'
+        description="De Citydata kaartlaag waarmee deze dataset op de kaart getoond kan worden"
     )
 ).add(
     'dct:modified',
-    Date(
+    dcat.Date(
         title="Verversingsdatum",
         description="De datum waarop de inhoud van deze link voor het laatst is geactualiseerd.",
-        default=(lambda: datetime.date.today().isoformat()),
-        json_pointer='/last_modified'
+        default=(lambda: datetime.date.today().isoformat())
     )
 ).add(
     'dc:identifier',
-    PlainTextLine(
+    dcat.PlainTextLine(
         title="UID",
-        description="Unieke identifier",
-        json_pointer='/name'
+        description="Unieke identifier"
     )
 ).add(
     'ams:classification',
-    Enum(
+    dcat.Enum(
         [
             ('public', "Publiek toegankelijk"),
         ],
-        title="Classification",
-        json_pointer='',
-        mapping=(lambda x: 'public')
+        title="Classification"
     )
 ).add(
     'dcat:byteSize',
-    Integer(
+    dcat.Integer(
         minimum=0,
         title="Bestandsgrootte",
-        description="Bestandsgrootte in bytes",
-        json_pointer='/size'
+        description="Bestandsgrootte in bytes"
     )
 ).add(
     'foaf:isPrimaryTopicOf',
-    Object(
+    dcat.Object(
         required=True,
-        title="",
-        json_pointer=''
+        title=""
     ).add(
         'dct:issued',
-        Date(
+        dcat.Date(
             title="Publicatiedatum",
             description="De datum waarop deze beschrijving van de gegevensset beschikbaar is gesteld",
-            default=(lambda: datetime.date.today().isoformat()),
-            json_pointer='/created'
+            default=(lambda: datetime.date.today().isoformat())
         )
     ).add(
         'dct:modified',
-        Date(
+        dcat.Date(
             title="Wijzigingsdatum",
             description="De datum waarop deze beschrijving van de gegevensset voor het laatst is gewijzigd",
             default=(lambda: datetime.date.today().isoformat()),
             sys_defined=True,
-            required=True,
-            json_pointer='/last_modified'
+            required=True
         )
     )
 )

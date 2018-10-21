@@ -17,7 +17,7 @@ test: cleanpy
 
 
 cov: cleanpy
-	$(PYTEST) $(PYTEST_COV_OPTS)
+	$(PYTEST) --addopts "$(PYTEST_COV_OPTS)"
 
 
 testclean: cleanpy

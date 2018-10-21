@@ -250,7 +250,7 @@ def mds_name() -> str:
 
     :returns: a string that is safe for use in a URL segment; ie. every string
         that matches regular expression
-        ``^(?:%[a-f0-9]{2}|[-\w:@!$&'()*+,;=.~])*$``
+        ``^(?:%[a-f0-9]{2}|[-\\w:@!$&'()*+,;=.~])*$``
 
     """
 
