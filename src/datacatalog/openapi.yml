@@ -35,7 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dcat-doc-list'
+                $ref: '#/components/schemas/dcat-datasets'
       parameters:
       - name: q
         in: query
@@ -114,7 +114,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/dcat-doc'
+              $ref: '#/components/schemas/dcat-dataset'
       responses:
         201:
           description: Created.
@@ -141,7 +141,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dcat-doc'
+                $ref: '#/components/schemas/dcat-dataset'
         304:
           description: >-
             Not Modified: The document has an etag that equals one of the given
@@ -204,7 +204,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/dcat-doc'
+              $ref: '#/components/schemas/dcat-dataset'
       responses:
         201:
           description: The dataset was succesfully uploaded.
@@ -296,10 +296,10 @@ components:
     etag:
       type: string
       pattern: '^(?:W/)?"[^"]+"$'
-    dcat-doc:
+    dcat-dataset:
       description: >-
         Intentionally left blank. Replaced by the actual schema at runtime.
-    dcat-doc-list:
+    dcat-datasets:
       # TODO: This schema is not accurate.
       type: array
       items:

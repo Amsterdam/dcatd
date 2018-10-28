@@ -19,7 +19,7 @@ async def get(request: web.Request):
         c = request.app.config
         # add document schema
         json_schema = await request.app.hooks.mds_json_schema(app=request.app)
-        openapi_schema['components']['schemas']['dcat-doc'] = json_schema
+        openapi_schema['components']['schemas']['dcat-dataset'] = json_schema
         # add base url to servers
         openapi_schema['servers'] = [{'url': c['web']['baseurl']}]
         openapi_json = json.dumps(openapi_schema, indent='  ', sort_keys=True)
