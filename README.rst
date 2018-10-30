@@ -147,10 +147,9 @@ The first two commands should not be required if database backups would correctl
 create the dcatd_latest.gz link. However this is currently not the case. That is
 why we need to copy manually with::
 
-    scp admin.datapunt.amsterdam.nl:/mnt/backup_postgres/dcatd_2018-09-03.gz /tmp/
-    docker cp  /tmp/dcatd_2018-09-03.gz  dcatd_database_1:/tmp/dcatd_latest.gz
+    scp admin.datapunt.amsterdam.nl:/mnt/backup_postgres/dcatd_2018-10-30.gz /tmp/
+    docker cp  /tmp/dcatd_2018-10-30.gz  dcatd_database_1:/tmp/dcatd_latest.gz
 
-Here 81adf880164c is the docker container.
 
 Then we can load it in Postgres with :
 
