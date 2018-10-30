@@ -11,7 +11,7 @@ GITORIGIN     = "$$(git remote show -n origin | grep 'Fetch URL:' | grep -o 'git
 GITBRANCH     := $(shell git branch | grep '^\* ' | sed 's/^\* //')
 
 
-apidoc:
+apidoc: clean
 	$(SPHINXAPIDOC) --force --module-first --no-toc --private -o "$(SOURCEDIR)/apidoc" ../src/datacatalog
 
 
@@ -33,12 +33,12 @@ invclean:
 
 
 gh-pages: docs
-	[ -d gh-pages ] || git clone --branch gh-pages --single-branch $(GITORIGIN) gh-pages
+	[ -d gh-pages ] || git clone --branch gh-pages --depth 1 $(GITORIGIN) gh-pages
 	cd gh-pages && { [ "`echo *`" = '*' ] || git rm -rf *; }
 	cd ../docs && cp -a * ../sphinx/gh-pages
 	cd gh-pages && \
 	  git add * && \
-	  git commit -m "Update from branch ''$(GITBRANCH)'" && \
+	  git commit -m "Update from branch $(GITBRANCH)" && \
 	  git push
 	cd ..
 	rm -rf gh-pages

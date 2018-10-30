@@ -15,7 +15,7 @@ from aiohttp_extras.content_negotiation import produces_content_types
 from datacatalog.dcat import Direction
 from datacatalog.handlers.openapi import clear_open_api_cache
 
-logger = logging.getLogger('datacatalog')
+logger = logging.getLogger(__name__ )
 
 _DCAT_ID_KEY = '@id'
 _FACET_QUERY_KEY = re.compile(
