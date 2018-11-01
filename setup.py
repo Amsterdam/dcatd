@@ -9,7 +9,7 @@ setup(
     # ┏━━━━━━━━━━━━━━━━━━━━━━┓
     # ┃ Publication Metadata ┃
     # ┗━━━━━━━━━━━━━━━━━━━━━━┛
-    version='1.0.0',
+    version='1.1.0',
     name='datacatalog-core',
     description="Core of the Amsterdam Data Catalog Project",
     # TODO:

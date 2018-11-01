@@ -3,10 +3,21 @@ openapi: '3.0.0'
 
 info:
   title: Data catalog
-  version: '1.0.0-alpha'
+  version: '1.1.0'
 
 
 paths:
+  /harvest:
+    get:
+      description: >-
+        Download the entire catalogue in one call.
+      responses:
+        200:
+          description: All datasets, including their distributions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dcat-datasets'
   /datasets:
     get:
       description: >-
