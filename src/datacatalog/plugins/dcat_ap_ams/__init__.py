@@ -64,6 +64,10 @@ def mds_canonicalize(data: dict, id: T.Optional[str]=None, direction: Direction=
                     del distribution['dct:byteSize']
                 if 'ams:serviceType' in distribution and distribution['ams:distributionType'] != 'api':
                     del distribution['ams:serviceType']
+                if distribution['ams:distributionType'] == 'file' and (
+                        not 'dct:format' in distribution or distribution['dct:format'] == ''):
+                    distribution['dct:format'] = 'application/octet-stream'
+
         else:  # Direction.GET
             if 'dct:license' not in distribution and 'ams:license' in retval:  # Inherit license from dataset
                 distribution['dct:license'] = retval['ams:license']
