@@ -248,14 +248,6 @@ def get_last_modified_date(doc: dict)->str:
                 last_modified = primary['dct:issued']
 
     if last_modified:
-        # TODO : remove once FrontEnd uses 'ams:sort_modified' for showing
-        if 'foaf:isPrimaryTopicOf' in doc:
-            primary = doc['foaf:isPrimaryTopicOf']
-            if 'dct:modified' not in primary or last_modified > primary['dct:modified']:
-                primary['dct:modified'] = last_modified
-            elif 'dct:modified' in primary:
-                last_modified = primary['dct:modified']
-        # END TODO
         doc['ams:sort_modified'] = last_modified
 
     return last_modified
