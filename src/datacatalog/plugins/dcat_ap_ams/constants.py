@@ -1,6 +1,28 @@
 from types import MappingProxyType
 
 
+ACCRUAL_PERIODICITY = [
+    ('unknown', "onbekend"),
+    ('realtime', "continu"),
+    ('day', "dagelijks"),
+    ('2pweek', "twee keer per week"),
+    ('week', "wekelijks"),
+    ('2weeks', "tweewekelijks"),
+    ('month', "maandelijks"),
+    ('quarter', "eens per kwartaal"),
+    ('2pyear', "halfjaarlijks"),
+    ('year', "jaarlijks"),
+    ('2years', "tweejaarlijks"),
+    ('4years', "vierjaarlijks"),
+    ('5years', "vijfjaarlijks"),
+    ('10years', "tienjaarlijks"),
+    ('reg', "regelmatig"),
+    ('irreg', "onregelmatig"),
+    ('req', "op afroep"),
+    ('other', "anders")
+]
+
+
 CONTEXT = MappingProxyType({
     'ams': 'http://datacatalogus.amsterdam.nl/term/',
     'ckan': 'https://ckan.org/terms/',
@@ -24,6 +46,7 @@ CONTEXT = MappingProxyType({
     'theme': 'ams:theme#',
     'time': 'http://www.w3.org/2006/time#',
     'vcard': 'http://www.w3.org/2006/vcard/ns#',
+    'ams:purl': {'@type': '@id'},
     'dcat:dataset': {'@container': '@list'},
     'dcat:distribution': {'@container': '@set'},
     'dcat:keyword': {'@container': '@set'},
@@ -38,6 +61,26 @@ CONTEXT = MappingProxyType({
     'vcard:hasURL': {'@type': '@id'},
     'vcard:hasLogo': {'@type': '@id'}
 })
+
+
+DISTRIBUTION_TYPES = [
+    ('api', "API/Service"),
+    ('file', "Bestand"),
+    ('web', "Website")
+]
+
+
+CLASSIFICATIONS = [
+    ('public', "Publiek toegankelijk"),
+]
+
+
+RESOURCE_TYPES = [
+    ('data', "Data"),
+    ('doc', "Documentatie"),
+    ('vis', "Visualisatie"),
+    ('app', "Voorbeeldtoepassing")
+]
 
 
 THEMES = [
@@ -60,6 +103,19 @@ THEMES = [
     ('theme:werk-inkomen', "Werk & Inkomen"),
     ('theme:wonen-leefomgeving', "Wonen & leefomgeving"),
     ('theme:zorg-welzijn', "Zorg & welzijn")
+]
+
+
+SERVICE_TYPES = [
+    ('atom', "REST: Atom feed"),
+    ('rest', "REST: overig"),
+    ('csw', "CSW"),
+    ('wcs', "WCS"),
+    ('wfs', "WFS"),
+    ('wms', "WMS"),
+    ('wmts', "WMTS"),
+    ('soap', "SOAP"),
+    ('other', "Anders")
 ]
 
 
@@ -433,4 +489,37 @@ DCT_FORMATS = [
     # defines text/xml as merely an alias of application/xml.
     ('application/xml', "XML"),
     ('application/octet-stream', "Anders"),
+]
+
+
+SPACIAL_UNITS = [
+    ('na', "Geen geografie"),
+    ('specific', "Specifieke punten/vlakken/lijnen"),
+    ('nation', "Land"),
+    ('region', "Regio"),
+    ('city', "Gemeente"),
+    ('district', "Stadsdeel"),
+    ('area', "Gebied"),
+    ('borrow', "Wijk"),
+    ('neighborhood', "Buurt"),
+    ('block', "Bouwblok"),
+    ('zip4', "Postcode (4 cijfers)"),
+    ('zip5', "Postcode (4 cijfers, 1 letter)"),
+    ('zip6', "Postcode (4 cijfers, 2 letters)"),
+    ('other', "anders")
+]
+
+
+TEMPORAL_UNIT = [
+    ('na', "Geen tijdseenheid"),
+    ('realtime', "Realtime"),
+    ('minutes', "Minuten"),
+    ('hours', "Uren"),
+    ('parttime', "Dagdelen"),
+    ('days', "Dagen"),
+    ('weeks', "Weken"),
+    ('months', "Maanden"),
+    ('quarters', "Kwartalen"),
+    ('years', "Jaren"),
+    ('other', "anders")
 ]

@@ -16,7 +16,7 @@ DISTRIBUTION = dcat.Object().add(
     'dct:title',
     dcat.PlainTextLine(
         title="Titel",
-        required=True
+        required='Titel onbekend'
     )
 ).add(
     'dct:description',
@@ -29,53 +29,43 @@ DISTRIBUTION = dcat.Object().add(
         format='uri',
         title="URL of upload",
         description="Toegangslink naar de daadwerkelijke gegevensset óf downloadlink om gegevensset te downloaden",
-        required=True
+        required=''
     )
 ).add(
     'ams:resourceType',
     dcat.Enum(
-        [
-            ('data', "Data"),
-            ('doc', "Documentatie"),
-            ('vis', "Visualisatie"),
-            ('app', "Voorbeeldtoepassing")
-        ],
+        constants.RESOURCE_TYPES,
         title="Type resource",
-        required=True
+        required='data'
     )
 ).add(
     'ams:distributionType',
     dcat.Enum(
-        [
-            ('api', "API/Service"),
-            ('file', "Bestand"),
-            ('web', "Website")
-        ],
+        constants.DISTRIBUTION_TYPES,
         title="Verschijningsvorm",
-        required=True
+        required='file'
     )
 ).add(
     'ams:serviceType',
     dcat.Enum(
-        [
-            ('atom', "REST: Atom feed"),
-            ('rest', "REST: overig"),
-            ('csw', "CSW"),
-            ('wcs', "WCS"),
-            ('wfs', "WFS"),
-            ('wms', "WMS"),
-            ('wmts', "WMTS"),
-            ('soap', "SOAP"),
-            ('other', "Anders")
-        ],
+        constants.SERVICE_TYPES,
         title="Type API/Service",
         description="Geef het type API of webservice"
     )
 ).add(
     'dct:format',
+    # TODO: Vervangen door dcat:mediaType, en evt. inzetten in plaats van ams:serviceType
     dcat.Enum(
         constants.DCT_FORMATS,
         title="Type bestand"
+    )
+).add(
+    'dcat:mediaType',
+    dcat.Enum(
+        constants.DCT_FORMATS,
+        title="Type bestand",
+        description="Dit is het juiste veld, volgens de DCAT standaard. Wij gebruiken dct:format, maar dat moet anders.",
+        read_only=True
     )
 ).add(
     'ams:layerIdentifier',
@@ -88,49 +78,57 @@ DISTRIBUTION = dcat.Object().add(
     dcat.Date(
         title="Verversingsdatum",
         description="De datum waarop de inhoud van deze link voor het laatst is geactualiseerd.",
-        default=(lambda: datetime.date.today().isoformat())
     )
 ).add(
     'dc:identifier',
     dcat.PlainTextLine(
         title="UID",
-        description="Unieke identifier"
+        description="Unieke identifier",
+        required=''
     )
 ).add(
     'ams:classification',
     dcat.Enum(
-        [
-            ('public', "Publiek toegankelijk"),
-        ],
+        constants.CLASSIFICATIONS,
         title="Classification"
     )
 ).add(
     'dcat:byteSize',
     dcat.Integer(
-        minimum=0,
+        minimum=1,
         title="Bestandsgrootte",
         description="Bestandsgrootte in bytes"
     )
 ).add(
     'foaf:isPrimaryTopicOf',
     dcat.Object(
-        required=True,
+        required=dict(),
+        read_only=True,
+        # TODO: Probably a front-end requirement, but really ugly:
         title=""
     ).add(
         'dct:issued',
         dcat.Date(
             title="Publicatiedatum",
             description="De datum waarop deze beschrijving van de gegevensset beschikbaar is gesteld",
-            default=(lambda: datetime.date.today().isoformat())
+            required='1970-01-01'
         )
     ).add(
         'dct:modified',
         dcat.Date(
             title="Wijzigingsdatum",
             description="De datum waarop deze beschrijving van de gegevensset voor het laatst is gewijzigd",
-            default=(lambda: datetime.date.today().isoformat()),
-            sys_defined=True,
-            required=True
+            required='1970-01-01'
         )
     )
+).add(
+    'ams:purl',
+    dcat.String(
+        format='uri',
+        title="Persistente URL",
+        description="Persistente URL voor deze resource.",
+        read_only=True,
+        required=''
+    )
+
 )

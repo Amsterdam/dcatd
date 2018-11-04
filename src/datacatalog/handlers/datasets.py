@@ -12,41 +12,22 @@ from pyld import jsonld
 from aiohttp_extras import conditional
 from aiohttp_extras.content_negotiation import produces_content_types
 
-from datacatalog.dcat import Direction
 from datacatalog.handlers.openapi import clear_open_api_cache
 
-logger = logging.getLogger(__name__ )
 
-_DCAT_ID_KEY = '@id'
+_logger = logging.getLogger(__name__)
+
 _FACET_QUERY_KEY = re.compile(
     r'(?:/properties/[^/=~<>]+(?:/items)?)+'
 )
 _FACET_QUERY_VALUE = re.compile(
     r'(in|eq|gt|lt|ge|le)=(.*)', flags=re.S
 )
-_COMMA_SEPARATED_SEGMENT = re.compile(
-    r'(?:\\.|[^,\\])+'
-)
-_ESCAPED_CHARACTER = re.compile(r'\\(.)')
-
-
-def _add_blank_node_identifiers_to(distributions: T.Iterable[dict]) -> None:
-    counter = 0
-    for distribution in distributions:
-        counter += 1
-        distribution['@id'] = "_:d{}".format(counter)
-
-
-def _add_persistent_links_to(prefix, distributions: T.Iterable[dict]) -> None:
-    for distribution in distributions:
-        accessURL = distribution.get('dcat:accessURL', None)
-        if accessURL is None or 'dc:identifier' not in distribution:
-            continue
-        distribution['ams:purl'] = prefix + distribution['dc:identifier']
 
 
 @produces_content_types('application/ld+json', 'application/json')
 async def get(request: web.Request):
+    hooks = request.app.hooks
     docid = request.match_info['dataset']
     etag_if_none_match = conditional.parse_if_header(
         request, conditional.HEADER_IF_NONE_MATCH
@@ -55,35 +36,33 @@ async def get(request: web.Request):
         raise web.HTTPBadRequest(
             body='Endpoint does not support * in the If-None-Match header.'
         )
-    # now we know the etag is either None or a set
+    # Now we know etag_if_none_match is either None or a set.
     try:
-        doc, etag = await request.app.hooks.storage_retrieve(
+        doc, etag = await hooks.storage_retrieve(
             app=request.app, docid=docid, etags=etag_if_none_match
         )
     except KeyError:
         raise web.HTTPNotFound()
     if doc is None:
         return web.Response(status=304, headers={'Etag': etag})
-    expanded_doc = jsonld.expand(doc)[0]
-    canonical_doc = await request.app.hooks.mds_canonicalize(data=expanded_doc, id=docid)
+    canonical_doc = await hooks.mds_canonicalize(app=request.app, data=doc)
+    canonical_doc = await hooks.mds_after_storage(app=request.app, data=canonical_doc, doc_id=docid)
 
-    identifiers_added = await _add_distribution_identifiers(request.app, canonical_doc)
-    if identifiers_added > 0:
-        hooks = request.app.hooks
-        # Let the metadata plugin grab the full-text search representation
-        searchable_text = await hooks.mds_full_text_search_representation(
-            data=canonical_doc
-        )
+    # identifiers_added = await _add_distribution_identifiers(request.app, canonical_doc)
+    # if identifiers_added > 0:
+    #     # Let the metadata plugin grab the full-text search representation
+    #     searchable_text = await hooks.mds_full_text_search_representation(
+    #         data=canonical_doc
+    #     )
+    #
+    #     new_etag = await hooks.storage_update(
+    #         app=request.app, docid=docid, doc=canonical_doc,
+    #         searchable_text=searchable_text, etags={etag},
+    #         iso_639_1_code="nl")
+    #     etag = new_etag
+    #     logger.debug(f'Added {identifiers_added} identifiers for {docid}')
 
-        new_etag = await hooks.storage_update(
-            app=request.app, docid=docid, doc=canonical_doc,
-            searchable_text=searchable_text, etags={etag},
-            iso_639_1_code="nl")
-        etag = new_etag
-        logger.debug(f'Added {identifiers_added} identifiers for {docid}')
-
-    _add_blank_node_identifiers_to(canonical_doc['dcat:distribution'])
-    _add_persistent_links_to(_datasets_url(request) + f'/{docid}/purls/', canonical_doc['dcat:distribution'])
+    # TODO: validate the current document and
     return web.json_response(canonical_doc, headers={
         'Etag': etag, 'content_type': 'application/ld+json'
     })
@@ -96,37 +75,18 @@ async def put(request: web.Request):
         doc = await request.json()
     except json.decoder.JSONDecodeError:
         raise web.HTTPBadRequest(text='invalid json')
-    canonical_doc = await hooks.mds_canonicalize(data=doc, direction=Direction.PUT)
+    canonical_doc = await hooks.mds_canonicalize(app=request.app, data=doc)
 
     # Make sure the docid in the path corresponds to the ids given in the
     # document, if any. The assumption is that request.path (which corresponds
     # to the path part of the incoming HTTP request) is the path as seen by
     # the client. This is not necessarily true.
-    docid = request.match_info['dataset']
-    docurl = f"ams-dcatd:{docid}"
-    if '@id' in canonical_doc:
-        if canonical_doc['@id'] != docurl:
-            raise web.HTTPBadRequest(
-                text='Invalid @id: {} != {}'.format(
-                    canonical_doc['@id'], docurl
-                )
-            )
-        del canonical_doc[_DCAT_ID_KEY]
-    if 'dct:identifier' in canonical_doc:
-        if canonical_doc['dct:identifier'] != docid:
-            raise web.HTTPBadRequest(
-                text='Invalid dct:identifier: {} != {}'.format(
-                    canonical_doc['dct:identifier'], docid
-                )
-            )
-        del canonical_doc['dct:identifier']
+    doc_id = request.match_info['dataset']
+
     # Let the metadata plugin grab the full-text search representation
     searchable_text = await hooks.mds_full_text_search_representation(
         data=canonical_doc
     )
-    identifiers_added = await _add_distribution_identifiers(request.app, canonical_doc)
-    if identifiers_added > 0:
-        logger.debug(f'Added {identifiers_added} identifiers for {docid}')
 
     # Figure out the mode (insert / update) of the request.
     etag_if_match = conditional.parse_if_header(
@@ -150,32 +110,47 @@ async def put(request: web.Request):
                      'or more Etags.'
             )
         try:
+            old_doc, _etag = await hooks.storage_retrieve(
+                app=request.app, docid=doc_id, etags=etag_if_match
+            )
+        except KeyError:
+            raise web.HTTPPreconditionFailed()
+        canonical_doc = await hooks.mds_before_storage(
+            app=request.app, data=canonical_doc, old_data=old_doc
+        )
+        try:
             new_etag = await hooks.storage_update(
-                app=request.app, docid=docid, doc=canonical_doc,
+                app=request.app, docid=doc_id, doc=canonical_doc,
                 searchable_text=searchable_text, etags=etag_if_match,
                 iso_639_1_code="nl"
             )
         except ValueError:
             raise web.HTTPPreconditionFailed()
         clear_open_api_cache()
-        return web.Response(status=204, headers={'Etag': new_etag})
+        retval = web.Response(status=204, headers={'Etag': new_etag})
 
-    # If-None-Match: * is for creates
-    if etag_if_none_match != '*':
-        raise web.HTTPBadRequest(
-            body='For inserts of new documents, provide If-None-Match: *'
+    else:
+        # If-None-Match: * is for creates
+        if etag_if_none_match != '*':
+            raise web.HTTPBadRequest(
+                body='For inserts of new documents, provide If-None-Match: *'
+            )
+        canonical_doc = await hooks.mds_before_storage(
+            app=request.app, data=canonical_doc
         )
-    try:
-        new_etag = await hooks.storage_create(
-            app=request.app, docid=docid, doc=canonical_doc,
-            searchable_text=searchable_text, iso_639_1_code="nl"
+        try:
+            new_etag = await hooks.storage_create(
+                app=request.app, docid=doc_id, doc=canonical_doc,
+                searchable_text=searchable_text, iso_639_1_code="nl"
+            )
+        except KeyError:
+            raise web.HTTPPreconditionFailed()
+        clear_open_api_cache()
+        retval = web.Response(
+            status=201, headers={'Etag': new_etag}, content_type='text/plain'
         )
-    except KeyError:
-        raise web.HTTPPreconditionFailed()
-    clear_open_api_cache()
-    return web.Response(
-        status=201, headers={'Etag': new_etag}, content_type='text/plain'
-    )
+
+    return retval
 
 
 async def delete(request: web.Request):
@@ -194,63 +169,19 @@ async def delete(request: web.Request):
     return web.Response(status=204, content_type='text/plain')
 
 
-def get_last_modified_date(doc: dict)->str:
-    """
-    Sorteren op, in onderstaande volgorde. Als veld niet gevuld is, dan volgende datum gebruiken:
-
-    verversingsdatum resource: dct:modified
-    wijzigingsdatum resource: primarytopicof: dct:modified
-    publicatiedatum resource: primarytopicof: dct:issued
-    Als een dataset meerdere resources heeft dan de laatste datum nemen.
-    wijzigingsdatum dataset: dct:modified
-    publicatiedatum dataset: dct:issued
-    wijzigingsdatum dataset: primarytopicof: dct:modified
-    publicatiedatum dataset: primarytopicof: dct:issued
-
-    Zet als laatse de last_modified_date in dataset->primarytopicof->dct:modified als
-    die niet groter is. Anders gebruik als last_modified dataset->primarytopicof->dct:modified
-
-    Deze waarde wordt getoond in de Frontend. OP deze wijze id de sortering consistent met de weergave in
-    de Frontend, ook als die waardes niet correct worden geupdate.
-
-    TODO: Check gebruik en regels omtrent 'foaf:isPrimaryTopicOf']->'dct:modified' en hoe dit te gebruiken in FE
-    Args:
-        doc:dataset
-
-    Returns:last_modified date to use for sorting
-    """
-    last_modified = ''
-    if 'dcat:distribution' in doc:
-        for resource in doc['dcat:distribution']:
-            if 'dct:modified' in resource and resource['dct:modified'] > last_modified:
-                last_modified = resource['dct:modified']
-        if not last_modified:
-            dct_issued_resource = ''
-            for resource in doc['dcat:distribution']:
-                if 'foaf:isPrimaryTopicOf' in resource:
-                    primary = resource['foaf:isPrimaryTopicOf']
-                    if 'dct:modified' in primary and primary['dct:modified'] > last_modified:
-                        last_modified = primary['dct:modified']
-                    if 'dct_issued' in primary and primary['dct:issued'] > dct_issued_resource:
-                        dct_issued_resource = primary['dct:issued']
-            if not last_modified:
-                last_modified = dct_issued_resource
-    if not last_modified:
-        if 'dct:modified' in doc:
-            last_modified = doc['dct:modified']
-        elif 'dct:issued' in doc:
-            last_modified = doc['dct:issued']
-        elif 'foaf:isPrimaryTopicOf' in doc:
-            primary = doc['foaf:isPrimaryTopicOf']
-            if 'dct:modified' in primary:
-                last_modified = primary['dct:modified']
-            elif 'dct:issued' in primary:
-                last_modified = primary['dct:issued']
-
-    if last_modified:
-        doc['ams:sort_modified'] = last_modified
-
-    return last_modified
+def _sort_value(doc: dict)->str:
+    if 'ams:sortModified' in doc:
+        return doc['ams:sortModified']
+    # TODO: remove the following code. In the near future, we should be able to
+    #   rely on the presence of 'ams:sortModified' in every document.
+    try:
+        return doc['foaf:isPrimaryTopicOf']['dct:modified']
+    except:
+        pass
+    try:
+        return doc['dct:title']
+    except:
+        return 'zzz'
 
 
 @produces_content_types('application/ld+json', 'application/json')
@@ -309,7 +240,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     resultiterator = await hooks.search_search(
         app=request.app, q=full_text_query,
         result_info=result_info,
-        sort_field_get=get_last_modified_date,
+        sort_field_get=_sort_value,
         facets=[
             '/properties/dcat:distribution/items/properties/ams:resourceType',
             '/properties/dcat:distribution/items/properties/dct:format',
@@ -336,10 +267,11 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     await response.write(b',"dcat:dataset":[')
 
     async for docid, doc in resultiterator:
-        canonical_doc = await hooks.mds_canonicalize(data=doc, id=docid)
+        canonical_doc = await hooks.mds_canonicalize(app=request.app, data=doc)
+        canonical_doc = await hooks.mds_after_storage(app=request.app, data=canonical_doc, doc_id=docid)
         keepers = {'@id', 'dct:identifier', 'dct:title', 'dct:description',
                    'dcat:keyword', 'foaf:isPrimaryTopicOf', 'dcat:distribution',
-                   'dcat:theme', 'ams:owner', 'ams:sort_modified'}
+                   'dcat:theme', 'ams:owner', 'ams:sortModified'}
         for key in list(canonical_doc.keys()):
             if key not in keepers:
                 del canonical_doc[key]
@@ -404,45 +336,23 @@ async def post_collection(request: web.Request):
         doc = await request.json()
     except json.decoder.JSONDecodeError:
         raise web.HTTPBadRequest(text='invalid json')
-    canonical_doc = await hooks.mds_canonicalize(data=doc, direction=Direction.PUT)
-
-    docurl = canonical_doc.get('@id')
-    if docurl is not None:
-        del canonical_doc['@id']
+    canonical_doc = await hooks.mds_canonicalize(app=request.app, data=doc)
 
     docid = canonical_doc.get('dct:identifier')
     if docid is not None:
-        del canonical_doc['dct:identifier']
-
-    if docid is not None:
-        collection_url_plus_docid = f"ams-dcatd:{docid}"
-        if docurl is None:
-            docurl = collection_url_plus_docid
-        elif docurl != collection_url_plus_docid:
-            raise web.HTTPBadRequest(
-                text='{} != {}'.format(docurl, collection_url_plus_docid)
-            )
-    elif docurl is not None:
-        if docurl.find(datasets_url + '/') != 0:
-            raise web.HTTPBadRequest(
-                text=f"{_DCAT_ID_KEY} must start with {datasets_url}/"
-            )
-        docid = docurl[len(datasets_url) + 1:]
         if not re.fullmatch(r"(?:%[a-f0-9]{2}|[-\w:@!$&'()*+,;=.~])+", docid):
             raise web.HTTPBadRequest(
-                text=f"Illegal value for {_DCAT_ID_KEY}"
+                text="Illegal value for dct:identifier"
             )
+        del canonical_doc['dct:identifier']
     else:
         docid = await hooks.storage_id()
-        docurl = f"{datasets_url}/{docid}"
+
+    canonical_doc = await hooks.mds_before_storage(app=request.app, data=canonical_doc)
     # Let the metadata plugin grab the full-text search representation
     searchable_text = await hooks.mds_full_text_search_representation(
         data=canonical_doc
     )
-    identifiers_added = await _add_distribution_identifiers(request.app, canonical_doc)
-    if identifiers_added > 0:
-        logger.debug(f'Added {identifiers_added} identifiers for {docid}')
-
     try:
         new_etag = await hooks.storage_create(
             app=request.app, docid=docid, doc=canonical_doc,
@@ -450,11 +360,14 @@ async def post_collection(request: web.Request):
         )
     except KeyError:
         raise web.HTTPBadRequest(
-            text='Document with id {} already exists'.format(docid)
+            text='Document with dct:identifier {} already exists'.format(docid)
         )
     clear_open_api_cache()
     return web.Response(
-        status=201, headers={'Etag': new_etag, 'Location': docurl},
+        status=201, headers={
+            'Etag': new_etag,
+            'Location': datasets_url + f'/{docid}'
+        },
         content_type='text/plain'
     )
 
@@ -469,43 +382,3 @@ def _csv_decode_line(s: str) -> T.Optional[T.Set[str]]:
         return set(next(iter(reader)))
     except (csv.Error, StopIteration):
         return None
-
-
-def _split_comma_separated_stringset(s: str) -> T.Optional[T.Set[str]]:
-    pos = 0
-    len_s = len(s)
-    retval = set()
-    while pos < len_s:
-        if pos != 0 and s[pos] == ',':
-            pos = pos + 1
-        matches: T.List[str] = _COMMA_SEPARATED_SEGMENT.match(s, pos)
-        if matches is None:
-            return None
-        match = matches[0]
-        pos = pos + len(match)
-        retval.add(_ESCAPED_CHARACTER.sub(r'\1', match))
-    return retval
-
-
-async def _add_distribution_identifiers(app, canonical_doc: dict) -> int:
-    all_identifiers = set()
-    to_be_added = 0
-    for distribution in canonical_doc.get('dcat:distribution', []):
-        if 'dc:identifier' in distribution:
-            all_identifiers.add(distribution['dc:identifier'])
-        else:
-            to_be_added += 1
-    if to_be_added == 0:
-        return 0
-    index = 0
-    for distribution in canonical_doc.get('dcat:distribution', []):
-        if 'dc:identifier' not in distribution:
-            selector_found = False
-            while not selector_found:
-                new_selector = await app.hooks.storage_id()
-                if new_selector not in all_identifiers:
-                    distribution['dc:identifier'] = new_selector
-                    selector_found = True
-                    all_identifiers.add(new_selector)
-        index += 1
-    return to_be_added

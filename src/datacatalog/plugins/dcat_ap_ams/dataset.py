@@ -4,40 +4,32 @@ from .distribution import DISTRIBUTION
 from .logger import logger
 
 
-def _ckan_2_dcat_theme_mapper(data):
-    retval = 'theme:' + data['name']
-    if retval not in {x[0] for x in constants.THEMES}:
-        logger.warning("Unknown theme: '%s'", retval)
-        return None
-    return retval
-
-
 DATASET = dcat.Object().add(
     'dct:title',
     dcat.PlainTextLine(
         title="Titel",
         # description="Geef een titel van de gegevensset.",
-        required=True
+        required='Geen titel opgegeven'
     )
 ).add(
     'dct:description',
     Markdown(
         title="Beschrijving",
         description="Geef een samenvatting van de inhoud van de gegevensset, welke gegevens zitten erin en wat is expliciet eruit gelaten",
-        required=True
+        required='Geen beschrijving opgegeven'
     )
 ).add(
     'dcat:distribution',
     dcat.List(
         DISTRIBUTION,
         title="Resources",
-        default=[]
+        required=[]
     )
 ).add(
     'overheidds:doel',
     Markdown(
         title="Doel",
-        required=True,
+        required="Geen doel gedefiniëerd",
         description="Geef aan met welk doel deze gegevensset is aangelegd. Waarom bestaat deze gegevensset?"
     )
 ).add(
@@ -48,30 +40,29 @@ DATASET = dcat.Object().add(
     )
 ).add(
     'foaf:isPrimaryTopicOf',
-    DATASET_CATALOG_RECORD
+    dcat.Object(
+        required=dict(),
+        title="",  # TODO: This was probably a front-end requirement, but it's ugly.
+        read_only=True
+    ).add(
+        'dct:issued',
+        dcat.Date(
+            title="Publicatiedatum",
+            description="De datum waarop deze beschrijving van de gegevensset beschikbaar is gesteld",
+            required='1970-01-01'  # datetime.date.today().isoformat()
+        )
+    ).add(
+        'dct:modified',
+        dcat.Date(
+            title="Wijzigingsdatum",
+            description="De datum waarop deze beschrijving van de gegevensset voor het laatst is gewijzigd",
+            required='1970-01-01'  # datetime.date.today().isoformat()
+        )
+    )
 ).add(
     'dct:accrualPeriodicity',
     dcat.Enum(
-        [
-            ('unknown', "onbekend"),
-            ('realtime', "continu"),
-            ('day', "dagelijks"),
-            ('2pweek', "twee keer per week"),
-            ('week', "wekelijks"),
-            ('2weeks', "tweewekelijks"),
-            ('month', "maandelijks"),
-            ('quarter', "eens per kwartaal"),
-            ('2pyear', "halfjaarlijks"),
-            ('year', "jaarlijks"),
-            ('2years', "tweejaarlijks"),
-            ('4years', "vierjaarlijks"),
-            ('5years', "vijfjaarlijks"),
-            ('10years', "tienjaarlijks"),
-            ('reg', "regelmatig"),
-            ('irreg', "onregelmatig"),
-            ('req', "op afroep"),
-            ('other', "anders")
-        ],
+        constants.ACCRUAL_PERIODICITY,
         title="Wijzigingsfrequentie",
         default='unknown'
         # description="Frequentie waarmee de gegevens worden geactualiseerd"
@@ -97,19 +88,7 @@ DATASET = dcat.Object().add(
 ).add(
     'ams:temporalUnit',
     dcat.Enum(
-        [
-            ('na', "Geen tijdseenheid"),
-            ('realtime', "Realtime"),
-            ('minutes', "Minuten"),
-            ('hours', "Uren"),
-            ('parttime', "Dagdelen"),
-            ('days', "Dagen"),
-            ('weeks', "Weken"),
-            ('months', "Maanden"),
-            ('quarters', "Kwartalen"),
-            ('years', "Jaren"),
-            ('other', "anders")
-        ],
+        constants.TEMPORAL_UNIT,
         title="Tijdseenheid",
         default='na',
         required=True
@@ -129,22 +108,7 @@ DATASET = dcat.Object().add(
 ).add(
     'ams:spatialUnit',
     dcat.Enum(
-        [
-            ('na', "Geen geografie"),
-            ('specific', "Specifieke punten/vlakken/lijnen"),
-            ('nation', "Land"),
-            ('region', "Regio"),
-            ('city', "Gemeente"),
-            ('district', "Stadsdeel"),
-            ('area', "Gebied"),
-            ('borrow', "Wijk"),
-            ('neighborhood', "Buurt"),
-            ('block', "Bouwblok"),
-            ('zip4', "Postcode (4 cijfers)"),
-            ('zip5', "Postcode (4 cijfers, 1 letter)"),
-            ('zip6', "Postcode (4 cijfers, 2 letters)"),
-            ('other', "anders")
-        ],
+        constants.SPACIAL_UNITS,
         default='na',
         title="Gebiedseenheid"
         # description="Geef een eenheid van het gebied waarin de gegevensset is uitgedrukt."
@@ -165,7 +129,7 @@ DATASET = dcat.Object().add(
         title="Taal",
         # description="De taal van de gegevensset",
         default='lang1:nl',
-        required=True
+        required='lang1:nl'
     )
 ).add(
     'ams:owner',
@@ -187,7 +151,8 @@ DATASET = dcat.Object().add(
             constants.THEMES
         ),
         title="Thema",
-        required=True,
+        required=[],
+        # TODO: allow_empty=False (afstemmen met Front-end)
         unique_items=True
         # description="Geef aan onder welke hoofdthema’s de gegevensset valt."
     ),
@@ -199,7 +164,7 @@ DATASET = dcat.Object().add(
         ),
         title="Tags",
         unique_items=True,
-        default=[]
+        required=[]
         # description="Geef een aantal trefwoorden, die van toepassing zijn op de gegevensset, zodat de gegevensset gevonden kan worden."
     )
 ).add(
@@ -215,26 +180,15 @@ DATASET = dcat.Object().add(
     'dct:identifier',
     dcat.PlainTextLine(
         title="UID",
-        description="Unieke identifier"
+        description="Unieke identifier",
+        read_only=True,
+        required=False  # Dus ja, wel required, met "nood-waarde": False
+    )
+).add(
+    'ams:sortModified',
+    dcat.Date(
+        title="Sorteerdatum",
+        required='1970-01-01',
+        read_only=True
     )
 )
-
-
-# def _from_ckan(data: dict):
-#     original = resolve_pointer(data, DATASET.json_pointer, None)
-#     if original is None:
-#         return None
-#     assert isinstance(original, dict)
-#     retval = {}
-#     for (name, value) in DATASET.properties:
-#         v = value.from_ckan(original)
-#         if v is not None:
-#             retval[name] = v
-#     def distribution_filter(distribution):
-#         if 'dcat:accessURL' not in distribution:
-#             logger.error(
-#                 "No dcat:accessURL is distribution %s of dataset %s",
-#                 distribution['title']
-#             )
-#             return None
-#     return retval if len(retval) else None

@@ -32,7 +32,9 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
 
     separator = b''
     async for docid, _etag, doc in dataset_iterator:
-        canonical_doc = await hooks.mds_canonicalize(data=doc, id=docid)
+        canonical_doc = await hooks.mds_canonicalize(app=request.app, data=doc)
+        canonical_doc = await hooks.mds_after_storage(app=request.app, data=canonical_doc, doc_id=docid)
+        del canonical_doc['@context']
         await response.write(separator + json.dumps(canonical_doc).encode())
         separator = b','
 
