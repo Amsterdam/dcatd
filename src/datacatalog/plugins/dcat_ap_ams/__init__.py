@@ -113,26 +113,33 @@ def mds_before_storage(app, data, old_data=None) -> dict:
     # Set all the meta-metadata timestamps correctly:
     if old_data is not None:
         if _datasets_vary(retval, old_data):
+            try:
+                old_issued = old_data['foaf:isPrimaryTopicOf']['dct:issued']
+            except KeyError:
+                _logger.error("Geen dct:issued in dataset %s", data['dct:title'])
+                old_issued = '1970-01-01'
             retval['foaf:isPrimaryTopicOf'] = {
-                'dct:issued': old_data.get('foaf:isPrimaryTopicOf', dict()).get('dct:issued', '1970-01-01'),
+                'dct:issued': old_issued,
                 'dct:modified': datetime.date.today().isoformat()
             }
         else:
-            retval['foaf:isPrimaryTopicOf'] = old_data.get(
-                'foaf:isPrimaryTopicOf',
-                {
-                    'dct:issued': '1970-01-01',
-                    'dct:modified': '1970-01-01'
-                }
-            )
-        old_distributions = old_data.get('dcat:distribution', [])
+            try:
+                retval['foaf:isPrimaryTopicOf'] = old_data['foaf:isPrimaryTopicOf']
+            except KeyError:
+                # TODO: nette logging van dit probleem
+                pass
+        old_distributions = {
+            old_distribution['dc:identifier']: old_distribution
+            for old_distribution in old_data.get('dcat:distribution', [])
+        }
         for distribution in distributions:
-            old_distribution = list(filter(
-                lambda x: x.get('dc:identifier', None) == distribution['dc:identifier'],
-                old_distributions
-            ))
-            if len(old_distribution) > 0:
-                old_distribution = old_distribution[0]
+            old_distribution = old_distributions.get(distribution['dc:identifier'])
+            if old_distribution is None:
+                distribution['foaf:isPrimaryTopicOf'] = {
+                    'dct:issued': datetime.date.today().isoformat(),
+                    'dct:modified': datetime.date.today().isoformat()
+                }
+            else:
                 distribution['foaf:isPrimaryTopicOf'] = old_distribution.get(
                     'foaf:isPrimaryTopicOf',
                     {
@@ -142,11 +149,6 @@ def mds_before_storage(app, data, old_data=None) -> dict:
                 )
                 if _distributions_vary(distribution, old_distribution):
                     distribution['foaf:isPrimaryTopicOf']['dct:modified'] = datetime.date.today().isoformat()
-            else:
-                distribution['foaf:isPrimaryTopicOf'] = {
-                    'dct:issued': datetime.date.today().isoformat(),
-                    'dct:modified': datetime.date.today().isoformat()
-                }
     else:
         retval['foaf:isPrimaryTopicOf'] = {
             'dct:issued': datetime.date.today().isoformat(),
