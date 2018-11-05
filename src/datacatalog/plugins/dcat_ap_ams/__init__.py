@@ -15,6 +15,9 @@ _BASE_URL = 'http://localhost/'
 _logger = logging.getLogger(__name__)
 
 
+def _datasets_url(app) -> str:
+    return app.config['web']['baseurl'] + 'datasets'
+
 def _get_sort_modified(doc: dict) -> str:
     # language=rst
     """Sorteerdatum.
@@ -126,8 +129,7 @@ def mds_before_storage(app, data, old_data=None) -> dict:
             try:
                 retval['foaf:isPrimaryTopicOf'] = old_data['foaf:isPrimaryTopicOf']
             except KeyError:
-                # TODO: nette logging van dit probleem
-                pass
+                _logger.error("Geen 'foaf:isPrimaryTopicOf' in dataset %s", data['dct:title'])
         old_distributions = {
             old_distribution['dc:identifier']: old_distribution
             for old_distribution in old_data.get('dcat:distribution', [])
@@ -140,13 +142,16 @@ def mds_before_storage(app, data, old_data=None) -> dict:
                     'dct:modified': datetime.date.today().isoformat()
                 }
             else:
-                distribution['foaf:isPrimaryTopicOf'] = old_distribution.get(
-                    'foaf:isPrimaryTopicOf',
-                    {
+                try:
+                    old_foaf = old_distribution.get('foaf:isPrimaryTopicOf')
+                except KeyError:
+                    _logger.error("Geen foaf:isPrimaryTopicOf in distribution %s:%s", data['dct:title'],
+                                  old_distribution['dc:identifier'])
+                    old_foaf = {
                         'dct:issued': '1970-01-01',
                         'dct:modified': '1970-01-01'
                     }
-                )
+                distribution['foaf:isPrimaryTopicOf'] = old_foaf
                 if _distributions_vary(distribution, old_distribution):
                     distribution['foaf:isPrimaryTopicOf']['dct:modified'] = datetime.date.today().isoformat()
     else:
@@ -190,11 +195,12 @@ def mds_after_storage(app, data, doc_id):
 
     distributions = retval.get('dcat:distribution', [])
     # _add_dc_identifiers_to(distributions)  # Already done by canonicalize()
+    datasets_url = _datasets_url(app)
     for distribution in distributions:
         # persistent URL:
         accessURL = distribution.get('dcat:accessURL', None)
         if accessURL is not None:
-            distribution['ams:purl'] = f'ams-dcatd:{doc_id}/purls/' + distribution['dc:identifier']
+            distribution['ams:purl'] = f"{datasets_url}/{doc_id}/purls/{distribution['dc:identifier']}"
         # dcat:mediaType:
         if 'dct:format' in distribution:
             distribution['dcat:mediaType'] = distribution['dct:format']
@@ -241,11 +247,11 @@ def mds_canonicalize(app, data: dict) -> dict:
     for distribution in retval['dcat:distribution']:
         if 'ams:distributionType' in distribution:
             if distribution['ams:distributionType'] != 'file':
-                distribution.pop('dct:format')
+                distribution.pop('dct:format', None)
             if distribution['ams:distributionType'] != 'file':
-                distribution.pop('dct:byteSize')
+                distribution.pop('dct:byteSize', None)
             if distribution['ams:distributionType'] != 'api':
-                distribution.pop('ams:serviceType')
+                distribution.pop('ams:serviceType', None)
 
     return retval
 
