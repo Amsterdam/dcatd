@@ -195,8 +195,11 @@ def mds_after_storage(app, data, doc_id):
 
     distributions = retval.get('dcat:distribution', [])
     # _add_dc_identifiers_to(distributions)  # Already done by canonicalize()
+    counter = 0
     datasets_url = _datasets_url(app)
     for distribution in distributions:
+        counter += 1
+        distribution['@id'] = "_:d{}".format(counter)
         # persistent URL:
         accessURL = distribution.get('dcat:accessURL', None)
         if accessURL is not None:
