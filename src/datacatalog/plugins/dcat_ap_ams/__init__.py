@@ -1,3 +1,4 @@
+from aiohttp import web
 from copy import deepcopy
 import datetime
 import logging
@@ -16,7 +17,10 @@ _logger = logging.getLogger(__name__)
 
 
 def _datasets_url(app) -> str:
-    return app.config['web']['baseurl'] + 'datasets'
+    if isinstance(app, web.Application):
+        return app.config['web']['baseurl'] + 'datasets'
+    else:
+        return 'http://localhost:8000/datasets'
 
 def _get_sort_modified(doc: dict) -> str:
     # language=rst
