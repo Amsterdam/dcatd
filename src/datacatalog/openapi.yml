@@ -316,6 +316,9 @@ components:
     dcat-dataset-put:
       description: >-
         Intentionally left blank. Replaced by the actual schema at runtime.
+    dcat-dataset:
+      description: >-
+        Intentionally left blank. Replaced by the actual schema at runtime.
     dcat-datasets:
       # TODO: This schema is not accurate.
       type: array

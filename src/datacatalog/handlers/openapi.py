@@ -27,6 +27,8 @@ async def get(request: web.Request):
         openapi_schema['components']['schemas']['dcat-dataset-get'] = json_schema['GET']
         openapi_schema['components']['schemas']['dcat-dataset-post'] = json_schema['POST']
         openapi_schema['components']['schemas']['dcat-dataset-put'] = json_schema['PUT']
+        # For backward compatibility: the front-end looks at this path:
+        openapi_schema['components']['schemas']['dcat-dataset'] = json_schema['PUT']
         # add base url to servers
         openapi_schema['servers'] = [{'url': c['web']['baseurl']}]
         openapi_json = json.dumps(openapi_schema, indent='  ', sort_keys=True)
