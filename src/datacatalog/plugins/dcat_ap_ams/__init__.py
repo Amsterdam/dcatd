@@ -112,10 +112,9 @@ def _datasets_vary(a: dict, b:dict) -> bool:
 def mds_before_storage(app, data, old_data=None) -> dict:
     retval = deepcopy(data)
     retval.pop('dct:identifier', None)
-    distributions = retval.get('dcat:distribution', [])
 
-    # Already done by canonicalize():
-    # _add_dc_identifiers_to(distributions=distributions)
+    distributions = retval.get('dcat:distribution', [])
+    retval['dcat:distribution'] = distributions = _add_dc_identifiers_to(distributions)
 
     # Set all the meta-metadata timestamps correctly:
     if old_data is not None:
@@ -198,7 +197,6 @@ def mds_after_storage(app, data, doc_id):
         retval['ams:sortModified'] = _get_sort_modified(retval)
 
     distributions = retval.get('dcat:distribution', [])
-    # _add_dc_identifiers_to(distributions)  # Already done by canonicalize()
     counter = 0
     datasets_url = _datasets_url(app)
     for distribution in distributions:
@@ -216,12 +214,14 @@ def mds_after_storage(app, data, doc_id):
 
 
 def _add_dc_identifiers_to(distributions: T.List[dict]) -> T.List[dict]:
-    retval = deepcopy(distributions)
     all_persistent_ids = set(
         str(distribution['dc:identifier'])
-        for distribution in retval
+        for distribution in distributions
         if 'dc:identifier' in distribution
     )
+    if len(all_persistent_ids) == len(distributions):
+        return distributions
+    retval = deepcopy(distributions)
     persistent_id = 1
     for distribution in retval:
         # persistent id:
@@ -249,7 +249,6 @@ def mds_canonicalize(app, data: dict) -> dict:
     retval = DATASET.canonicalize(retval)
     if 'dcat:distribution' not in retval:
         retval['dcat:distribution'] = []
-    retval['dcat:distribution'] = _add_dc_identifiers_to(retval['dcat:distribution'])
     retval['@context'] = ctx
     for distribution in retval['dcat:distribution']:
         if 'ams:distributionType' in distribution:
