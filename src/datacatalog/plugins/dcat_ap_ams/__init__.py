@@ -168,8 +168,8 @@ def mds_before_storage(app, data, old_data=None) -> dict:
                 'dct:modified': datetime.date.today().isoformat()
             }
 
-    # Add ams:sortModified:
-    retval['ams:sortModified'] = _get_sort_modified(retval)
+    # Add ams:sort_modified:
+    retval['ams:sort_modified'] = _get_sort_modified(retval)
     return retval
 
 
@@ -192,9 +192,9 @@ def mds_after_storage(app, data, doc_id):
     retval['@id'] = f"ams-dcatd:{doc_id}"
     retval['dct:identifier'] = str(doc_id)
 
-    # Add ams:sortModified:
-    if 'ams:sortMdified' not in retval:
-        retval['ams:sortModified'] = _get_sort_modified(retval)
+    # Add ams:sort_modified:
+    if 'ams:sort_modified' not in retval:
+        retval['ams:sort_modified'] = _get_sort_modified(retval)
 
     distributions = retval.get('dcat:distribution', [])
     counter = 0

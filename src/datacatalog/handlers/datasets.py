@@ -170,10 +170,10 @@ async def delete(request: web.Request):
 
 
 def _sort_value(doc: dict)->str:
-    if 'ams:sortModified' in doc:
-        return doc['ams:sortModified']
+    if 'ams:sort_modified' in doc:
+        return doc['ams:sort_modified']
     # TODO: remove the following code. In the near future, we should be able to
-    #   rely on the presence of 'ams:sortModified' in every document.
+    #   rely on the presence of 'ams:sort_modified' in every document.
     try:
         return doc['foaf:isPrimaryTopicOf']['dct:modified']
     except:
@@ -271,7 +271,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
         canonical_doc = await hooks.mds_after_storage(app=request.app, data=canonical_doc, doc_id=docid)
         keepers = {'@id', 'dct:identifier', 'dct:title', 'dct:description',
                    'dcat:keyword', 'foaf:isPrimaryTopicOf', 'dcat:distribution',
-                   'dcat:theme', 'ams:owner', 'ams:sortModified'}
+                   'dcat:theme', 'ams:owner', 'ams:sort_modified'}
         for key in list(canonical_doc.keys()):
             if key not in keepers:
                 del canonical_doc[key]

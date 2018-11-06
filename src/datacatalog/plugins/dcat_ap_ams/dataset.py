@@ -185,7 +185,7 @@ DATASET = dcat.Object().add(
         required=False  # Dus ja, wel required, met "nood-waarde": False
     )
 ).add(
-    'ams:sortModified',
+    'ams:sort_modified',
     dcat.Date(
         title="Sorteerdatum",
         required='1970-01-01',
