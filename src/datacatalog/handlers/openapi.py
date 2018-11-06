@@ -19,14 +19,11 @@ async def get(request: web.Request):
         c = request.app.config
         # add document schema
         json_schema = {}
-        for method in ['GET', 'POST', 'PUT']:
+        for method in ['PUT']:
             json_schema[method] = await request.app.hooks.mds_json_schema(
                 app=request.app,
                 method=method
             )
-        openapi_schema['components']['schemas']['dcat-dataset-get'] = json_schema['GET']
-        openapi_schema['components']['schemas']['dcat-dataset-post'] = json_schema['POST']
-        openapi_schema['components']['schemas']['dcat-dataset-put'] = json_schema['PUT']
         # For backward compatibility: the front-end looks at this path:
         openapi_schema['components']['schemas']['dcat-dataset'] = json_schema['PUT']
         # add base url to servers
