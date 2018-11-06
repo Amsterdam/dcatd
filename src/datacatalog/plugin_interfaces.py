@@ -2,8 +2,6 @@ import typing as T
 
 from aiopluggy import HookspecMarker
 
-from datacatalog.dcat import Direction
-
 hookspec = HookspecMarker('datacatalog')
 
 
@@ -59,6 +57,38 @@ def health_check(app) -> T.Optional[str]:
     :returns: If unhealthy, a string describing the problem, otherwise ``None``.
     :raises Exception: if that's easier than returning a string.
 
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_only
+def check_startup_action(app, name: str) -> bool:
+    # language=rst
+    """Check if action has been done
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_only
+def add_startup_action(app, name: str):
+    # language=rst
+    """Set action to done
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_only
+def get_old_identifiers(app):
+    # language=rst
+    """Get old identifiers
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_only
+def set_new_identifier(app, old_id: str, new_id: str):
+    # language=rst
+    """Set new identifier
     """
 
 
@@ -163,6 +193,14 @@ def storage_id() -> str:
     """New unique identifier."""
 
 
+# noinspection PyUnusedLocal
+@hookspec.first_only
+async def storage_all(app: T.Mapping[str, T.Any]) -> T.AsyncGenerator[T.Tuple[str, str, dict], None]:
+    # language=rst
+    """Get all data
+    """
+
+
 ################
 # Object Store #
 ################
@@ -227,7 +265,7 @@ def search_search(
 
 
 ####################
-# Metadata Schemas #
+# MetaData Schemas #
 ####################
 
 # noinspection PyUnusedLocal
@@ -243,24 +281,14 @@ def search_search(
 #     """
 
 
-@hookspec.first_only.sync
-def mds_name() -> str:
-    # language=rst
-    """The schema this plugin provides.
-
-    :returns: a string that is safe for use in a URL segment; ie. every string
-        that matches regular expression
-        ``^(?:%[a-f0-9]{2}|[-\\w:@!$&'()*+,;=.~])*$``
-
-    """
-
-
 # noinspection PyUnusedLocal
 @hookspec.first_only
-def mds_canonicalize(data: dict, id: T.Optional[str]=None, direction: Direction=Direction.GET) -> dict:
+def mds_canonicalize(app, data: dict) -> dict:
     # language=rst
     """Canonicalize the given document according to this schema.
 
+    :param app: the `~datacatalog.application.Application`
+    :param data: the dataset
     :returns: dict with canonicalized entries
 
     """
@@ -268,7 +296,37 @@ def mds_canonicalize(data: dict, id: T.Optional[str]=None, direction: Direction=
 
 # noinspection PyUnusedLocal
 @hookspec.first_only
-def mds_json_schema(app) -> dict:
+def mds_before_storage(app,
+                       data: dict,
+                       old_data: T.Optional[dict]=None) -> dict:
+    # language=rst
+    """ Search.
+
+    :param app: the `~datacatalog.application.Application`
+    :param data: the dataset
+    :param old_data: the old dataset in the database, for PUT requests
+    :returns: the modified data dictionary
+
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_only
+def mds_after_storage(app, data: dict, doc_id: str) -> dict:
+    # language=rst
+    """ Search.
+
+    :param app: the `~datacatalog.application.Application`
+    :param data: the dataset
+    :param id: the doc_id
+    :returns: the modified data dictionary
+
+    """
+
+
+# noinspection PyUnusedLocal
+@hookspec.first_only
+def mds_json_schema(app, method: str) -> dict:
     # language=rst
     """The json schema.
     """
@@ -287,44 +345,4 @@ def mds_full_text_search_representation(data: dict) -> str:
 def mds_context() -> dict:
     # language=rst
     """Context of the metadata schema.
-    """
-
-
-# noinspection PyUnusedLocal
-@hookspec.first_only
-def check_startup_action(app, name: str) -> bool:
-    # language=rst
-    """Check if action has been done
-    """
-
-
-# noinspection PyUnusedLocal
-@hookspec.first_only
-async def add_startup_action(app, name: str):
-    # language=rst
-    """Set action to done
-    """
-
-
-# noinspection PyUnusedLocal
-@hookspec.first_only
-async def get_old_identifiers(app):
-    # language=rst
-    """Get old identifiers
-    """
-
-
-# noinspection PyUnusedLocal
-@hookspec.first_only
-async def set_new_identifier(app, old_id: str, new_id: str):
-    # language=rst
-    """Set new identifier
-    """
-
-
-# noinspection PyUnusedLocal
-@hookspec.first_only
-async def storage_all(app: T.Mapping[str, T.Any]) -> T.AsyncGenerator[T.Tuple[str, str, dict], None]:
-    # language=rst
-    """Get all data
     """

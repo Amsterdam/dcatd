@@ -1,55 +1,71 @@
 import typing as T
-from enum import Enum
+import logging
 
+# import jsonpointer
 import jsonschema
 
 
-class Direction(Enum):
-    GET = 0
-    PUT = 1
+logger = logging.getLogger(__name__)
 
 
 class Type(object):
-    def __init__(self, *args, title=None, description=None, required=False,
-                 default=None, examples=None, format=None, read_only=None,
-                 write_only=None, sys_defined=None, **kwargs):
-        if len(args) > 0 or len(kwargs) > 0:
+    def __init__(self, *args,
+                 title: T.Optional[str]=None,
+                 description: T.Optional[str]=None,
+                 required: T.Optional[T.Any]=None,
+                 default: T.Optional[T.Any]=None,
+                 examples: T.Optional[T.List[str]]=None,
+                 format: T.Optional[str]=None,
+                 read_only: bool=False):
+        # language=rst
+        """
+        If either ``read_only_get`` or ``read_only_put`` is provided, the type is automatically marked as ``readOnly`` in the JSON Schema.
+
+        :param args: Unused. It’s only part of the signature so that the
+            implementation can force callers to use named arguments only.
+        :param title: Copied verbatim into JSON Schema
+        :param description: Copied verbatim into JSON Schema
+        :param required: Some default value, for GET requests where this value
+            is still empty.
+        :param default: Copied verbatim into JSON Schema. For documentation only.
+        :param examples: Copied verbatim into JSON Schema
+        :param format: Copied verbatim into JSON Schema
+        :param read_only: For documentation only. Fields marked as read_only
+            will only be in the openapi schema for ``GET`` methods, and marked
+            as ``readOnly``.
+        """
+        if len(args) > 0:
             raise ValueError()
         self.title = title
         self.description = description
         self.required = required
         self.default = default
-        self.sys_defined = sys_defined
         self.examples = examples
         self.format = format
+        assert isinstance(read_only, bool)
         self.read_only = read_only
-        self.write_only = write_only
 
-    @property
-    def schema(self) -> dict:
+    def schema(self, method: str) -> dict:
         retval = {}
         if self.title is not None:
             retval['title'] = self.title
         if self.description is not None:
             retval['description'] = self.description
         if self.default is not None:
-            retval['default'] = self.default() if callable(self.default) else self.default
-        if self.sys_defined is not None:
-            retval['sysDefined'] = self.sys_defined
+            retval['default'] = self.default
         if self.examples is not None:
             retval['examples'] = self.examples
         if self.format is not None:
             retval['format'] = self.format
         if self.read_only is not None:
             retval['readOnly'] = self.read_only
-        if self.write_only is not None:
-            retval['writeOnly'] = self.write_only
         return retval
 
     def full_text_search_representation(self, data) -> T.Optional[str]:
         return None
 
-    def validate(self, data):
+    def validate(self, data: dict, method: str):
+        # language=rst
         """Validate the data.
 
         :returns: the Type for which validation succeeded. See also
@@ -57,36 +73,38 @@ class Type(object):
         :rtype: Type
 
         """
-        jsonschema.validate(data, self.schema)
+        jsonschema.validate(data, self.schema(method))
         return self
 
-    # noinspection PyMethodMayBeStatic
-    def canonicalize(self, data, direction=Direction.GET):
-        revert_to_default = data is None and self.required is not None
-        #   Currently for sys-defined values the default is used (can be callable)
-        sys_override = self.sys_defined is True and direction is Direction.PUT
-
-        if revert_to_default or sys_override:
-            return self.default() if callable(self.default) else self.default
-        return data
+    def canonicalize(self, value: T.Any):
+        return value
 
 
 class List(Type):
-    def __init__(self, item_type: Type, *args, required=False, default=None,
-                 allow_empty=True, unique_items=None, **kwargs):
-        if default is None and required and allow_empty:
-            default = []
+    def __init__(self,
+                 item_type: Type,
+                 *args,
+                 required=None,
+                 default=None,
+                 format=None,
+                 allow_empty=True,
+                 unique_items: T.Optional[bool]=None,
+                 **kwargs):
+        assert format is None
+        # Not sure if the next statement is useful, but it probably won't do any
+        # harm:
+        if default is None and required is not None and allow_empty:
+            default = required
         super().__init__(*args, required=required, default=default, **kwargs)
         self.item_type = item_type
         self.allow_empty = allow_empty
         self.unique_items = unique_items
 
-    @property
-    def schema(self) -> dict:
-        retval = dict(super().schema)
+    def schema(self, method: str) -> dict:
+        retval = dict(super().schema(method))  # Important: makes a shallow copy.
         retval.update({
             'type': 'array',
-            'items': self.item_type.schema
+            'items': self.item_type.schema(method)
         })
         if self.unique_items is not None:
             retval['uniqueItems'] = bool(self.unique_items)
@@ -94,17 +112,17 @@ class List(Type):
             retval['minItems'] = 1
         return retval
 
-    def canonicalize(self, data: T.Optional[list], **kwargs) -> T.Optional[list]:
-        data = super().canonicalize(data, **kwargs)
-        if data is None:
+    def canonicalize(self, value: T.Optional[list]):
+        value = super().canonicalize(value)
+        if value is None:
             return None
-        if not isinstance(data, list):
-            raise TypeError("{}: not a list".format(data))
+        if not isinstance(value, list):
+            raise TypeError("{}: not a list".format(value))
         retval = []
-        for datum in data:
-            value = self.item_type.canonicalize(datum, **kwargs)
-            if value is not None:
-                retval.append(value)
+        for index, datum in enumerate(value):
+            v = self.item_type.canonicalize(datum)
+            if v is not None:
+                retval.append(v)
         return retval
 
     def full_text_search_representation(self, data: T.Iterable):
@@ -119,35 +137,35 @@ class List(Type):
         return self.item_type.full_text_search_representation(data)
 
 
-class OneOf(Type):
-    def __init__(self, *types, **kwargs):
-        super().__init__(**kwargs)
-        self.types = list(types)
-
-    @property
-    def schema(self) -> dict:
-        retval = dict(super().schema)
-        retval['oneOf'] = [v.schema for v in self.types]
-        return retval
-
-    def validate(self, data) -> Type:
-        for type in self.types:
-            try:
-                jsonschema.validate(data, self.schema)
-                return type
-            except jsonschema.ValidationError:
-                pass
-        raise jsonschema.ValidationError("Not valid for any type")
-
-    def full_text_search_representation(self, data: T.Any):
-        raise NotImplementedError()
-
-    def canonicalize(self, data: T.Any, **kwargs):
-        return self.validate(data).canonicalize(data, **kwargs)
+# class OneOf(Type):
+#     def __init__(self, *types, **kwargs):
+#         super().__init__(**kwargs)
+#         self.types = list(types)
+#
+#     def schema(self, method: str) -> dict:
+#         retval = dict(super().schema(method))  # Important: makes a shallow copy
+#         retval['oneOf'] = [v.schema(method) for v in self.types]
+#         return retval
+#
+#     def validate(self, data, method) -> Type:
+#         for type in self.types:
+#             try:
+#                 jsonschema.validate(data, self.schema(method))
+#                 return type
+#             except jsonschema.ValidationError:
+#                 pass
+#         raise jsonschema.ValidationError("Not valid for any type")
+#
+#     def full_text_search_representation(self, data: T.Any):
+#         raise NotImplementedError()
+#
+#     def canonicalize(self, data: T.Any, **kwargs):
+#         return self.validate(data).canonicalize(data, **kwargs)
 
 
 class Object(Type):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, format=None, **kwargs):
+        assert format is None
         super().__init__(*args, **kwargs)
         self.properties: T.List[T.Tuple[str, Type]] = []
 
@@ -172,18 +190,32 @@ class Object(Type):
             self.properties.insert(insert_position, property)
         return self
 
-    @property
-    def schema(self) -> dict:
-        retval = dict(super().schema)
+    def schema(self, method: str) -> dict:
+        retval = dict(super().schema(method))  # Important: makes a shallow copy
+        # If method != GET, read_only properties aren't mentioned in the schema,
+        # because the front-end doesn't understand the JSON Schema readOnly
+        # flag.
+        # TODO: Fix this in the front-end.
+        properties = self.properties \
+            if method == 'GET' \
+            else [
+                (name, type_)
+                for name, type_ in self.properties
+                if not type_.read_only
+            ]
         retval.update({
             'type': 'object',
             'properties': {
-                name: value.schema
-                for name, value in self.properties
+                name: value.schema(method)
+                for name, value in properties
             },
-            'x-order': [name for name, value in self.properties]
+            'x-order': [name for name, value in properties]
         })
-        required = [name for name, value in self.properties if value.required]
+        required = list(
+            name
+            for name, type_ in properties
+            if type_.required
+        )
         if len(required) > 0:
             retval['required'] = required
         return retval
@@ -197,24 +229,36 @@ class Object(Type):
         retval = '\n\n'.join(v for v in ftsr if v is not None)
         return retval if len(retval) > 0 else None
 
-    def canonicalize(self, data: dict, **kwargs):
-        data = super().canonicalize(data, **kwargs)
-        if data is None:
+    def canonicalize(self, value: T.Optional[dict]):
+        value = super().canonicalize(value)
+        if value is None:
             return None
-        if not isinstance(data, dict):
-            raise TypeError("{}: not a dict".format(data))
+        if not isinstance(value, dict):
+            raise TypeError("{}: not a dict".format(value))
         retval = {}
         for key, type_ in self.properties:
-            canonical_value = None
+            if key not in value:
+                continue
+            v = type_.canonicalize(value[key])
+            if v is not None:
+                retval[key] = v
+        return retval
 
-            if type_.sys_defined is True:
-                type_data = data[key] if key in data else None
-                canonical_value = type_.canonicalize(type_data, **kwargs)
-            elif key in data:
-                canonical_value = type_.canonicalize(data[key], **kwargs)
+    def set_required_values(self, object_: dict) -> dict:
+        # language=rst
+        """
+        This method is called only during GET requests, just before the body is
+        returned to the user.
 
-            if canonical_value is not None:
-                retval[key] = canonical_value
+        :param object_: The object about to be returned to the user.
+        :return: ``object_`` with required values added.
+        """
+        retval = dict(object_)  # Important. Makes a shallow copy.
+        for key, type_ in self.properties:
+            if type_.required is not None and key not in retval:
+                retval[key] = type_.required
+            if isinstance(type_, Object) and key in retval:
+                retval[key] = type_.set_required_values(retval[key])
         return retval
 
 
@@ -226,9 +270,8 @@ class String(Type):
         self.max_length = max_length
         self.allow_empty = allow_empty
 
-    @property
-    def schema(self) -> dict:
-        retval = dict(super().schema)
+    def schema(self, method: str) -> dict:
+        retval = dict(super().schema(method))  # Important: makes a shallow copy
         retval['type'] = 'string'
         if self.pattern is not None:
             retval['pattern'] = self.pattern
@@ -241,14 +284,16 @@ class String(Type):
     def full_text_search_representation(self, data: str):
         return data
 
-    def canonicalize(self, data: str, **kwargs):
-        data = super().canonicalize(data, **kwargs)
-        if data is None:
+    def canonicalize(self, value: T.Optional[str]):
+        value = super().canonicalize(value)
+        if value is None:
             return None
-        if not isinstance(data, str):
-            raise TypeError("{}: not a string".format(data))
-        retval = data.strip().replace('\r\n', '\n')
-        return retval if len(retval) > 0 or self.allow_empty else None
+        if not isinstance(value, str):
+            raise TypeError("{}: not a string".format(repr(value)))
+        value = value.strip().replace('\r\n', '\n')
+        if len(value) == 0 and not self.allow_empty:
+            value = None
+        return value
 
 
 class PlainTextLine(String):
@@ -260,21 +305,27 @@ class PlainTextLine(String):
 class Date(String):
     def __init__(self, *args, format=None, pattern=None, **kwargs):
         assert format is None and pattern is None
-        super().__init__(*args, format='date', pattern=r'^\d\d\d\d-[01]\d-[0-3]\d(?:T[012]\d:[0-5]\d:[0-5]\d(?:\.\d+)?)?(?:Z|[01]\d(?::[0-5]\d)?)?$', **kwargs)
+        super().__init__(*args,
+                         format='date',
+                         pattern=r'^\d\d\d\d-[01]\d-[0-3]\d(?:T[012]\d:[0-5]\d:[0-5]\d(?:\.\d+)?)?(?:Z|[01]\d(?::[0-5]\d)?)?$',
+                         **kwargs)
 
-    def canonicalize(self, data: str, **kwargs) -> T.Optional[str]:
-        data = super().canonicalize(data, **kwargs)
-        if data is None:
+    def canonicalize(self, value: T.Optional[str]) -> T.Optional[str]:
+        value = super().canonicalize(value)
+        if value is None:
             return None
-        if not isinstance(data, str):
-            raise TypeError("{}: not a string".format(data))
-        return data[:10]
+        if not isinstance(value, str):
+            raise TypeError("{}: not a string".format(repr(value)))
+        return value[:10]
 
 
 class Language(String):
     def __init__(self, *args, format=None, pattern=None, **kwargs):
         assert format is None and pattern is None
-        super().__init__(*args, format='lang', pattern=r'^(?:lang1:\w\w|lang2:\w\w\w)$', **kwargs)
+        super().__init__(*args,
+                         format='lang',
+                         pattern=r'^(?:lang1:\w\w|lang2:\w\w\w)$',
+                         **kwargs)
 
 
 class Enum(String):
@@ -284,9 +335,8 @@ class Enum(String):
         self.values = values
         self.dict = {key: value for key, value in values}
 
-    @property
-    def schema(self) -> dict:
-        retval = dict(super().schema)
+    def schema(self, method: str) -> dict:
+        retval = dict(super().schema(method))  # Important: makes a shallow copy
         retval['enum'] = [v[0] for v in self.values]
         retval['enumNames'] = [v[1] for v in self.values]
         return retval
@@ -307,9 +357,8 @@ class Integer(Type):
         self.minimum = minimum
         self.exclusiveMinimum = exclusiveMinimum
 
-    @property
-    def schema(self) -> dict:
-        retval = dict(super().schema)
+    def schema(self, method: str) -> dict:
+        retval = dict(super().schema(method))  # Important: makes a shallow copy.
         retval['type'] = 'number'
         for k in {'multipleOf', 'maximum', 'exclusiveMaximum', 'minimum', 'exclusiveMinimum'}:
             v = getattr(self, k)
@@ -321,18 +370,18 @@ class Integer(Type):
     def full_text_search_representation(self, data: T.Any):
         return str(data) if isinstance(data, int) else None
 
-    def canonicalize(self, data, **kwargs):
-        data = super().canonicalize(data, **kwargs)
-        if data is None:
+    def canonicalize(self, value: T.Optional[str]):
+        value = super().canonicalize(value)
+        if value is None:
             return None
-        if isinstance(data, int):
-            return data
-        if isinstance(data, str):
-            retval = int(data.strip())
-            if len(str(retval)) != len(data):
-                raise ValueError("{}: not an integer".format(data))
+        if isinstance(value, int):
+            return value
+        if isinstance(value, str):
+            retval = int(value.strip())
+            if len(str(retval)) != len(value):
+                raise ValueError("{}: not an integer".format(value))
             return retval
-        raise TypeError("{}: not an integer".format(data))
+        raise TypeError("{}: not an integer".format(value))
 
 
 DISTRIBUTION = Object()
@@ -340,7 +389,6 @@ DISTRIBUTION.add('dct:title', String())
 DISTRIBUTION.add('dct:description', String())
 DISTRIBUTION.add('dct:issued', Date())
 DISTRIBUTION.add('dct:modified', Date())
-DISTRIBUTION.add('dc:identifier', PlainTextLine())
 DISTRIBUTION.add('dct:license', String())
 DISTRIBUTION.add('dct:rights', String())
 DISTRIBUTION.add('dcat:accessURL', String(format='uri'))
@@ -351,11 +399,11 @@ DISTRIBUTION.add('dcat:byteSize', Integer(minimum=0))
 
 
 VCARD = Object()
-VCARD.add('vcard:fn', PlainTextLine(required=True))
+VCARD.add('vcard:fn', PlainTextLine(required='unknown'))
 
 
 FOAF_AGENT = Object()
-FOAF_AGENT.add('foaf:name', PlainTextLine(required=True))
+FOAF_AGENT.add('foaf:name', PlainTextLine(required='unknown'))
 
 
 DATASET = Object()

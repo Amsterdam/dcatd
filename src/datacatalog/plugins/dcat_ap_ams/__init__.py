@@ -1,17 +1,87 @@
+from aiohttp import web
+from copy import deepcopy
+import datetime
+import logging
 import typing as T
 
 from aiopluggy import HookimplMarker
 from pyld import jsonld
 
-from datacatalog.dcat import Direction
-
 from .constants import CONTEXT
-from .dataset import DATASET
+from .dataset import DATASET, DISTRIBUTION
+
 
 _hookimpl = HookimplMarker('datacatalog')
-
-_SCHEMA = 'dcat-ap-ams'
 _BASE_URL = 'http://localhost/'
+_logger = logging.getLogger(__name__)
+
+
+def _datasets_url(app) -> str:
+    if isinstance(app, web.Application):
+        return app.config['web']['baseurl'] + 'datasets'
+    else:
+        return 'http://localhost:8000/datasets'
+
+def _get_sort_modified(doc: dict) -> str:
+    # language=rst
+    """Sorteerdatum.
+
+    Wordt aangeroepen door zowel :func:`mds_before_storage` als
+    :func:`mds_after_storage`. Sorteren op, in onderstaande volgorde. Als veld
+    niet gevuld is, dan volgende datum gebruiken:
+
+    verversingsdatum resource: dct:modified
+    wijzigingsdatum resource: primarytopicof: dct:modified
+    publicatiedatum resource: primarytopicof: dct:issued
+    Als een dataset meerdere resources heeft dan de laatste datum nemen.
+    wijzigingsdatum dataset: dct:modified
+    publicatiedatum dataset: dct:issued
+    wijzigingsdatum dataset: primarytopicof: dct:modified
+    publicatiedatum dataset: primarytopicof: dct:issued
+
+    Zet als laatse de last_modified_date in
+    dataset->primarytopicof->dct:modified als die niet groter is. Anders gebruik
+    als last_modified dataset->primarytopicof->dct:modified
+
+    Deze waarde wordt getoond in de Frontend. OP deze wijze id de sortering
+    consistent met de weergave in de Frontend, ook als die waardes niet correct
+    worden geupdate.
+
+    TODO: Check gebruik en regels omtrent 'foaf:isPrimaryTopicOf']->'dct:modified' en hoe dit te gebruiken in FE
+
+    :param doc: de dataset
+    :returns: sorteerdatum
+
+    """
+    last_modified = ''
+    if 'dcat:distribution' in doc:
+        for resource in doc['dcat:distribution']:
+            if 'dct:modified' in resource and resource['dct:modified'] > last_modified:
+                last_modified = resource['dct:modified']
+        if not last_modified:
+            dct_issued_resource = ''
+            for resource in doc['dcat:distribution']:
+                if 'foaf:isPrimaryTopicOf' in resource:
+                    primary = resource['foaf:isPrimaryTopicOf']
+                    if 'dct:modified' in primary and primary['dct:modified'] > last_modified:
+                        last_modified = primary['dct:modified']
+                    if 'dct_issued' in primary and primary['dct:issued'] > dct_issued_resource:
+                        dct_issued_resource = primary['dct:issued']
+            if not last_modified:
+                last_modified = dct_issued_resource
+    if not last_modified:
+        if 'dct:modified' in doc:
+            last_modified = doc['dct:modified']
+        elif 'dct:issued' in doc:
+            last_modified = doc['dct:issued']
+        elif 'foaf:isPrimaryTopicOf' in doc:
+            primary = doc['foaf:isPrimaryTopicOf']
+            if 'dct:modified' in primary:
+                last_modified = primary['dct:modified']
+            elif 'dct:issued' in primary:
+                last_modified = primary['dct:issued']
+
+    return last_modified
 
 
 @_hookimpl
@@ -20,71 +90,183 @@ def initialize_sync(app):
     _BASE_URL = app.config['web']['baseurl']
 
 
-@_hookimpl
-def mds_name():
-    return _SCHEMA
+def _distributions_vary(a: dict, b: dict) -> bool:
+    vary = False
+    for name, property in DISTRIBUTION.properties:
+        if not property.read_only and a.get(name) != b.get(name):
+            vary = True
+    return vary
+
+
+def _datasets_vary(a: dict, b:dict) -> bool:
+    vary = False
+    for name, property in DATASET.properties:
+        if name == 'dcat:distribution':
+            continue
+        if not property.read_only and a.get(name) != b.get(name):
+            vary = True
+    return vary
 
 
 @_hookimpl
-def mds_canonicalize(data: dict, id: T.Optional[str]=None, direction: Direction=Direction.GET) -> dict:
-    # language=rst
-    """
+def mds_before_storage(app, data, old_data=None) -> dict:
+    retval = deepcopy(data)
+    retval.pop('dct:identifier', None)
 
-    :param data:
-    :param id: Can be one of three values:
+    distributions = retval.get('dcat:distribution', [])
+    retval['dcat:distribution'] = distributions = _add_dc_identifiers_to(distributions)
 
-        #.  ``None``: do nothing with the ``@id`` or ``dct:identifier`` fields.
-        #.  ``""`` (the empty string): remove the ``@id`` or ``dct:identifier`` fields.
-        #.  ``str`` (non-empty string): set the ``@id`` or ``dct:identifier`` fields.
+    # Set all the meta-metadata timestamps correctly:
+    if old_data is not None:
+        if _datasets_vary(retval, old_data):
+            try:
+                old_issued = old_data['foaf:isPrimaryTopicOf']['dct:issued']
+            except KeyError:
+                _logger.error("Geen dct:issued in dataset %s", data['dct:title'])
+                old_issued = '1970-01-01'
+            retval['foaf:isPrimaryTopicOf'] = {
+                'dct:issued': old_issued,
+                'dct:modified': datetime.date.today().isoformat()
+            }
+        else:
+            try:
+                retval['foaf:isPrimaryTopicOf'] = old_data['foaf:isPrimaryTopicOf']
+            except KeyError:
+                _logger.error("Geen 'foaf:isPrimaryTopicOf' in dataset %s", data['dct:title'])
+        old_distributions = {
+            old_distribution['dc:identifier']: old_distribution
+            for old_distribution in old_data.get('dcat:distribution', [])
+        }
+        for distribution in distributions:
+            old_distribution = old_distributions.get(distribution['dc:identifier'])
+            if old_distribution is None:
+                distribution['foaf:isPrimaryTopicOf'] = {
+                    'dct:issued': datetime.date.today().isoformat(),
+                    'dct:modified': datetime.date.today().isoformat()
+                }
+            else:
+                try:
+                    old_foaf = old_distribution.get('foaf:isPrimaryTopicOf')
+                except KeyError:
+                    _logger.error("Geen foaf:isPrimaryTopicOf in distribution %s:%s", data['dct:title'],
+                                  old_distribution['dc:identifier'])
+                    old_foaf = {
+                        'dct:issued': '1970-01-01',
+                        'dct:modified': '1970-01-01'
+                    }
+                distribution['foaf:isPrimaryTopicOf'] = old_foaf
+                if _distributions_vary(distribution, old_distribution):
+                    distribution['foaf:isPrimaryTopicOf']['dct:modified'] = datetime.date.today().isoformat()
+    else:
+        retval['foaf:isPrimaryTopicOf'] = {
+            'dct:issued': datetime.date.today().isoformat(),
+            'dct:modified': datetime.date.today().isoformat()
+        }
+        for distribution in distributions:
+            distribution['foaf:isPrimaryTopicOf'] = {
+                'dct:issued': datetime.date.today().isoformat(),
+                'dct:modified': datetime.date.today().isoformat()
+            }
 
-    :param direction: direction of the
-    """
-    ctx = context()
-    # The expansion is implicitly done in jsonld.compact() below.
-    # data = jsonld.expand(data)
-    retval = jsonld.compact(data, ctx)
-    old_id = retval.get('@id')
-    sort_modified = retval.get('ams:sort_modified', None)
-    retval = DATASET.canonicalize(retval, direction=direction)
-    if 'dcat:distribution' not in retval:
-        retval['dcat:distribution'] = []
-    retval['@context'] = ctx
-    if direction == Direction.GET:
-        if 'overheid:authority' not in retval:
-            retval['overheid:authority'] = 'Amsterdam'
-
-    for distribution in retval.get('dcat:distribution', []):
-        if '@id' in distribution:
-            del distribution['@id']
-        if direction == Direction.PUT:
-            if 'ams:distributionType' in distribution:
-                if 'dct:format' in distribution and distribution['ams:distributionType'] != 'file':
-                    del distribution['dct:format']
-                if 'dct:byteSize' in distribution and distribution['ams:distributionType'] != 'file':
-                    del distribution['dct:byteSize']
-                if 'ams:serviceType' in distribution and distribution['ams:distributionType'] != 'api':
-                    del distribution['ams:serviceType']
-        else:  # Direction.GET
-            if 'dct:license' not in distribution and 'ams:license' in retval:  # Inherit license from dataset
-                distribution['dct:license'] = retval['ams:license']
-
-    if id == '':
-        for item in ['@id', 'dct:identifier']:
-            if item in retval:
-                del retval[item]
-    elif id is not None:
-        retval['@id'] = f"ams-dcatd:{id}"
-        retval['dct:identifier'] = str(id)
-    elif old_id is not None:
-        retval['@id'] = old_id
-    if sort_modified is not None:
-        retval['ams:sort_modified'] = sort_modified
+    # Add ams:sortModified:
+    retval['ams:sortModified'] = _get_sort_modified(retval)
     return retval
 
 
 @_hookimpl
-async def mds_json_schema(app) -> dict:
-    result = DATASET.schema
+def mds_after_storage(app, data, doc_id):
+    retval = deepcopy(data)
+    # The following is a temporary measure, for as long as not all the data
+    # in the database has been converted.
+    # TODO: Remove
+    if 'ams:license' in retval:  # Inherit license from dataset
+        license = retval['ams:license']
+        for distribution in retval.get('dcat:distribution', []):
+            if 'dct:license' not in distribution:
+                distribution['dct:license'] = license
+
+    if 'overheid:authority' not in retval:
+        retval['overheid:authority'] = 'overheid:Amsterdam'
+
+    # Add proper identifiers:
+    retval['@id'] = f"ams-dcatd:{doc_id}"
+    retval['dct:identifier'] = str(doc_id)
+
+    # Add ams:sortModified:
+    if 'ams:sortMdified' not in retval:
+        retval['ams:sortModified'] = _get_sort_modified(retval)
+
+    distributions = retval.get('dcat:distribution', [])
+    counter = 0
+    datasets_url = _datasets_url(app)
+    for distribution in distributions:
+        counter += 1
+        distribution['@id'] = "_:d{}".format(counter)
+        # persistent URL:
+        accessURL = distribution.get('dcat:accessURL', None)
+        if accessURL is not None:
+            distribution['ams:purl'] = f"{datasets_url}/{doc_id}/purls/{distribution['dc:identifier']}"
+        # dcat:mediaType:
+        if 'dct:format' in distribution:
+            distribution['dcat:mediaType'] = distribution['dct:format']
+    retval = DATASET.set_required_values(retval)
+    return retval
+
+
+def _add_dc_identifiers_to(distributions: T.List[dict]) -> T.List[dict]:
+    all_persistent_ids = set(
+        str(distribution['dc:identifier'])
+        for distribution in distributions
+        if 'dc:identifier' in distribution
+    )
+    if len(all_persistent_ids) == len(distributions):
+        return distributions
+    retval = deepcopy(distributions)
+    persistent_id = 1
+    for distribution in retval:
+        # persistent id:
+        if 'dc:identifier' not in distribution:
+            while str(persistent_id) in all_persistent_ids:
+                persistent_id += 1
+            all_persistent_ids.add(str(persistent_id))
+            distribution['dc:identifier'] = str(persistent_id)
+    return retval
+
+
+@_hookimpl
+def mds_canonicalize(app, data: dict) -> dict:
+    # language=rst
+    """
+    TODO: Documentation of this vital function.
+    """
+    ctx = mds_context()
+    # if '@context' not in data:
+    #     _logger.warning("No @context in data to be canonicalized.")
+    #     data['@context'] = ctx
+    # The expansion is implicitly done in jsonld.compact() below.
+    # data = jsonld.expand(data)
+    retval = jsonld.compact(data, ctx)
+    retval = DATASET.canonicalize(retval)
+    if 'dcat:distribution' not in retval:
+        retval['dcat:distribution'] = []
+    retval['@context'] = ctx
+    for distribution in retval['dcat:distribution']:
+        if 'ams:distributionType' in distribution:
+            if distribution['ams:distributionType'] != 'file':
+                distribution.pop('dct:format', None)
+            if distribution['ams:distributionType'] != 'file':
+                distribution.pop('dct:byteSize', None)
+            if distribution['ams:distributionType'] != 'api':
+                distribution.pop('ams:serviceType', None)
+
+    return retval
+
+
+@_hookimpl
+async def mds_json_schema(app, method: str) -> dict:
+    result = DATASET.schema(method)
+    if method == 'GET':
+        return result
     owners = await app.hooks.storage_extract(
         app=app, ptr='/properties/ams:owner', distinct=True)
     owners = sorted([owner async for owner in owners])
@@ -104,14 +286,8 @@ def mds_full_text_search_representation(data: dict) -> str:
 
 @_hookimpl
 def mds_context() -> dict:
-    return context()
-
-
-def context(base_url=None) -> dict:
-    if base_url is None:
-        base_url = _BASE_URL
     retval = dict(CONTEXT)
-    retval['ams-dcatd'] = base_url + 'datasets/'
+    retval['ams-dcatd'] = _BASE_URL + 'datasets/'
     return retval
 
 

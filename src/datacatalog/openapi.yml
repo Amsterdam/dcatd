@@ -46,7 +46,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dcat-datasets'
+                $ref: '#/components/schemas/datasets-get'
       parameters:
       - name: q
         in: query
@@ -125,7 +125,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/dcat-dataset'
+              $ref: '#/components/schemas/dcat-dataset-post'
       responses:
         201:
           description: Created.
@@ -152,7 +152,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/dcat-dataset'
+                $ref: '#/components/schemas/dcat-dataset-get'
         304:
           description: >-
             Not Modified: The document has an etag that equals one of the given
@@ -215,7 +215,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/dcat-dataset'
+              $ref: '#/components/schemas/dcat-dataset-put'
       responses:
         201:
           description: The dataset was succesfully uploaded.
@@ -307,6 +307,15 @@ components:
     etag:
       type: string
       pattern: '^(?:W/)?"[^"]+"$'
+    dcat-dataset-get:
+      description: >-
+        Intentionally left blank. Replaced by the actual schema at runtime.
+    dcat-dataset-post:
+      description: >-
+        Intentionally left blank. Replaced by the actual schema at runtime.
+    dcat-dataset-put:
+      description: >-
+        Intentionally left blank. Replaced by the actual schema at runtime.
     dcat-dataset:
       description: >-
         Intentionally left blank. Replaced by the actual schema at runtime.
@@ -314,7 +323,7 @@ components:
       # TODO: This schema is not accurate.
       type: array
       items:
-        type: string
+        $ref: '#/components/schemas/dcat-dataset-get'
 
   securitySchemes:
     OAuth2:

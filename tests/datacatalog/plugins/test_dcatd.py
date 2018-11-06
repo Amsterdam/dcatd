@@ -1,8 +1,11 @@
 import unittest
 import datetime
 
-from datacatalog.dcat import Direction
-from datacatalog.plugins.dcat_ap_ams import mds_canonicalize
+from datacatalog.plugins.dcat_ap_ams import (
+    mds_before_storage,
+    mds_after_storage,
+    mds_canonicalize
+)
 
 
 class TestDcatd(unittest.TestCase):
@@ -82,8 +85,17 @@ class TestDcatd(unittest.TestCase):
                 'ams-dcatd': 'http://localhost/datasets/'},
             '@id': 'ams-dcatd:_FlXXpXDa-Ro3Q'}
 
-        canonicalized = mds_canonicalize(data)
+        canonicalized = self._canonicalize(data)
         self.assertDictEqual(canonicalized, expected)
+
+    @staticmethod
+    def _canonicalize(data, old_data=None, doc_id=None):
+        retval = mds_before_storage(
+            app={}, data=mds_canonicalize(app={}, data=data), old_data=old_data
+        )
+        if doc_id is not None:
+            retval = mds_after_storage(app={}, data=retval, doc_id=doc_id)
+        return retval
 
     def test_canonicalize_modifieddate(self):
         this_date = datetime.date.today().strftime('%Y-%m-%d')
@@ -99,7 +111,7 @@ class TestDcatd(unittest.TestCase):
             "foaf:isPrimaryTopicOf": {'dct:issued': past_date}
         }
 
-        canonicalized = mds_canonicalize(data)
+        canonicalized = self._canonicalize(data, doc_id="_FlXXpXDa-Ro3Q")
 
         self.assertIn('dct:modified', canonicalized["foaf:isPrimaryTopicOf"])
         self.assertEqual(canonicalized["foaf:isPrimaryTopicOf"]['dct:modified'], this_date)
@@ -113,7 +125,7 @@ class TestDcatd(unittest.TestCase):
         for distribution in data['dcat:distribution']:
             distribution['dct:modified'] = past_date
 
-        canonicalized = mds_canonicalize(data)
+        canonicalized = self._canonicalize(data)
 
         for distribution in canonicalized['dcat:distribution']:
             self.assertEqual(distribution['dct:modified'], past_date)
@@ -121,10 +133,10 @@ class TestDcatd(unittest.TestCase):
         with_past_date = canonicalized
         with_past_date["foaf:isPrimaryTopicOf"]['dct:modified'] = past_date
 
-        canonicalized = mds_canonicalize(with_past_date)
+        canonicalized = self._canonicalize(with_past_date, old_data=with_past_date)
         self.assertEqual(canonicalized["foaf:isPrimaryTopicOf"]['dct:modified'], past_date)
 
-        canonicalized = mds_canonicalize(with_past_date, direction=Direction.PUT)
+        canonicalized = self._canonicalize(with_past_date)
         self.assertEqual(canonicalized["foaf:isPrimaryTopicOf"]['dct:modified'], this_date)
 
 

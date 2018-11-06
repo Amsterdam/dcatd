@@ -26,21 +26,16 @@ async def add_resource_identifiers(app):
     dataset_iterator = await app.hooks.storage_all(app=app)
     changed = 0
     async for docid, etag, doc in dataset_iterator:
-        canonical_doc = await app.hooks.mds_canonicalize(data=doc, id=docid)
-        identifiers_added = await datasets._add_distribution_identifiers(app, canonical_doc)
-        if identifiers_added > 0:
-            # Let the metadata plugin grab the full-text search representation
-            searchable_text = await app.hooks.mds_full_text_search_representation(
-                data=canonical_doc
-            )
-            new_etag = await app.hooks.storage_update(
-                app=app, docid=docid, doc=canonical_doc,
-                searchable_text=searchable_text, etags={etag},
-                iso_639_1_code="nl")
-            logger.debug(f'Added {identifiers_added} identifiers for {docid}')
-
-        changed += identifiers_added
-    logger.info(f'Set new identifiers for {changed} resources')
+        canonical_doc = await app.hooks.mds_canonicalize(app=app, data=doc)
+        canonical_doc = await app.hooks.mds_before_storage(app=app, data=canonical_doc)
+        # Let the metadata plugin grab the full-text search representation
+        searchable_text = await app.hooks.mds_full_text_search_representation(
+            data=canonical_doc
+        )
+        await app.hooks.storage_update(
+            app=app, docid=docid, doc=canonical_doc,
+            searchable_text=searchable_text, etags={etag},
+            iso_639_1_code="nl")
     return True
 
 

@@ -1,5 +1,3 @@
-import datetime
-
 import bleach
 
 from datacatalog import dcat
@@ -15,14 +13,14 @@ class Markdown(dcat.String):
 
 
 CONTACT_POINT = dcat.Object(
-    required=True,
+    required=dict(),
     title=""
 ).add(
     'vcard:fn',
     dcat.PlainTextLine(
         description="Geef de naam van de contactpersoon voor eventuele vragen over de inhoud en kwaliteit van de gegevens.",
         title="Inhoudelijk contactpersoon",
-        required=True
+        required='Onbekend'
     )
 ).add(
     'vcard:hasEmail',
@@ -41,14 +39,14 @@ CONTACT_POINT = dcat.Object(
 
 
 DCT_PUBLISHER = dcat.Object(
-    required=True,
+    required=dict(),
     title=""
 ).add(
     'foaf:name',
     dcat.PlainTextLine(
         title="Technisch contactpersoon",
         description="Geef de naam van de contactpersoon voor technische vragen over de aanlevering. Dit kan dezelfde contactpersoon zijn als voor de inhoudelijke vragen.",
-        required=True
+        required='Onbekend'
     )
 ).add(
     'foaf:mbox',
@@ -63,27 +61,5 @@ DCT_PUBLISHER = dcat.Object(
         format='uri',
         title="Website technisch contactpersoon"
         # description="Website technisch contactpersoon"
-    )
-)
-
-
-DATASET_CATALOG_RECORD = dcat.Object(
-    required=True,
-    title=""
-).add(
-    'dct:issued',
-    dcat.Date(
-        title="Publicatiedatum",
-        description="De datum waarop deze beschrijving van de gegevensset beschikbaar is gesteld",
-        default=datetime.date.today().isoformat()
-    )
-).add(
-    'dct:modified',
-    dcat.Date(
-        title="Wijzigingsdatum",
-        description="De datum waarop deze beschrijving van de gegevensset voor het laatst is gewijzigd",
-        default=(lambda: datetime.date.today().isoformat()),
-        sys_defined=True,
-        required=True
     )
 )
