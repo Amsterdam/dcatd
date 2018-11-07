@@ -229,7 +229,7 @@ async def storage_all(app: T.Mapping[str, T.Any]) -> T.AsyncGenerator[T.Tuple[st
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
 def search_search(
-    app, q: str, sort_field_get: T.Callable[[dict], str],
+    app, q: str, sortpath: T.List[str],
     result_info: T.MutableMapping,
     facets: T.Optional[T.Iterable[str]]=None,
     limit: T.Optional[int]=None, offset: T.Optional[int]=0,
@@ -248,7 +248,7 @@ def search_search(
 
     :param app: the `~datacatalog.application.Application`
     :param q: the query
-    :param sort_field_get: function to get propererty to sort by.
+    :param sortproperty: the property to sort by. Must be a top-level object property.
     :param result_info: mapping in which all encountered facets in the result set are
         put
     :param facets: a list of facets to return and count

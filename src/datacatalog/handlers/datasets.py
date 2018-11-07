@@ -169,21 +169,6 @@ async def delete(request: web.Request):
     return web.Response(status=204, content_type='text/plain')
 
 
-def _sort_value(doc: dict)->str:
-    if 'ams:sort_modified' in doc:
-        return doc['ams:sort_modified']
-    # TODO: remove the following code. In the near future, we should be able to
-    #   rely on the presence of 'ams:sort_modified' in every document.
-    try:
-        return doc['foaf:isPrimaryTopicOf']['dct:modified']
-    except:
-        pass
-    try:
-        return doc['dct:title']
-    except:
-        return 'zzz'
-
-
 @produces_content_types('application/ld+json', 'application/json')
 async def get_collection(request: web.Request) -> web.StreamResponse:
     # language=rst
@@ -239,8 +224,8 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     result_info = {}
     resultiterator = await hooks.search_search(
         app=request.app, q=full_text_query,
+        sortpath=['ams:sort_modified'],
         result_info=result_info,
-        sort_field_get=_sort_value,
         facets=[
             '/properties/dcat:distribution/items/properties/ams:resourceType',
             '/properties/dcat:distribution/items/properties/dct:format',
