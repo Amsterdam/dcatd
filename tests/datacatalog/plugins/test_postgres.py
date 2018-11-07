@@ -170,15 +170,13 @@ def test_storage_extract(event_loop, corpus, app):
     empty = event_loop.run_until_complete(retrieve_nothing())
     assert len(empty) == 0
 
-def get_id_sort_field(doc: dict)->str:
-    return doc['@id'] if '@id' in doc else ''
 
 def test_search_search(event_loop, corpus, app):
     # search on query
     async def search(record):
         q = record['searchable_text']
         return [r async for r in postgres_plugin.search_search(
-            app=app, q=q, sort_field_get=get_id_sort_field, result_info={}, limit=1,
+            app=app, q=q, sortpath=['@id'], result_info={}, limit=1,
             filters=None, iso_639_1_code=record['iso_639_1_code'])]
 
     for corpus_id, corpus_doc in corpus.items():
@@ -190,7 +188,7 @@ def test_search_search(event_loop, corpus, app):
     async def search(record):
         filters = {'/properties/id': {'eq': record['doc']['id']}}
         return [r async for r in postgres_plugin.search_search(
-            app=app, q='', sort_field_get=get_id_sort_field, result_info={},
+            app=app, q='', sortpath=['@id'], result_info={},
             limit=1, filters=filters,
             iso_639_1_code=record['iso_639_1_code'])]
 
@@ -205,7 +203,7 @@ def test_search_search(event_loop, corpus, app):
         filters = {'/properties/keywords/items': {'eq': 'foo'}}
         result_info = {}
         return [r async for r in postgres_plugin.search_search(
-            app=app, q='', sort_field_get=get_id_sort_field, result_info=result_info,
+            app=app, q='', sortpath=['@id'], result_info=result_info,
             facets=['/properties/keywords/items'],
             limit=1, filters=filters,
             iso_639_1_code='nl')], result_info

@@ -228,7 +228,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
         result_info=result_info,
         facets=[
             '/properties/dcat:distribution/items/properties/ams:resourceType',
-            '/properties/dcat:distribution/items/properties/dct:format',
+            '/properties/dcat:distribution/items/properties/dcat:mediaType',
             '/properties/dcat:distribution/items/properties/ams:distributionType',
             '/properties/dcat:distribution/items/properties/ams:serviceType',
             '/properties/dcat:keyword/items',
