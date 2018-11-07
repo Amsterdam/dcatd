@@ -32,6 +32,15 @@ DISTRIBUTION = dcat.Object().add(
         required=''
     )
 ).add(
+    'ams:purl',
+    dcat.String(
+        format='uri',
+        title="Persistente URL",
+        description="Persistente URL voor deze resource.",
+        read_only=True,
+        required=''
+    )
+).add(
     'ams:resourceType',
     dcat.Enum(
         constants.RESOURCE_TYPES,
@@ -121,14 +130,4 @@ DISTRIBUTION = dcat.Object().add(
             required='1970-01-01'
         )
     )
-).add(
-    'ams:purl',
-    dcat.String(
-        format='uri',
-        title="Persistente URL",
-        description="Persistente URL voor deze resource.",
-        read_only=True,
-        required=''
-    )
-
 )
