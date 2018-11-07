@@ -207,7 +207,7 @@ class Object(Type):
         required = list(
             name
             for name, type_ in properties
-            if type_.required
+            if type_.required is not None
         )
         if len(required) > 0:
             retval['required'] = required
