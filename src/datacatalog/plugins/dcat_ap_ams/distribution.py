@@ -37,8 +37,7 @@ DISTRIBUTION = dcat.Object().add(
         format='uri',
         title="Persistente URL",
         description="Persistente URL voor deze resource.",
-        read_only=True,
-        required=''
+        read_only=True
     )
 ).add(
     'ams:resourceType',
