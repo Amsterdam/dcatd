@@ -275,7 +275,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
         for key in list(canonical_doc.keys()):
             if key not in keepers:
                 del canonical_doc[key]
-        keepers = {'dct:format', 'ams:resourceType', 'ams:distributionType',
+        keepers = {'dct:format', 'dcat:mediaType', 'ams:resourceType', 'ams:distributionType',
                    'ams:serviceType', 'dc:identifier'}
         for d in canonical_doc.get('dcat:distribution', []):
             for key in list(d.keys()):
