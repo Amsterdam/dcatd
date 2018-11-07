@@ -167,6 +167,15 @@ def mds_before_storage(app, data, old_data=None) -> dict:
                 'dct:issued': datetime.date.today().isoformat(),
                 'dct:modified': datetime.date.today().isoformat()
             }
+    for distribution in distributions:
+        if 'dcat:mediaType' in distribution:
+            distribution['dct:format'] = distribution['dcat:mediaType']
+        elif 'dct:format' in distribution:
+            distribution['dcat:mediaType'] = distribution['dct:format']
+
+        if distribution['ams:distributionType'] == 'file' and (
+                'dcat:mediaType' not in distribution or distribution['dcat:mediaType'] == ''):
+            distribution['dct:format']= distribution['dcat:mediaType'] = 'application/octet-stream'
 
     # Add ams:sort_modified:
     retval['ams:sort_modified'] = _get_sort_modified(retval)
@@ -254,6 +263,7 @@ def mds_canonicalize(app, data: dict) -> dict:
         if 'ams:distributionType' in distribution:
             if distribution['ams:distributionType'] != 'file':
                 distribution.pop('dct:format', None)
+                distribution.pop('dcat:mediaType', None)
             if distribution['ams:distributionType'] != 'file':
                 distribution.pop('dct:byteSize', None)
             if distribution['ams:distributionType'] != 'api':
