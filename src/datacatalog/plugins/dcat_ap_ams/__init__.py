@@ -173,9 +173,9 @@ def mds_before_storage(app, data, old_data=None) -> dict:
         elif 'dct:format' in distribution:
             distribution['dcat:mediaType'] = distribution['dct:format']
 
-        if distribution['ams:distributionType'] == 'file' and (
+        if 'ams:distributionType' in distribution and distribution['ams:distributionType'] == 'file' and (
                 'dcat:mediaType' not in distribution or distribution['dcat:mediaType'] == ''):
-            distribution['dct:format']= distribution['dcat:mediaType'] = 'application/octet-stream'
+            distribution['dct:format'] = distribution['dcat:mediaType'] = 'application/octet-stream'
 
     # Add ams:sort_modified:
     retval['ams:sort_modified'] = _get_sort_modified(retval)
