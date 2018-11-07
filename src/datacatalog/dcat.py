@@ -192,17 +192,10 @@ class Object(Type):
 
     def schema(self, method: str) -> dict:
         retval = dict(super().schema(method))  # Important: makes a shallow copy
-        # If method != GET, read_only properties aren't mentioned in the schema,
-        # because the front-end doesn't understand the JSON Schema readOnly
-        # flag.
-        # TODO: Fix this in the front-end.
-        properties = self.properties \
-            if method == 'GET' \
-            else [
-                (name, type_)
-                for name, type_ in self.properties
-                if not type_.read_only
-            ]
+        # Also show read_only properties in the frontend because they ned to be shown
+        # TODO : In frontend use read_only flag in schema to make properties readonly
+        properties = self.properties
+
         retval.update({
             'type': 'object',
             'properties': {

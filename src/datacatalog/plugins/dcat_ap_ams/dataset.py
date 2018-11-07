@@ -188,7 +188,6 @@ DATASET = dcat.Object().add(
     'ams:sort_modified',
     dcat.Date(
         title="Sorteerdatum",
-        required='1970-01-01',
         read_only=True
     )
 )
