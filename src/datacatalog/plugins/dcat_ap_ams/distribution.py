@@ -92,7 +92,7 @@ DISTRIBUTION = dcat.Object().add(
     dcat.PlainTextLine(
         title="UID",
         description="Unieke identifier",
-        required=''
+        read_only=True
     )
 ).add(
     'ams:classification',

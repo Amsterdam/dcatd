@@ -181,8 +181,7 @@ DATASET = dcat.Object().add(
     dcat.PlainTextLine(
         title="UID",
         description="Unieke identifier",
-        read_only=True,
-        required=False  # Dus ja, wel required, met "nood-waarde": False
+        read_only=True
     )
 ).add(
     'ams:sort_modified',
