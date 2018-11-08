@@ -62,7 +62,7 @@ DISTRIBUTION = dcat.Object().add(
     )
 ).add(
     'dct:format',
-    # TODO: Vervangen door dcat:mediaType, en evt. inzetten in plaats van ams:serviceType
+    # TODO: dct:format verwijderen zodra dcat:mediaType overal (frontend, backend, acc en prod) doorgevoerd en aanwezig is
     dcat.Enum(
         constants.DCT_FORMATS,
         title="Type bestand"
@@ -73,7 +73,6 @@ DISTRIBUTION = dcat.Object().add(
         constants.DCT_FORMATS,
         title="Type bestand",
         description="Dit is het juiste veld, volgens de DCAT standaard. Wij gebruiken dct:format, maar dat moet anders.",
-        read_only=True
     )
 ).add(
     'ams:layerIdentifier',
