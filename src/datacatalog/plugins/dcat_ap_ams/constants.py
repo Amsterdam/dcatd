@@ -473,7 +473,6 @@ LICENSES = [
 
 
 DCT_FORMATS = [
-    ('n/a', ''),
     ('text/csv', "CSV"),
     ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', "DOCX"),
     ('application/vnd.geo+json', "GeoJSON"),
