@@ -111,7 +111,7 @@ async def put(request: web.Request):
             )
         try:
             old_doc, _etag = await hooks.storage_retrieve(
-                app=request.app, docid=doc_id, etags=etag_if_match
+                app=request.app, docid=doc_id, etags=None
             )
         except KeyError:
             raise web.HTTPPreconditionFailed()
