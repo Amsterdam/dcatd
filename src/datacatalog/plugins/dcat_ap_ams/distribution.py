@@ -71,8 +71,7 @@ DISTRIBUTION = dcat.Object().add(
     'dcat:mediaType',
     dcat.Enum(
         constants.DCT_FORMATS,
-        title="Type bestand",
-        description="Dit is het juiste veld, volgens de DCAT standaard. Wij gebruiken dct:format, maar dat moet anders.",
+        title="Type bestand"
     )
 ).add(
     'ams:layerIdentifier',
