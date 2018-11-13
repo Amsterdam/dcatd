@@ -22,7 +22,7 @@ _corpus = {
             'id': 'dutch_dataset1',
             'keywords': ['foo', 'bar']
         },
-        'searchable_text': 'dit is de eerste nederlandse dataset',
+        'searchable_text': {'A': 'Nederlands 1', 'B': '', 'C': 'dit is de eerste nederlandse dataset', 'D': ''},
         'iso_639_1_code': 'nl'
     },
     'dutch_dataset2': {
@@ -30,22 +30,22 @@ _corpus = {
             'id': 'dutch_dataset2',
             'keywords': ['foo', 'baz']
         },
-        'searchable_text': 'dit is de tweede nederlandse dataset',
+        'searchable_text': {'A': 'Nederlands 2', 'B': '', 'C': 'dit is de tweede nederlandse dataset', 'D': ''},
         'iso_639_1_code': 'nl'
     },
     'english_dataset1': {
         'doc': {'id': 'english_dataset1'},
-        'searchable_text': 'this is the first english dataset',
+        'searchable_text':  {'A': 'English 1', 'B': '', 'C': 'this is the first english dataset', 'D': ''},
         'iso_639_1_code': 'en'
     },
     'english_dataset2': {
         'doc': {'id': 'english_dataset2'},
-        'searchable_text': 'this is the second english dataset',
+        'searchable_text': {'A': 'English 2', 'B': '', 'C': 'this is the second english dataset', 'D': ''},
         'iso_639_1_code': 'en'
     },
     'unspecified_language_dataset1': {
         'doc': {'id': 'unspecified_language_dataset1'},
-        'searchable_text': 'isto pode ser escrito em qualquer idioma',
+        'searchable_text': {'A': 'Unspecified', 'B': '', 'C': 'isto pode ser escrito em qualquer idioma', 'D': ''},
         'iso_639_1_code': None
     },
 }
@@ -174,7 +174,7 @@ def test_storage_extract(event_loop, corpus, app):
 def test_search_search(event_loop, corpus, app):
     # search on query
     async def search(record):
-        q = record['searchable_text']
+        q = record['searchable_text']['C']
         return [r async for r in postgres_plugin.search_search(
             app=app, q=q, sortpath=['@id'], result_info={}, limit=1,
             filters=None, iso_639_1_code=record['iso_639_1_code'])]

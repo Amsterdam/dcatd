@@ -298,6 +298,9 @@ def mds_full_text_search_representation(data: dict) -> dict:
     result['B'] = DATASET.full_text_search_representation(data, {'dcat:theme', 'dcat:keyword'})
     result['C'] = DATASET.full_text_search_representation(data, {'dct:description', 'dcat:keyword'})
     result['D'] = DATASET.full_text_search_representation(data, {'ams:owner', 'overheid:grondslag', 'overheidds:doel'})
+    for key, value in result.items():
+        if value is None:
+            result[key] = ''
     return result
 
 

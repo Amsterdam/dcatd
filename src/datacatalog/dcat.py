@@ -129,10 +129,11 @@ class List(Type):
         """We must check whether the given data is really a list, jsonld may
         flatten lists."""
         if type(data) is list:
-            retval = '\n\n'.join([
+            ftsr = (
                 self.item_type.full_text_search_representation(v, prop_filter)
                 for v in data if v is not None
-            ])
+            )
+            retval = '\n\n'.join(v for v in ftsr if v is not None)
             return retval if len(retval) > 0 else None
         return self.item_type.full_text_search_representation(data, prop_filter)
 
