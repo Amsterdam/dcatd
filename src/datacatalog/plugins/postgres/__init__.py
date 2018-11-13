@@ -576,7 +576,7 @@ def _to_pg_json_query_fullmatch(q: str) -> str:
     """
     #   escape single quote (lexeme-demarcator in pg fulltext search) in words
     words = [t.replace("'", "[\\']") for t in q.split()]
-    return ' & '.join("{}:".format(w) for w in words)
+    return ' & '.join("{}".format(w) for w in words)
 
 
 def _etag_from_str(s: str) -> str:
