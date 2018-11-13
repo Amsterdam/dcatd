@@ -8,7 +8,7 @@ class Markdown(dcat.String):
         assert format is None
         super().__init__(*args, **kwargs)
 
-    def full_text_search_representation(self, data: str):
+    def full_text_search_representation(self, data: str, prop_filter: set):
         return bleach.clean(data, tags=[], strip=True)
 
 

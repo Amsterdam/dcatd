@@ -61,7 +61,7 @@ class Type(object):
             retval['readOnly'] = self.read_only
         return retval
 
-    def full_text_search_representation(self, data) -> T.Optional[str]:
+    def full_text_search_representation(self, data, prop_filter:set) -> T.Optional[str]:
         return None
 
     def validate(self, data: dict, method: str):
@@ -125,16 +125,16 @@ class List(Type):
                 retval.append(v)
         return retval
 
-    def full_text_search_representation(self, data: T.Iterable):
+    def full_text_search_representation(self, data: T.Iterable, prop_filter:set):
         """We must check whether the given data is really a list, jsonld may
         flatten lists."""
         if type(data) is list:
             retval = '\n\n'.join([
-                self.item_type.full_text_search_representation(v)
+                self.item_type.full_text_search_representation(v, prop_filter)
                 for v in data if v is not None
             ])
             return retval if len(retval) > 0 else None
-        return self.item_type.full_text_search_representation(data)
+        return self.item_type.full_text_search_representation(data, prop_filter)
 
 
 # class OneOf(Type):
@@ -156,7 +156,7 @@ class List(Type):
 #                 pass
 #         raise jsonschema.ValidationError("Not valid for any type")
 #
-#     def full_text_search_representation(self, data: T.Any):
+#     def full_text_search_representation(self, data: T.Any, prop_filter: set):
 #         raise NotImplementedError()
 #
 #     def canonicalize(self, data: T.Any, **kwargs):
@@ -213,11 +213,11 @@ class Object(Type):
             retval['required'] = required
         return retval
 
-    def full_text_search_representation(self, data: dict):
+    def full_text_search_representation(self, data: dict, prop_filter: set):
         ftsr = (
-            value.full_text_search_representation(data[key])
+            value.full_text_search_representation(data[key], prop_filter)
             for key, value in self.properties
-            if key in data
+            if key in data and (prop_filter is None or key in prop_filter)
         )
         retval = '\n\n'.join(v for v in ftsr if v is not None)
         return retval if len(retval) > 0 else None
@@ -274,7 +274,7 @@ class String(Type):
             retval['minLength'] = 1
         return retval
 
-    def full_text_search_representation(self, data: str):
+    def full_text_search_representation(self, data: str, prop_filter: set):
         return data
 
     def canonicalize(self, value: T.Optional[str]):
@@ -334,7 +334,7 @@ class Enum(String):
         retval['enumNames'] = [v[1] for v in self.values]
         return retval
 
-    def full_text_search_representation(self, data: str):
+    def full_text_search_representation(self, data: str, prop_filter: set):
         return self.dict[data]
 
 
@@ -360,7 +360,7 @@ class Integer(Type):
                 retval[k] = v
         return retval
 
-    def full_text_search_representation(self, data: T.Any):
+    def full_text_search_representation(self, data: T.Any, prop_filter: set):
         return str(data) if isinstance(data, int) else None
 
     def canonicalize(self, value: T.Optional[str]):
@@ -375,50 +375,3 @@ class Integer(Type):
                 raise ValueError("{}: not an integer".format(value))
             return retval
         raise TypeError("{}: not an integer".format(value))
-
-
-DISTRIBUTION = Object()
-DISTRIBUTION.add('dct:title', String())
-DISTRIBUTION.add('dct:description', String())
-DISTRIBUTION.add('dct:issued', Date())
-DISTRIBUTION.add('dct:modified', Date())
-DISTRIBUTION.add('dct:license', String())
-DISTRIBUTION.add('dct:rights', String())
-DISTRIBUTION.add('dcat:accessURL', String(format='uri'))
-DISTRIBUTION.add('dcat:downloadURL', String(format='uri'))
-DISTRIBUTION.add('dcat:mediaType', String(pattern=r'^[-\w.]+/[-\w.]+$'))
-DISTRIBUTION.add('dct:format', String())
-DISTRIBUTION.add('dcat:byteSize', Integer(minimum=0))
-
-
-VCARD = Object()
-VCARD.add('vcard:fn', PlainTextLine(required='unknown'))
-
-
-FOAF_AGENT = Object()
-FOAF_AGENT.add('foaf:name', PlainTextLine(required='unknown'))
-
-
-DATASET = Object()
-DATASET.add('dct:title', String())
-DATASET.add('dct:description', String())
-DATASET.add('dct:issued', Date())
-DATASET.add('dct:modified', Date())
-DATASET.add('dct:identifier', PlainTextLine())
-DATASET.add('dcat:keyword', List(PlainTextLine()))
-DATASET.add('dct:language', Language())
-DATASET.add('dcat:contactPoint', VCARD)
-DATASET.add('dct:Temporal', String())
-DATASET.add('dct:Spatial', String())
-DATASET.add('dct:accrualPeriodicity', String())
-DATASET.add('dcat:landingPage', String(format='uri'))
-DATASET.add('dcat:theme', String(format='uri'))
-DATASET.add('dct:publisher', FOAF_AGENT)
-DATASET.add('dcat:distribution', DISTRIBUTION)
-
-
-# import json
-# print(json.dumps(
-#     DATASET.schema,
-#     indent='  ', sort_keys=True
-# ))

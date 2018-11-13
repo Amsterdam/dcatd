@@ -40,23 +40,28 @@ CREATE TABLE IF NOT EXISTS "dataset" (
 CREATE INDEX IF NOT EXISTS "idx_id_etag" ON "dataset" ("id", "etag");
 CREATE INDEX IF NOT EXISTS "idx_full_text_search" ON "dataset" USING gin ("searchable_text");
 CREATE INDEX IF NOT EXISTS "idx_json_docs" ON "dataset" USING gin ("doc" jsonb_path_ops);
+SET default_text_search_config='simple'
 '''
 
-# TODO: er kunnen meerdere resource per endpoint zijn. Daarom werkt dit niet. Er moet een extra tabel komen met selectors per accessURL
-
+SEARCH_VECTOR = "SETWEIGHT(TO_TSVECTOR(${:d}), 'A') || SETWEIGHT(TO_TSVECTOR(${:d}), 'B') || \
+SETWEIGHT(TO_TSVECTOR(${:d}), 'C') || SETWEIGHT(TO_TSVECTOR(${:d}), 'D')"
 _Q_HEALTHCHECK = 'SELECT 1'
 _Q_RETRIEVE_DOC = 'SELECT doc, etag FROM "dataset" WHERE id = $1'
-_Q_INSERT_DOC = 'INSERT INTO "dataset" (id, doc, searchable_text, lang, etag) VALUES ($1, $2, to_tsvector($3, $4), $3, $5)'
-_Q_UPDATE_DOC = 'UPDATE "dataset" SET doc=$1, searchable_text=to_tsvector($2, $3), lang=$2, etag=$4 WHERE id=$5 AND etag=ANY($6) RETURNING id'
+_Q_INSERT_DOC = 'INSERT INTO "dataset" (id, doc, searchable_text, lang, etag) VALUES ($1, $2, ' + \
+                   SEARCH_VECTOR.format(3, 4, 5, 6) + ', $7, $8)'
+_Q_UPDATE_DOC = 'UPDATE "dataset" SET doc=$1, searchable_text=' + \
+                   SEARCH_VECTOR.format(2, 3, 4, 5) + ', etag=$6 WHERE id=$7 AND etag=ANY($8) RETURNING id'
+
 _Q_DELETE_DOC = 'DELETE FROM "dataset" WHERE id=$1 AND etag=ANY($2) RETURNING id'
 _Q_RETRIEVE_ALL_DOCS = 'SELECT doc FROM "dataset"'
 _Q_SEARCH_DOCS = """
-SELECT id, doc, ts_rank_cd(searchable_text, query) AS rank
-FROM "dataset", to_tsquery($1, $2) query
-WHERE (''=$2::varchar OR searchable_text @@ query) {filters}
-AND ('simple'=$1::varchar OR lang=$1::varchar)
+SELECT id, doc, 2 * ts_rank_cd(searchable_text, fullmatch_query) + ts_rank_cd(searchable_text, prefix_query) AS rank
+FROM "dataset", to_tsquery($1) prefix_query, to_tsquery($2) fullmatch_query
+WHERE (''=$1::varchar OR searchable_text @@ prefix_query) {filters}
 ORDER BY rank DESC;
 """
+
+
 _Q_LIST_DOCS = """
 SELECT id, doc
 FROM "dataset"
@@ -194,7 +199,7 @@ async def storage_retrieve(app: T.Mapping[str, T.Any], docid: str, etags: T.Opti
 
 
 @_hookimpl
-async def storage_create(app: T.Mapping[str, T.Any], docid: str, doc: dict, searchable_text: str,
+async def storage_create(app: T.Mapping[str, T.Any], docid: str, doc: dict, searchable_text: dict,
                          iso_639_1_code: T.Optional[str]) -> str:
     # language=rst
     """ Store a new document.
@@ -203,7 +208,7 @@ async def storage_create(app: T.Mapping[str, T.Any], docid: str, doc: dict, sear
     :param docid: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
-    :param searchable_text: this will be indexed for free-text search.
+    :param searchable_text: dictionary with search strings for A,B,C and D weights
     :param iso_639_1_code: the language of the document.
     :returns: new ETag
     :raises: KeyError if the docid already exists.
@@ -212,14 +217,22 @@ async def storage_create(app: T.Mapping[str, T.Any], docid: str, doc: dict, sear
     new_etag = _etag_from_str(new_doc)
     lang = _iso_639_1_code_to_pg(iso_639_1_code)
     try:
-        await app['pool'].execute(_Q_INSERT_DOC, docid, new_doc, lang, searchable_text, new_etag)
+        await app['pool'].execute(_Q_INSERT_DOC,
+                                  docid,
+                                  new_doc,
+                                  searchable_text.get('A', ''),
+                                  searchable_text.get('B', ''),
+                                  searchable_text.get('C', ''),
+                                  searchable_text.get('D', ''),
+                                  lang,
+                                  new_etag)
     except asyncpg.exceptions.UniqueViolationError as e:
         raise KeyError from e
     return new_etag
 
 
 @_hookimpl
-async def storage_update(app: T.Mapping[str, T.Any], docid: str, doc: dict, searchable_text: str,
+async def storage_update(app: T.Mapping[str, T.Any], docid: str, doc: dict, searchable_text: dict,
                          etags: T.Set[str], iso_639_1_code: T.Optional[str]) \
         -> str:
     # language=rst
@@ -229,7 +242,7 @@ async def storage_update(app: T.Mapping[str, T.Any], docid: str, doc: dict, sear
     :param docid: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
-    :param searchable_text: this will be indexed for free-text search.
+    :param searchable_text: dictionary with search strings for A,B,C and D weights
     :param etags: one or more Etags.
     :param iso_639_1_code: the language of the document.
     :returns: new ETag
@@ -238,8 +251,15 @@ async def storage_update(app: T.Mapping[str, T.Any], docid: str, doc: dict, sear
     """
     new_doc = json.dumps(doc, ensure_ascii=False, sort_keys=True)
     new_etag = _etag_from_str(new_doc)
-    lang = _iso_639_1_code_to_pg(iso_639_1_code)
-    if (await app['pool'].fetchval(_Q_UPDATE_DOC, new_doc, lang, searchable_text, new_etag, docid, list(etags))) is None:
+    if (await app['pool'].fetchval(_Q_UPDATE_DOC,
+                                   new_doc,
+                                   searchable_text.get('A', ''),
+                                   searchable_text.get('B', ''),
+                                   searchable_text.get('C', ''),
+                                   searchable_text.get('D', ''),
+                                   new_etag,
+                                   docid,
+                                   list(etags))) is None:
         raise ValueError
     return new_etag
 
@@ -398,7 +418,7 @@ async def search_search(
     # if we have a query we should perform a free-text search ordered by
     # relevance, otherwise we should do a sorted listing.
     if len(q) > 0:
-        result_iterator = _execute_search_query(app, filterexpr, lang, q)
+        result_iterator = _execute_search_query(app, filterexpr, q)
     else:
         result_iterator = _execute_list_query(app, filterexpr, lang, sortpath)
     # now iterate over the results
@@ -440,15 +460,17 @@ async def _execute_list_query(app, filterexpr: str, lang: str, sortpath: T.List[
                 yield row['id'], json.loads(row['doc'])
 
 
-async def _execute_search_query(app, filterexpr: str, lang: str, q: str):
-    query = _to_pg_json_query(q)
+async def _execute_search_query(app, filterexpr: str, q: str):
+    prefix_query = _to_pg_json_query(q)
+    fullmatch_query = _to_pg_json_query_fullmatch(q)
+
     async with app['pool'].acquire() as con:
         # use a cursor so we can stream
         async with con.transaction():
             stmt = await con.prepare(
                 _Q_SEARCH_DOCS.format(filters=filterexpr)
             )
-            async for row in stmt.cursor(lang, query):
+            async for row in stmt.cursor(prefix_query, fullmatch_query):
                 yield row['id'], json.loads(row['doc'])
 
 
@@ -528,9 +550,33 @@ def _to_pg_lang(iso_639_1_code: str) -> str:
 
 
 def _to_pg_json_query(q: str) -> str:
+    """
+
+    Args:
+        q: strings(s) to search for
+
+    Returns:
+        Postgres expression for prefix match with AND search for each term
+
+    """
     #   escape single quote (lexeme-demarcator in pg fulltext search) in words
     words = [t.replace("'", "[\\']") for t in q.split()]
     return ' & '.join("{}:*".format(w) for w in words)
+
+
+def _to_pg_json_query_fullmatch(q: str) -> str:
+    """
+
+    Args:
+        q: strings(s) to search for
+
+    Returns:
+        Postgres expression for fulltext match with AND search for each term
+
+    """
+    #   escape single quote (lexeme-demarcator in pg fulltext search) in words
+    words = [t.replace("'", "[\\']") for t in q.split()]
+    return ' & '.join("{}:".format(w) for w in words)
 
 
 def _etag_from_str(s: str) -> str:

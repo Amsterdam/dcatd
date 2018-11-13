@@ -52,7 +52,7 @@ _startup_actions = [
     #   DISABLE replace_old_identifiers until Service  & Delivery did check if old URL links are still used
     #   and this can be done without too much impact.
     #    ("replace_old_identifiers", replace_old_identifiers),
-    ("rw_all_2018_11_07", read_write_all),
+    ("rw_all_2018_11_12", read_write_all),
 ]
 
 

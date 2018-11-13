@@ -7,6 +7,8 @@ import typing as T
 from aiopluggy import HookimplMarker
 from pyld import jsonld
 
+from datacatalog.dcat import PlainTextLine, List, String
+from .fieldtypes import Markdown
 from .constants import CONTEXT
 from .dataset import DATASET, DISTRIBUTION
 
@@ -290,8 +292,13 @@ async def mds_json_schema(app, method: str) -> dict:
 
 
 @_hookimpl
-def mds_full_text_search_representation(data: dict) -> str:
-    return DATASET.full_text_search_representation(data)
+def mds_full_text_search_representation(data: dict) -> dict:
+    result = dict()
+    result['A'] = DATASET.full_text_search_representation(data, {'dct:title', 'dcat:distribution'})
+    result['B'] = DATASET.full_text_search_representation(data, {'dcat:theme', 'dcat:keyword'})
+    result['C'] = DATASET.full_text_search_representation(data, {'dct:description', 'dcat:keyword'})
+    result['D'] = DATASET.full_text_search_representation(data, {'ams:owner', 'overheid:grondslag', 'overheidds:doel'})
+    return result
 
 
 @_hookimpl
