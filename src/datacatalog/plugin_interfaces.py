@@ -118,7 +118,7 @@ def storage_retrieve(app, docid: str, etags: T.Optional[T.Set[str]]) \
 
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_create(app, docid: str, doc: dict, searchable_text: str,
+def storage_create(app, docid: str, doc: dict, searchable_text: dict,
                    iso_639_1_code: T.Optional[str]) -> str:
     # language=rst
     """ Store a new document.
@@ -127,16 +127,17 @@ def storage_create(app, docid: str, doc: dict, searchable_text: str,
     :param docid: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
-    :param searchable_text: this will be indexed for free-text search.
+    :param searchable_text: dictionary with search strings for A,B,C and D weights.
     :param iso_639_1_code: the language of the document.
     :returns: new ETag
     :raises: KeyError if the docid already exists.
     """
 
 
+
 # noinspection PyUnusedLocal
 @hookspec.first_only.required
-def storage_update(app, docid: str, doc: dict, searchable_text: str,
+def storage_update(app, docid: str, doc: dict, searchable_text: dict,
                    etags: T.Set[str], iso_639_1_code: T.Optional[str]) \
         -> str:
     # language=rst
@@ -146,7 +147,7 @@ def storage_update(app, docid: str, doc: dict, searchable_text: str,
     :param docid: the ID under which to store this document. May or may not
         already exist in the data store.
     :param doc: the document to store; a "JSON dictionary".
-    :param searchable_text: this will be indexed for free-text search.
+    :param searchable_text: dictionary with search strings for A,B,C and D weights.
     :param etags: one or more Etags.
     :param iso_639_1_code: the language of the document.
     :returns: new ETag
@@ -334,9 +335,9 @@ def mds_json_schema(app, method: str) -> dict:
 
 # noinspection PyUnusedLocal
 @hookspec.first_only
-def mds_full_text_search_representation(data: dict) -> str:
+def mds_full_text_search_representation(data: dict) -> dict:
     # language=rst
-    """Full text search representation of the given data.
+    """Full text search representation of the given data as A,B,C and D weights in dict.
     """
 
 

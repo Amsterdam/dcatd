@@ -1,5 +1,4 @@
 import logging
-from .handlers import datasets
 
 
 logger = logging.getLogger(__name__)
@@ -16,6 +15,32 @@ async def replace_old_identifiers(app):
         if result == 'UPDATE 1':
             changed += 1
     logger.info(f'Set new identifiers for {changed} datasets')
+    if changed == count:
+        return True
+    else:
+        return False
+
+
+async def read_write_all(app):
+    dataset_iterator = await app.hooks.storage_all(app=app)
+    count = 0
+    changed = 0
+    logger.info('start rewriting datasets')
+    async for docid, etag, doc in dataset_iterator:
+        canonical_doc = await app.hooks.mds_canonicalize(app=app, data=doc)
+        canonical_doc = await app.hooks.mds_before_storage(app=app, data=canonical_doc, old_data=canonical_doc)
+        # Let the metadata plugin grab the full-text search representation
+        searchable_text = await app.hooks.mds_full_text_search_representation(
+            data=canonical_doc
+        )
+        count += 1
+        result = await app.hooks.storage_update(
+            app=app, docid=docid, doc=canonical_doc,
+            searchable_text=searchable_text, etags={etag},
+            iso_639_1_code="nl")
+        if result:
+            changed += 1
+    logger.info(f'read_write for {changed} datasets')
     if changed == count:
         return True
     else:
@@ -62,6 +87,7 @@ _startup_actions = [
     #   and this can be done without too much impact.
     #    ("replace_old_identifiers", replace_old_identifiers),
     ("rw_all_2018_11_14", read_write_all_ch_shape_format),
+    ("rw_all_2018_11_12", read_write_all),
 ]
 
 
