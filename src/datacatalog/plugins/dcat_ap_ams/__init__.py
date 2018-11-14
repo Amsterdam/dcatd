@@ -23,6 +23,7 @@ def _datasets_url(app) -> str:
     else:
         return 'http://localhost:8000/datasets'
 
+
 def _get_sort_modified(doc: dict) -> str:
     # language=rst
     """Sorteerdatum.
@@ -91,20 +92,20 @@ def initialize_sync(app):
     _BASE_URL = app.config['web']['baseurl']
 
 
-def _distributions_vary(a: dict, b: dict) -> bool:
+def _distributions_vary(a: dict, b: dict, exclude: set) -> bool:
     vary = False
-    for name, property in DISTRIBUTION.properties:
-        if not property.read_only and a.get(name) != b.get(name):
+    for name, property1 in DISTRIBUTION.properties:
+        if name not in exclude and not property1.read_only and a.get(name) != b.get(name):
             vary = True
     return vary
 
 
-def _datasets_vary(a: dict, b:dict) -> bool:
+def _datasets_vary(a: dict, b: dict) -> bool:
     vary = False
-    for name, property in DATASET.properties:
+    for name, property1 in DATASET.properties:
         if name == 'dcat:distribution':
             continue
-        if not property.read_only and a.get(name) != b.get(name):
+        if not property1.read_only and a.get(name) != b.get(name):
             vary = True
     return vary
 
@@ -156,8 +157,18 @@ def mds_before_storage(app, data, old_data=None) -> dict:
                         'dct:modified': '1970-01-01'
                     }
                 distribution['foaf:isPrimaryTopicOf'] = old_foaf
-                if _distributions_vary(distribution, old_distribution):
+                # dct:modified and dcat:accessURL are not checked for changes in
+                # 'foaf:isPrimaryTopicOf'->'dct:modified'
+                if _distributions_vary(distribution, old_distribution, {'dct:modified', 'dcat:accessURL'}):
                     distribution['foaf:isPrimaryTopicOf']['dct:modified'] = datetime.date.today().isoformat()
+                # dct:modified is set if accessURL is changed AND the date was not changed manually
+                # by the frontend.
+                # TODO : check if this should only be done by the frontend
+                if distribution.get('dct:modified') is None or (
+                        distribution.get('dcat:accessURL') != old_distribution.get(
+                        'dcat:accessURL') and distribution.get('dct:modified') == old_distribution.get('dct:modified')):
+                    distribution['dct:modified'] = datetime.date.today().isoformat()
+
     else:
         retval['foaf:isPrimaryTopicOf'] = {
             'dct:issued': datetime.date.today().isoformat(),
@@ -169,7 +180,7 @@ def mds_before_storage(app, data, old_data=None) -> dict:
                 'dct:modified': datetime.date.today().isoformat()
             }
 
-    all_mediatypes = set( [mt[0] for mt in DCT_FORMATS])
+    all_mediatypes = set([mt[0] for mt in DCT_FORMATS])
     for distribution in distributions:
         if 'dcat:mediaType' in distribution:
             distribution['dct:format'] = distribution['dcat:mediaType']
@@ -192,10 +203,10 @@ def mds_after_storage(app, data, doc_id):
     # in the database has been converted.
     # TODO: Remove
     if 'ams:license' in retval:  # Inherit license from dataset
-        license = retval['ams:license']
+        license1 = retval['ams:license']
         for distribution in retval.get('dcat:distribution', []):
             if 'dct:license' not in distribution:
-                distribution['dct:license'] = license
+                distribution['dct:license'] = license1
 
     if 'overheid:authority' not in retval:
         retval['overheid:authority'] = 'overheid:Amsterdam'

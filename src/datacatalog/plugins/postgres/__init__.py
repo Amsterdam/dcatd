@@ -595,6 +595,8 @@ def _iso_639_1_code_to_pg(iso_639_1_code: str) -> str:
 
 all_startup_actions = None
 
+# TODO : make this check work in way it is executed on only one server in case the service is restarted
+# on multiple servers
 
 @_hookimpl
 async def check_startup_action(app: T.Mapping[str, T.Any], name: str) -> bool:
