@@ -7,7 +7,7 @@ import typing as T
 from aiopluggy import HookimplMarker
 from pyld import jsonld
 
-from .constants import CONTEXT
+from .constants import CONTEXT, DCT_FORMATS
 from .dataset import DATASET, DISTRIBUTION
 
 
@@ -167,6 +167,8 @@ def mds_before_storage(app, data, old_data=None) -> dict:
                 'dct:issued': datetime.date.today().isoformat(),
                 'dct:modified': datetime.date.today().isoformat()
             }
+
+    all_mediatypes = set( [mt[0] for mt in DCT_FORMATS])
     for distribution in distributions:
         if 'dcat:mediaType' in distribution:
             distribution['dct:format'] = distribution['dcat:mediaType']
@@ -174,7 +176,7 @@ def mds_before_storage(app, data, old_data=None) -> dict:
             distribution['dcat:mediaType'] = distribution['dct:format']
 
         if 'ams:distributionType' in distribution and distribution['ams:distributionType'] == 'file' and (
-                'dcat:mediaType' not in distribution or distribution['dcat:mediaType'] == ''):
+                'dcat:mediaType' not in distribution or distribution['dcat:mediaType'] not in all_mediatypes):
             distribution['dct:format'] = distribution['dcat:mediaType'] = 'application/octet-stream'
 
     # Add ams:sort_modified:

@@ -22,13 +22,22 @@ async def replace_old_identifiers(app):
         return False
 
 
-async def read_write_all(app):
+async def read_write_all_ch_shape_format(app):
     dataset_iterator = await app.hooks.storage_all(app=app)
     count = 0
     changed = 0
     logger.info('start rewriting datasets')
     async for docid, etag, doc in dataset_iterator:
         canonical_doc = await app.hooks.mds_canonicalize(app=app, data=doc)
+        for distribution in canonical_doc.get('dcat:distribution', []):
+            # TODO : remove code once it is in production
+            # Rename old shape mediatype because the semicolon gives problems with filtering
+            if 'dcat:mediaType' in distribution and distribution['dcat:mediaType'] == 'application/zip; format="shp"':
+                distribution['dcat:mediaType'] = 'application/x-zipped-shp'
+            if 'dct:format' in distribution and distribution['dct:format'] == 'application/zip; format="shp"':
+                distribution['dct:format'] = 'application/x-zipped-shp'
+            # END TODO : remove code once it is in production
+
         canonical_doc = await app.hooks.mds_before_storage(app=app, data=canonical_doc, old_data=canonical_doc)
         # Let the metadata plugin grab the full-text search representation
         searchable_text = await app.hooks.mds_full_text_search_representation(
@@ -52,7 +61,7 @@ _startup_actions = [
     #   DISABLE replace_old_identifiers until Service  & Delivery did check if old URL links are still used
     #   and this can be done without too much impact.
     #    ("replace_old_identifiers", replace_old_identifiers),
-    ("rw_all_2018_11_07", read_write_all),
+    ("rw_all_2018_11_14", read_write_all_ch_shape_format),
 ]
 
 

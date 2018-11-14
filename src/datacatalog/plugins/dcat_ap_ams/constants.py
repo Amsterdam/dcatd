@@ -481,7 +481,7 @@ DCT_FORMATS = [
     ('application/json', "JSON"),
     ('application/pdf', "PDF"),
     ('image/png', "PNG"),
-    ('application/zip; format="shp"', "SHP"),
+    ('application/x-zipped-shp', "SHP"),
     ('application/vnd.ms-excel', "XLS"),
     ('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', "XLSX"),
     # application/xml is the prefered media type for XML documents. RFC7303
