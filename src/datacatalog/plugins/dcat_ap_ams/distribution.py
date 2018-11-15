@@ -101,7 +101,7 @@ DISTRIBUTION = dcat.Object().add(
 ).add(
     'dcat:byteSize',
     dcat.Integer(
-        minimum=1,
+        minimum=0,
         title="Bestandsgrootte",
         description="Bestandsgrootte in bytes"
     )
