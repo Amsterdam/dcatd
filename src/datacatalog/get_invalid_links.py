@@ -101,7 +101,7 @@ async def do_work():
     await conn.close()
 
 
-def main():
+def get_invalid_links():
     start = time.time()
     loop = asyncio.get_event_loop()
 
@@ -115,4 +115,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    get_invalid_links()
