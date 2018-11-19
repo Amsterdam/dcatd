@@ -97,6 +97,8 @@ async def do_work():
                 invalid_count += 1
                 write(r[1])
     perc = invalid_count * 100 / total_count
+    write(f"\nTotal number of links   :  {total_count}")
+    write(f"Invalid number of links :  {invalid_count}")
     write(f"\nPercentage invalid URLS {perc:.2f}")
     await conn.close()
 
