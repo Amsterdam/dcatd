@@ -522,3 +522,10 @@ TEMPORAL_UNIT = [
     ('years', "Jaren"),
     ('other', "anders")
 ]
+
+STATUSES = [
+    ('in_onderzoek', "In onderzoek"),
+    ('niet_beschikbaar', "Niet beschikbaar"),
+    ('beschikbaar', "Beschikbaar"),
+    ('gepland', "Gepland")
+]

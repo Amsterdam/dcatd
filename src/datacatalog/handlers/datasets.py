@@ -178,8 +178,14 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
 
     # Extract facet filters:
     filters = {}
+    admin = query.get('role', None) == 'admin'
+    if not admin:
+        # Toon niet beschikbare datasets alleen voor admin
+        filters['/properties/ams:status'] = {}
+        filters['/properties/ams:status']['eq']='beschikbaar'
+
     for key in query:
-        if not _FACET_QUERY_KEY.fullmatch(key):
+        if not _FACET_QUERY_KEY.fullmatch(key) or (not admin and key == '/properties/ams:status'):
             continue
         if key not in filters:
             filters[key] = {}
@@ -222,20 +228,24 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
             )
 
     result_info = {}
+    facets = [
+                 '/properties/dcat:distribution/items/properties/ams:resourceType',
+                 '/properties/dcat:distribution/items/properties/dcat:mediaType',
+                 '/properties/dcat:distribution/items/properties/dct:format',
+                 '/properties/dcat:distribution/items/properties/ams:distributionType',
+                 '/properties/dcat:distribution/items/properties/ams:serviceType',
+                 '/properties/dcat:keyword/items',
+                 '/properties/dcat:theme/items',
+                 '/properties/ams:owner'
+             ]
+    if admin:
+        facets.append('/properties/ams:status')
+
     resultiterator = await hooks.search_search(
         app=request.app, q=full_text_query,
         sortpath=['ams:sort_modified'],
         result_info=result_info,
-        facets=[
-            '/properties/dcat:distribution/items/properties/ams:resourceType',
-            '/properties/dcat:distribution/items/properties/dcat:mediaType',
-            '/properties/dcat:distribution/items/properties/dct:format',
-            '/properties/dcat:distribution/items/properties/ams:distributionType',
-            '/properties/dcat:distribution/items/properties/ams:serviceType',
-            '/properties/dcat:keyword/items',
-            '/properties/dcat:theme/items',
-            '/properties/ams:owner'
-        ],
+        facets=facets,
         limit=limit, offset=offset,
         filters=filters, iso_639_1_code='nl'
     )

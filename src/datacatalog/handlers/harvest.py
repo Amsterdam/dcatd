@@ -17,7 +17,19 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     # language=rst
     """Handler for ``/datasets``"""
     hooks = request.app.hooks
-    dataset_iterator = await hooks.storage_all(app=request.app)
+
+    filters = {
+        '/properties/ams:status': {
+            'eq': 'beschikbaar'
+        }
+    }
+    result_info = {}
+    dataset_iterator = await hooks.search_search(
+        app=request.app, q='',
+        sortpath=['ams:sort_modified'],
+        result_info=result_info,
+        filters=filters, iso_639_1_code='nl'
+    )
 
     ctx = await hooks.mds_context()
     ctx_json = json.dumps(ctx)
@@ -31,7 +43,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     await response.write(b',"dcat:dataset":[')
 
     separator = b''
-    async for docid, _etag, doc in dataset_iterator:
+    async for docid, doc in dataset_iterator:
         canonical_doc = await hooks.mds_canonicalize(app=request.app, data=doc)
         canonical_doc = await hooks.mds_after_storage(app=request.app, data=canonical_doc, doc_id=docid)
         del canonical_doc['@context']
