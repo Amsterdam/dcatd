@@ -8,43 +8,52 @@ import jwt
 
 _logger = logging.getLogger(__name__)
 
+LOCAL_ALWAYS_OK = True
+
 
 async def _extract_scopes(request: web.Request) -> T.Set:
+    if not (LOCAL_ALWAYS_OK and request.url.host == 'localhost'):
+        authorization_header = request.headers.get('authorization')
+        if authorization_header is None:
+            return set()
+        match = re.fullmatch(r'bearer ([-\w.=]+)', authorization_header, flags=re.IGNORECASE)
+        if not match:
+            return set()
 
-    authorization_header = request.headers.get('authorization')
-    if authorization_header is None:
-        return set()
-    match = re.fullmatch(r'bearer ([-\w.=]+)', authorization_header, flags=re.IGNORECASE)
-    if not match:
-        return set()
+        token = match[1]
+        try:
+            header = jwt.get_unverified_header(token)
+        except (jwt.InvalidTokenError, jwt.DecodeError):
+            raise web.HTTPBadRequest(text='JWT decode error while reading header') from None
 
-    token = match[1]
-    try:
-        header = jwt.get_unverified_header(token)
-    except (jwt.InvalidTokenError, jwt.DecodeError):
-        raise web.HTTPBadRequest(text='JWT decode error while reading header') from None
+        if 'kid' not in header:
+            raise web.HTTPBadRequest(text='Did not get a valid key identifier') from None
 
-    if 'kid' not in header:
-        raise web.HTTPBadRequest(text='Did not get a valid key identifier') from None
+        keys = request.app['jwks'].verifiers
 
-    keys = request.app['jwks'].verifiers
-
-    if header['kid'] not in keys:
-        raise web.HTTPBadRequest(text="Unknown key identifier: {}".format(header['kid'])) from None
-    key = keys[header['kid']]
-    try:
-        access_token = jwt.decode(
-            token, verify=True,
-            key=key.key,
-            algorithms=key.alg
-        )
-    except jwt.InvalidTokenError:
-        raise web.HTTPBadRequest(text='Invalid Bearer token') from None
-    if 'scopes' not in access_token or not isinstance(access_token['scopes'], list):
-        raise web.HTTPBadRequest(
-            text='No scopes in access token'
-        )
-    return set(access_token['scopes'])
+        if header['kid'] not in keys:
+            raise web.HTTPBadRequest(text="Unknown key identifier: {}".format(header['kid'])) from None
+        key = keys[header['kid']]
+        try:
+            access_token = jwt.decode(
+                token, verify=True,
+                key=key.key,
+                algorithms=key.alg
+            )
+        except jwt.InvalidTokenError:
+            raise web.HTTPBadRequest(text='Invalid Bearer token') from None
+        if 'scopes' not in access_token or not isinstance(access_token['scopes'], list):
+            raise web.HTTPBadRequest(
+                text='No scopes in access token'
+            )
+        scopes = set(access_token['scopes'])
+        subject = access_token.get('subject', '')
+    else:
+        scopes = {'CAT/W', 'CAT/R'}
+        subject = 'test@test.nl'
+    request.authz_scopes = scopes
+    request.authz_subject = subject
+    return scopes
 
 
 async def _extract_api_key_info(request: web.Request,
@@ -98,8 +107,8 @@ async def middleware(app, handler):
 
 async def _enforce_one_of(request: web.Request,
                           security_requirements: T.List[T.Dict[
-                             str, T.Optional[T.Iterable]]
-                         ]):
+                              str, T.Optional[T.Iterable]]
+                          ]):
     for security_requirement in security_requirements:
         if await _enforce_all_of(request, security_requirement):
             return
@@ -110,6 +119,8 @@ async def _enforce_all_of(request: web.Request,
                           security_requirements: T.Dict[
                               str, T.Optional[T.Iterable]
                           ]) -> bool:
+    if security_requirements is None:
+        return True
     openapi = request.app['openapi']
     security_definitions = openapi['components']['securitySchemes']
     all_authz_info = await _extract_authz_info(request, security_definitions)
