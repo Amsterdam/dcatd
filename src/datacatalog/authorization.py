@@ -8,7 +8,7 @@ import jwt
 
 _logger = logging.getLogger(__name__)
 
-LOCAL_ALWAYS_OK = True
+LOCAL_ALWAYS_OK = False
 
 
 async def _extract_scopes(request: web.Request) -> T.Set:
