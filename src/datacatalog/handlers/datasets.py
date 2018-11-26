@@ -1,13 +1,10 @@
 import csv
 import json.decoder
-# import os.path
 import logging
 import re
 import typing as T
-# import urllib.parse
 
 from aiohttp import web
-from pyld import jsonld
 
 from aiohttp_extras import conditional
 from aiohttp_extras.content_negotiation import produces_content_types
@@ -48,21 +45,6 @@ async def get(request: web.Request):
     canonical_doc = await hooks.mds_canonicalize(app=request.app, data=doc)
     canonical_doc = await hooks.mds_after_storage(app=request.app, data=canonical_doc, doc_id=docid)
 
-    # identifiers_added = await _add_distribution_identifiers(request.app, canonical_doc)
-    # if identifiers_added > 0:
-    #     # Let the metadata plugin grab the full-text search representation
-    #     searchable_text = await hooks.mds_full_text_search_representation(
-    #         data=canonical_doc
-    #     )
-    #
-    #     new_etag = await hooks.storage_update(
-    #         app=request.app, docid=docid, doc=canonical_doc,
-    #         searchable_text=searchable_text, etags={etag},
-    #         iso_639_1_code="nl")
-    #     etag = new_etag
-    #     logger.debug(f'Added {identifiers_added} identifiers for {docid}')
-
-    # TODO: validate the current document and
     return web.json_response(canonical_doc, headers={
         'Etag': etag, 'content_type': 'application/ld+json'
     })
@@ -70,6 +52,11 @@ async def get(request: web.Request):
 
 async def put(request: web.Request):
     hooks = request.app.hooks
+
+    if hasattr(request, "authz_subject"):
+        subject = request.authz_subject
+        scopes = request.authz_scopes
+        _logger.warning(f"AUTHZ  subject {subject}, scopes {scopes}")
     # Grab the document from the request body and canonicalize it.
     try:
         doc = await request.json()
@@ -176,10 +163,25 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     hooks = request.app.hooks
     query = request.query
 
+    admin = False
+    if hasattr(request, "authz_scopes"):
+        scopes = request.authz_scopes
+        if 'CAT/W' in scopes or 'CAT/R' in scopes:
+            admin = True
+
+    if admin:
+        # show non-available datasets only to admin
+        filters = {}
+    else:
+        filters = {
+            '/properties/ams:status': {
+                'eq': 'beschikbaar'
+            }
+        }
+
     # Extract facet filters:
-    filters = {}
     for key in query:
-        if not _FACET_QUERY_KEY.fullmatch(key):
+        if not _FACET_QUERY_KEY.fullmatch(key) or (not admin and key == '/properties/ams:status'):
             continue
         if key not in filters:
             filters[key] = {}
@@ -222,20 +224,24 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
             )
 
     result_info = {}
+    facets = [
+                 '/properties/dcat:distribution/items/properties/ams:resourceType',
+                 '/properties/dcat:distribution/items/properties/dcat:mediaType',
+                 '/properties/dcat:distribution/items/properties/dct:format',
+                 '/properties/dcat:distribution/items/properties/ams:distributionType',
+                 '/properties/dcat:distribution/items/properties/ams:serviceType',
+                 '/properties/dcat:keyword/items',
+                 '/properties/dcat:theme/items',
+                 '/properties/ams:owner'
+             ]
+    if admin:
+        facets.append('/properties/ams:status')
+
     resultiterator = await hooks.search_search(
         app=request.app, q=full_text_query,
         sortpath=['ams:sort_modified'],
         result_info=result_info,
-        facets=[
-            '/properties/dcat:distribution/items/properties/ams:resourceType',
-            '/properties/dcat:distribution/items/properties/dcat:mediaType',
-            '/properties/dcat:distribution/items/properties/dct:format',
-            '/properties/dcat:distribution/items/properties/ams:distributionType',
-            '/properties/dcat:distribution/items/properties/ams:serviceType',
-            '/properties/dcat:keyword/items',
-            '/properties/dcat:theme/items',
-            '/properties/ams:owner'
-        ],
+        facets=facets,
         limit=limit, offset=offset,
         filters=filters, iso_639_1_code='nl'
     )
@@ -315,6 +321,11 @@ async def link_redirect(request: web.Request):
 
 
 async def post_collection(request: web.Request):
+    if hasattr(request, "authz_subject"):
+        subject = request.authz_subject
+        scopes = request.authz_scopes
+        _logger.warning(f"AUTHZ  subject {subject}, scopes {scopes}")
+
     hooks = request.app.hooks
     datasets_url = _datasets_url(request)
     # Grab the document from the request body and canonicalize it.

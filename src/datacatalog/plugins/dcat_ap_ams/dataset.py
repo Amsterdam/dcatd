@@ -189,4 +189,13 @@ DATASET = dcat.Object().add(
         title="Sorteerdatum",
         read_only=True
     )
+).add(
+    'ams:status',
+    dcat.Enum(
+        constants.STATUSES,
+        title="Status",
+        description="Beschikbaar of anders",
+        required='beschikbaar',
+        default='gepland'
+    )
 )
