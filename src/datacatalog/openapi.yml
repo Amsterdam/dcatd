@@ -43,7 +43,7 @@ paths:
       security:
       - OAuth2:
         - CAT/W
-      -
+      - OAuth2: []
       responses:
         200:
           description: A list of datasets.
