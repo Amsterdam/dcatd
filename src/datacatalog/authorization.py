@@ -119,9 +119,6 @@ async def _enforce_all_of(request: web.Request,
                           security_requirements: T.Dict[
                               str, T.Optional[T.Iterable]
                           ]) -> bool:
-    if len(security_requirements) == 1 and len(list(security_requirements.values())[0]) == 0:
-        # These checks are not really needed but they avoid unneeded calls below
-         return True
     openapi = request.app['openapi']
     security_definitions = openapi['components']['securitySchemes']
     all_authz_info = await _extract_authz_info(request, security_definitions)
