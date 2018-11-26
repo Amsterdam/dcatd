@@ -19,6 +19,15 @@ DATASET = dcat.Object().add(
         required='Geen beschrijving opgegeven'
     )
 ).add(
+    'ams:status',
+    dcat.Enum(
+        constants.STATUSES,
+        title="Status",
+        description="Let op: deze status geldt alleen voor de weergave in City Data. Via andere wegen blijft de dataset te raadplegen, ongeacht de status.",
+        required='beschikbaar',
+        default='gepland'
+    )
+).add(
     'dcat:distribution',
     dcat.List(
         DISTRIBUTION,
@@ -188,14 +197,5 @@ DATASET = dcat.Object().add(
     dcat.Date(
         title="Sorteerdatum",
         read_only=True
-    )
-).add(
-    'ams:status',
-    dcat.Enum(
-        constants.STATUSES,
-        title="Status",
-        description="Beschikbaar of anders",
-        required='beschikbaar',
-        default='gepland'
     )
 )
