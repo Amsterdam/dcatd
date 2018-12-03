@@ -1,5 +1,3 @@
-import re
-
 import aiohttp
 import asyncio
 import asyncpg
@@ -64,7 +62,7 @@ async def check_link(id: str, r_id: str, title: str, r_title: str, url: str):
         except Exception as exc:
             status = 400
             message = str(exc)
-        message = f"{status} : ({id},{r_id}): {title},{r_title} : {url}: {message}"
+        message = f"{status}|{id}|{r_id}|{title}|{r_title}|{url}|{message}"
         return (status, message)
 
 
@@ -107,9 +105,8 @@ async def do_work(make_unavailable):
             if r[0] >= 400:
                 invalid_count += 1
                 write(r[1])
-                m = re.match('[^,]+: \(([^,]+)', r[1])
-                if m:
-                    dataset_links[m.group(1)]['invalid_links' ] += 1
+                doc_id = r[1].split('|')[1]
+                dataset_links[doc_id]['invalid_links' ] += 1
 
     unavailable_count = 0
     if make_unavailable:
