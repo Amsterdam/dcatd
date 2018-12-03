@@ -142,16 +142,8 @@ somewhat filled database
 Load production data
 --------------------
 
-If you need to load production data  in development you can do the following commands
-The first two commands should not be required if database backups would correctly
-create the dcatd_latest.gz link. However this is currently not the case. That is
-why we need to copy manually with::
+If you need to load acceptation data in development you can import this with :
 
-    scp admin.datapunt.amsterdam.nl:/mnt/backup_postgres/dcatd_2018-10-30.gz /tmp/
-    docker cp  /tmp/dcatd_2018-10-30.gz  dcatd_database_1:/tmp/dcatd_latest.gz
-
-
-Then we can load it in Postgres with :
 
     docker-compose exec database update-db.sh dcatd <yourname>
 
@@ -172,3 +164,15 @@ Run the following command to push latest version to github:
 
     make -C sphinx gh-pages
 
+Check invalid links in DCAT
+---------------------------
+
+::
+
+    python get_invalid_links.py --make_unavailable=yes
+
+With the get_invalid_links.py script is is possible to check if the URLs uses in dataset
+resource are valid links or whether they do not exist (anymore).
+
+With the parameter --make_unavailable=yes datasets that contain resources with invalid links
+are set to 'Niet beschikbaar'

@@ -1,19 +1,17 @@
+import re
+
 import aiohttp
 import asyncio
 import asyncpg
+import argparse
 import os
 import json
 import time
 
+from datacatalog.plugins.postgres import _etag_from_str
+
 MAX_REQUESTS = 10
 MAX_REDIRECTS = 5
-
-async def on_request_start(
-        session, trace_config_ctx, params):
-    print("Starting request")
-
-async def on_request_end(session, trace_config_ctx, params):
-    print("Ending request")
 
 
 def write(msg):
@@ -27,6 +25,15 @@ async def storage_all(con):
         stmt = await con.prepare(_Q)
         async for row in stmt.cursor():
             yield row['id'], row['title'], json.loads(row['doc'])
+
+
+async def update_doc(con, id, doc):
+    _Q_UPDATE_DOC = 'UPDATE "dataset" SET doc=$1, etag=$2 WHERE id=$3 RETURNING id'
+    new_doc = json.dumps(doc, ensure_ascii=False, sort_keys=True)
+    new_etag = _etag_from_str(new_doc)
+    async with con.transaction():
+        await con.execute(_Q_UPDATE_DOC, new_doc, new_etag, id);
+    return new_etag
 
 
 async def check_link(id: str, r_id: str, title: str, r_title: str, url: str):
@@ -61,7 +68,7 @@ async def check_link(id: str, r_id: str, title: str, r_title: str, url: str):
         return (status, message)
 
 
-async def do_work():
+async def do_work(make_unavailable):
     now = time.strftime("%c")
     write(f"Ongeldige URL links in datacatalogus per {now}\n\n")
     dbname = os.getenv('DB_DATABASE', 'dcatd')
@@ -78,9 +85,13 @@ async def do_work():
     invalid_count = 0
 
     checks = []
+
+    dataset_links = {}
     async for docid, title, doc in iterator:
         title = doc.get('dct:title', '')
+        dataset_links[docid] = { 'total_links' : 0, 'invalid_links' : 0}
         for distribution in doc.get('dcat:distribution', []):
+            dataset_links[docid]['total_links'] += 1
             total_count += 1
             id = distribution['dc:identifier']
             url = distribution.get('dcat:accessURL')
@@ -96,18 +107,37 @@ async def do_work():
             if r[0] >= 400:
                 invalid_count += 1
                 write(r[1])
+                m = re.match('[^,]+: \(([^,]+)', r[1])
+                if m:
+                    dataset_links[m.group(1)]['invalid_links' ] += 1
+
+    unavailable_count = 0
+    if make_unavailable:
+        iterator = storage_all(conn)
+        async for docid, title, doc in iterator:
+            if dataset_links[docid]['invalid_links'] > 0 and doc['ams:status'] == 'beschikbaar':
+                doc['ams:status'] = 'niet_beschikbaar'
+                await update_doc(conn, docid, doc)
+                unavailable_count += 1
+                write(f"Make dataset {docid} unavailable : {dataset_links[docid]['invalid_links']} invalid links from {dataset_links[docid]['total_links']}")
+
     perc = invalid_count * 100 / total_count
     write(f"\nTotal number of links   :  {total_count}")
     write(f"Invalid number of links :  {invalid_count}")
     write(f"\nPercentage invalid URLS {perc:.2f}")
+    write(f"\nDatasets made unavailable because of invalid links : {unavailable_count}")
     await conn.close()
 
 
 def get_invalid_links():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--make_unavailable", choices=['yes', 'no'], default='no', help="Maak dataset 'Niet beschikbaar' indien er een ongeldig link is")
+    args = parser.parse_args()
+
     start = time.time()
     loop = asyncio.get_event_loop()
 
-    loop.run_until_complete(do_work())
+    loop.run_until_complete(do_work(args.make_unavailable == 'yes'))
     loop.close()
 
     end = time.time()
