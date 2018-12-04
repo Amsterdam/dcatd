@@ -1,3 +1,5 @@
+import re
+
 import aiohttp
 import asyncio
 import asyncpg
@@ -5,6 +7,7 @@ import argparse
 import os
 import json
 import time
+from urllib.parse import urljoin
 
 from datacatalog.plugins.postgres import _etag_from_str
 
@@ -53,6 +56,8 @@ async def check_link(id: str, r_id: str, title: str, r_title: str, url: str):
                             https_url = 'https://' + url[7:]
                             if len(r_url) < len(https_url) and https_url.startswith(r_url):
                                 r_url = https_url
+                        if not re.match('^http(?:s)?://', r_url):
+                            r_url = urljoin(url, r_url)
                         url = r_url
                         continue
                     status = resp.status
