@@ -40,14 +40,16 @@ async def _extract_scopes(request: web.Request) -> T.Set:
                 key=key.key,
                 algorithms=key.alg
             )
+            if 'scopes' not in access_token or not isinstance(access_token['scopes'], list):
+                raise web.HTTPBadRequest(
+                    text='No scopes in access token'
+                )
+            scopes = set(access_token['scopes'])
+            subject = access_token.get('subject', '')
+        except jwt.ExpiredSignatureError:
+            return set()
         except jwt.InvalidTokenError:
             raise web.HTTPBadRequest(text='Invalid Bearer token') from None
-        if 'scopes' not in access_token or not isinstance(access_token['scopes'], list):
-            raise web.HTTPBadRequest(
-                text='No scopes in access token'
-            )
-        scopes = set(access_token['scopes'])
-        subject = access_token.get('subject', '')
     else:
         scopes = {'CAT/W', 'CAT/R'}
         subject = 'test@test.nl'
