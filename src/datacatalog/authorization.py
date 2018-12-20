@@ -45,7 +45,7 @@ async def _extract_scopes(request: web.Request) -> T.Set:
                     text='No scopes in access token'
                 )
             scopes = set(access_token['scopes'])
-            subject = access_token.get('subject', '')
+            subject = access_token.get('sub', '')
         except jwt.ExpiredSignatureError:
             return set()
         except jwt.InvalidTokenError:
