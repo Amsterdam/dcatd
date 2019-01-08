@@ -71,7 +71,7 @@ async def check_link(id: str, r_id: str, title: str, r_title: str, url: str):
         return (status, message)
 
 
-async def do_work(make_unavailable):
+async def do_work(make_unavailable, show_unavailable):
     now = time.strftime("%c")
     write(f"Ongeldige URL links in datacatalogus per {now}\n\n")
     dbname = os.getenv('DB_DATABASE', 'dcatd')
@@ -85,17 +85,22 @@ async def do_work(make_unavailable):
 
     iterator = storage_all(conn)
     total_count = 0
+    total_beschikbaar_count = 0
     invalid_count = 0
+    invalid_beschikbaar_count = 0
 
     checks = []
 
     dataset_links = {}
     async for docid, title, doc in iterator:
         title = doc.get('dct:title', '')
-        dataset_links[docid] = { 'total_links' : 0, 'invalid_links' : 0}
+        ams_status = doc.get('ams:status', 'beschikbaar')
+        dataset_links[docid] = { 'total_links' : 0, 'invalid_links' : 0, 'ams:status' : ams_status}
         for distribution in doc.get('dcat:distribution', []):
             dataset_links[docid]['total_links'] += 1
             total_count += 1
+            if ams_status == 'beschikbaar':
+                total_beschikbaar_count += 1
             id = distribution['dc:identifier']
             url = distribution.get('dcat:accessURL')
             r_title = distribution.get('dct:title', '')
@@ -108,10 +113,15 @@ async def do_work(make_unavailable):
         result = await asyncio.gather(*tasks)
         for r in result:
             if r[0] >= 400:
-                invalid_count += 1
-                write(r[1])
                 doc_id = r[1].split('|')[1]
-                dataset_links[doc_id]['invalid_links' ] += 1
+                dataset_links[doc_id]['invalid_links'] += 1
+                invalid_count += 1
+                ams_status = dataset_links[doc_id]['ams:status']
+                if ams_status == 'beschikbaar':
+                    invalid_beschikbaar_count += 1
+                    write(ams_status + '|' + r[1])
+                elif show_unavailable:
+                    write(ams_status + '|' + r[1])
 
     unavailable_count = 0
     if make_unavailable:
@@ -122,6 +132,11 @@ async def do_work(make_unavailable):
                 await update_doc(conn, docid, doc)
                 unavailable_count += 1
                 write(f"Make dataset {docid} unavailable : {dataset_links[docid]['invalid_links']} invalid links from {dataset_links[docid]['total_links']}")
+
+    perc_beschikbaar = invalid_beschikbaar_count * 100 / total_beschikbaar_count if total_beschikbaar_count > 0 else 0
+    write(f"\nTotal available number of links   :  {total_beschikbaar_count}")
+    write(f"Invalid available number of links :  {invalid_beschikbaar_count}")
+    write(f"\nPercentage invalid URLS {perc_beschikbaar:.2f}")
 
     perc = invalid_count * 100 / total_count
     write(f"\nTotal number of links   :  {total_count}")
@@ -134,12 +149,14 @@ async def do_work(make_unavailable):
 def get_invalid_links():
     parser = argparse.ArgumentParser()
     parser.add_argument("--make_unavailable", choices=['yes', 'no'], default='no', help="Maak dataset 'Niet beschikbaar' indien er een ongeldig link is")
+    parser.add_argument("--show_unavailable", choices=['yes', 'no'], default='no', help="Toon niet beschikbare, ongeldig links")
+
     args = parser.parse_args()
 
     start = time.time()
     loop = asyncio.get_event_loop()
 
-    loop.run_until_complete(do_work(args.make_unavailable == 'yes'))
+    loop.run_until_complete(do_work(args.make_unavailable == 'yes', args.show_unavailable == 'yes'))
     loop.close()
 
     end = time.time()
