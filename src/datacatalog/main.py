@@ -15,7 +15,8 @@ def main():
     if sentry_dsn:
         sentry_sdk.init(
             dsn=sentry_dsn,
-            integrations=[AioHttpIntegration()]
+            integrations=[AioHttpIntegration()],
+            ignore_errors=['HTTPTemporaryRedirect']
     )
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
