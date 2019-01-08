@@ -70,6 +70,7 @@ setup(
         'pyjwt',
         'pyld',
         'PyYaml',
+        'sentry-sdk',
         'whoosh',
 
         # Recommended by aiohttp docs:
