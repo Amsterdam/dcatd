@@ -6,6 +6,8 @@ import collections
 import hashlib
 import json
 import logging
+import re
+
 import pkg_resources
 import secrets
 import typing as T
@@ -460,6 +462,8 @@ async def _execute_list_query(app, filterexpr: str, lang: str, sortpath: T.List[
 
 
 async def _execute_search_query(app, filterexpr: str, q: str):
+    # Replace .,\'"|&:()*!\/ with spaces
+    q = re.sub('[\\\\/.,\'"|&:()*!]', ' ', q)
     prefix_query = _to_pg_json_query(q)
     fullmatch_query = _to_pg_json_query_fullmatch(q)
 
@@ -558,9 +562,7 @@ def _to_pg_json_query(q: str) -> str:
         Postgres expression for prefix match with AND search for each term
 
     """
-    #   escape single quote (lexeme-demarcator in pg fulltext search) in words
-    words = [t.replace("'", "[\\']") for t in q.split()]
-    return ' & '.join("{}:*".format(w) for w in words)
+    return ' & '.join("{}:*".format(w) for w in q.split())
 
 
 def _to_pg_json_query_fullmatch(q: str) -> str:
@@ -573,9 +575,7 @@ def _to_pg_json_query_fullmatch(q: str) -> str:
         Postgres expression for fulltext match with AND search for each term
 
     """
-    #   escape single quote (lexeme-demarcator in pg fulltext search) in words
-    words = [t.replace("'", "[\\']") for t in q.split()]
-    return ' & '.join("{}".format(w) for w in words)
+    return ' & '.join("{}".format(w) for w in q.split())
 
 
 def _etag_from_str(s: str) -> str:
