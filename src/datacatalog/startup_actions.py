@@ -75,9 +75,7 @@ async def read_write_set_status_all(app):
         return False
 
 _startup_actions = [
-    #   DISABLE replace_old_identifiers until Service  & Delivery did check if old URL links are still used
-    #   and this can be done without too much impact.
-    #    ("replace_old_identifiers", replace_old_identifiers),
+    ("replace_old_identifiers", replace_old_identifiers),
     ("rw_all_2018_11_22", read_write_set_status_all), # add ams:status to all datasets
 ]
 
