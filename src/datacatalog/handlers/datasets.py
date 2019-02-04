@@ -264,6 +264,8 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
         keepers = {'@id', 'dct:identifier', 'dct:title', 'dct:description',
                    'dcat:keyword', 'foaf:isPrimaryTopicOf', 'dcat:distribution',
                    'dcat:theme', 'ams:owner', 'ams:sort_modified'}
+        if admin:
+            keepers.add('ams:status')
         for key in list(canonical_doc.keys()):
             if key not in keepers:
                 del canonical_doc[key]
