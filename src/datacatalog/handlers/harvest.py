@@ -18,11 +18,21 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     """Handler for ``/datasets``"""
     hooks = request.app.hooks
 
-    filters = {
-        '/properties/ams:status': {
-            'eq': 'beschikbaar'
+    admin = False
+    if hasattr(request, "authz_scopes"):
+        scopes = request.authz_scopes
+        if 'CAT/W' in scopes or 'CAT/R' in scopes:
+            admin = True
+
+    if admin:
+        # show non-available datasets only to admin
+        filters = {}
+    else:
+        filters = {
+            '/properties/ams:status': {
+                'eq': 'beschikbaar'
+            }
         }
-    }
     result_info = {}
     dataset_iterator = await hooks.search_search(
         app=request.app, q='',
