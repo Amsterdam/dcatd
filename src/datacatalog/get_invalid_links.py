@@ -14,6 +14,7 @@ from datacatalog.plugins.postgres import _etag_from_str
 MAX_REQUESTS = 10
 MAX_REDIRECTS = 5
 
+environment = None
 
 def write(msg):
     print(msg, flush=True)
@@ -67,8 +68,14 @@ async def check_link(id: str, r_id: str, title: str, r_title: str, url: str):
         except Exception as exc:
             status = 400
             message = str(exc)
-        message = f"{status}|{id}|{r_id}|{title}|{r_title}|{url}|{message}"
-        return (status, message)
+
+        global environment
+        if environment is None:
+            environment = os.getenv('environment', 'acceptance')
+
+        dataset_url = f"https://{'acc.' if environment != 'production' else ''}data.amsterdam.nl/datasets/{id}/"
+        message = f"{status}|{id}| {dataset_url} |{r_id}|{title}|{r_title}| {url} |{message}"
+        return status, message
 
 
 async def do_work(make_unavailable, show_unavailable):
@@ -95,7 +102,7 @@ async def do_work(make_unavailable, show_unavailable):
     async for docid, title, doc in iterator:
         title = doc.get('dct:title', '')
         ams_status = doc.get('ams:status', 'beschikbaar')
-        dataset_links[docid] = { 'total_links' : 0, 'invalid_links' : 0, 'ams:status' : ams_status}
+        dataset_links[docid] = {'total_links': 0, 'invalid_links': 0, 'ams:status': ams_status}
         for distribution in doc.get('dcat:distribution', []):
             dataset_links[docid]['total_links'] += 1
             total_count += 1
@@ -115,6 +122,11 @@ async def do_work(make_unavailable, show_unavailable):
             if r[0] >= 400:
                 doc_id = r[1].split('|')[1]
                 dataset_links[doc_id]['invalid_links'] += 1
+                if r[0] in dataset_links[doc_id]:
+                    dataset_links[doc_id][r[0]] += 1
+                else:
+                    dataset_links[doc_id][r[0]] = 1
+
                 invalid_count += 1
                 ams_status = dataset_links[doc_id]['ams:status']
                 if ams_status == 'beschikbaar':
@@ -127,7 +139,9 @@ async def do_work(make_unavailable, show_unavailable):
     if make_unavailable:
         iterator = storage_all(conn)
         async for docid, title, doc in iterator:
-            if dataset_links[docid]['invalid_links'] > 0 and doc['ams:status'] == 'beschikbaar':
+            # Only make unavailable in case of 404. Other errors could have different causes
+            if (dataset_links[docid]['invalid_links'] > 0 and 404 in dataset_links[docid]
+                    and doc['ams:status'] == 'beschikbaar'):
                 doc['ams:status'] = 'niet_beschikbaar'
                 await update_doc(conn, docid, doc)
                 unavailable_count += 1
