@@ -11,6 +11,10 @@ paths:
     get:
       description: >-
         Download the entire catalogue in one call.
+      security:
+        - OAuth2:
+            - CAT/W
+        - {}
       responses:
         200:
           description: All datasets, including their distributions
