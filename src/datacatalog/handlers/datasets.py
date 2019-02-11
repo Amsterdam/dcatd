@@ -9,8 +9,6 @@ from aiohttp import web
 from aiohttp_extras import conditional
 from aiohttp_extras.content_negotiation import produces_content_types
 
-from datacatalog.handlers.openapi import clear_open_api_cache
-
 
 _logger = logging.getLogger(__name__)
 
@@ -113,7 +111,6 @@ async def put(request: web.Request):
             )
         except ValueError:
             raise web.HTTPPreconditionFailed()
-        clear_open_api_cache()
         retval = web.Response(status=204, headers={'Etag': new_etag})
 
     else:
@@ -132,7 +129,6 @@ async def put(request: web.Request):
             )
         except KeyError:
             raise web.HTTPPreconditionFailed()
-        clear_open_api_cache()
         retval = web.Response(
             status=201, headers={'Etag': new_etag}, content_type='text/plain'
         )
@@ -152,7 +148,6 @@ async def delete(request: web.Request):
             app=request.app, docid=given_id, etags=etag_if_match)
     except KeyError:
         raise web.HTTPNotFound()
-    clear_open_api_cache()
     return web.Response(status=204, content_type='text/plain')
 
 
@@ -361,7 +356,6 @@ async def post_collection(request: web.Request):
         raise web.HTTPBadRequest(
             text='Document with dct:identifier {} already exists'.format(docid)
         )
-    clear_open_api_cache()
     return web.Response(
         status=201, headers={
             'Etag': new_etag,
