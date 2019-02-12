@@ -13,7 +13,8 @@ paths:
         Download the entire catalogue in one call.
       security:
         - OAuth2:
-            - CAT/W
+          - CAT/W
+          - CAT/R
         - {}
       responses:
         200:
@@ -47,6 +48,7 @@ paths:
       security:
       - OAuth2:
         - CAT/W
+        - CAT/R
       - {}
       responses:
         200:
@@ -331,6 +333,6 @@ components:
         implicit:
           authorizationUrl: '/oauth2/authorize'
           scopes:
-            CAT/W: Administer the data catalog
-            CAT/R: Redactor of data catalog
+            CAT/W: Administer the data catalog (full write and read access)
+            CAT/R: Redactor of data catalog (full read, limited write access)
 

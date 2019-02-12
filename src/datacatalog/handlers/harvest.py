@@ -17,15 +17,10 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     # language=rst
     """Handler for ``/datasets``"""
     hooks = request.app.hooks
+    scopes = request.authz_scopes if hasattr(request, "authz_scopes") else {}
 
-    admin = False
-    if hasattr(request, "authz_scopes"):
-        scopes = request.authz_scopes
-        if 'CAT/W' in scopes or 'CAT/R' in scopes:
-            admin = True
-
-    if admin:
-        # show non-available datasets only to admin
+    # show non-available datasets only to admin or redactor
+    if 'CAT/R' in scopes or 'CAT/W' in scopes:
         filters = {}
     else:
         filters = {
@@ -33,6 +28,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
                 'eq': 'beschikbaar'
             }
         }
+
     result_info = {}
     dataset_iterator = await hooks.search_search(
         app=request.app, q='',
