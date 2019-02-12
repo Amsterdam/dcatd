@@ -332,4 +332,5 @@ components:
           authorizationUrl: '/oauth2/authorize'
           scopes:
             CAT/W: Administer the data catalog
+            CAT/R: Redactor of data catalog
 
