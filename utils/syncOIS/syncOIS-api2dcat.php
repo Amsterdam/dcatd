@@ -1,7 +1,14 @@
 <?php
 require_once("dcat.php");
 
-define("DCAT_URL", "https://acc.api.data.amsterdam.nl/dcatd/");
+$dcat_env = getenv('DCAT_ENVIRONMENT');
+if(!$dcat_env || $dcat_env != 'prod') {
+    $env_prefix = 'acc.';
+} else {
+    $env_prefix = '';
+}
+
+define("DCAT_URL", "https://{$env_prefix}api.data.amsterdam.nl/dcatd/");
 define("OIS_URL","https://www.ois.amsterdam.nl/api/get-items/20000");
 define("DCAT_USER", getenv("DCAT_USER"));
 define("DCAT_PASSWORD",getenv("DCAT_PASSWORD"));
@@ -283,7 +290,7 @@ class SyncOIS{
 
         //For each dataset from API, check if available in DCAT 
         foreach($this->sets as $set){
-            print("<HR>". $set->$p_identifier ."<BR>");
+            print("<HR>{$set->$p_identifier}({$set->$p_title})<BR>");
             $matched_set = null;
             foreach($this->dcat->datasets as $dcatset){
                 if($dcatset->$p_identifier == $set->$p_identifier || $dcatset->$p_id == $set->$p_id || $dcatset->$p_title == $set->$p_title){
@@ -311,6 +318,7 @@ class SyncOIS{
                 if(!$test) $this->createSet($set);
                 print("No match found, dataset created");
             }
+            print("\n");
         }
         //For each OIS-dataset in DCAT, check if it still exists in Excel
         //TODO: this won't work if we don't use 'ois-xxxxx' id's! Does work for initial sync with 'old' OIS-datasets.
@@ -401,5 +409,5 @@ class SyncOIS{
 $sync = new SyncOIS();
 
 print("\n\r\n\r<HR>OK - ". date("Y-m-d H:i:s"));
-print("\n\r". $sync->new_sets ." nieuwe datasets, ". $sync->updated_sets ." updated datasets, ". $sync->deleted_sets ." verwijderd");
+print("\n\r". $sync->new_sets ." nieuwe datasets, ". $sync->updated_sets ." updated datasets, ". $sync->deleted_sets ." verwijderd\n");
 ?>
