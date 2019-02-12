@@ -331,6 +331,6 @@ components:
         implicit:
           authorizationUrl: '/oauth2/authorize'
           scopes:
-            CAT/W: (Full) Write Access to the data catalog (for admins).
-            CAT/R: (Full) Read Access to the data catalog (for admins and editors).
+            CAT/R: (R)edact-access to the data catalog (for admins and editors).
+            CAT/W: Additional (W)rite-acces to the data catalog (for admins).
 

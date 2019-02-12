@@ -46,7 +46,7 @@ See: http://localhost:8000/openapi and http://localhost:8000/datasets
 
 You could even go one further and also spin up the Amsterdam Swagger UI::
 
-    docker-compose up -d database swagger-ui
+    docker-compose up -d database swaggerui
     make example
 
 
