@@ -19,8 +19,8 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     hooks = request.app.hooks
     scopes = request.authz_scopes if hasattr(request, "authz_scopes") else {}
 
-    # show non-available datasets only to admin or redactor
-    if 'CAT/R' in scopes or 'CAT/W' in scopes:
+    # show non-available datasets only to scope CAT/R
+    if 'CAT/R' in scopes:
         filters = {}
     else:
         filters = {
