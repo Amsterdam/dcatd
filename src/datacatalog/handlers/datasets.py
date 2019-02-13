@@ -53,7 +53,6 @@ async def put(request: web.Request):
     scopes = request.authz_scopes
 
     is_redact_only = 'CAT/W' not in scopes
-    _logger.warning(f"isredact: {is_redact_only} , in scopes {scopes}")
     if hasattr(request, "authz_subject"):
         subject = request.authz_subject
         _logger.warning(f"AUTHZ  subject {subject}, scopes {scopes}")
@@ -71,8 +70,6 @@ async def put(request: web.Request):
     # the client. This is not necessarily true.
     doc_id = request.match_info['dataset']
 
-    _logger.warning(f"cannonical {canonical_doc}")
-    _logger.warning(f"status {canonical_doc['ams:status']}")
     if is_redact_only and canonical_doc['ams:status'] == 'beschikbaar':
         raise web.HTTPForbidden()
 
