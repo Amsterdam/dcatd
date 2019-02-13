@@ -64,14 +64,14 @@ async def put(request: web.Request):
         raise web.HTTPBadRequest(text='invalid json')
     canonical_doc = await hooks.mds_canonicalize(app=request.app, data=doc)
 
+    if is_redact_only and canonical_doc['ams:status'] == 'beschikbaar':
+        raise web.HTTPForbidden()
+
     # Make sure the docid in the path corresponds to the ids given in the
     # document, if any. The assumption is that request.path (which corresponds
     # to the path part of the incoming HTTP request) is the path as seen by
     # the client. This is not necessarily true.
     doc_id = request.match_info['dataset']
-
-    if is_redact_only and canonical_doc['ams:status'] == 'beschikbaar':
-        raise web.HTTPForbidden()
 
     # Let the metadata plugin grab the full-text search representation
     searchable_text = await hooks.mds_full_text_search_representation(
@@ -319,12 +319,14 @@ async def link_redirect(request: web.Request):
 
 
 async def post_collection(request: web.Request):
+    hooks = request.app.hooks
+    scopes = request.authz_scopes
+
+    is_redact_only = 'CAT/W' not in scopes
     if hasattr(request, "authz_subject"):
         subject = request.authz_subject
-        scopes = request.authz_scopes
         _logger.warning(f"AUTHZ  subject {subject}, scopes {scopes}")
 
-    hooks = request.app.hooks
     datasets_url = _datasets_url(request)
     # Grab the document from the request body and canonicalize it.
     try:
@@ -332,6 +334,9 @@ async def post_collection(request: web.Request):
     except json.decoder.JSONDecodeError:
         raise web.HTTPBadRequest(text='invalid json')
     canonical_doc = await hooks.mds_canonicalize(app=request.app, data=doc)
+
+    if is_redact_only and canonical_doc['ams:status'] == 'beschikbaar':
+        raise web.HTTPForbidden()
 
     docid = canonical_doc.get('dct:identifier')
     if docid is not None:

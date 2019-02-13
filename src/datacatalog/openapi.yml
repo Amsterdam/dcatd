@@ -12,9 +12,9 @@ paths:
       description: >-
         Download the entire catalogue in one call.
       security:
-        - OAuth2:
-          - CAT/R
-        - {}
+      - OAuth2:
+        - CAT/R
+      - {}
       responses:
         200:
           description: All datasets, including their distributions
@@ -337,4 +337,3 @@ components:
           scopes:
             CAT/R: (R)edact-access to the data catalog (for admins and editors).
             CAT/W: Additional (W)rite-acces to the data catalog (for admins).
-
