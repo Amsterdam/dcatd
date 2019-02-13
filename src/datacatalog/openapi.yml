@@ -13,7 +13,7 @@ paths:
         Download the entire catalogue in one call.
       security:
         - OAuth2:
-            - CAT/W
+          - CAT/R
         - {}
       responses:
         200:
@@ -46,7 +46,7 @@ paths:
         ``GET /datasets?/properties/dct:modified=ge=2017-01-01&/properties/dct:modified=lt=2017-01-31``
       security:
       - OAuth2:
-        - CAT/W
+        - CAT/R
       - {}
       responses:
         200:
@@ -331,6 +331,6 @@ components:
         implicit:
           authorizationUrl: '/oauth2/authorize'
           scopes:
-            CAT/W: Administer the data catalog
-            CAT/R: Redactor of data catalog
+            CAT/R: (R)edact-access to the data catalog (for admins and editors).
+            CAT/W: Additional (W)rite-acces to the data catalog (for admins).
 

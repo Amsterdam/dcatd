@@ -157,15 +157,11 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     """Handler for ``/datasets``"""
     hooks = request.app.hooks
     query = request.query
+    scopes = request.authz_scopes if hasattr(request, "authz_scopes") else {}
+    extra_read_access = 'CAT/R' in scopes
 
-    admin = False
-    if hasattr(request, "authz_scopes"):
-        scopes = request.authz_scopes
-        if 'CAT/W' in scopes or 'CAT/R' in scopes:
-            admin = True
-
-    if admin:
-        # show non-available datasets only to admin
+    # show non-available datasets only to extra_read_access
+    if extra_read_access:
         filters = {}
     else:
         filters = {
@@ -176,7 +172,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
 
     # Extract facet filters:
     for key in query:
-        if not _FACET_QUERY_KEY.fullmatch(key) or (not admin and key == '/properties/ams:status'):
+        if not _FACET_QUERY_KEY.fullmatch(key) or (not extra_read_access and key == '/properties/ams:status'):
             continue
         if key not in filters:
             filters[key] = {}
@@ -229,7 +225,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
                  '/properties/dcat:theme/items',
                  '/properties/ams:owner'
              ]
-    if admin:
+    if extra_read_access:
         facets.append('/properties/ams:status')
 
     resultiterator = await hooks.search_search(
@@ -259,7 +255,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
         keepers = {'@id', 'dct:identifier', 'dct:title', 'dct:description',
                    'dcat:keyword', 'foaf:isPrimaryTopicOf', 'dcat:distribution',
                    'dcat:theme', 'ams:owner', 'ams:sort_modified'}
-        if admin:
+        if extra_read_access:
             keepers.add('ams:status')
         for key in list(canonical_doc.keys()):
             if key not in keepers:

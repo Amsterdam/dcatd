@@ -20,3 +20,7 @@
 /utils/ckandata/
 /utils/dcatdata/
 /utils/dists/
+
+.venv
+.idea
+*.iml
