@@ -35,7 +35,8 @@ class DatasetTestCase(BaseTestCase):
 
     def setUp(self):
         super().setUp()
-        self.token = create_valid_token(self.app, 'test@test.nl', ['CAT/W'])
+        self.admin_token = create_valid_token(self.app, 'test@test.nl', ['CAT/W', 'CAT/R'])
+        self.redact_token = create_valid_token(self.app, 'test@test.nl', ['CAT/R'])
 
 
     @unittest_run_loop
@@ -63,10 +64,10 @@ class DatasetTestCase(BaseTestCase):
             'origin': 'http://localhost',
             'Access-Control-Request-Method': 'POST',
             'content-type': 'application/json',
-            'authorization': self.token
+            'authorization': self.admin_token
         }
 
-        valid_headers = {**basic_headers, **{'authorization': self.token}}
+        valid_headers = {**basic_headers, **{'authorization': self.admin_token}}
         invalid_headers = {**basic_headers, **{'authorization': _INVALID_TOKEN}}
 
         response = await self.client.request(
@@ -158,7 +159,7 @@ class DatasetTestCase(BaseTestCase):
     async def testUpload(self):
         headers = {
             'Accept': "application/json",
-            'Authorization': self.token,
+            'Authorization': self.redact_token,
             'Cache-Control': "no-cache",
         }
 
