@@ -128,6 +128,8 @@ paths:
       security:
       - OAuth2:
         - CAT/W
+      - OAuth2:
+        - CAT/R
       requestBody:
         required: true
         content:
@@ -190,6 +192,8 @@ paths:
       security:
       - OAuth2:
         - CAT/W
+      - OAuth2:
+        - CAT/R
       parameters:
       - name: id
         in: path
@@ -275,7 +279,7 @@ paths:
         Upload a dcat distribution.
       security:
       - OAuth2:
-        - CAT/W
+        - CAT/R
       requestBody:
         required: true
         content:
