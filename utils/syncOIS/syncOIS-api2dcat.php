@@ -137,7 +137,7 @@ class SyncOIS{
     
     function buildSet($onderwerp){
         $id = $onderwerp->osid;
-        $tags = Array("ois");
+        $tags = Array();
         
         list($fenc, $gebied, $thema, $subthema) = explode(" > ",$onderwerp->path);
         if($gebied == "Feiten en cijfers") $gebied = $fenc;
