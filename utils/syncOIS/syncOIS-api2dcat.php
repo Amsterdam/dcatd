@@ -8,6 +8,13 @@ if(!$dcat_env || $dcat_env != 'prod') {
     $env_prefix = '';
 }
 
+$test_env = getenv('DCAT_DO_TEST');
+if(!$dcat_env || $dcat_env != 'false') {
+    $do_test = true;
+} else {
+    $do_test = false;
+}
+
 define("DCAT_URL", "https://{$env_prefix}api.data.amsterdam.nl/dcatd/");
 define("OIS_URL","https://www.ois.amsterdam.nl/api/get-items/20000");
 define("DCAT_USER", getenv("DCAT_USER"));
@@ -31,7 +38,7 @@ class SyncOIS{
     * Sets mapping for groups, from categories OIS is using to groups in Catalogus
     * 
     */
-    function SyncOIS(){
+    function SyncOIS($do_test){
         $this->groupmapping =  Array(
             "Kerncijfers" => "bevolking",
             "Bevolking" => "bevolking",
@@ -77,7 +84,7 @@ class SyncOIS{
            
         $this->dcat = new DCAT(DCAT_URL,DCAT_USER, DCAT_PASSWORD);
         $this->readDatasetsFromDCAT();
-        $this->sync();
+        $this->sync($do_test);
     }
     
     /**
@@ -405,8 +412,11 @@ class SyncOIS{
         //print("<HR><PRE>"); print_r($set); print("</PRE>");
     }
 }
-    
-$sync = new SyncOIS();
+
+print("\n\r\n\r<HR>Start - ". date("Y-m-d H:i:s"));
+print("\nDCAT_URL: " . DCAT_URL . ", DCAT_DO_TEST: $do_test\n\n");
+
+$sync = new SyncOIS($do_test);
 
 print("\n\r\n\r<HR>OK - ". date("Y-m-d H:i:s"));
 print("\n\r". $sync->new_sets ." nieuwe datasets, ". $sync->updated_sets ." updated datasets, ". $sync->deleted_sets ." verwijderd\n");
