@@ -53,15 +53,13 @@ async def put(request: web.Request):
     scopes = request.authz_scopes
 
     is_redact_only = 'CAT/W' not in scopes
-    if hasattr(request, "authz_subject"):
-        subject = request.authz_subject
-        _logger.warning(f"AUTHZ  subject {subject}, scopes {scopes}")
 
     # Grab the document from the request body and canonicalize it.
     try:
         doc = await request.json()
     except json.decoder.JSONDecodeError:
         raise web.HTTPBadRequest(text='invalid json')
+    doc['ams:modifiedby'] = request.authz_subject
     canonical_doc = await hooks.mds_canonicalize(app=request.app, data=doc)
 
     if is_redact_only and canonical_doc['ams:status'] == 'beschikbaar':
@@ -323,9 +321,6 @@ async def post_collection(request: web.Request):
     scopes = request.authz_scopes
 
     is_redact_only = 'CAT/W' not in scopes
-    if hasattr(request, "authz_subject"):
-        subject = request.authz_subject
-        _logger.warning(f"AUTHZ  subject {subject}, scopes {scopes}")
 
     datasets_url = _datasets_url(request)
     # Grab the document from the request body and canonicalize it.
@@ -333,6 +328,7 @@ async def post_collection(request: web.Request):
         doc = await request.json()
     except json.decoder.JSONDecodeError:
         raise web.HTTPBadRequest(text='invalid json')
+    doc['ams:modifiedby'] = request.authz_subject
     canonical_doc = await hooks.mds_canonicalize(app=request.app, data=doc)
 
     if is_redact_only and canonical_doc['ams:status'] == 'beschikbaar':

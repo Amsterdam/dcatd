@@ -205,6 +205,9 @@ def mds_after_storage(app, data, doc_id):
     retval['@id'] = f"ams-dcatd:{doc_id}"
     retval['dct:identifier'] = str(doc_id)
 
+    if 'ams:modifiedby' not in retval:
+        retval['ams:modifiedby'] = 'onbekend'  # The value 'ams:modifiedby' cannot be a empty string
+
     # Add ams:sort_modified:
     if 'ams:sort_modified' not in retval:
         retval['ams:sort_modified'] = _get_sort_modified(retval)
