@@ -35,7 +35,8 @@ class DatasetTestCase(BaseTestCase):
 
     def setUp(self):
         super().setUp()
-        self.token = create_valid_token(self.app, 'test@test.nl', ['CAT/W'])
+        self.admin_token = create_valid_token(self.app, 'test@test.nl', ['CAT/W', 'CAT/R'])
+        self.redact_token = create_valid_token(self.app, 'test@test.nl', ['CAT/R'])
 
 
     @unittest_run_loop
@@ -55,18 +56,20 @@ class DatasetTestCase(BaseTestCase):
         with open(self._WORKING_PATH + path.sep + 'test.json') as definition:
             data = definition.read()
 
-        with open(
-                self._WORKING_PATH + path.sep + 'test_update.json') as defn:
+        with open(self._WORKING_PATH + path.sep + 'test_update.json') as defn:
             updated_data = defn.read()
+
+        with open(self._WORKING_PATH + path.sep + 'test_unpublished.json') as defn:
+            unpublished_data = defn.read()
 
         basic_headers = {
             'origin': 'http://localhost',
             'Access-Control-Request-Method': 'POST',
             'content-type': 'application/json',
-            'authorization': self.token
+            'authorization': self.admin_token
         }
 
-        valid_headers = {**basic_headers, **{'authorization': self.token}}
+        admin_headers = {**basic_headers}
         invalid_headers = {**basic_headers, **{'authorization': _INVALID_TOKEN}}
 
         response = await self.client.request(
@@ -76,14 +79,14 @@ class DatasetTestCase(BaseTestCase):
                           'Verkeerde reactie op verkeer token')
 
         response = await self.client.request(
-            "POST", "/datasets", data=data, headers=valid_headers)
+            "POST", "/datasets", data=data, headers=admin_headers)
 
         self.assertEqual(response.status, 201, 'Toevoegen dataset mislukt')
 
         etag = response.headers.get('Etag')
 
         response = await self.client.request(
-            "POST", "/datasets", data=data, headers=valid_headers)
+            "POST", "/datasets", data=data, headers=admin_headers)
 
         self.assertEqual(
             response.status, 400, 'Geen 400 error bij duplicate entry')
@@ -136,29 +139,59 @@ class DatasetTestCase(BaseTestCase):
 
         response = await self.client.request(
             "PUT", f"/datasets/{_SUT_DOC_ID}",
-            headers={**valid_headers, **{'If-Match': 'random'}},
+            headers={**admin_headers, **{'If-Match': 'random'}},
             data=updated_data)
 
         self.assertEqual(response.status, 400, '')
 
         response = await self.client.request(
             "DELETE", f"/datasets/{_SUT_DOC_ID}",
-            headers={**valid_headers, **{'If-Match': 'random'}})
+            headers={**admin_headers, **{'If-Match': 'random'}})
 
         self.assertEqual(response.status, 400, 'Document onterecht verwijderd')
 
         response = await self.client.request(
             "DELETE", f"/datasets/{_SUT_DOC_ID}",
-            headers={**valid_headers, **{'If-Match': etag}})
+            headers={**admin_headers, **{'If-Match': etag}})
 
         self.assertEqual(response.status, 204,
                           'Document kon niet worden verwijderd')
+
+        # Check redact access on POST
+        redact_headers = {**basic_headers, **{'authorization': self.redact_token}}
+
+        response = await self.client.request(
+            "POST", "/datasets", data=data, headers=redact_headers)
+
+        self.assertEqual(response.status, 403, 'Redacteur mag dataset publiceren')
+
+        response = await self.client.request(
+            "POST", "/datasets", data=unpublished_data, headers=redact_headers)
+
+        self.assertEqual(response.status, 201, 'Redacteur mag niet beschikbare dataset niet opslaan')
+
+        etag = response.headers.get('Etag')
+
+        # Check redact access on PUT
+        response = await self.client.request(
+            "PUT", f"/datasets/{_SUT_DOC_ID}",
+            headers={**redact_headers, **{'If-Match': 'random'}},
+            data=data)
+
+        self.assertEqual(response.status, 403, 'Redacteur mag dataset publiceren')
+
+        response = await self.client.request(
+            "PUT", f"/datasets/{_SUT_DOC_ID}",
+            headers={**redact_headers, **{'If-Match': etag}},
+            data=unpublished_data)
+
+        self.assertEqual(response.status, 204, 'Redacteur mag ongepubliceerde dataset niet opslaan')
 
     @unittest_run_loop
     async def testUpload(self):
         headers = {
             'Accept': "application/json",
-            'Authorization': self.token,
+            'Authorization': self.redact_token,
             'Cache-Control': "no-cache",
         }
 
