@@ -198,4 +198,10 @@ DATASET = dcat.Object().add(
         title="Sorteerdatum",
         read_only=True
     )
+).add(
+    'ams:modifiedby',
+    dcat.String(
+        title="Modified by",
+        read_only=True
+    )
 )
