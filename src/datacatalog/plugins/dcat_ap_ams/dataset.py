@@ -23,7 +23,10 @@ DATASET = dcat.Object().add(
     dcat.Enum(
         constants.STATUSES,
         title="Status",
-        description="Let op: deze status geldt alleen voor de weergave in City Data. Via andere wegen blijft de dataset te raadplegen, ongeacht de status.",
+        description="Datasets met status 'beschikbaar' worden weergegeven in dataportaal. Datasets 'in onderzoek' "
+                    "ook, maar voorzien van een kanttekening totdat een beheerder de datasets gecontroleerd en weer "
+                    "beschikbaar heeft gemaakt. Datasets met andere statussen zijn niet vindbaar in dataportaal, "
+                    "maar mogelijk wel via andere wegen (als je de link hebt).",
         required='beschikbaar',
         default='gepland'
     )
