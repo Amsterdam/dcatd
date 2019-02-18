@@ -169,7 +169,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     else:
         filters = {
             '/properties/ams:status': {
-                'eq': 'beschikbaar'
+                'in': ['beschikbaar', 'in_onderzoek']
             }
         }
 
