@@ -43,6 +43,12 @@ async def get(request: web.Request):
     canonical_doc = await hooks.mds_canonicalize(app=request.app, data=doc)
     canonical_doc = await hooks.mds_after_storage(app=request.app, data=canonical_doc, doc_id=docid)
 
+    if canonical_doc['ams:status'] not in ('beschikbaar', 'in_onderzoek'):
+        scopes = request.authz_scopes if hasattr(request, "authz_scopes") else {}
+        extra_read_access = 'CAT/R' in scopes
+        if not extra_read_access:
+            return web.HTTPForbidden()
+
     return web.json_response(canonical_doc, headers={
         'Etag': etag, 'content_type': 'application/ld+json'
     })

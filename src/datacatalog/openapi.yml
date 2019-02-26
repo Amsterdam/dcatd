@@ -151,6 +151,10 @@ paths:
   /datasets/{id}:
     get:
       description: Get the dataset identified by id.
+      security:
+      - OAuth2:
+        - CAT/R
+      - {}
       responses:
         200:
           description: The dataset as a dcat document.
