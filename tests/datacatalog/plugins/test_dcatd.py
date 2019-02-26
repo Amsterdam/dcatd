@@ -22,9 +22,9 @@ class TestDcatd(unittest.TestCase):
             "dcat:identifier": "_FlXXpXDa-Ro3Q",
             "dcat:title": "Ouderen",
             "dcat:distribution": [
-                {"dct:format": "application/json"},
-                {"dct:format": "application/json"},
-                {"dct:format": "text/html"}
+                {"dcat:mediaType": "application/json"},
+                {"dcat:mediaType": "application/json"},
+                {"dcat:mediaType": "text/html"}
             ],
             "dcat:keyword": [
                 "dementie",
@@ -42,9 +42,9 @@ class TestDcatd(unittest.TestCase):
                                 'verpleeg- en verzorgingshuizen, zorg en hulp '
                                 'bij dementie en\ndienstencentra voor ouderen',
             'dct:distribution': [
-                {'dct:format': 'application/json'},
-                {'dct:format': 'application/json'},
-                {'dct:format': 'text/html'}
+                {'dcat:mediaType': 'application/json'},
+                {'dcat:mediaType': 'application/json'},
+                {'dcat:mediaType': 'text/html'}
             ],
             'dcat:keyword': ['dementie', 'dienstencentra', 'ouderen',
                              'verpleeghuizen', 'verzorgingshuizen'],
@@ -104,9 +104,9 @@ class TestDcatd(unittest.TestCase):
             "@id": "ams-dcatd:_FlXXpXDa-Ro3Q",
             "dcat:identifier": "_FlXXpXDa-Ro3Q",
             "dcat:distribution": [
-                {"dct:format": "application/json"},
-                {"dct:format": "application/json"},
-                {"dct:format": "text/html"}
+                {"dcat:mediaType": "application/json"},
+                {"dcat:mediaType": "application/json"},
+                {"dcat:mediaType": "text/html"}
             ],
             "foaf:isPrimaryTopicOf": {'dct:issued': past_date}
         }

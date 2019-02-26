@@ -221,7 +221,6 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
     facets = [
                  '/properties/dcat:distribution/items/properties/ams:resourceType',
                  '/properties/dcat:distribution/items/properties/dcat:mediaType',
-                 '/properties/dcat:distribution/items/properties/dct:format',
                  '/properties/dcat:distribution/items/properties/ams:distributionType',
                  '/properties/dcat:distribution/items/properties/ams:serviceType',
                  '/properties/dcat:keyword/items',
@@ -263,7 +262,7 @@ async def get_collection(request: web.Request) -> web.StreamResponse:
         for key in list(canonical_doc.keys()):
             if key not in keepers:
                 del canonical_doc[key]
-        keepers = {'dct:format', 'dcat:mediaType', 'ams:resourceType', 'ams:distributionType',
+        keepers = {'dcat:mediaType', 'ams:resourceType', 'ams:distributionType',
                    'ams:serviceType', 'dc:identifier'}
         for d in canonical_doc.get('dcat:distribution', []):
             for key in list(d.keys()):

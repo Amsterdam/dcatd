@@ -61,13 +61,6 @@ DISTRIBUTION = dcat.Object().add(
         description="Geef het type API of webservice"
     )
 ).add(
-    'dct:format',
-    # TODO: dct:format verwijderen zodra dcat:mediaType overal (frontend, backend, acc en prod) doorgevoerd en aanwezig is
-    dcat.Enum(
-        constants.DCT_FORMATS,
-        title="Type bestand"
-    )
-).add(
     'dcat:mediaType',
     dcat.Enum(
         constants.DCT_FORMATS,

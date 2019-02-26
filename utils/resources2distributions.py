@@ -24,7 +24,7 @@ def _distributions():
             if _ckan_url(url):
                 distributions[doc['dct:identifier']].append({
                     'url': url,
-                    'mime': distribution['dct:format'],
+                    'mime': distribution['dcat:mediaType'],
                     'name': os.path.basename(url)
                 })
     return distributions

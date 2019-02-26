@@ -172,14 +172,9 @@ def mds_before_storage(app, data, old_data=None) -> dict:
 
     all_mediatypes = set([mt[0] for mt in DCT_FORMATS])
     for distribution in distributions:
-        if 'dcat:mediaType' in distribution:
-            distribution['dct:format'] = distribution['dcat:mediaType']
-        elif 'dct:format' in distribution:
-            distribution['dcat:mediaType'] = distribution['dct:format']
-
         if 'ams:distributionType' in distribution and distribution['ams:distributionType'] == 'file' and (
                 'dcat:mediaType' not in distribution or distribution['dcat:mediaType'] not in all_mediatypes):
-            distribution['dct:format'] = distribution['dcat:mediaType'] = 'application/octet-stream'
+            distribution['dcat:mediaType'] = 'application/octet-stream'
 
     # Add ams:sort_modified:
     retval['ams:sort_modified'] = _get_sort_modified(retval)
@@ -222,9 +217,6 @@ def mds_after_storage(app, data, doc_id):
         accessURL = distribution.get('dcat:accessURL', None)
         if accessURL is not None:
             distribution['ams:purl'] = f"{datasets_url}/{doc_id}/purls/{distribution['dc:identifier']}"
-        # dcat:mediaType:
-        if 'dct:format' in distribution:
-            distribution['dcat:mediaType'] = distribution['dct:format']
     retval = DATASET.set_required_values(retval)
     return retval
 
@@ -269,7 +261,7 @@ def mds_canonicalize(app, data: dict) -> dict:
     for distribution in retval['dcat:distribution']:
         if 'ams:distributionType' in distribution:
             if distribution['ams:distributionType'] != 'file':
-                distribution.pop('dct:format', None)
+                distribution.pop('dcat:mediaType', None)
                 distribution.pop('dcat:mediaType', None)
             if distribution['ams:distributionType'] != 'file':
                 distribution.pop('dct:byteSize', None)

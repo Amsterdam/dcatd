@@ -172,7 +172,6 @@ class SyncOIS{
         $p_url = "dcat:accessURL";
         $p_resourcetype = "ams:resourceType";
         $p_distributiontype = "ams:distributionType";
-        $p_format = "dct:format";
         $p_mediatype = "dcat:mediaType";
         $p_classification = "ams:classification";
         $p_license = "dct:license";
@@ -188,7 +187,6 @@ class SyncOIS{
                 $dist->$p_url = $url;
                 $dist->$p_resourcetype = "data";
                 $dist->$p_distributiontype = "file";
-                $dist->$p_format = "application/vnd.ms-excel";
                 $dist->$p_mediatype = "application/vnd.ms-excel";
                 $dist->$p_classification = "public";
                 $dist->$p_license = "cc-by";
