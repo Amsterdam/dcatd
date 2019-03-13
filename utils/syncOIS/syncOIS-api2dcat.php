@@ -9,7 +9,7 @@ if(!$dcat_env || $dcat_env != 'prod') {
 }
 
 $test_env = getenv('DCAT_DO_TEST');
-if(!$dcat_env || $dcat_env != 'false') {
+if(!$test_env || $test_env != 'false') {
     $do_test = true;
 } else {
     $do_test = false;
