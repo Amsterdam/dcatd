@@ -61,7 +61,9 @@
         }
 
         $headers = get_headers_from_curl_response($resp);
-        $location = $headers["Location"] ? $headers["Location"] : url_getinfo($curl)['redirect_url'];
+        print("Headers:");
+        print($headers);
+        $location = $headers["Location"] ? $headers["Location"] : curl_getinfo($curl)['redirect_url'];
         print("Location: $location\n");
         if(!$location) {
             throw new Exception('Redirect location not found!');
@@ -90,7 +92,7 @@
 
         $headers = get_headers_from_curl_response($response);
 
-        $location = $headers["Location"] ? $headers["Location"] : url_getinfo($curl)['redirect_url'];
+        $location = $headers["Location"] ? $headers["Location"] : curl_getinfo($curl)['redirect_url'];
         if(!$location) {
             throw new Exception('Redirect location not found!');
         }
@@ -109,7 +111,7 @@
         }
 
         $headers = get_headers_from_curl_response($resp);
-        $location = $headers["Location"] ? $headers["Location"] : url_getinfo($curl)['redirect_url'];
+        $location = $headers["Location"] ? $headers["Location"] : curl_getinfo($curl)['redirect_url'];
         if(!$location) {
             throw new Exception('Redirect location not found!');
         }
