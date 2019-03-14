@@ -98,10 +98,16 @@ class SyncOIS{
         $context = NULL;
         $proxy = getenv('HTTPS_PROXY');
         if($proxy) {
-            $context = stream_context_create( array( 'http' =>
-                array( 'proxy' => $proxy,
+            $context = stream_context_create(
+                array(
+                    'http' =>
+                        array( 'proxy' => $proxy,
                        'request_fulluri' => true,
-                     ),
+                    ),
+                    'https' =>
+                        array( 'proxy' => $proxy,
+                       'request_fulluri' => true,
+                    ),
                 )
             );
         }

@@ -141,13 +141,9 @@
         if($resp === false) {
             throw new Exception('Curl error: ' . curl_error($curl));
         }
-        print("getDatasets info:");
-        print_r(curl_getinfo($curl));
         curl_close($curl);
 
         $this->harvest = json_decode($resp);
-        print("\ngetDatasets resp:");
-        print_r($this->harvest);
 
         $param_dataset = "dcat:dataset";
         $param_id = "@id";
