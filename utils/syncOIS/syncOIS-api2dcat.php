@@ -94,7 +94,19 @@ class SyncOIS{
     
     function readAPI(){
         $this->onderwerpen = [];
-        $items = json_decode(file_get_contents(OIS_URL));
+
+        $context = NULL;
+        $proxy = getenv('HTTPS_PROXY');
+        if($proxy) {
+            $context = stream_context_create( array( 'http' =>
+                array( 'proxy' => $proxy,
+                       'request_fulluri' => true,
+                     ),
+                )
+            );
+        }
+
+        $items = json_decode(file_get_contents(OIS_URL, false, $context));
         
         foreach($items->in as $item){
             $this->addItemFromAPI($item);
