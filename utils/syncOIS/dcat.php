@@ -10,11 +10,20 @@
       var $themas;
       var $categorien;
       var $token;
+      var $curl_opts;
            
       function DCAT($url = DCAT_URL, $username = DCAT_USER, $password = DCAT_PASSWORD){
           $this->url = $url;
           $this->username = $username;
           $this->password = $password;
+          $this->curl_opts = array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_SSL_VERIFYPEER => false,
+          );
+          $proxy = getenv('HTTPS_PROXY');
+          if($proxy) {
+              $this->curl_opts[CURLOPT_PROXY] = $proxy;
+          }
           $this->setToken();
       }
       
@@ -40,11 +49,9 @@
         //print($request_url);
         
         $curl = curl_init();
-        curl_setopt_array($curl, array(
+        curl_setopt_array($curl, $this->curl_opts + array(
             CURLOPT_HEADER => true,
             CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_URL => $request_url
         ));
         
@@ -62,11 +69,9 @@
         $data = http_build_query($data);
         
         $curl  = curl_init();
-        curl_setopt_array( $curl ,  array (
+        curl_setopt_array( $curl ,  $this->curl_opts +  array (
             CURLOPT_HEADER => true,
             CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $data,
             CURLOPT_URL => $location
@@ -79,11 +84,9 @@
         $location = $headers["Location"];
         
         $curl = curl_init();
-        curl_setopt_array($curl, array(
+        curl_setopt_array($curl, $this->curl_opts + array(
             CURLOPT_HEADER => true,
             CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_URL => $location
         ));
         
@@ -104,10 +107,8 @@
       function getDatasets(){
         $url = $this->url . "harvest";
         $curl = curl_init();
-        curl_setopt_array($curl, array(
+        curl_setopt_array($curl, $this->curl_opts +  array(
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_HTTPHEADER => array("Authorization: Bearer ". $this->token),
             CURLOPT_URL => $url
         ));
@@ -135,9 +136,7 @@
         
         $data = json_encode($set);
         $curl = curl_init();
-        curl_setopt_array( $curl ,  array (
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
+        curl_setopt_array( $curl ,  $this->curl_opts +  array (
             CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_HTTPHEADER => array('Content-Type: application/json',"Authorization: Bearer ". $this->token,"If-Match: ".$etag),
             CURLOPT_POST => true,
@@ -161,9 +160,7 @@
         $data = json_encode($set);
         
         $curl = curl_init();
-        curl_setopt_array( $curl ,  array (
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
+        curl_setopt_array( $curl ,  $this->curl_opts + array (
             CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_HTTPHEADER => array('Content-Type: application/json',"Authorization: Bearer ". $this->token),
             CURLOPT_POST => true,
