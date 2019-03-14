@@ -59,11 +59,17 @@
         if($resp === false) {
             throw new Exception('Curl error: ' . curl_error($curl));
         }
-        curl_close($curl);
 
         $headers = get_headers_from_curl_response($resp);
         $location = $headers["Location"];
-        
+
+        print("Location: $location\n");
+        if(!$location) {
+            print_r(curl_getinfo($curl));
+            throw new Exception('Redirect location not found!');
+        }
+        curl_close($curl);
+
         $data = [
             "type" => "employee_plus",
             "email" => $this->username,
