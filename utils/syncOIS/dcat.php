@@ -62,7 +62,7 @@
 
         $headers = get_headers_from_curl_response($resp);
         print("Headers:");
-        print($headers);
+        print_r($headers);
         $location = $headers["Location"] ? $headers["Location"] : curl_getinfo($curl)['redirect_url'];
         print("Location: $location\n");
         if(!$location) {
@@ -131,7 +131,7 @@
       function getDatasets(){
         $url = $this->url . "harvest";
         $curl = curl_init();
-        curl_setopt_array($curl, $this->curl_opts +  array(
+        curl_setopt_array($curl, $this->curl_opts + array(
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTPHEADER => array("Authorization: Bearer ". $this->token),
             CURLOPT_URL => $url
@@ -141,10 +141,14 @@
         if($resp === false) {
             throw new Exception('Curl error: ' . curl_error($curl));
         }
+        print("getDatasets info:");
+        print_r(curl_getinfo($curl));
         curl_close($curl);
-        
+
         $this->harvest = json_decode($resp);
-                
+        print("\ngetDatasets resp:");
+        print_r($this->harvest);
+
         $param_dataset = "dcat:dataset";
         $param_id = "@id";
         foreach($this->harvest->$param_dataset as $result){
