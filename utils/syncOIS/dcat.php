@@ -56,6 +56,9 @@
         ));
         
         $resp = curl_exec($curl);
+        if($resp === false) {
+            throw new Exception('Curl error: ' . curl_error($curl));
+        }
         curl_close($curl);
 
         $headers = get_headers_from_curl_response($resp);
@@ -77,6 +80,9 @@
             CURLOPT_URL => $location
         ));
         $response  = curl_exec( $curl );
+        if($response === false) {
+            throw new Exception('Curl error: ' . curl_error($curl));
+        }
         curl_close( $curl );
 
         $headers = get_headers_from_curl_response($response);
@@ -91,6 +97,9 @@
         ));
         
         $resp = curl_exec($curl);
+        if($resp === false) {
+            throw new Exception('Curl error: ' . curl_error($curl));
+        }
         curl_close($curl);
 
         $headers = get_headers_from_curl_response($resp);
@@ -100,6 +109,9 @@
         parse_str($params[1], $arr);
         
         $this->token = $arr["access_token"];
+        if( ! $this->token ) {
+            throw new Exception("Unable to login. Token not defined");
+        }
         print("Token set to: ". $this->token);
       }
       
@@ -114,6 +126,9 @@
         ));
         
         $resp = curl_exec($curl);
+        if($resp === false) {
+            throw new Exception('Curl error: ' . curl_error($curl));
+        }
         curl_close($curl);
         
         $this->harvest = json_decode($resp);
@@ -145,7 +160,7 @@
             CURLOPT_URL => $url
         ));
         $response  = curl_exec( $curl );
-        if(!curl_errno($curl)){ 
+        if(!curl_errno($curl)){
           $info = curl_getinfo($curl); 
           //echo 'Took ' . $info['total_time'] . ' seconds to send a request to ' . $info['url']; 
           //print("<PRE>");print_r($info);print("</PRE>");
