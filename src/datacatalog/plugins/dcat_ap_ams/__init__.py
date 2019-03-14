@@ -92,10 +92,10 @@ def initialize_sync(app):
     _BASE_URL = app.config['web']['baseurl']
 
 
-def _distributions_vary(a: dict, b: dict) -> bool:
+def _distributions_vary(a: dict, b: dict, exclude: set) -> bool:
     vary = False
     for name, property1 in DISTRIBUTION.properties:
-        if not property1.read_only and a.get(name) != b.get(name):
+        if name not in exclude and not property1.read_only and a.get(name) != b.get(name):
             vary = True
     return vary
 
@@ -157,8 +157,17 @@ def mds_before_storage(app, data, old_data=None) -> dict:
                         'dct:modified': '1970-01-01'
                     }
                 distribution['foaf:isPrimaryTopicOf'] = old_foaf
-                if _distributions_vary(distribution, old_distribution):
+                # dct:modified and dcat:accessURL are not checked for changes in
+                # 'foaf:isPrimaryTopicOf'->'dct:modified'
+                if _distributions_vary(distribution, old_distribution, {'dct:modified', 'dcat:accessURL'}):
                     distribution['foaf:isPrimaryTopicOf']['dct:modified'] = datetime.date.today().isoformat()
+                # dct:modified is set if accessURL is changed AND the date was not changed manually
+                # by the frontend. Currently disabled
+                # if distribution.get('dct:modified') is None or (
+                #        distribution.get('dcat:accessURL') != old_distribution.get(
+                #        'dcat:accessURL') and distribution.get('dct:modified') == old_distribution.get('dct:modified')):
+                #    distribution['dct:modified'] = datetime.date.today().isoformat()
+
     else:
         retval['foaf:isPrimaryTopicOf'] = {
             'dct:issued': datetime.date.today().isoformat(),
