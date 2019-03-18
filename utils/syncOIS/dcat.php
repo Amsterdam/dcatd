@@ -61,10 +61,10 @@
         }
 
         $headers = get_headers_from_curl_response($resp);
-        print("Headers:");
-        print_r($headers);
+        // print("Headers:");
+        // print_r($headers);
         $location = $headers["Location"] ? $headers["Location"] : curl_getinfo($curl)['redirect_url'];
-        print("Location: $location\n");
+        // print("Location: $location\n");
         if(!$location) {
             throw new Exception('Redirect location not found!');
         }
@@ -124,7 +124,7 @@
         if( ! $this->token ) {
             throw new Exception("Unable to login. Token not defined");
         }
-        print("Token set to: ". $this->token);
+        // print("Token set to: ". $this->token);
       }
       
       

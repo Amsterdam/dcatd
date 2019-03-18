@@ -95,25 +95,27 @@ class SyncOIS{
     function readAPI(){
         $this->onderwerpen = [];
 
-        $context = NULL;
+        $curl = curl_init();
+        $curl_opts = array(
+            CURLOPT_URL => OIS_URL,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_FOLLOWLOCATION => true,
+          );
         $proxy = getenv('HTTPS_PROXY');
         if($proxy) {
-            $context = stream_context_create(
-                array(
-                    'http' =>
-                        array( 'proxy' => $proxy,
-                       'request_fulluri' => true,
-                    ),
-                    'https' =>
-                        array( 'proxy' => $proxy,
-                       'request_fulluri' => true,
-                    ),
-                )
-            );
+            $curl_opts[CURLOPT_PROXY] = $proxy;
         }
+        curl_setopt_array($curl, $curl_opts);
 
-        $items = json_decode(file_get_contents(OIS_URL, false, $context));
-        
+        $resp = curl_exec($curl);
+        if($resp === false) {
+            throw new Exception('Curl error: ' . curl_error($curl));
+        }
+        curl_close($curl);
+
+        $items = json_decode($resp);
+
         foreach($items->in as $item){
             $this->addItemFromAPI($item);
         }
