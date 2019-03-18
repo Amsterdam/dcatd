@@ -31,6 +31,7 @@ class SyncOIS{
     var $groupmapping;
     var $dcat;
     var $sets;
+    var $curl_opts;
         
         
     /**
@@ -39,6 +40,16 @@ class SyncOIS{
     * 
     */
     function SyncOIS($do_test){
+        $this->curl_opts = array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_FOLLOWLOCATION => true,
+          );
+        $proxy = getenv('HTTPS_PROXY');
+        if($proxy) {
+            $this->curl_opts[CURLOPT_PROXY] = $proxy;
+        }
+
         $this->groupmapping =  Array(
             "Kerncijfers" => "bevolking",
             "Bevolking" => "bevolking",
@@ -96,16 +107,9 @@ class SyncOIS{
         $this->onderwerpen = [];
 
         $curl = curl_init();
-        $curl_opts = array(
-            CURLOPT_URL => OIS_URL,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_FOLLOWLOCATION => true,
-          );
-        $proxy = getenv('HTTPS_PROXY');
-        if($proxy) {
-            $curl_opts[CURLOPT_PROXY] = $proxy;
-        }
+
+        $curl_opts = $this->curl_opts;
+        $curl_opts[CURLOPT_URL] = OIS_URL;
         curl_setopt_array($curl, $curl_opts);
 
         $resp = curl_exec($curl);
@@ -131,14 +135,26 @@ class SyncOIS{
         if($item->osid > 0 && !$this->onderwerpen[$item->osid]){
             $this->onderwerpen[$item->osid] = $item;
             $this->onderwerpen[$item->osid]->bestanden = [];
-             $bestanden = json_decode(file_get_contents("https://www.ois.amsterdam.nl/api/get-bestanden/". $item->osid));
-             foreach($bestanden->bestanden as $bestand){
-                 $this->onderwerpen[$item->osid]->bestanden[] = $bestand;
-             }
-             foreach($item->in as $child){
-                $this->addItemFromAPI($child);
-             }
-             unset($this->onderwerpen[$item->osid]->in);
+
+            $curl = curl_init();
+            $curl_opts = $this->curl_opts;
+            $curl_opts[CURLOPT_URL] = "https://www.ois.amsterdam.nl/api/get-bestanden/" . $item->osid;
+            curl_setopt_array($curl, $curl_opts);
+
+            $resp = curl_exec($curl);
+            if($resp === false) {
+                throw new Exception('Curl error: ' . curl_error($curl));
+            }
+            curl_close($curl);
+
+            $bestanden = json_decode($resp);
+            foreach($bestanden->bestanden as $bestand){
+                $this->onderwerpen[$item->osid]->bestanden[] = $bestand;
+            }
+            foreach($item->in as $child){
+               $this->addItemFromAPI($child);
+            }
+            unset($this->onderwerpen[$item->osid]->in);
         }
     }
     
