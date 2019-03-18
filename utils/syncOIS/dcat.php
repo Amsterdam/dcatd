@@ -113,10 +113,10 @@
         $headers = get_headers_from_curl_response($resp);
 
         $info = curl_getinfo($curl);
-        print("Info:");
-        print_r($info);
-        print("Headers:");
-        print_r($headers);
+        // print("Info:");
+        // print_r($info);
+        // print("Headers:");
+        // print_r($headers);
 
         $location = $headers["Location"] ? $headers["Location"] : $info['redirect_url'];
         if(!$location) {
