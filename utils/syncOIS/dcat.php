@@ -111,7 +111,14 @@
         }
 
         $headers = get_headers_from_curl_response($resp);
-        $location = $headers["Location"] ? $headers["Location"] : curl_getinfo($curl)['redirect_url'];
+
+        $info = curl_getinfo($curl);
+        print("Info:");
+        print_r($info);
+        print("Headers:");
+        print_r($headers);
+
+        $location = $headers["Location"] ? $headers["Location"] : $info['redirect_url'];
         if(!$location) {
             throw new Exception('Redirect location not found!');
         }
