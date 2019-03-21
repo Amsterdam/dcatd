@@ -143,6 +143,9 @@ def dictionary_vary(a: dict, b: dict, exclude: dict, parent_key:str = None) -> b
 def _convert_to_ckan(dcat):
     language = MAP_LANGUAGE[dcat['dct:language']]
 
+    # Remove duplicates and sort for easy comparison
+    themes = sorted([MAP_THEMES[theme] for theme in list(set(dcat['dcat:theme']))])
+    tags = [{"name": keyword} for keyword in sorted(list(set(dcat['dcat:keyword'])))]
 
     ckan = {
         'title': dcat['dct:title'],
@@ -188,8 +191,8 @@ def _convert_to_ckan(dcat):
         # 'publisher_email': dcat['dct:publisher']['foaf:mbox'],
         # 'publisher_name': dcat['dct:publisher']['foaf:name'],
         'publisher': 'http://standaarden.overheid.nl/owms/terms/Amsterdam',
-        'theme': [ MAP_THEMES[theme] for theme in list(set(dcat['dcat:theme']))],  # Remove duplicates
-        'tags': [ {"name": keyword} for keyword in list(set(dcat['dcat:keyword']))], # Remove duplicates
+        'theme': themes,
+        'tags': tags,
         'license_id': MAP_LICENSES[dcat['ams:license']],
         'authority': "http://standaarden.overheid.nl/owms/terms/" + dcat['overheid:authority'][9:],
         'identifier': IDENTIFIER_PREFIX + dcat['dct:identifier'],
@@ -227,19 +230,9 @@ def push_dcat():
     identifier_index_map_new = { IDENTIFIER_PREFIX + datasets_new[index]['dct:identifier']: index for index in
                                  range(len(datasets_new))}
 
-    # TO REMOVE
-    for index in range(len(datasets_old)):
-        l = prefix_len - 1
-        identifier_index_map_old[datasets_old[index]['identifier'][l:]] = index
-
-    for index in range(len(datasets_new)):
-        identifier_index_map_new["https://api.data.amsterdam.nl/dcatd/dataset/" + datasets_new[index]['dct:identifier']] = index
-
-
     insert_count = 0
     update_count = 0
     delete_count = 0
-
     count = 0
 
     remove_resources = {}
@@ -329,6 +322,10 @@ def push_dcat():
                     'state',
                 }
             }
+
+            # sort tags and themes for easy comparison
+            ds_old['tags'] = sorted(ds_old['tags'], key=lambda ds:ds['name'])
+            ds_old['theme'] = sorted(ds_old['theme'])
 
             if not dictionary_vary(ds_new, ds_old, exclude):
                 continue
