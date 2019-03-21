@@ -92,7 +92,7 @@ MAP_THEMES = {
 }
 
 
-IDENTIFIER_PREFIX = "https://api.data.amsterdam.nl/dcatd/dataset"
+IDENTIFIER_PREFIX = "https://api.data.amsterdam.nl/dcatd/datasets/"
 
 
 def _request_with_headers(url, data=None, method=None, authorization=None):
@@ -143,6 +143,7 @@ def dictionary_vary(a: dict, b: dict, exclude: dict, parent_key:str = None) -> b
 def _convert_to_ckan(dcat):
     language = MAP_LANGUAGE[dcat['dct:language']]
 
+
     ckan = {
         'title': dcat['dct:title'],
         'notes': dcat['dct:description'],
@@ -187,8 +188,8 @@ def _convert_to_ckan(dcat):
         # 'publisher_email': dcat['dct:publisher']['foaf:mbox'],
         # 'publisher_name': dcat['dct:publisher']['foaf:name'],
         'publisher': 'http://standaarden.overheid.nl/owms/terms/Amsterdam',
-        'theme': [ MAP_THEMES[theme] for theme in dcat['dcat:theme']],
-        'tags': [ {"name": keyword} for keyword in dcat['dcat:keyword']],
+        'theme': [ MAP_THEMES[theme] for theme in list(set(dcat['dcat:theme']))],  # Remove duplicates
+        'tags': [ {"name": keyword} for keyword in list(set(dcat['dcat:keyword']))], # Remove duplicates
         'license_id': MAP_LICENSES[dcat['ams:license']],
         'authority': "http://standaarden.overheid.nl/owms/terms/" + dcat['overheid:authority'][9:],
         'identifier': IDENTIFIER_PREFIX + dcat['dct:identifier'],
@@ -212,8 +213,8 @@ def push_dcat():
         datasets_new = json.load(response)
         datasets_new = datasets_new['dcat:dataset']
 
-    # Get all old datasets for gemeente amsterdam
-    req = _request_with_headers(f'{donl_root}/api/3/action/package_search?q=organization:gemeente-amsterdam')
+    # Get all old datasets for gemeente amsterdam. If we have more then 1000 datasets this should be  changed
+    req = _request_with_headers(f'{donl_root}/api/3/action/package_search?q=organization:gemeente-amsterdam&rows=1000')
     response = request.urlopen(req)
     assert response.code == 200
     response_dict0 = json.loads(response.read())
@@ -221,9 +222,19 @@ def push_dcat():
     datasets_old = response_dict0['result']['results']
     prefix_len = len(IDENTIFIER_PREFIX)
     identifier_index_map_old = {datasets_old[index]['identifier'][prefix_len:]: index for index in
-                                range(len(datasets_old))}
+          range(len(datasets_old))}
 
-    identifier_index_map_new = { IDENTIFIER_PREFIX + datasets_new[index]['dct:identifier']:index for index in range(len(datasets_new))}
+    identifier_index_map_new = { IDENTIFIER_PREFIX + datasets_new[index]['dct:identifier']: index for index in
+                                 range(len(datasets_new))}
+
+    # TO REMOVE
+    for index in range(len(datasets_old)):
+        l = prefix_len - 1
+        identifier_index_map_old[datasets_old[index]['identifier'][l:]] = index
+
+    for index in range(len(datasets_new)):
+        identifier_index_map_new["https://api.data.amsterdam.nl/dcatd/dataset/" + datasets_new[index]['dct:identifier']] = index
+
 
     insert_count = 0
     update_count = 0
@@ -335,7 +346,8 @@ def push_dcat():
             ds_new_string = ds_new_string.encode('utf-8')
             req.add_header('Content-Length', len(ds_new_string))
 
-            req = _request_with_headers(f'{donl_root}/api/3/action/package_update?id={id}', data=ds_new_string, authorization=api_key, method='POST')
+            req = _request_with_headers(f'{donl_root}/api/3/action/package_update?id={id}', data=ds_new_string,
+                                        authorization=api_key, method='POST')
             try:
                 response = request.urlopen(req)
             except HTTPError as err:
@@ -363,7 +375,8 @@ def push_dcat():
             ds_new_string = ds_new_string.encode('utf-8')
             req.add_header('Content-Length', len(ds_new_string))
 
-            req = _request_with_headers(f'{donl_root}/api/3/action/package_create', data=ds_new_string, authorization=api_key, method='POST')
+            req = _request_with_headers(f'{donl_root}/api/3/action/package_create', data=ds_new_string,
+                                        authorization=api_key, method='POST')
             try:
                 response = request.urlopen(req)
             except HTTPError as err:
@@ -388,8 +401,20 @@ def push_dcat():
     # Delete datasets in datasets_old not in datasets_new
     for ds_old in datasets_old:
         if ds_old['identifier'] not in identifier_index_map_new:
-            req = _request_with_headers(f'{donl_root}/api/3/action/package_delete?id={ds_old[id]}')
-            response = request.urlopen(req)
+            body = {
+                'id': ds_old['id']
+            }
+            body_string = urllib.parse.quote(json.dumps(body))
+            body_string = body_string.encode('utf-8')
+            req = _request_with_headers(f"{donl_root}/api/3/action/package_delete?id={ds_old['id']}", data=body_string,
+                                        authorization=api_key, method='POST')
+            try:
+                response = request.urlopen(req)
+            except HTTPError as err:
+                error_message = err.read()
+                print(error_message)
+                raise err
+
             assert response.code == 200
             response_dict4 = json.loads(response.read())
             if response_dict4['success']:
@@ -397,10 +422,16 @@ def push_dcat():
 
     # Delete resources
     delete_res_count = 0
-    for ds_id, res_list in remove_resources:
+    for ds_id, res_list in remove_resources.items():
         for res_id in res_list:
             req = _request_with_headers(f'{donl_root}/api/3/action/resource_delete?id={res_id}')
-            response = request.urlopen(req)
+            try:
+                response = request.urlopen(req)
+            except HTTPError as err:
+                error_message = err.read()
+                print(error_message)
+                raise err
+
             assert response.code == 200
             response_dict5 = json.loads(response.read())
             if response_dict5['success']:
