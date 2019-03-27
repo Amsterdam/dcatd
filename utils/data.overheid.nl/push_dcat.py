@@ -6,7 +6,6 @@ from urllib import request
 from urllib.error import HTTPError
 import pprint
 
-
 filetype_prefix = 'http://publications.europa.eu/resource/authority/file-type/'
 
 MAP_MEDIATYPE_FORMAT = {
@@ -91,6 +90,18 @@ MAP_THEMES = {
     'theme:zorg-welzijn': 'http://standaarden.overheid.nl/owms/terms/Zorg_en_gezondheid'
 }
 
+MAP_SERVICE_TYPES = {
+    'atom': ('application/json', filetype_prefix + 'JSON'),
+    'rest': ('application/json', filetype_prefix + 'JSON'),
+    'csw': ('application/gml+xml', filetype_prefix + 'XML'),
+    'wcs': ('application/octet-stream', filetype_prefix + 'TAR_XZ'),
+    'wfs': ('application/vnd.geo+json', filetype_prefix + 'WFS_SRVC'),
+    'wms': ('image/png', filetype_prefix + 'WMS_SRVC'),
+    'wmts': ('image/png', filetype_prefix + 'WMS_SRVC'),
+    'soap': ('application/xml', filetype_prefix + 'XML'),
+    'other': ('application/octet-stream', filetype_prefix + 'TAR_XZ'),
+}
+
 
 IDENTIFIER_PREFIX = "https://api.data.amsterdam.nl/dcatd/datasets/"
 
@@ -109,7 +120,7 @@ def _request_with_headers(url, data=None, method=None, authorization=None):
     return req
 
 
-def dictionary_vary(a: dict, b: dict, exclude: dict, parent_key:str = None) -> bool:
+def dictionary_vary(a: dict, b: dict, exclude: dict, parent_key: str = None) -> bool:
     parent_exclude = exclude.get(parent_key, {})
 
     if set(a.keys()) - parent_exclude != set(b.keys()) - parent_exclude:
@@ -121,13 +132,13 @@ def dictionary_vary(a: dict, b: dict, exclude: dict, parent_key:str = None) -> b
                 if not isinstance(b[key], dict) or dictionary_vary(value, b[key], exclude, key):
                     return True
             elif isinstance(value, list):
-                if not isinstance(b[key],list) or len(value) != len(b[key]):
+                if not isinstance(b[key], list) or len(value) != len(b[key]):
                     return True
                 for i in range(len(value)):
                     if isinstance(value[i], dict):
                         if not isinstance(b[key][i], dict) or dictionary_vary(value[i], b[key][i], exclude, key):
                             return True
-                    else: # We do not have lists of lists
+                    else:  # We do not have lists of lists
                         if value[i] != b[key][i]:
                             return True
             elif key in ('modified', 'modification_date', 'issued'):
@@ -140,28 +151,43 @@ def dictionary_vary(a: dict, b: dict, exclude: dict, parent_key:str = None) -> b
     return False
 
 
-def _convert_to_ckan(dcat):
+def _convert_to_ckan(dcat: dict)->dict:
     language = MAP_LANGUAGE[dcat['dct:language']]
 
     # Remove duplicates and sort for easy comparison
-    themes = sorted([MAP_THEMES[theme] for theme in list(set(dcat['dcat:theme']))])
+    themes = sorted(list(set([MAP_THEMES[theme] for theme in dcat['dcat:theme']])))
     tags = [{"name": keyword} for keyword in sorted(list(set(dcat['dcat:keyword'])))]
 
-    ckan = {
-        'title': dcat['dct:title'],
-        'notes': dcat['dct:description'],
-        'dataset_status': f"http://data.overheid.nl/status/{dcat['ams:status']}",
-        "owner_org": "gemeente-amsterdam",  # Should there be a relation between owner_org and owner ?
-        # 'owner': dcat['ams:owner'],
-        'resources': [
-            {
+    if dcat['ams:license'] == 'other-not-open':
+        access_rights = 'http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC'
+    elif dcat['ams:license'] == 'unspec':
+        # If license unknown we have to set access_rights to restricted.
+        access_rights = 'http://publications.europa.eu/resource/authority/access-right/RESTRICTED'
+    else:
+        access_rights = 'http://publications.europa.eu/resource/authority/access-right/PUBLIC'
+
+    resources = []
+    for dist in dcat['dcat:distribution']:
+        # ? default application/octet-stream if no dcat:mediaType
+        mimetype = dist.get('dcat:mediaType', 'application/octet-stream')
+        format1 = MAP_MEDIATYPE_FORMAT[mimetype]
+
+        if dist['ams:distributionType'] == 'api':
+            types = MAP_SERVICE_TYPES[dist['ams:serviceType']]
+            mimetype = types[0]
+            format1 = types[1]
+        elif dist['ams:distributionType'] == 'web':
+            mimetype = 'text/html'
+            format1 = filetype_prefix + 'HTML'
+
+        resource = {
                 'title': dist['dct:title'],
                 'description': dist['description'] if 'description' in dist else 'unknown',
                 'url': dist['dcat:accessURL'],
                 # 'resourceType': dist['ams:resourceType'],
                 # 'distributionType': dist['ams:distributionType'],
-                'mimetype':dist.get('dcat:mediaType', 'application/octet-stream'),  # ? default application/octet-stream if no dcat:mediaType
-                'format': MAP_MEDIATYPE_FORMAT[dist.get('dcat:mediaType','application/octet-stream')],
+                'mimetype': mimetype,
+                'format': format1,
                 'name': dist['dc:identifier'],
                 # 'classification':'public', # We only have public datasets in dcat ?
                 'size': dist['dcat:byteSize'] if 'dcat:byteSize' in dist else None,
@@ -169,27 +195,24 @@ def _convert_to_ckan(dcat):
                     'dct:modified'],
                 'language': [language],  # Inherit from dataset
                 'metadata_language': language,  # Inherit from dataset
-                # 'metadata_created': dist['foaf:isPrimaryTopicOf']['dct:issued'],
-                # 'metadata_modified': dist['foaf:isPrimaryTopicOf']['dct:modified'],
                 'license_id': MAP_LICENSES[dist['dct:license']],
-                # 'purl': dist['ams:purl']
-            } for dist in dcat['dcat:distribution']
-        ],
+        }
+        resources.append(resource)
 
+    ckan = {
+        'title': dcat['dct:title'],
+        'notes': dcat['dct:description'],
+        'dataset_status': f"http://data.overheid.nl/status/{dcat['ams:status']}",
+        "owner_org": "gemeente-amsterdam",  # Should there be a relation between owner_org and owner ?
+        'resources': resources,
         'metadata_language': language,
-        # 'metadata_created': dcat['foaf:isPrimaryTopicOf']['dct:issued'],
-        # 'metadata_modified': dcat['foaf:isPrimaryTopicOf']['dct:modified'],
-        'issued' : dcat['foaf:isPrimaryTopicOf']['dct:issued'],
+        'issued': dcat['foaf:isPrimaryTopicOf']['dct:issued'],
         'modified': dcat['dct:modified'] if 'dct:modified' in dcat else dcat['foaf:isPrimaryTopicOf']['dct:modified'],
         'frequency': MAP_FREQUENCY.get(dcat['dct:accrualPeriodicity'],
                                        'http://publications.europa.eu/resource/authority/frequency/UNKNOWN'),
-        # 'temporalUnit': "na",
         'language': [language],
         'contact_point_name': dcat['dcat:contactPoint']['vcard:fn'],
         'contact_point_email': dcat['dcat:contactPoint']['vcard:hasEmail'],
-        # ? How to map publishers  to fixed list of organisations : https://waardelijsten.dcat-ap-donl.nl/donl_organization.json
-        # 'publisher_email': dcat['dct:publisher']['foaf:mbox'],
-        # 'publisher_name': dcat['dct:publisher']['foaf:name'],
         'publisher': 'http://standaarden.overheid.nl/owms/terms/Amsterdam',
         'theme': themes,
         'tags': tags,
@@ -197,17 +220,23 @@ def _convert_to_ckan(dcat):
         'authority': "http://standaarden.overheid.nl/owms/terms/" + dcat['overheid:authority'][9:],
         'identifier': IDENTIFIER_PREFIX + dcat['dct:identifier'],
         'name': dcat['dct:identifier'].lower(),
-        #'modifiedby': dcat['ams:modifiedby']
+        'source_catalog': 'https://data.amsterdam.nl/',
+        'access_rights': access_rights
         }
     return ckan
+
 
 def push_dcat():
     dcat_env = os.getenv('ENVIRONMENT', 'acc')  # acc or prod
     api_key = os.getenv('API_KEY')
     organisation_id = os.getenv('ORGANISATION_ID', 'gemeente-amsterdam')
 
-    dcat_root = 'https://api.data.amsterdam.nl/dcatd' if dcat_env == 'prod' else 'https://acc.api.data.amsterdam.nl/dcatd'
-    donl_root = 'https://data.overheid.nl/data' if dcat_env == 'prod' else 'http://beta-acc.data.overheid.nl/data'
+    if dcat_env == 'prod':
+        dcat_root = 'https://api.data.amsterdam.nl/dcatd'
+        donl_root = 'https://data.overheid.nl/data'
+    else:
+        dcat_root = 'https://acc.api.data.amsterdam.nl/dcatd'
+        donl_root = 'http://beta-acc.data.overheid.nl/data'
 
     req = _request_with_headers(f'{dcat_root}/harvest')
 
@@ -224,25 +253,31 @@ def push_dcat():
     assert response_dict0['success']
     datasets_old = response_dict0['result']['results']
     prefix_len = len(IDENTIFIER_PREFIX)
-    identifier_index_map_old = {datasets_old[index]['identifier'][prefix_len:]: index for index in
-          range(len(datasets_old))}
+    identifier_index_map_old = {
+        datasets_old[index]['identifier'][prefix_len:]: index for index in range(len(datasets_old))
+    }
 
-    identifier_index_map_new = { IDENTIFIER_PREFIX + datasets_new[index]['dct:identifier']: index for index in
-                                 range(len(datasets_new))}
+    identifier_index_map_new = {
+        IDENTIFIER_PREFIX + datasets_new[index]['dct:identifier']: index for index in range(len(datasets_new))
+    }
 
     insert_count = 0
     update_count = 0
     delete_count = 0
     count = 0
-
     remove_resources = {}
 
     for ds_new in datasets_new:
         identifier = ds_new['dct:identifier']
+        print(f"Processing: {identifier}, {ds_new['dct:title']}")
 
         owner = ds_new['ams:owner']
         # Only import datasets where amsterdam is owner
         if not re.search('amsterdam', owner, flags=re.IGNORECASE):
+            continue
+
+        # Only import datasets that are beschikbaar
+        if ds_new['ams:status'] != 'beschikbaar':
             continue
 
         if not api_key:
@@ -258,15 +293,15 @@ def push_dcat():
         if ds_old:
             # Dataset already exists. Use package_update
             # First add ID's to ckan dataset
-            id = ds_new['id'] = ds_old['id']
+            id1 = ds_new['id'] = ds_old['id']
 
-            name_id_map_old = { res_old['name']: res_old['id'] for res_old in ds_old['resources']}
+            name_id_map_old = {res_old['name']: res_old['id'] for res_old in ds_old['resources']}
             for res_new in ds_new['resources']:
                 if res_new['name'] in name_id_map_old:
                     res_new['id'] = name_id_map_old[res_new['name']]
-                # else A new id will be assigned
+                # else a new id will be assigned
 
-            name_set_new = { res_new['name'] for res_new in ds_new['resources']}
+            name_set_new = {res_new['name'] for res_new in ds_new['resources']}
 
             # Check if old and new datasets are different
             exclude = {
@@ -324,7 +359,7 @@ def push_dcat():
             }
 
             # sort tags and themes for easy comparison
-            ds_old['tags'] = sorted(ds_old['tags'], key=lambda ds:ds['name'])
+            ds_old['tags'] = sorted(ds_old['tags'], key=lambda ds: ds['name'])
             ds_old['theme'] = sorted(ds_old['theme'])
 
             if not dictionary_vary(ds_new, ds_old, exclude):
@@ -337,13 +372,13 @@ def push_dcat():
                     to_remove.append(ds_old['resources'][i]['id'])
 
             # Remove resource later
-            remove_resources[id] = to_remove
+            remove_resources[id1] = to_remove
 
             ds_new_string = urllib.parse.quote(json.dumps(ds_new))
             ds_new_string = ds_new_string.encode('utf-8')
             req.add_header('Content-Length', len(ds_new_string))
 
-            req = _request_with_headers(f'{donl_root}/api/3/action/package_update?id={id}', data=ds_new_string,
+            req = _request_with_headers(f'{donl_root}/api/3/action/package_update?id={id1}', data=ds_new_string,
                                         authorization=api_key, method='POST')
             try:
                 response = request.urlopen(req)
@@ -421,7 +456,13 @@ def push_dcat():
     delete_res_count = 0
     for ds_id, res_list in remove_resources.items():
         for res_id in res_list:
-            req = _request_with_headers(f'{donl_root}/api/3/action/resource_delete?id={res_id}')
+            body = {
+                'id': res_id
+            }
+            body_string = urllib.parse.quote(json.dumps(body))
+            body_string = body_string.encode('utf-8')
+            req = _request_with_headers(f'{donl_root}/api/3/action/resource_delete?id={res_id}', data=body_string,
+                                        authorization=api_key, method='POST')
             try:
                 response = request.urlopen(req)
             except HTTPError as err:
