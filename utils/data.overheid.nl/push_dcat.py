@@ -166,7 +166,7 @@ def _convert_to_ckan(dcat: dict)->dict:
     else:
         access_rights = 'http://publications.europa.eu/resource/authority/access-right/PUBLIC'
 
-    resources = []
+    resources = {}
     for dist in dcat['dcat:distribution']:
         # ? default application/octet-stream if no dcat:mediaType
         mimetype = dist.get('dcat:mediaType', 'application/octet-stream')
@@ -188,7 +188,7 @@ def _convert_to_ckan(dcat: dict)->dict:
                 # 'distributionType': dist['ams:distributionType'],
                 'mimetype': mimetype,
                 'format': format1,
-                'name': dist['dc:identifier'],
+                'name': dist['dct:title'],
                 # 'classification':'public', # We only have public datasets in dcat ?
                 'size': dist['dcat:byteSize'] if 'dcat:byteSize' in dist else None,
                 'modification_date': dist['dct:modified'] if 'dct:modified' in dist else dist['foaf:isPrimaryTopicOf'][
@@ -197,14 +197,17 @@ def _convert_to_ckan(dcat: dict)->dict:
                 'metadata_language': language,  # Inherit from dataset
                 'license_id': MAP_LICENSES[dist['dct:license']],
         }
-        resources.append(resource)
+
+        # Remove duplicates with the same name or dct:title
+        if resource['name'] not in resources:
+            resources[resource['name']] = resource
 
     ckan = {
         'title': dcat['dct:title'],
         'notes': dcat['dct:description'],
         'dataset_status': f"http://data.overheid.nl/status/{dcat['ams:status']}",
         "owner_org": "gemeente-amsterdam",  # Should there be a relation between owner_org and owner ?
-        'resources': resources,
+        'resources': list(resources.values()),
         'metadata_language': language,
         'issued': dcat['foaf:isPrimaryTopicOf']['dct:issued'],
         'modified': dcat['dct:modified'] if 'dct:modified' in dcat else dcat['foaf:isPrimaryTopicOf']['dct:modified'],
@@ -295,7 +298,13 @@ def push_dcat():
             # First add ID's to ckan dataset
             id1 = ds_new['id'] = ds_old['id']
 
-            name_id_map_old = {res_old['name']: res_old['id'] for res_old in ds_old['resources']}
+            name_id_map_old = {}
+            for res_old in ds_old['resources']:
+                name_id_map_old[res_old['name']] = res_old['id']
+                name_id_map_old[res_old['title']] = res_old['id']
+
+            # name_id_map_old = {res_old['name']: res_old['id'] for res_old in ds_old['resources']}
+
             for res_new in ds_new['resources']:
                 if res_new['name'] in name_id_map_old:
                     res_new['id'] = name_id_map_old[res_new['name']]
@@ -368,7 +377,8 @@ def push_dcat():
             # Collect resources te be removed
             to_remove = []
             for i in reversed(range(len(ds_old['resources']))):
-                if ds_old['resources'][i]['name'] not in name_set_new:
+                if ds_old['resources'][i]['name'] not in name_set_new and \
+                        ds_old['resources'][i]['title'] not in name_set_new:
                     to_remove.append(ds_old['resources'][i]['id'])
 
             # Remove resource later
