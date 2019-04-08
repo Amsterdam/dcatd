@@ -182,7 +182,7 @@ def _convert_to_ckan(dcat: dict)->dict:
 
         resource = {
                 'title': dist['dct:title'],
-                'description': dist['description'] if 'description' in dist else '',
+                'description': dist['description'] if 'description' in dist else 'unknown',
                 'url': dist['dcat:accessURL'],
                 # 'resourceType': dist['ams:resourceType'],
                 # 'distributionType': dist['ams:distributionType'],
