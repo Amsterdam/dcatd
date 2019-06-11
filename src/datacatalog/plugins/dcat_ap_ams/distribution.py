@@ -28,7 +28,8 @@ DISTRIBUTION = dcat.Object().add(
     dcat.String(
         format='uri',
         title="URL of upload",
-        description="Toegangslink naar de daadwerkelijke gegevensset óf downloadlink om gegevensset te downloaden",
+        description="Toegangslink naar de daadwerkelijke gegevensset óf downloadlink om gegevensset te downloaden. "
+                    "Vergeet niet de Verversingsdatum hieronder te controleren",
         required=''
     )
 ).add(
