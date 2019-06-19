@@ -108,8 +108,10 @@ async def middleware(app, handler):
 
 
 async def _enforce_one_of(request: web.Request,
-                          security_requirements: T.List[T.Dict[
-                              str, T.Optional[T.Iterable]]
+                          security_requirements: T.List[
+                              T.Optional[T.Dict[
+                                str, T.Optional[T.Iterable]
+                              ]]
                           ]):
     for security_requirement in security_requirements:
         if await _enforce_all_of(request, security_requirement):
@@ -118,9 +120,11 @@ async def _enforce_one_of(request: web.Request,
 
 
 async def _enforce_all_of(request: web.Request,
-                          security_requirements: T.Dict[
+                          security_requirements: T.Optional[T.Dict[
                               str, T.Optional[T.Iterable]
-                          ]) -> bool:
+                          ]]) -> bool:
+    if security_requirements is None:
+        return True
     openapi = request.app['openapi']
     security_definitions = openapi['components']['securitySchemes']
     all_authz_info = await _extract_authz_info(request, security_definitions)
