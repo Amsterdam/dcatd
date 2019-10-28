@@ -96,7 +96,7 @@ You can import CKAN data into the DCAT-API to bootstrap your install with data
 
 PUT-ting and DELETE-ing data via the API require authorisation.
 
-In the context of Amsterdam City Data can obtiain a JWT from the swagger-ui
+In the context of Amsterdam Data en Informatie can obtiain a JWT from the swagger-ui
 (http://localhost:8686/swagger-ui/?url=http://localhost:8000/openapi); export it to JWT:
 (For more information see: https://hub.docker.com/r/amsterdam/oauth2swaggerui/ )
 

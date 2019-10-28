@@ -17,7 +17,7 @@ setup(
     #
     # """,
     url='https://github.com/Amsterdam/datacatalog-core',
-    author='Amsterdam City Data',
+    author='Amsterdam Data en Informatie',
     author_email='datapunt@amsterdam.nl',
     license='Mozilla Public License Version 2.0',
     classifiers=[
