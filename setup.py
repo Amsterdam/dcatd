@@ -67,7 +67,7 @@ setup(
         'jsonschema',
         'jsonpointer',
         'pluggy',
-        'pyjwt',
+        'jwcrypto',
         'pyld',
         'PyYaml',
         'sentry-sdk',
