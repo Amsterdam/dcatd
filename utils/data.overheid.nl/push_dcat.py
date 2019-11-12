@@ -70,24 +70,18 @@ MAP_FREQUENCY = {
 # Map themes to : https://standaarden.overheid.nl/owms/terms/TaxonomieBeleidsagenda.xml
 MAP_THEMES = {
     'theme:none': 'http://standaarden.overheid.nl/owms/terms/Overige_economische_sectoren',  # ???
-    'theme:bestuur-en-organisatie': 'http://standaarden.overheid.nl/owms/terms/Bestuur',
+    'theme:bestuur': 'http://standaarden.overheid.nl/owms/terms/Bestuur',
     'theme:bevolking': 'http://standaarden.overheid.nl/owms/terms/Sociale_zekerheid',
-    'theme:dienstverlening': 'http://standaarden.overheid.nl/owms/terms/Economie',
-    'theme:economie-haven': 'http://standaarden.overheid.nl/owms/terms/Economie',
-    'theme:educatie-jeugd-diversiteit': 'http://standaarden.overheid.nl/owms/terms/Onderwijs_en_wetenschap',
-    'theme:energie': 'http://standaarden.overheid.nl/owms/terms/Energie',
-    'theme:geografie': 'http://standaarden.overheid.nl/owms/terms/Ruimte_en_infrastructuur',
-    'theme:milieu-water': 'http://standaarden.overheid.nl/owms/terms/Natuur_en_milieu',
-    'theme:openbare-orde-veiligheid': 'http://standaarden.overheid.nl/owms/terms/Openbare_orde_en_veiligheid',
-    'theme:openbare-ruimte-groen': 'http://standaarden.overheid.nl/owms/terms/Natuur-_en_landschapsbeheer',
-    'theme:sport-recreatie': 'http://standaarden.overheid.nl/owms/terms/Cultuur_en_recreatie',
-    'theme:stedelijke-ontwikkeling': 'http://standaarden.overheid.nl/owms/terms/Ruimte_en_infrastructuur',
-    'theme:toerisme-cultuur': 'http://standaarden.overheid.nl/owms/terms/Toerisme',
-    'theme:verkeer-infrastructuur': 'http://standaarden.overheid.nl/owms/terms/Verkeer_(thema)',
-    'theme:verkiezingen': 'http://standaarden.overheid.nl/owms/terms/Bestuur',
-    'theme:werk-inkomen': 'http://standaarden.overheid.nl/owms/terms/Werk_(thema)',
-    'theme:wonen-leefomgeving': 'http://standaarden.overheid.nl/owms/terms/Huisvesting_(thema)',
-    'theme:zorg-welzijn': 'http://standaarden.overheid.nl/owms/terms/Zorg_en_gezondheid'
+    'theme:cultuur-en-recreatie': 'http://standaarden.overheid.nl/owms/terms/Cultuur_en_recreatie',
+    'theme:duurzaamheid-en-milieu': 'http://standaarden.overheid.nl/owms/terms/Natuur_en_milieu',
+    'theme:economie-en-toerisme': 'http://standaarden.overheid.nl/owms/terms/Economie',
+    'theme:onderwijs-en-wetenschap': 'http://standaarden.overheid.nl/owms/terms/Onderwijs_en_wetenschap',
+    'theme:openbare-orde-en-veiligheid': 'http://standaarden.overheid.nl/owms/terms/Openbare_orde_en_veiligheid',
+    'theme:ruimte-en-topografie': 'http://standaarden.overheid.nl/owms/terms/Ruimte_en_infrastructuur',
+    'theme:verkeer': 'http://standaarden.overheid.nl/owms/terms/Verkeer_(thema)',
+    'theme:werk-en-sociale-zekerheid': 'http://standaarden.overheid.nl/owms/terms/Werk_(thema)',
+    'theme:wonen': 'http://standaarden.overheid.nl/owms/terms/Huisvesting_(thema)',
+    'theme:zorg-en-welzijn': 'http://standaarden.overheid.nl/owms/terms/Zorg_en_gezondheid'
 }
 
 MAP_SERVICE_TYPES = {
