@@ -1,5 +1,6 @@
 import logging
 import re
+import json
 import typing as T
 import urllib.parse
 
@@ -36,11 +37,11 @@ async def _extract_scopes(request: web.Request) -> T.Set:
             try:
                 jwt = decode_token(raw_jwt)
             except JWTMissingKey as e:
-                logger.warning('API authz problem: unknown key. {}'.format(e))
+                _logger.warning('API authz problem: unknown key. {}'.format(e))
                 raise web.HTTPBadRequest(text="Unknown key identifier: {}".format(header['kid'])) from None
 
         claims = get_claims(jwt)
-        sub = claims['sub']
+        subject = claims['sub']
         scopes = claims['scopes']
 
     request.authz_scopes = scopes
@@ -51,19 +52,19 @@ async def _extract_scopes(request: web.Request) -> T.Set:
 def decode_token(raw_jwt):
     settings = get_settings()
     try:
-        jwt = JWT(jwt=raw_jwt, key=get_keyset(), algs=settings['ALLOWED_SIGNING_ALGORITHMS'])
+        jwt = JWT(jwt=raw_jwt, key=get_keyset(), algs=settings['allowed_signing_algorithms'])
     except JWTExpired:
-        logger.info(
-            'API authz problem: token expired {}'.format(raw_jwt)
+        _logger.info(
+            'Auth problem: token expired {}'.format(raw_jwt)
         )
-        raise _AuthorizationHeaderError(invalid_token())
+        return set()
     except InvalidJWSSignature as e:
-        logger.warning('API authz problem: invalid signature. {}'.format(e))
-        raise _AuthorizationHeaderError(invalid_token())
+        _logger.warning('Auth problem: invalid signature. {}'.format(e))
+        raise web.HTTPBadRequest(text='Invalid Bearer token')
     except ValueError as e:
-        logger.warning(
-            'API authz problem: {}'.format(e))
-        raise _AuthorizationHeaderError(invalid_token())
+        _logger.warning(
+            'Auth problem: {}'.format(e))
+        raise web.HTTPBadRequest(text='Invalid Bearer token')
     return jwt
 
 
@@ -73,7 +74,7 @@ def get_claims(jwt):
         # Authz token structure
         return {
             'sub': claims.get('sub'),
-            'scopes': claims['scopes']
+            'scopes': set(claims['scopes'])
         }
     elif claims.get('realm_access'):
         # Keycloak token structure
@@ -81,10 +82,7 @@ def get_claims(jwt):
             'sub': claims.get('sub'),
             'scopes': {convert_scope(r) for r in claims['realm_access']['roles']}
         }
-    logger.warning(
-        'API authz problem: access token misses scopes claim'
-    )
-    raise _AuthorizationHeaderError(invalid_token())
+    raise web.HTTPBadRequest(text='No scopes in access token')
 
 
 def convert_scope(scope):

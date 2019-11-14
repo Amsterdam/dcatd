@@ -1,14 +1,16 @@
 import time
 
-import jwt
 from os import path
 
 from aiohttp import FormData
 from aiohttp.test_utils import unittest_run_loop
 from mockito import when, unstub, any
+from jwcrypto.jwt import JWT
 
 from datacatalog.plugins import postgres as pgpl, swift
+from datacatalog.jwks import get_keyset
 from tests.datacatalog.base_test_case import BaseTestCase
+
 
 # Note: the valid token relies on the key in the default config.yml
 _INVALID_TOKEN = "bearer invalid_token"
@@ -17,18 +19,27 @@ _SUT_DOC_ID = '_FlXXpXDa-Ro3Q'
 
 
 def create_valid_token(app, subject, scopes):
-    jwks = app['jwks'].signers
+    jwks = get_keyset()
     assert len(jwks) > 0
-    (kid, key), = jwks.items()
 
+    key = next(iter(jwks['keys']))
     now = int(time.time())
 
-    token = jwt.encode({
-        'scopes': scopes,
-        'subject': subject,
-        'iat': now, 'exp': now + 600
-    }, key.key, algorithm=key.alg, headers={'kid': kid})
-    return 'bearer ' + str(token, 'utf-8')
+    header = {
+        'alg': 'ES256',  # algorithm of the test key
+        'kid': key.key_id
+    }
+
+    token = JWT(
+        header=header,
+        claims={
+            'iat': now,
+            'exp': now + 600,
+            'scopes': scopes,
+            'subject': subject
+        })
+    token.make_signed_token(key)
+    return 'bearer ' + token.serialize()
 
 
 class DatasetTestCase(BaseTestCase):

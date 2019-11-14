@@ -41,7 +41,7 @@ from pkg_resources import resource_stream
 
 logger = logging.getLogger(__name__)
 
-
+_settings = {}
 _CONFIG_SCHEMA_RESOURCE = 'config_schema.yml'
 
 
@@ -50,6 +50,18 @@ DEFAULT_CONFIG_PATHS = [
     pathlib.Path('config.yml')
 ]
 """List of locations to look for a configuration file."""
+
+
+def init_settings():
+    global _settings
+    _settings = load()
+
+
+def get_settings():
+    global _settings
+    if not _settings:
+        init_settings()
+    return _settings
 
 
 class ConfigDict(dict):

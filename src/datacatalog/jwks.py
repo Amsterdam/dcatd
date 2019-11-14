@@ -7,10 +7,12 @@ import sys
 from jwcrypto.jwk import JWKSet
 from jwcrypto.common import JWException
 
-from .config import get_settings, AuthzConfigurationError
+from .config import get_settings, ConfigError
 
 _keyset = None
 _keyset_last_update = 0
+
+logger = logging.getLogger(__name__)
 
 
 def get_keyset():
@@ -42,14 +44,14 @@ def init_keyset():
     _keyset_last_update = time.time()
     settings = get_settings()
 
-    if settings.get('JWKS'):
-        load_jwks(settings['JWKS'])
+    if settings.get('jwks'):
+        load_jwks(settings['jwks'])
 
-    if settings.get('JWKS_URL'):
-        load_jwks_from_url(settings['JWKS_URL'])
+    if settings.get('jwks_url'):
+        load_jwks_from_url(settings['jwks_url'])
 
     if len(_keyset['keys']) == 0:
-        raise AuthzConfigurationError('No keys loaded!')
+        raise ConfigError('No keys loaded!')
 
 
 def load_jwks(jwks):
@@ -57,7 +59,7 @@ def load_jwks(jwks):
     try:
         _keyset.import_keyset(jwks)
     except JWException as e:
-        raise AuthzConfigurationError("Failed to import keyset from settings") from e
+        raise ConfigError("Failed to import keyset from settings") from e
     logger.info('Loaded JWKS from JWKS setting.')
 
 
@@ -67,15 +69,14 @@ def load_jwks_from_url(jwks_url):
         response = requests.get(jwks_url)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        raise AuthzConfigurationError(
+        raise ConfigError(
             "Failed to get Keycloak keyset from url: {}, error: {}".format(jwks_url, e)
         )
     try:
         _keyset.import_keyset(response.text)
     except JWException as e:
-        raise AuthzConfigurationError("Failed to import Keycloak keyset") from e
+        raise ConfigError("Failed to import Keycloak keyset") from e
     logger.info('Loaded JWKS from JWKS_URL setting {}'.format(jwks_url))
 
 
 __all__ = dir(sys.modules[__name__])
-__all__.remove('int_from_bytes')  # To keep Sphinx happy

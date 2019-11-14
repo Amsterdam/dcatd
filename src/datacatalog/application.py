@@ -7,7 +7,7 @@ import aiohttp_cors
 import aiopluggy
 
 from datacatalog import startup_actions
-from . import authorization, config, handlers, jwks, openapi, plugin_interfaces
+from . import authorization, config, handlers, openapi, plugin_interfaces
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +45,6 @@ class Application(web.Application):
             path += '/'
         self['path'] = path
         self['openapi'] = openapi.openapi
-        self['jwks'] = jwks.load(self._config['jwks'])
 
         # set routes
         self.router.add_get(path + 'datasets', handlers.datasets.get_collection)

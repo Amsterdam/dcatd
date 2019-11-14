@@ -55,6 +55,11 @@ definitions:
   jwks:
     type: string
 
+  allowed_signing_algorithms:
+    type: array
+    items:
+      type: string
+
   cors:
     type: object
     additionalProperties: false
