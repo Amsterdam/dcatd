@@ -4,6 +4,7 @@ import base64
 import json
 import sys
 
+import requests
 from jwcrypto.jwk import JWKSet
 from jwcrypto.common import JWException
 

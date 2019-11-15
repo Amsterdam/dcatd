@@ -32,6 +32,11 @@ async def _extract_scopes(request: web.Request) -> T.Set:
         raw_jwt = match[1]
         try:
             jwt = decode_token(raw_jwt)
+        except JWTExpired:
+            _logger.info(
+                'Auth problem: token expired'
+            )
+            return set()
         except JWTMissingKey:
             check_update_keyset()
             try:
@@ -53,11 +58,6 @@ def decode_token(raw_jwt):
     settings = get_settings()
     try:
         jwt = JWT(jwt=raw_jwt, key=get_keyset(), algs=settings['allowed_signing_algorithms'])
-    except JWTExpired:
-        _logger.info(
-            'Auth problem: token expired {}'.format(raw_jwt)
-        )
-        return set()
     except InvalidJWSSignature as e:
         _logger.warning('Auth problem: invalid signature. {}'.format(e))
         raise web.HTTPBadRequest(text='Invalid Bearer token')
@@ -167,6 +167,7 @@ async def _enforce_all_of(request: web.Request,
         security_type = security_definitions[requirement]['type']
         if security_type == 'oauth2':
             if len(set(scopes) - authz_info) > 0:
+                _logger.debug("Request with insufficient scopes")
                 return False
         elif security_type == 'apiKey':
             if not authz_info:
@@ -174,6 +175,7 @@ async def _enforce_all_of(request: web.Request,
         else:
             _logger.error('Unexpected security type: %s' % security_type)
             raise web.HTTPInternalServerError()
+    _logger.debug("Request with sufficient authorization")
     return True
 
 

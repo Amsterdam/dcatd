@@ -86,8 +86,7 @@ class DatasetTestCase(BaseTestCase):
         response = await self.client.request(
             "POST", "/datasets", data=data, headers=invalid_headers)
 
-        self.assertEqual(response.status, 400,
-                          'Verkeerde reactie op verkeer token')
+        self.assertEqual(response.status, 400, 'Verkeerde reactie op verkeer token')
 
         response = await self.client.request(
             "POST", "/datasets", data=data, headers=admin_headers)
@@ -119,19 +118,16 @@ class DatasetTestCase(BaseTestCase):
             "GET", f"/datasets/{_SUT_DOC_ID}",
             headers={'If-None-Match': 'notanetag'})
 
-        self.assertNotEqual(response.status, 304,
-                             'Onterechte not modified ontvangen')
+        self.assertNotEqual(response.status, 304, 'Onterechte not modified ontvangen')
 
         response = await self.client.request(
             "GET", f"/datasets", params={'q': 'nonexistent'})
 
-        self.assertEqual(response.status, 200,
-                          'Geen match resulteert in !200 state')
+        self.assertEqual(response.status, 200, 'Geen match resulteert in !200 state')
 
         response_json = await response.json()
 
-        self.assertEqual(response_json['dcat:dataset'], [],
-                          'Leeg resultaat verwacht')
+        self.assertEqual(response_json['dcat:dataset'], [], 'Leeg resultaat verwacht')
 
         response = await self.client.request(
             "GET", f"/datasets", params={'q': 'ouderen'})
@@ -165,8 +161,7 @@ class DatasetTestCase(BaseTestCase):
             "DELETE", f"/datasets/{_SUT_DOC_ID}",
             headers={**admin_headers, **{'If-Match': etag}})
 
-        self.assertEqual(response.status, 204,
-                          'Document kon niet worden verwijderd')
+        self.assertEqual(response.status, 204, 'Document kon niet worden verwijderd')
 
         # Check redact access on POST
         redact_headers = {**basic_headers, **{'authorization': self.redact_token}}

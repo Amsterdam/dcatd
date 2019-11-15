@@ -72,6 +72,7 @@ setup(
         'PyYaml',
         'sentry-sdk',
         'whoosh',
+        'requests',
 
         # Recommended by aiohttp docs:
         'aiodns',    # optional asynchronous DNS client
