@@ -22,7 +22,6 @@ required:
 - logging
 - plugins
 - primarySchema
-- jwks
 - web
 
 

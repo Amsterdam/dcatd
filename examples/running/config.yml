@@ -41,6 +41,8 @@ jwks: >
     ]
   }
 
+jwks_url: ${JWKS_URL:-}
+
 allowed_signing_algorithms:
   - HS256
   - HS384
