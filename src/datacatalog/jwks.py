@@ -59,7 +59,7 @@ def load_jwks(jwks):
     try:
         _keyset.import_keyset(jwks)
     except JWException as e:
-        raise ConfigError("Failed to import keyset from settings") from e
+        raise ConfigError("Failed to import JWKS from settings") from e
     logger.info('Loaded JWKS from JWKS setting.')
 
 
@@ -70,12 +70,12 @@ def load_jwks_from_url(jwks_url):
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         raise ConfigError(
-            "Failed to get Keycloak keyset from url: {}, error: {}".format(jwks_url, e)
+            "Failed to get JWKS from url: {}, error: {}".format(jwks_url, e)
         )
     try:
         _keyset.import_keyset(response.text)
     except JWException as e:
-        raise ConfigError("Failed to import Keycloak keyset") from e
+        raise ConfigError("Failed to import JWKS from url") from e
     logger.info('Loaded JWKS from JWKS_URL setting {}'.format(jwks_url))
 
 
