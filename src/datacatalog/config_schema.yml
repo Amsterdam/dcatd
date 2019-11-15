@@ -54,6 +54,12 @@ definitions:
   jwks:
     type: string
 
+  jwks_url:
+    type: string
+
+  min_interval_keyset_update:
+    type: integer
+
   allowed_signing_algorithms:
     type: array
     items:

@@ -42,8 +42,8 @@ async def _extract_scopes(request: web.Request) -> T.Set:
             try:
                 jwt = decode_token(raw_jwt)
             except JWTMissingKey as e:
-                _logger.warning('API authz problem: unknown key. {}'.format(e))
-                raise web.HTTPBadRequest(text="Unknown key identifier: {}".format(header['kid'])) from None
+                _logger.warning('Auth problem: unknown key. {}'.format(e))
+                raise web.HTTPBadRequest(text="Invalid Bearer token")
 
         claims = get_claims(jwt)
         subject = claims['sub']

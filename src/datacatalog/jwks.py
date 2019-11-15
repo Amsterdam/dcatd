@@ -31,7 +31,7 @@ def check_update_keyset():
     """
     settings = get_settings()
     current_time = time.time()
-    if current_time - _keyset_last_update >= settings['MIN_INTERVAL_KEYSET_UPDATE']:
+    if current_time - _keyset_last_update >= settings['min_interval_keyset_update']:
         init_keyset()
 
 
