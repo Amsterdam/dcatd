@@ -94,7 +94,7 @@ class ConfigError(Exception):
 def _config_schema() -> T.Mapping:
     with resource_stream(__name__, _CONFIG_SCHEMA_RESOURCE) as s:
         try:
-            return yaml.load(s)
+            return yaml.load(s, Loader=yaml.SafeLoader)
         except yaml.YAMLError as e:
             error_msg = "Couldn't load bundled config_schema '{}'."
             raise ConfigError(error_msg.format(_CONFIG_SCHEMA_RESOURCE)) from e
@@ -111,7 +111,7 @@ def _load_yaml(path: pathlib.Path) -> dict:
     """
     with path.open() as f:
         try:
-            result = yaml.load(f)
+            result = yaml.load(f, Loader=yaml.SafeLoader)
         except yaml.YAMLError as e:
             error_msg = "Couldn't load yaml file '{}'.".format(path)
             raise ConfigError(error_msg.format(path)) from e
