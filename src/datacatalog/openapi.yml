@@ -108,6 +108,7 @@ paths:
             description: >-
               A string, if the comparator is one of ``=``, ``>``, or ``<``
           - type: string
+            description: >-
               A set of strings, if the comparator is ``~``
             pattern: '^(/(~0|~1|[^/~<>=])+)+([<>]=|=[=<>~]).+$'
       - name: limit
