@@ -6,4 +6,4 @@ import yaml
 _OPENAPI_SCHEMA_RESOURCE = 'openapi.yml'
 
 with resource_stream(__name__, _OPENAPI_SCHEMA_RESOURCE) as s:
-    openapi = yaml.load(s, Loader=yaml.SafeLoader)
+    openapi = yaml.safe_load(s)

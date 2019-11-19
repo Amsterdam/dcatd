@@ -27,7 +27,7 @@ def initialize_sync(app):
     """
     # validate configuration
     with pkg_resources.resource_stream(__name__, 'config_schema.yml') as s:
-        schema = yaml.load(s, Loader=yaml.SafeLoader)
+        schema = yaml.safe_load(s)
     app.config.validate(schema)
     global _BASE_URL, _AUTHORIZATION
     config = app.config['storage_swift']
