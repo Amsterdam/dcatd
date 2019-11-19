@@ -41,6 +41,7 @@ jwks: >
     ]
   }
 
+jwks_url: ${JWKS_URL}
 min_interval_keyset_update: 30
 
 allowed_signing_algorithms:

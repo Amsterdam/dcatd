@@ -201,7 +201,7 @@ class _TemplateWithDefaults(string.Template):
                 if '-' in named:
                     var, _, default = named.partition('-')
                     return mapping.get(var, default)
-                val = mapping[named]
+                val = mapping.get(named, "")
                 return '%s' % (val,)
             if mo.group('escaped') is not None:
                 return self.delimiter
