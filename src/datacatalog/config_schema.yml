@@ -11,6 +11,12 @@ properties:
     $ref: '#/definitions/web'
   jwks:
     $ref: '#/definitions/jwks'
+  jwks_url:
+    $ref: '#/definitions/jwks_url'
+  min_interval_keyset_update:
+    $ref: '#/definitions/min_interval_keyset_update'
+  allowed_signing_algorithms:
+    $ref: '#/definitions/allowed_signing_algorithms'
   cors:
     $ref: '#/definitions/cors'
   primarySchema:
