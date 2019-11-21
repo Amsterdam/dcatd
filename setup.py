@@ -67,11 +67,12 @@ setup(
         'jsonschema',
         'jsonpointer',
         'pluggy',
-        'pyjwt',
+        'jwcrypto',
         'pyld',
         'PyYaml',
         'sentry-sdk',
         'whoosh',
+        'requests',
 
         # Recommended by aiohttp docs:
         'aiodns',    # optional asynchronous DNS client

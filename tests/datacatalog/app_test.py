@@ -1,14 +1,16 @@
 import time
 
-import jwt
 from os import path
 
 from aiohttp import FormData
 from aiohttp.test_utils import unittest_run_loop
 from mockito import when, unstub, any
+from jwcrypto.jwt import JWT
 
 from datacatalog.plugins import postgres as pgpl, swift
+from datacatalog.jwks import get_keyset
 from tests.datacatalog.base_test_case import BaseTestCase
+
 
 # Note: the valid token relies on the key in the default config.yml
 _INVALID_TOKEN = "bearer invalid_token"
@@ -17,18 +19,27 @@ _SUT_DOC_ID = '_FlXXpXDa-Ro3Q'
 
 
 def create_valid_token(app, subject, scopes):
-    jwks = app['jwks'].signers
+    jwks = get_keyset()
     assert len(jwks) > 0
-    (kid, key), = jwks.items()
 
+    key = next(iter(jwks['keys']))
     now = int(time.time())
 
-    token = jwt.encode({
-        'scopes': scopes,
-        'subject': subject,
-        'iat': now, 'exp': now + 600
-    }, key.key, algorithm=key.alg, headers={'kid': kid})
-    return 'bearer ' + str(token, 'utf-8')
+    header = {
+        'alg': 'ES256',  # algorithm of the test key
+        'kid': key.key_id
+    }
+
+    token = JWT(
+        header=header,
+        claims={
+            'iat': now,
+            'exp': now + 600,
+            'scopes': scopes,
+            'subject': subject
+        })
+    token.make_signed_token(key)
+    return 'bearer ' + token.serialize()
 
 
 class DatasetTestCase(BaseTestCase):
@@ -75,8 +86,7 @@ class DatasetTestCase(BaseTestCase):
         response = await self.client.request(
             "POST", "/datasets", data=data, headers=invalid_headers)
 
-        self.assertEqual(response.status, 400,
-                          'Verkeerde reactie op verkeer token')
+        self.assertEqual(response.status, 400, 'Verkeerde reactie op verkeer token')
 
         response = await self.client.request(
             "POST", "/datasets", data=data, headers=admin_headers)
@@ -108,19 +118,16 @@ class DatasetTestCase(BaseTestCase):
             "GET", f"/datasets/{_SUT_DOC_ID}",
             headers={'If-None-Match': 'notanetag'})
 
-        self.assertNotEqual(response.status, 304,
-                             'Onterechte not modified ontvangen')
+        self.assertNotEqual(response.status, 304, 'Onterechte not modified ontvangen')
 
         response = await self.client.request(
             "GET", f"/datasets", params={'q': 'nonexistent'})
 
-        self.assertEqual(response.status, 200,
-                          'Geen match resulteert in !200 state')
+        self.assertEqual(response.status, 200, 'Geen match resulteert in !200 state')
 
         response_json = await response.json()
 
-        self.assertEqual(response_json['dcat:dataset'], [],
-                          'Leeg resultaat verwacht')
+        self.assertEqual(response_json['dcat:dataset'], [], 'Leeg resultaat verwacht')
 
         response = await self.client.request(
             "GET", f"/datasets", params={'q': 'ouderen'})
@@ -154,8 +161,7 @@ class DatasetTestCase(BaseTestCase):
             "DELETE", f"/datasets/{_SUT_DOC_ID}",
             headers={**admin_headers, **{'If-Match': etag}})
 
-        self.assertEqual(response.status, 204,
-                          'Document kon niet worden verwijderd')
+        self.assertEqual(response.status, 204, 'Document kon niet worden verwijderd')
 
         # Check redact access on POST
         redact_headers = {**basic_headers, **{'authorization': self.redact_token}}

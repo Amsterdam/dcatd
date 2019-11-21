@@ -345,7 +345,7 @@ async def _encode(obj: T.Any, stack: T.Set) -> T.Union[str, T.Any]:
 
 
 async def encode(obj, chunk_size=_JSON_DEFAULT_CHUNK_SIZE) -> \
-        collections.AsyncIterable:
+        collections.abc.AsyncIterable:
     # language=rst
     """Asynchronous JSON serializer."""
     buffer = bytearray()
