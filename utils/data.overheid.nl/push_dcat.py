@@ -69,7 +69,6 @@ MAP_FREQUENCY = {
 
 # Map themes to : https://standaarden.overheid.nl/owms/terms/TaxonomieBeleidsagenda.xml
 MAP_THEMES = {
-    'theme:none': 'http://standaarden.overheid.nl/owms/terms/Overige_economische_sectoren',  # ???
     'theme:bestuur': 'http://standaarden.overheid.nl/owms/terms/Bestuur',
     'theme:bevolking': 'http://standaarden.overheid.nl/owms/terms/Sociale_zekerheid',
     'theme:cultuur-en-recreatie': 'http://standaarden.overheid.nl/owms/terms/Cultuur_en_recreatie',
