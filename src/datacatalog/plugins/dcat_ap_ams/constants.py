@@ -84,7 +84,6 @@ RESOURCE_TYPES = [
 
 
 THEMES = [
-    ('theme:none', "Overig"),
     ('theme:bestuur', "Bestuur"),
     ('theme:bevolking', "Bevolking"),
     ('theme:cultuur-en-recreatie', "Cultuur en recreatie"),
