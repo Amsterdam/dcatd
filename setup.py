@@ -68,6 +68,7 @@ setup(
         'jsonpointer',
         'pluggy',
         'jwcrypto',
+        'pyjwt',
         'pyld',
         'PyYaml',
         'sentry-sdk',
@@ -77,6 +78,7 @@ setup(
         # Recommended by aiohttp docs:
         'aiodns',    # optional asynchronous DNS client
         'uvloop',    # optional fast eventloop for asyncio
+        'xlrd',
     ],
     extras_require={
         'docs': [
