@@ -169,13 +169,16 @@ def mds_before_storage(app, data, old_data=None) -> dict:
                 #    distribution['dct:modified'] = datetime.date.today().isoformat()
 
     else:
+        dct_issued = retval.get('foaf:isPrimaryTopicOf', {}).get('dct:issued', datetime.date.today().isoformat())
         retval['foaf:isPrimaryTopicOf'] = {
-            'dct:issued': datetime.date.today().isoformat(),
+            'dct:issued': dct_issued,
             'dct:modified': datetime.date.today().isoformat()
         }
         for distribution in distributions:
+            dct_issued = distribution.get('foaf:isPrimaryTopicOf', {}).get('dct:issued',
+                                                                           datetime.date.today().isoformat())
             distribution['foaf:isPrimaryTopicOf'] = {
-                'dct:issued': datetime.date.today().isoformat(),
+                'dct:issued': dct_issued,
                 'dct:modified': datetime.date.today().isoformat()
             }
 

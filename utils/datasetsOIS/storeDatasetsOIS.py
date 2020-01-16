@@ -9,19 +9,21 @@ import os
 import random
 import string
 from time import time
+import requests
 from collections import defaultdict
-from pprint import pprint
 from urllib.parse import quote, urlparse, parse_qsl
 
-import requests
 from xlrd import open_workbook, xldate_as_tuple, XL_CELL_NUMBER
 from datacatalog.plugins.dcat_ap_ams.constants import THEMES, ACCRUAL_PERIODICITY, TEMPORAL_UNIT, LANGUAGES, \
     SPACIAL_UNITS
+from utils.utils import dictionary_vary
 
-DCAT_URL = os.getenv('DCAT_URL', "https://acc.api.data.amsterdam.nl/dcatd/")
+# DCAT_URL = os.getenv('DCAT_URL', "https://acc.api.data.amsterdam.nl/dcatd/")
+DCAT_URL = os.getenv('DCAT_URL', "http://localhost:8000/")
+
 DCAT_USER = os.getenv('DCAT_USER', 'citydata.acc@amsterdam.nl')
 DCAT_PASSWORD = os.getenv('DCAT_PASSWORD', 'insecure')
-OBJECTSTORE_ROOT = 'https://b98488fe31634db9955ebdff95db4f1e.objectstore.eu/ois/'
+OIS_OBJECTSTORE_ROOT = 'https://b98488fe31634db9955ebdff95db4f1e.objectstore.eu/ois/'
 
 THEMES_MAP = {desc:label for (label, desc) in THEMES}
 ACCRUAL_PERIODICITY_MAP = { desc: label for (label, desc) in ACCRUAL_PERIODICITY}
@@ -82,12 +84,27 @@ def read_ois_excelfile(file: str) -> dict:
 
 
 def is_ois_dataset(ds):
+    '''
+    A dataset is a OIS dataset if all resources are in the OIS object store
+    '''
     result = True
     for resource in ds['dcat:distribution']:
-        if not resource['dcat:accessURL'].startswith(OBJECTSTORE_ROOT):
+        if not resource['dcat:accessURL'].startswith(OIS_OBJECTSTORE_ROOT):
             result = False
             break
     return result
+
+
+def check_link(url: str) -> bool:
+    return True
+    # response = requests.head(url)
+    # if response.status_code != 200:
+    #     print(f"Link error for {url}: {response.status_code}")
+    # return True if response else False
+
+
+def canonicalize(value: str):
+    return value.strip().replace('\r\n', '\n')
 
 
 def build_dataset(ds_row, datasets, tabellen, dataset_tabellen):
@@ -95,14 +112,17 @@ def build_dataset(ds_row, datasets, tabellen, dataset_tabellen):
     tags = []
     resources = []
     for tr in dataset_tabellen[str(ois_id)]:
-        access_url = f"{OBJECTSTORE_ROOT}{quote(tabellen['bestandsnaam'][tr])}.{tabellen['bestandstype'][tr]}"
-        # TODO: Verify existence of access_url
+        access_url = f"{OIS_OBJECTSTORE_ROOT}{quote(tabellen['bestandsnaam'][tr])}.{tabellen['bestandstype'][tr]}"
+        if not check_link(access_url):
+            print(f"Dataset {datasets['naam'][ds_row]} contains invalid url {access_url}")
+            continue
+
         dct_modified = get_excel_date(tabellen['datum gewijzigd'][tr])
         if not dct_modified:
             dct_modified = datetime.date.today().isoformat()
 
         resource = {
-                'dct:title': tabellen['tabeltitel'][tr],
+                'dct:title': canonicalize(tabellen['tabeltitel'][tr]),
                 'dcat:accessURL': access_url,
                 'ams:resourceType': 'data',
                 'ams:distributionType': 'file',
@@ -136,11 +156,11 @@ def build_dataset(ds_row, datasets, tabellen, dataset_tabellen):
 
     technisch_contactpersoon =  datasets['technisch contactpersoon'][ds_row]
     ds = {
-        'dct:title': datasets['naam'][ds_row],
-        'dct:description': description,
+        'dct:title': canonicalize(datasets['naam'][ds_row]),
+        'dct:description': canonicalize(description),
         'ams:status': 'beschikbaar',
         'dcat:distribution': resources,
-        'dcat:theme': THEMES_MAP[theme],
+        'dcat:theme': [ THEMES_MAP[theme] ],
         'dcat:keyword': keywords,
         'ams:license': 'cc-by',
         'overheid:authority': 'overheid:Amsterdam',
@@ -194,45 +214,85 @@ def build_dataset(ds_row, datasets, tabellen, dataset_tabellen):
 def harvest_dcat_api(access_token):
     url = f"{DCAT_URL}/harvest"
     response = requests.get(url, headers=access_token)
+    if not response:
+        print(f"Request error: {response.status_code}")
     jsonresponse = response.json()
     return jsonresponse
 
 
-def add_dataset(dataset:dict) -> int:
-    pass
+def add_dataset(dataset:dict, access_token: str) -> int:
+    url = f"{DCAT_URL}/datasets"
+    dataset.pop('dct:identifier', None)
+    dataset.pop('@id', None)
+    headers = copy.deepcopy(access_token)
+    headers["Content-Type"] = 'application/json'
+    response = requests.post(url, headers=headers, json=dataset)
+    if not response:
+        print(f"Request error: {response.status_code}")
+    return 1 if response else 0
 
 
 def update_dataset(id1: str, dataset: dict, access_token: str) -> int:
     url = f"{DCAT_URL}/datasets/{id1}"
-    response = requests.head(url)
+    response = requests.get(url)
     etag = response.headers['Etag']
     headers = copy.deepcopy(access_token)
     headers["If-Match"] = etag
     headers["Content-Type"] = 'application/json'
-    body = urllib.parse.quote(json.dumps(dataset))
-    body = body.encode('utf-8')
-    response = requests.post( url, headers=headers, data=body)
-    if response.status_code != 200:
-        print(f"Request error: {response.e}")
-    status = response.status_code
+    response = requests.put( url, headers=headers, json=dataset)
+    if not response:
+        print(f"Request error: {response.status_code}")
+    return 1 if response else 0
 
 
-    pass
+def delete_dataset(id1: str, dataset: dict, access_token: str) -> int:
+    dataset['ams:status'] = 'niet_beschikbaar'
+    return update_dataset(id1, dataset, access_token)
 
 
-def delete_dataset(id1: str):
-    pass
+def datasets_equal(new: dict, old: dict):
+    # We do not want to modify the new datasets here
+    new = copy.deepcopy(new)
+    print(f"Comparing datasets {new['dct:identifier']},{old['dct:identifier']}")
 
+    # Sort lists to have the same order in old and new
+    new['dcat:keyword'] = sorted(new['dcat:keyword'])
+    old['dcat:keyword'] = sorted(old['dcat:keyword'])
+    new['dcat:theme'] = sorted(new['dcat:theme'])
+    old['dcat:theme'] = sorted(old['dcat:theme'])
+    new['dcat:distribution'] = sorted(new['dcat:distribution'], key=lambda res: res['dct:title'])
+    old['dcat:distribution'] = sorted(old['dcat:distribution'], key=lambda res: res['dct:title'])
 
-def datasets_equal(a: dict, b: dict):
-    print(f"Comparing datasets {a['dct:identifier']},{b['dct:identifier']}")
-    return True
+    exclude = {
+        None: {
+            'dct:identifier',
+            '@id',
+            'ams:modifiedby',
+            'ams:sort_modified',
+        },
+        'dcat:distribution': {
+            'dc:identifier',
+            'dct:modified',
+            '@id',
+            'ams:purl',
+            'foaf:isPrimaryTopicOf',
+        },
+        'foaf:isPrimaryTopicOf': {
+            'dct:modified'
+        }
+    }
+
+    is_different = dictionary_vary(new, old, exclude)
+    return not is_different
 
 
 _access_token = None
 
 
-def get_access_token(username, password, acceptance=True):
+def get_access_token(username, password, environment1):
+    if environment1 == 'localhost':
+        return {}
+
     global _access_token
 
     if _access_token is not None:
@@ -248,7 +308,7 @@ def get_access_token(username, password, acceptance=True):
 
         state = randomword(10)
         scopes = ['CAT/R','CAT/W']
-        acc_prefix = 'acc.' if acceptance else ''
+        acc_prefix = 'acc.' if environment1 == 'acc' else ''
         authzUrl = f'https://{acc_prefix}api.data.amsterdam.nl/oauth2/authorize'
         params = {
             'idp_id': 'datapunt',
@@ -294,36 +354,64 @@ def get_access_token(username, password, acceptance=True):
 if __name__ == '__main__':
     file1 = '/Users/bart/tmp/dcat/meta.xlsx'
     data1 = read_ois_excelfile(file1)
-    # pprint(data1)
-    acceptance = re.search(r'acc', DCAT_URL)
-    access_token = get_access_token(DCAT_USER, DCAT_PASSWORD, acceptance)
-    if not access_token:
+    if re.search(r'acc', DCAT_URL):
+        environment1 = 'acc'
+    elif re.search(r'localhost', DCAT_URL):
+        environment1 = 'localhost'
+    else:
+        environment1 = 'prod'
+    access_token = get_access_token(DCAT_USER, DCAT_PASSWORD, environment1)
+    if not access_token and environment1 != 'localhost':
         print('Failed to login\n\n')
         os.exit(1)
-    harvested = harvest_dcat_api(access_token)
-    harvested_title = {ds['dct:title']:ds for ds in harvested['dcat:dataset']}
+    harvested_all = harvest_dcat_api(access_token)
+    harvested = list(filter( lambda ds: ds['ams:status'] != 'niet_beschikbaar', harvested_all['dcat:dataset']))
+    harvested_title = {ds['dct:title']:ds for ds in harvested}
     data_title = {ds['dct:title']:ds for ds in data1}
 
-    ds_add_count = 0
-    ds_update_count = 0
-    ds_delete_count = 0
+    to_add = []
+    to_update = {}
+    to_delete = {}
 
     for ds_title, ds in data_title.items():
-        if ds_title in harvested_title and not datasets_equal(ds, harvested_title[ds_title]):
-            id1 = harvested_title[ds_title]['dct:identifier']
-            update_dataset(id1, ds)
-            ds_update_count += 1
-
+        if ds_title in harvested_title:
+            old_ds = harvested_title[ds_title]
+            if not datasets_equal(ds, old_ds):
+                # Update identifier for dataset
+                id1 = harvested_title[ds_title]['dct:identifier']
+                ds['dct:identifier'] = id1
+                # Update identifiers for distribution
+                old_identifiers = { res['dct:title']: res['dc:identifier'] for res in old_ds['dcat:distribution']}
+                for res in ds['dcat:distribution']:
+                    old_identifier = old_identifiers[res['dct:title']]
+                    if old_identifier:
+                        res['dc:identifier'] = old_identifier
+                to_update[id1] = ds
+            # else: No update required. Datasets equal
         else:
-            add_dataset(ds)
-            ds_add_count += 1
+            to_add.append(ds)
 
     for ds_title, ds in harvested_title.items():
         if is_ois_dataset(ds) and ds_title not in data_title:
             id1 = harvested_title[ds_title]['dct:identifier']
-            delete_dataset(id1)
-            ds_delete_count += 1
+            to_delete[id1] = ds
+
+    print(f'To be added {len(to_add)}, to be updated: {len(to_update)}, To be deleted: {len(to_delete)}')
+    print('Proceed (yes or no) >')
+    if input() != 'yes':
+        print("Aborted")
+        os.exit(0)
+    ds_add_count = 0
+    ds_update_count = 0
+    ds_delete_count = 0
+
+    for ds in to_add:
+        ds_add_count += add_dataset(ds, access_token)
+
+    for id1, ds in to_update.items():
+        ds_update_count += update_dataset(id1, ds, access_token)
+
+    for id1, ds in to_delete.items():
+        ds_delete_count += delete_dataset(id1, ds, access_token)
 
     print(f'Datasets added: {ds_add_count}, updated: {ds_update_count}, deleted: {ds_delete_count}')
-
-    # pprint(harvested)
