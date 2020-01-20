@@ -1,8 +1,6 @@
 import copy
 import datetime
-import json
 import re
-import urllib
 
 import jwt
 import os
@@ -32,6 +30,20 @@ LANGUAGES_MAP = { desc: label for (label, desc) in LANGUAGES}
 SPACIAL_UNITS_MAP = { desc: label for (label, desc) in SPACIAL_UNITS}
 
 datemode = None
+
+DAY_IN_SECONDS = 24 * 60 * 60
+
+
+def get_ois_excel_file(filename):
+    tmpdir = os.getenv('TMPDIR', '/tmp')
+    local_file = tmpdir + '/' + filename
+    if not os.path.isfile(local_file) or time() - os.path.getmtime(local_file) > DAY_IN_SECONDS:
+        url = OIS_OBJECTSTORE_ROOT + filename
+        response = requests.get(url)
+        response.raise_for_status()
+        with open(local_file, 'wb') as file:
+            file.write(response.content)
+    return local_file
 
 
 def get_excel_date(value: str):
@@ -96,11 +108,10 @@ def is_ois_dataset(ds):
 
 
 def check_link(url: str) -> bool:
-    return True
-    # response = requests.head(url)
+    response = requests.head(url)
     # if response.status_code != 200:
     #     print(f"Link error for {url}: {response.status_code}")
-    # return True if response else False
+    return True if response else False
 
 
 def canonicalize(value: str):
@@ -298,7 +309,7 @@ def get_access_token(username, password, environment1):
     if _access_token is not None:
         decoded = jwt.decode(_access_token, verify=False)
         # We should have more then 100 seconds left
-        if int(time.time()) + 100 > int(decoded['exp']):
+        if int(time()) + 100 > int(decoded['exp']):
             _access_token = None
 
     if not _access_token:
@@ -352,8 +363,10 @@ def get_access_token(username, password, environment1):
 
 
 if __name__ == '__main__':
-    file1 = '/Users/bart/tmp/dcat/meta.xlsx'
-    data1 = read_ois_excelfile(file1)
+
+    excel_file = 'meta.xlsx'
+    local_excel_file = get_ois_excel_file(excel_file)
+    data1 = read_ois_excelfile(local_excel_file)
     if re.search(r'acc', DCAT_URL):
         environment1 = 'acc'
     elif re.search(r'localhost', DCAT_URL):
@@ -383,9 +396,11 @@ if __name__ == '__main__':
                 # Update identifiers for distribution
                 old_identifiers = { res['dct:title']: res['dc:identifier'] for res in old_ds['dcat:distribution']}
                 for res in ds['dcat:distribution']:
-                    old_identifier = old_identifiers[res['dct:title']]
+                    old_identifier = old_identifiers.get(res['dct:title'])
                     if old_identifier:
                         res['dc:identifier'] = old_identifier
+                    else:
+                        res.pop('dc:identifier', None)
                 to_update[id1] = ds
             # else: No update required. Datasets equal
         else:
@@ -397,10 +412,12 @@ if __name__ == '__main__':
             to_delete[id1] = ds
 
     print(f'To be added {len(to_add)}, to be updated: {len(to_update)}, To be deleted: {len(to_delete)}')
-    print('Proceed (yes or no) >')
-    if input() != 'yes':
-        print("Aborted")
-        os.exit(0)
+    total_len = len(to_add) + len(to_update) + len(to_delete)
+    if total_len > 0:
+        print('Proceed (yes or no) >')
+        if input() != 'yes':
+            print("Aborted")
+            os.exit(0)
     ds_add_count = 0
     ds_update_count = 0
     ds_delete_count = 0
