@@ -1,6 +1,8 @@
 import copy
 import datetime
 import re
+import sys
+import argparse
 
 import jwt
 import os
@@ -16,6 +18,7 @@ from datacatalog.plugins.dcat_ap_ams.constants import THEMES, ACCRUAL_PERIODICIT
     SPACIAL_UNITS
 from utils.utils import dictionary_vary
 
+# DCAT_URL = os.getenv('DCAT_URL', "https://api.data.amsterdam.nl/dcatd/")
 # DCAT_URL = os.getenv('DCAT_URL', "https://acc.api.data.amsterdam.nl/dcatd/")
 DCAT_URL = os.getenv('DCAT_URL', "http://localhost:8000/")
 
@@ -30,6 +33,8 @@ LANGUAGES_MAP = { desc: label for (label, desc) in LANGUAGES}
 SPACIAL_UNITS_MAP = { desc: label for (label, desc) in SPACIAL_UNITS}
 
 datemode = None
+args = None
+
 
 DAY_IN_SECONDS = 24 * 60 * 60
 
@@ -108,9 +113,9 @@ def is_ois_dataset(ds):
 
 
 def check_link(url: str) -> bool:
+    if args.nocheck:
+        return True
     response = requests.head(url)
-    # if response.status_code != 200:
-    #     print(f"Link error for {url}: {response.status_code}")
     return True if response else False
 
 
@@ -363,7 +368,10 @@ def get_access_token(username, password, environment1):
 
 
 if __name__ == '__main__':
-
+    parser = argparse.ArgumentParser(description='Process OIS datasets from excel file')
+    parser.add_argument('-f', '--force', action='store_true', help="Force update")
+    parser.add_argument('-n', '--nocheck', action='store_true', help="Do no check links")
+    args, leftovers = parser.parse_known_args()
     excel_file = 'meta.xlsx'
     local_excel_file = get_ois_excel_file(excel_file)
     data1 = read_ois_excelfile(local_excel_file)
@@ -413,11 +421,11 @@ if __name__ == '__main__':
 
     print(f'To be added {len(to_add)}, to be updated: {len(to_update)}, To be deleted: {len(to_delete)}')
     total_len = len(to_add) + len(to_update) + len(to_delete)
-    if total_len > 0:
+    if total_len > 0 and args.force is None:
         print('Proceed (yes or no) >')
         if input() != 'yes':
             print("Aborted")
-            os.exit(0)
+            sys.exit(0)
     ds_add_count = 0
     ds_update_count = 0
     ds_delete_count = 0
