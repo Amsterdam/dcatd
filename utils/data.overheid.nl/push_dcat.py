@@ -5,6 +5,7 @@ import urllib
 from urllib import request
 from urllib.error import HTTPError
 import pprint
+from utils.utils import dictionary_vary
 
 filetype_prefix = 'http://publications.europa.eu/resource/authority/file-type/'
 
@@ -111,37 +112,6 @@ def _request_with_headers(url, data=None, method=None, authorization=None):
     for key, val in headers.items():
         req.add_header(key, val)
     return req
-
-
-def dictionary_vary(a: dict, b: dict, exclude: dict, parent_key: str = None) -> bool:
-    parent_exclude = exclude.get(parent_key, {})
-
-    if set(a.keys()) - parent_exclude != set(b.keys()) - parent_exclude:
-        return True
-
-    for key, value in a.items():
-        if key not in parent_exclude:
-            if isinstance(value, dict):
-                if not isinstance(b[key], dict) or dictionary_vary(value, b[key], exclude, key):
-                    return True
-            elif isinstance(value, list):
-                if not isinstance(b[key], list) or len(value) != len(b[key]):
-                    return True
-                for i in range(len(value)):
-                    if isinstance(value[i], dict):
-                        if not isinstance(b[key][i], dict) or dictionary_vary(value[i], b[key][i], exclude, key):
-                            return True
-                    else:  # We do not have lists of lists
-                        if value[i] != b[key][i]:
-                            return True
-            elif key in ('modified', 'modification_date', 'issued'):
-                if value[:8] != b[key][:8]:
-                    return True
-            else:
-                if value != b[key]:
-                    return True
-
-    return False
 
 
 def _convert_to_ckan(dcat: dict)->dict:

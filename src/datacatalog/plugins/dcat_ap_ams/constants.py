@@ -522,3 +522,8 @@ STATUSES = [
     ('beschikbaar', "Beschikbaar"),
     ('gepland', "Gepland")
 ]
+
+LANGUAGES = [
+    ('lang1:nl', "Nederlands"),
+    ('lang1:en', "Engels")
+]
