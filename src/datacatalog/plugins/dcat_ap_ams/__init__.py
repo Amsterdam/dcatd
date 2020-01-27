@@ -110,6 +110,23 @@ def _datasets_vary(a: dict, b: dict) -> bool:
     return vary
 
 
+def _get_meta_issued_modified(element:dict, old_element:dict, im: str):
+    value = element.get('foaf:isPrimaryTopicOf', {}).get(im)
+    if not value and old_element:
+        value = old_element.get('foaf:isPrimaryTopicOf', {}).get(im)
+    if not value:
+        value = datetime.date.today().isoformat()
+    return value
+
+
+def get_meta_issued(element:dict, old_element:dict = None):
+    return _get_meta_issued_modified(element, old_element, 'dct:issued')
+
+
+def get_meta_modified(element:dict, old_element:dict = None):
+    return _get_meta_issued_modified(element, old_element, 'dct:modified')
+
+
 @_hookimpl
 def mds_before_storage(app, data, old_data=None) -> dict:
     retval = deepcopy(data)
@@ -121,20 +138,16 @@ def mds_before_storage(app, data, old_data=None) -> dict:
     # Set all the meta-metadata timestamps correctly:
     if old_data is not None:
         if _datasets_vary(retval, old_data):
-            try:
-                old_issued = old_data['foaf:isPrimaryTopicOf']['dct:issued']
-            except KeyError:
-                _logger.error("Geen dct:issued in dataset %s", data['dct:title'])
-                old_issued = '1970-01-01'
             retval['foaf:isPrimaryTopicOf'] = {
-                'dct:issued': old_issued,
-                'dct:modified': datetime.date.today().isoformat()
+                'dct:issued': get_meta_issued(retval, old_data),
+                'dct:modified': get_meta_modified(retval, None)
             }
         else:
-            try:
-                retval['foaf:isPrimaryTopicOf'] = old_data['foaf:isPrimaryTopicOf']
-            except KeyError:
-                _logger.error("Geen 'foaf:isPrimaryTopicOf' in dataset %s", data['dct:title'])
+            retval['foaf:isPrimaryTopicOf'] = {
+                'dct:issued': get_meta_issued(retval, old_data),
+                'dct:modified': get_meta_modified(retval, old_data)
+            }
+
         old_distributions = {
             old_distribution['dc:identifier']: old_distribution
             for old_distribution in old_data.get('dcat:distribution', [])
@@ -143,43 +156,29 @@ def mds_before_storage(app, data, old_data=None) -> dict:
             old_distribution = old_distributions.get(distribution['dc:identifier'])
             if old_distribution is None:
                 distribution['foaf:isPrimaryTopicOf'] = {
-                    'dct:issued': datetime.date.today().isoformat(),
-                    'dct:modified': datetime.date.today().isoformat()
+                    'dct:issued': get_meta_issued(distribution),
+                    'dct:modified': get_meta_modified(distribution)
                 }
             else:
-                try:
-                    old_foaf = old_distribution.get('foaf:isPrimaryTopicOf')
-                except KeyError:
-                    _logger.error("Geen foaf:isPrimaryTopicOf in distribution %s:%s", data['dct:title'],
-                                  old_distribution['dc:identifier'])
-                    old_foaf = {
-                        'dct:issued': '1970-01-01',
-                        'dct:modified': '1970-01-01'
-                    }
-                distribution['foaf:isPrimaryTopicOf'] = old_foaf
-                # dct:modified and dcat:accessURL are not checked for changes in
-                # 'foaf:isPrimaryTopicOf'->'dct:modified'
                 if _distributions_vary(distribution, old_distribution, {'dct:modified', 'dcat:accessURL'}):
-                    distribution['foaf:isPrimaryTopicOf']['dct:modified'] = datetime.date.today().isoformat()
-                # dct:modified is set if accessURL is changed AND the date was not changed manually
-                # by the frontend. Currently disabled
-                # if distribution.get('dct:modified') is None or (
-                #        distribution.get('dcat:accessURL') != old_distribution.get(
-                #        'dcat:accessURL') and distribution.get('dct:modified') == old_distribution.get('dct:modified')):
-                #    distribution['dct:modified'] = datetime.date.today().isoformat()
-
+                    distribution['foaf:isPrimaryTopicOf'] = {
+                        'dct:issued': get_meta_issued(distribution, old_distribution),
+                        'dct:modified': get_meta_modified(distribution, None)
+                    }
+                else:
+                    distribution['foaf:isPrimaryTopicOf'] = {
+                        'dct:issued': get_meta_issued(distribution, old_distribution),
+                        'dct:modified': get_meta_modified(distribution, old_distribution)
+                    }
     else:
-        dct_issued = retval.get('foaf:isPrimaryTopicOf', {}).get('dct:issued', datetime.date.today().isoformat())
         retval['foaf:isPrimaryTopicOf'] = {
-            'dct:issued': dct_issued,
-            'dct:modified': datetime.date.today().isoformat()
+            'dct:issued': get_meta_issued(retval),
+            'dct:modified': get_meta_modified(retval)
         }
         for distribution in distributions:
-            dct_issued = distribution.get('foaf:isPrimaryTopicOf', {}).get('dct:issued',
-                                                                           datetime.date.today().isoformat())
             distribution['foaf:isPrimaryTopicOf'] = {
-                'dct:issued': dct_issued,
-                'dct:modified': datetime.date.today().isoformat()
+                'dct:issued': get_meta_issued(distribution),
+                'dct:modified': get_meta_modified(distribution)
             }
 
     all_mediatypes = set([mt[0] for mt in DCT_FORMATS])

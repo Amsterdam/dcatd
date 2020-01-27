@@ -421,7 +421,7 @@ if __name__ == '__main__':
 
     print(f'To be added {len(to_add)}, to be updated: {len(to_update)}, To be deleted: {len(to_delete)}')
     total_len = len(to_add) + len(to_update) + len(to_delete)
-    if total_len > 0 and args.force is None:
+    if total_len > 0 and not args.force:
         print('Proceed (yes or no) >')
         if input() != 'yes':
             print("Aborted")
