@@ -1,3 +1,4 @@
+import copy
 import unittest
 import datetime
 
@@ -137,9 +138,13 @@ class TestDcatd(unittest.TestCase):
         self.assertEqual(canonicalized["foaf:isPrimaryTopicOf"]['dct:modified'], past_date)
 
         canonicalized = self._canonicalize(with_past_date)
+        self.assertEqual(canonicalized["foaf:isPrimaryTopicOf"]['dct:modified'], past_date)
+
+        no_modified_date  = self._canonicalize(data)
+        del no_modified_date["foaf:isPrimaryTopicOf"]['dct:modified']
+        canonicalized = self._canonicalize(no_modified_date)
         self.assertEqual(canonicalized["foaf:isPrimaryTopicOf"]['dct:modified'], this_date)
 
-
-
-
-
+        del no_modified_date["foaf:isPrimaryTopicOf"]
+        canonicalized = self._canonicalize(no_modified_date)
+        self.assertEqual(canonicalized["foaf:isPrimaryTopicOf"]['dct:issued'], this_date)

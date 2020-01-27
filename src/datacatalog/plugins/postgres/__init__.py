@@ -463,7 +463,7 @@ async def _execute_list_query(app, filterexpr: str, lang: str, sortpath: T.List[
 
 async def _execute_search_query(app, filterexpr: str, q: str):
     # Replace .,\'"|&:()*!\/ with spaces
-    q = re.sub('[\\\\/.,\'"|&:()*!<>;\[\]{}]', ' ', q)
+    q = re.sub(r'[\\/.,\'"|&:()*!<>;\[\]{}]', ' ', q)
     prefix_query = _to_pg_json_query(q)
     fullmatch_query = _to_pg_json_query_fullmatch(q)
 
