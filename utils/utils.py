@@ -25,7 +25,7 @@ def dictionary_vary(a: dict, b: dict, exclude: dict, parent_key: str = None) -> 
                         if value[i] != b[key][i]:
                             return True
             elif key in ('modified', 'modification_date', 'issued', 'dct:issued'):
-                if value[:8] != b[key][:8]:
+                if value[:10] != b[key][:10]:
                     return True
             else:
                 if value != b[key]:
