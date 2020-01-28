@@ -150,6 +150,9 @@ async def initialize(app):
                 raise
         else:
             break
+
+    # listen to Postgres notifications
+    await listen_notifications(app, app.notify_callback)
     _logger.info("Successfully connected to postgres.")
 
 
@@ -157,6 +160,7 @@ async def initialize(app):
 async def deinitialize(app):
     # language=rst
     """ Deinitialize the plugin."""
+    await notify(app=app, message='exit')
     await app['pool'].close()
     del app['pool']
 
@@ -645,3 +649,21 @@ async def storage_all(app: T.Mapping[str, T.Any]) -> T.AsyncGenerator[T.Tuple[st
             stmt = await con.prepare(_Q)
             async for row in stmt.cursor():
                 yield row['id'], row['etag'], json.loads(row['doc'])
+
+
+@_hookimpl
+async def notify(app: T.Mapping[str, T.Any], msg: str) -> None:
+    async with app['pool'].acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(f"NOTIFY channel, {msg}")
+
+
+async def listen_notifications(app: T.Mapping[str, T.Any], callback: T.Callable) -> None:
+    async with app['pool'].acquire() as conn:
+        async with conn.cursor() as cur:
+            async with cur.execute("LISTEN channel"):
+                while True:
+                    msg = await conn.notifies.get()
+                    if msg == 'exit':
+                        return
+                    callback(msg)

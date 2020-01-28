@@ -201,7 +201,29 @@ async def storage_all(app: T.Mapping[str, T.Any]) -> T.AsyncGenerator[T.Tuple[st
     """Get all data
     """
 
+@hookspec.first_only
+async def notify(app: T.Mapping[str, T.Any], msg: str) -> None:
+    # language=rst
+    """
+    Notify Postgres channel
+    :param app: the `~datacatalog.application.Application`
+    :param msg: message to notify
+    :return: None
+    """
 
+
+# @hookspec.first_only
+# async def listen(app: T.Mapping[str, T.Any], callback: T.Callable) -> None:
+#     # language=rst
+#     """
+#     Listen to Postgres channel. Exits if message exit is sent.
+#     Otherwise process message in callback
+#
+#     :param app: the `~datacatalog.application.Application`
+#     :param callback: The callback that expectes the message as argument
+#     :return: None
+#     """
+#
 ################
 # Object Store #
 ################

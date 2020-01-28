@@ -7,6 +7,8 @@ import aiohttp_cors
 import aiopluggy
 
 from datacatalog import startup_actions
+from datacatalog.handlers.openapi import clear_open_api_cache
+
 from . import authorization, config, handlers, openapi, plugin_interfaces
 
 logger = logging.getLogger(__name__)
@@ -114,6 +116,11 @@ class Application(web.Application):
             raise Exception(
                 "There are no implementations for the following required hooks: %s" % missing
             )
+
+    @staticmethod
+    def notify_callback(msg: str):
+        if msg == 'data_changed':
+            clear_open_api_cache()
 
 
 async def _on_startup(app):
