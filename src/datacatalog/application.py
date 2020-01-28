@@ -8,6 +8,7 @@ import aiopluggy
 
 from datacatalog import startup_actions
 from datacatalog.handlers.openapi import clear_open_api_cache
+from datacatalog.plugins.postgres import listen_notifications
 
 from . import authorization, config, handlers, openapi, plugin_interfaces
 
@@ -118,8 +119,8 @@ class Application(web.Application):
             )
 
     @staticmethod
-    def notify_callback(msg: str):
-        if msg == 'data_changed':
+    def notify_callback(conn, pid, channel, payload):
+        if channel == 'channel' and payload == 'data_changed':
             clear_open_api_cache()
 
 
@@ -129,6 +130,9 @@ async def _on_startup(app):
         if r.exception is not None:
             raise r.exception
     await startup_actions.run_startup_actions(app)
+
+    # listen to Postgres notifications
+    await listen_notifications(app, app.notify_callback)
 
 
 async def _on_cleanup(app):

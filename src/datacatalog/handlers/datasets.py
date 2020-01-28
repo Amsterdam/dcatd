@@ -120,7 +120,7 @@ async def put(request: web.Request):
             )
         except ValueError:
             raise web.HTTPPreconditionFailed()
-        notify_data_changed()
+        await notify_data_changed(request.app)
         retval = web.Response(status=204, headers={'Etag': new_etag})
 
     else:
@@ -139,7 +139,7 @@ async def put(request: web.Request):
             )
         except KeyError:
             raise web.HTTPPreconditionFailed()
-        notify_data_changed()
+        await notify_data_changed(request.app)
         retval = web.Response(
             status=201, headers={'Etag': new_etag}, content_type='text/plain'
         )
@@ -159,7 +159,7 @@ async def delete(request: web.Request):
             app=request.app, docid=given_id, etags=etag_if_match)
     except KeyError:
         raise web.HTTPNotFound()
-    notify_data_changed()
+    await notify_data_changed(request.app)
     return web.Response(status=204, content_type='text/plain')
 
 
@@ -366,7 +366,7 @@ async def post_collection(request: web.Request):
         raise web.HTTPBadRequest(
             text='Document with dct:identifier {} already exists'.format(docid)
         )
-    notify_data_changed()
+    await notify_data_changed(request.app)
     return web.Response(
         status=201, headers={
             'Etag': new_etag,
@@ -378,7 +378,7 @@ async def post_collection(request: web.Request):
 
 async def notify_data_changed(app):
     hooks = app.hooks
-    await hooks.notify(app=app, message='data_changed')
+    await hooks.notify(app=app, msg='data_changed')
 
 
 def _datasets_url(request: web.Request) -> str:

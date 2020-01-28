@@ -151,8 +151,6 @@ async def initialize(app):
         else:
             break
 
-    # listen to Postgres notifications
-    await listen_notifications(app, app.notify_callback)
     _logger.info("Successfully connected to postgres.")
 
 
@@ -654,16 +652,9 @@ async def storage_all(app: T.Mapping[str, T.Any]) -> T.AsyncGenerator[T.Tuple[st
 @_hookimpl
 async def notify(app: T.Mapping[str, T.Any], msg: str) -> None:
     async with app['pool'].acquire() as conn:
-        async with conn.cursor() as cur:
-            await cur.execute(f"NOTIFY channel, {msg}")
+        await conn.execute(f"NOTIFY channel, '{msg}'")
 
 
-async def listen_notifications(app: T.Mapping[str, T.Any], callback: T.Callable) -> None:
-    async with app['pool'].acquire() as conn:
-        async with conn.cursor() as cur:
-            async with cur.execute("LISTEN channel"):
-                while True:
-                    msg = await conn.notifies.get()
-                    if msg == 'exit':
-                        return
-                    callback(msg)
+async def listen_notifications(app, callback: T.Callable) -> None:
+    conn = await app['pool'].acquire()
+    await conn.add_listener('channel', callback)
