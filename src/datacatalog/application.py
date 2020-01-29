@@ -1,3 +1,4 @@
+import asyncio
 import importlib
 import urllib.parse
 import logging
@@ -5,8 +6,11 @@ import logging
 from aiohttp import web
 import aiohttp_cors
 import aiopluggy
+from asyncpg import InterfaceError
 
 from datacatalog import startup_actions
+from datacatalog.handlers.openapi import clear_open_api_cache
+
 from . import authorization, config, handlers, openapi, plugin_interfaces
 
 logger = logging.getLogger(__name__)
@@ -115,6 +119,53 @@ class Application(web.Application):
                 "There are no implementations for the following required hooks: %s" % missing
             )
 
+    @staticmethod
+    def notify_callback(conn, pid, channel, payload):
+        logger.debug(f'Notification from {pid} on channel {channel} : {payload}')
+        if channel == 'channel' and payload == 'data_changed':
+            clear_open_api_cache()
+
+
+class NotificationHandler:
+    __slots__ = ['loop_counter', 'listen_conn', 'previous_is_closed', 'app', 'DB_CONNECTION_CHECK_PERIOD']
+
+    def __init__(self, app):
+        self.loop_counter = 0
+        self.listen_conn = None
+        self.previous_is_closed = None
+        self.DB_CONNECTION_CHECK_PERIOD = 600  # 600 is 10 minutes
+        self.app = app
+
+    def _callback(self, n, loop):
+        try:
+            is_closed = self.listen_conn.is_closed()
+        except InterfaceError as e:
+            logger.error(f"InterfaceError: {str(e)}")
+            is_closed = True
+
+        logger.debug(f'Callback {n} to check db connection called. Database connection is_closed: {is_closed}')
+        # log if is_closed is changed
+        if self.previous_is_closed is not None and self.previous_is_closed != is_closed:
+            logger.warning(f'Database connection changed from {self.previous_is_closed} to {is_closed}')
+            if not is_closed:  # If changed back to False clear cache to if notification is missed
+                clear_open_api_cache()
+        self.previous_is_closed = is_closed
+
+        if is_closed:
+            asyncio.create_task(self.listen_notifications_assign())
+
+        self.loop_counter += 1
+        loop.call_later(self.DB_CONNECTION_CHECK_PERIOD, self._callback, self.loop_counter, loop)
+
+    async def _listen_notifications_assign(self):
+        self.listen_conn = await self.app.hooks.listen_notifications(app=self.app, callback=self.app.notify_callback)
+
+    async def setup_notification_handling(self):
+        # listen to Postgres notifications
+        await self._listen_notifications_assign()
+        loop = asyncio.get_event_loop()
+        loop.call_later(self.DB_CONNECTION_CHECK_PERIOD, self._callback, self.loop_counter, loop)
+
 
 async def _on_startup(app):
     results = await app.hooks.initialize(app=app)
@@ -122,6 +173,7 @@ async def _on_startup(app):
         if r.exception is not None:
             raise r.exception
     await startup_actions.run_startup_actions(app)
+    await NotificationHandler(app).setup_notification_handling()
 
 
 async def _on_cleanup(app):
