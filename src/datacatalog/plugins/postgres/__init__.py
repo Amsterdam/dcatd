@@ -158,7 +158,6 @@ async def initialize(app):
 async def deinitialize(app):
     # language=rst
     """ Deinitialize the plugin."""
-    await notify(app=app, message='exit')
     await app['pool'].close()
     del app['pool']
 
