@@ -212,6 +212,16 @@ async def notify(app: T.Mapping[str, T.Any], msg: str) -> None:
     """
 
 
+@hookspec.first_only
+async def listen_notifications(app: T.Mapping[str, T.Any], callback: T.Callable) -> None:
+    # language=rst
+    """
+    Listen to Postgres channel. Exits if message exit is sent.
+    Otherwise process message in callback
+    :param app: the `~datacatalog.application.Application`
+    :param callback: The callback that expectes the message as argument
+    :return: None
+    """
 ################
 # Object Store #
 ################

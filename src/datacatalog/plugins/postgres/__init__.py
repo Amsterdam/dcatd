@@ -654,6 +654,7 @@ async def notify(app: T.Mapping[str, T.Any], msg: str) -> None:
         await conn.execute(f"NOTIFY channel, '{msg}'")
 
 
+@_hookimpl
 async def listen_notifications(app, callback: T.Callable) -> None:
     conn = await app['pool'].acquire()
     await conn.add_listener('channel', callback)

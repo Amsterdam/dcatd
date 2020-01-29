@@ -6,10 +6,10 @@ import logging
 from aiohttp import web
 import aiohttp_cors
 import aiopluggy
+from asyncpg import InterfaceError
 
 from datacatalog import startup_actions
 from datacatalog.handlers.openapi import clear_open_api_cache
-from datacatalog.plugins.postgres import listen_notifications
 
 from . import authorization, config, handlers, openapi, plugin_interfaces
 
@@ -126,48 +126,45 @@ class Application(web.Application):
             clear_open_api_cache()
 
 
-loop_counter = 0
-listen_conn = None
-previous_is_closed = None
-DB_CONNECTION_CHECK_PERIOD = 600  # 600 is 10 minutes
+class NotificationHandler:
+    __slots__ = ['loop_counter', 'listen_conn', 'previous_is_closed', 'app', 'DB_CONNECTION_CHECK_PERIOD']
 
+    def __init__(self, app):
+        self.loop_counter = 0
+        self.listen_conn = None
+        self.previous_is_closed = None
+        self.DB_CONNECTION_CHECK_PERIOD = 600  # 600 is 10 minutes
+        self.app = app
 
-async def listen_notifications_assign(app, callback):
-    global listen_conn
-    listen_conn = await listen_notifications(app, callback)
-
-
-async def setup_postgres_notification_handling(app):
-    # listen to Postgres notifications
-    global listen_conn
-    listen_conn = await listen_notifications(app, app.notify_callback)
-
-    def callback(n, loop):
-        global loop_counter
-        global listen_conn
-        global previous_is_closed
+    def _callback(self, n, loop):
         try:
-            is_closed = listen_conn.is_closed()
-        except Exception as e:
+            is_closed = self.listen_conn.is_closed()
+        except InterfaceError as e:
+            logger.error(f"InterfaceError: {str(e)}")
             is_closed = True
 
-        logger.debug(f'Callback {n} to check db connection called {loop}, Database connection is_closed: {is_closed}')
+        logger.debug(f'Callback {n} to check db connection called. Database connection is_closed: {is_closed}')
         # log if is_closed is changed
-        if previous_is_closed is not None and previous_is_closed != is_closed:
-            logger.warning(f'Database connection changed from {previous_is_closed} to {is_closed}')
-            if is_closed:  # If changed back to true clear cache to if notification is missed
+        if self.previous_is_closed is not None and self.previous_is_closed != is_closed:
+            logger.warning(f'Database connection changed from {self.previous_is_closed} to {is_closed}')
+            if not is_closed:  # If changed back to False clear cache to if notification is missed
                 clear_open_api_cache()
-        previous_is_closed = is_closed
+        self.previous_is_closed = is_closed
 
         if is_closed:
-            asyncio.create_task(listen_notifications_assign(app, app.notify_callback))
+            asyncio.create_task(self.listen_notifications_assign())
 
-        loop_counter += 1
-        loop.call_later(DB_CONNECTION_CHECK_PERIOD, callback, loop_counter, loop)
+        self.loop_counter += 1
+        loop.call_later(self.DB_CONNECTION_CHECK_PERIOD, self._callback, self.loop_counter, loop)
 
-    loop = asyncio.get_event_loop()
-    global loop_counter
-    loop.call_later(DB_CONNECTION_CHECK_PERIOD, callback, loop_counter, loop)
+    async def _listen_notifications_assign(self):
+        self.listen_conn = await self.app.hooks.listen_notifications(app=self.app, callback=self.app.notify_callback)
+
+    async def setup_notification_handling(self):
+        # listen to Postgres notifications
+        await self._listen_notifications_assign()
+        loop = asyncio.get_event_loop()
+        loop.call_later(self.DB_CONNECTION_CHECK_PERIOD, self._callback, self.loop_counter, loop)
 
 
 async def _on_startup(app):
@@ -176,8 +173,7 @@ async def _on_startup(app):
         if r.exception is not None:
             raise r.exception
     await startup_actions.run_startup_actions(app)
-
-    await setup_postgres_notification_handling(app)
+    await NotificationHandler(app).setup_notification_handling()
 
 
 async def _on_cleanup(app):
