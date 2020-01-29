@@ -28,7 +28,7 @@ CONNECT_ATTEMPT_INTERVAL_SECS = 2
 CONNECT_ATTEMPT_MAX_TRIES = 5
 _DEFAULT_CONNECTION_TIMEOUT = 60
 _DEFAULT_MIN_POOL_SIZE = 0
-_DEFAULT_MAX_POOL_SIZE = 5
+_DEFAULT_MAX_POOL_SIZE = 6
 _DEFAULT_MAX_INACTIVE_CONNECTION_LIFETIME = 5.0
 
 _Q_CREATE = '''
@@ -658,3 +658,4 @@ async def notify(app: T.Mapping[str, T.Any], msg: str) -> None:
 async def listen_notifications(app, callback: T.Callable) -> None:
     conn = await app['pool'].acquire()
     await conn.add_listener('channel', callback)
+    return conn

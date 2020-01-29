@@ -1,3 +1,4 @@
+import asyncio
 import importlib
 import urllib.parse
 import logging
@@ -120,8 +121,53 @@ class Application(web.Application):
 
     @staticmethod
     def notify_callback(conn, pid, channel, payload):
+        logger.debug(f'Notification from {pid} on channel {channel} : {payload}')
         if channel == 'channel' and payload == 'data_changed':
             clear_open_api_cache()
+
+
+loop_counter = 0
+listen_conn = None
+previous_is_closed = None
+DB_CONNECTION_CHECK_PERIOD = 600  # 600 is 10 minutes
+
+
+async def listen_notifications_assign(app, callback):
+    global listen_conn
+    listen_conn = await listen_notifications(app, callback)
+
+
+async def setup_postgres_notification_handling(app):
+    # listen to Postgres notifications
+    global listen_conn
+    listen_conn = await listen_notifications(app, app.notify_callback)
+
+    def callback(n, loop):
+        global loop_counter
+        global listen_conn
+        global previous_is_closed
+        try:
+            is_closed = listen_conn.is_closed()
+        except Exception as e:
+            is_closed = True
+
+        logger.debug(f'Callback {n} to check db connection called {loop}, Database connection is_closed: {is_closed}')
+        # log if is_closed is changed
+        if previous_is_closed is not None and previous_is_closed != is_closed:
+            logger.warning(f'Database connection changed from {previous_is_closed} to {is_closed}')
+            if is_closed:  # If changed back to true clear cache to if notification is missed
+                clear_open_api_cache()
+        previous_is_closed = is_closed
+
+        if is_closed:
+            asyncio.create_task(listen_notifications_assign(app, app.notify_callback))
+
+        loop_counter += 1
+        loop.call_later(DB_CONNECTION_CHECK_PERIOD, callback, loop_counter, loop)
+
+    loop = asyncio.get_event_loop()
+    global loop_counter
+    loop.call_later(DB_CONNECTION_CHECK_PERIOD, callback, loop_counter, loop)
 
 
 async def _on_startup(app):
@@ -131,8 +177,7 @@ async def _on_startup(app):
             raise r.exception
     await startup_actions.run_startup_actions(app)
 
-    # listen to Postgres notifications
-    await listen_notifications(app, app.notify_callback)
+    await setup_postgres_notification_handling(app)
 
 
 async def _on_cleanup(app):
