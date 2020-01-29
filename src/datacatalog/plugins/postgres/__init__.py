@@ -24,6 +24,9 @@ from .languages import ISO_639_1_TO_PG_DICTIONARIES
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger(__name__)
 
+_listen_conn = None
+_listen_callback = None
+
 CONNECT_ATTEMPT_INTERVAL_SECS = 2
 CONNECT_ATTEMPT_MAX_TRIES = 5
 _DEFAULT_CONNECTION_TIMEOUT = 60
@@ -158,6 +161,12 @@ async def initialize(app):
 async def deinitialize(app):
     # language=rst
     """ Deinitialize the plugin."""
+    global _listen_conn
+    global _listen_callback
+
+    if _listen_conn  and not _listen_conn.is_closed():
+        await _listen_conn.remove_listener('channel', _listen_callback)
+        await _listen_conn.close()
     await app['pool'].close()
     del app['pool']
 
@@ -656,6 +665,10 @@ async def notify(app: T.Mapping[str, T.Any], msg: str) -> None:
 
 @_hookimpl
 async def listen_notifications(app, callback: T.Callable) -> None:
-    conn = await app['pool'].acquire()
-    await conn.add_listener('channel', callback)
-    return conn
+    global _listen_conn
+    global _listen_callback
+
+    _listen_callback = callback
+    _listen_conn = await app['pool'].acquire()
+    await _listen_conn.add_listener('channel', _listen_callback)
+    return _listen_conn
