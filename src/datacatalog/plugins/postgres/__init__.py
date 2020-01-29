@@ -95,7 +95,7 @@ async def initialize(app):
     if app.get('pool') is not None:
         # Not failing hard because not sure whether initializing twice is allowed
         _logger.warning("Plugin is already intialized. Deinitializing before proceeding.")
-        await deinitialize(app)
+        await deinitialize(app, False)
 
     # validate configuration
     with pkg_resources.resource_stream(__name__, 'config_schema.yml') as s:
@@ -126,8 +126,7 @@ async def initialize(app):
                 timeout=conn_timeout,
                 min_size=min_pool_size,
                 max_size=max_pool_size,
-                max_inactive_connection_lifetime=max_inactive_conn_lifetime,
-                loop=app.loop
+                max_inactive_connection_lifetime=max_inactive_conn_lifetime
             )
         except ConnectionRefusedError:
             if connect_attempt_tries_left > 0:
@@ -158,15 +157,15 @@ async def initialize(app):
 
 
 @_hookimpl
-async def deinitialize(app):
+async def deinitialize(app, remove_listener=True):
     # language=rst
     """ Deinitialize the plugin."""
     global _listen_conn
     global _listen_callback
 
-    if _listen_conn  and not _listen_conn.is_closed():
-        await _listen_conn.remove_listener('channel', _listen_callback)
-        await _listen_conn.close()
+    if remove_listener and _listen_conn  and not _listen_conn.is_closed():
+         await _listen_conn.remove_listener('channel', _listen_callback)
+         await _listen_conn.close()
     await app['pool'].close()
     del app['pool']
 
