@@ -384,7 +384,7 @@ if __name__ == '__main__':
     access_token = get_access_token(DCAT_USER, DCAT_PASSWORD, environment1)
     if not access_token and environment1 != 'localhost':
         print('Failed to login\n\n')
-        os.exit(1)
+        sys.exit(1)
     harvested_all = harvest_dcat_api(access_token)
     harvested = list(filter( lambda ds: ds['ams:status'] != 'niet_beschikbaar', harvested_all['dcat:dataset']))
     harvested_title = {ds['dct:title']:ds for ds in harvested}
