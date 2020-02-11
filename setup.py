@@ -28,7 +28,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'datacatalog-core=datacatalog.main:main'
+            'datacatalog-core=datacatalog.main:main',
+            'aschema-sync=dcatsync.sync_aschema:main'
         ]
     },
 
@@ -60,6 +61,7 @@ setup(
         'aiohttp',
         'aiohttp_cors',
         'aiopluggy',
+        'amsterdam-schema',
         'asyncpg',  # for postgres plugin
         'bleach',  # Markdown to text conversion
         'cryptography',
@@ -104,5 +106,6 @@ setup(
         'pytest',
         'pytest-cov',
         'pytest-aiohttp',
+        'pytest-mockito',
     ],
 )
