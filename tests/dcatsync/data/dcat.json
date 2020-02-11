@@ -1,0 +1,166 @@
+{
+  "@context": {
+    "ams": "http://datacatalogus.amsterdam.nl/term/",
+    "ckan": "https://ckan.org/terms/",
+    "class": "ams:class#",
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "dcat": "http://www.w3.org/ns/dcat#",
+    "dct": "http://purl.org/dc/terms/",
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "lang1": "http://id.loc.gov/vocabulary/iso639-1/",
+    "lang2": "http://id.loc.gov/vocabulary/iso639-2/",
+    "org": "ams:org#",
+    "overheid": "http://standaarden.overheid.nl/owms/terms/",
+    "overheidds": "http://standaarden.overheid.nl/owms/terms/ds#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "void": "http://rdfs.org/ns/void#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "theme": "ams:theme#",
+    "time": "http://www.w3.org/2006/time#",
+    "vcard": "http://www.w3.org/2006/vcard/ns#",
+    "ams:purl": {
+      "@type": "@id"
+    },
+    "dcat:dataset": {
+      "@container": "@list"
+    },
+    "dcat:distribution": {
+      "@container": "@set"
+    },
+    "dcat:keyword": {
+      "@container": "@set"
+    },
+    "dcat:landingpage": {
+      "@type": "@id"
+    },
+    "dcat:theme": {
+      "@container": "@set",
+      "@type": "@id"
+    },
+    "dct:issued": {
+      "@type": "xsd:date"
+    },
+    "dct:language": {
+      "@type": "@id"
+    },
+    "dct:modified": {
+      "@type": "xsd:date"
+    },
+    "foaf:homepage": {
+      "@type": "@id"
+    },
+    "foaf:mbox": {
+      "@type": "@id"
+    },
+    "vcard:hasEmail": {
+      "@type": "@id"
+    },
+    "vcard:hasURL": {
+      "@type": "@id"
+    },
+    "vcard:hasLogo": {
+      "@type": "@id"
+    },
+    "ams-dcatd": "https://api.data.amsterdam.nl/dcatd/datasets/"
+  },
+  "dcat:dataset": [
+    {
+      "dct:title": "Onder- en bovengrondse Afvalcontainers en putten",
+      "dct:description": "Alle locaties van de actieve onder- en bovengronds afvalcontainers en betonputten van de Gemeente Amsterdam. De locaties worden dagelijks bijgewerkt en bevatten de fracties Rest, Papier, Glas, Textiel en Plastic. Naast de objectinformatie zijn ook de weeggegevens beschikbaar.",
+      "ams:status": "beschikbaar",
+      "dcat:distribution": [
+        {
+          "dct:title": "containers",
+          "dcat:accessURL": "https://acc.api.data.amsterdam.nl/v1/afvalwegingen/containers",
+          "ams:resourceType": "app",
+          "ams:distributionType": "api",
+          "ams:serviceType": "rest",
+          "dc:identifier": "1",
+          "ams:classification": "public",
+          "foaf:isPrimaryTopicOf": {
+            "dct:issued": "2020-02-11",
+            "dct:modified": "2020-02-11"
+          },
+          "dct:license": "cc-by",
+          "@id": "_:d1",
+          "ams:purl": "http://localhost:8000/datasets/a3PzWTDP8ly0vw/purls/1"
+        },
+        {
+          "dct:title": "clusters",
+          "dcat:accessURL": "https://acc.api.data.amsterdam.nl/v1/afvalwegingen/clusters",
+          "ams:resourceType": "app",
+          "ams:distributionType": "api",
+          "ams:serviceType": "rest",
+          "dc:identifier": "2",
+          "ams:classification": "public",
+          "foaf:isPrimaryTopicOf": {
+            "dct:issued": "2020-02-11",
+            "dct:modified": "2020-02-11"
+          },
+          "dct:license": "cc-by",
+          "@id": "_:d2",
+          "ams:purl": "http://localhost:8000/datasets/a3PzWTDP8ly0vw/purls/2"
+        },
+        {
+          "dct:title": "wegingen",
+          "dcat:accessURL": "https://acc.api.data.amsterdam.nl/v1/afvalwegingen/wegingen",
+          "ams:resourceType": "app",
+          "ams:distributionType": "api",
+          "ams:serviceType": "rest",
+          "dc:identifier": "3",
+          "ams:classification": "public",
+          "foaf:isPrimaryTopicOf": {
+            "dct:issued": "2020-02-11",
+            "dct:modified": "2020-02-11"
+          },
+          "dct:license": "cc-by",
+          "@id": "_:d3",
+          "ams:purl": "http://localhost:8000/datasets/a3PzWTDP8ly0vw/purls/3"
+        },
+        {
+          "dct:title": "containertypes",
+          "dcat:accessURL": "https://acc.api.data.amsterdam.nl/v1/afvalwegingen/containertypes",
+          "ams:resourceType": "app",
+          "ams:distributionType": "api",
+          "ams:serviceType": "rest",
+          "dc:identifier": "4",
+          "ams:classification": "public",
+          "foaf:isPrimaryTopicOf": {
+            "dct:issued": "2020-02-11",
+            "dct:modified": "2020-02-11"
+          },
+          "dct:license": "cc-by",
+          "@id": "_:d4",
+          "ams:purl": "http://localhost:8000/datasets/a3PzWTDP8ly0vw/purls/4"
+        }
+      ],
+      "dcat:landingPage": "https://data.amsterdam.nl",
+      "foaf:isPrimaryTopicOf": {
+        "dct:issued": "13 januari",
+        "dct:modified": "13 januari"
+      },
+      "dct:accrualPeriodicity": "dagelijks",
+      "ams:temporalUnit": "na",
+      "ams:spatialDescription": "Gemeente Amsterdam",
+      "dct:language": "Nederlands",
+      "ams:owner": "Gemeente Amsterdam, Stadswerken",
+      "dct:publisher": {
+        "foaf:name": "OIS",
+        "foaf:mbox": "algemeen.OIS@amsterdam.nl"
+      },
+      "dcat:theme": [],
+      "dcat:keyword": [],
+      "ams:license": "cc-by",
+      "ams:sort_modified": "2020-02-11",
+      "ams:modifiedby": "test@test.nl",
+      "overheid:authority": "overheid:Amsterdam",
+      "@id": "ams-dcatd:a3PzWTDP8ly0vw",
+      "dct:identifier": "a3PzWTDP8ly0vw",
+      "overheidds:doel": "Geen doel gedefiniëerd",
+      "dcat:contactPoint": {
+        "vcard:fn": "Onbekend"
+      }
+    }
+  ]
+}
