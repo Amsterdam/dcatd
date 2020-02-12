@@ -81,6 +81,7 @@ setup(
         'aiodns',    # optional asynchronous DNS client
         'uvloop',    # optional fast eventloop for asyncio
         'xlrd',
+        'deepdiff',
     ],
     extras_require={
         'docs': [
