@@ -1,5 +1,6 @@
 import os
 import datetime
+from deepdiff import DeepDiff
 from amsterdam_schema.utils import schema_defs_from_url
 from amsterdam_schema.types import DatasetSchema
 from .utils import (
@@ -130,5 +131,16 @@ def main():
     for title in aschema_set & harvested_set:
         ds_id = harvested_lookup[title]["dct:identifier"]
         dcat_ds = create_dataset(aschema_lookup[title])
+
         # Do a deep compare, only update if needed
-        update_dataset(ds_id, dcat_ds, access_token)
+        if DeepDiff(
+            dcat_ds,
+            harvested_lookup[title],
+            exclude_regex_paths={
+                r".*identif.*",
+                r".*modified.*",
+                ".*@id",
+                ".*ams:purl",
+            },
+        ):
+            update_dataset(ds_id, dcat_ds, access_token)

@@ -37,6 +37,9 @@ def patcher(mocker):
         ("dcat-niet.json", "afval.json", ("add",)),
         ("dcat-two.json", "afval.json", ("delete", "update")),
         ("dcat-two.json", "bommen.json", ("delete", "add")),
+        ("dcat-ident.json", "afval.json", ()),
+        ("dcat-ident-unsort.json", "afval.json", ()),
+        ("dcat-ident-irrelevant.json", "afval.json", ()),
     ],
 )
 def test_syncing(patcher, dcat_fn, schema_fn, called):
