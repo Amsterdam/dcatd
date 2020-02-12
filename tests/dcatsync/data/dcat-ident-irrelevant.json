@@ -1,0 +1,53 @@
+{
+  "@context": {},
+  "dcat:dataset": [
+    {
+      "dct:title": "Afvalwegingen",
+      "dct:description": "",
+      "dct:source": "https://schemas.data.amsterdam.nl/datasets/",
+      "ams:status": "beschikbaar",
+      "dcat:distribution": [
+        {
+          "dct:title": "containers",
+          "dcat:accessURL": "https://acc.api.data.amsterdam.nl/v1/afvalwegingen/containers",
+          "ams:resourceType": "app",
+          "ams:distributionType": "api",
+          "ams:serviceType": "rest",
+          "ams:classification": "public",
+          "dct:license": "cc-by",
+          "dct:modified": "",
+          "ams:purl": "http://localhost:8000/datasets/a3PzWTDP8ly0vw/purls/3"
+        },
+        {
+          "dct:title": "clusters",
+          "dcat:accessURL": "https://acc.api.data.amsterdam.nl/v1/afvalwegingen/clusters",
+          "ams:resourceType": "app",
+          "ams:distributionType": "api",
+          "ams:serviceType": "rest",
+          "ams:classification": "public",
+          "dct:license": "cc-by",
+          "dct:modified": "changed-irrelevant"
+        }
+      ],
+      "dcat:theme": [],
+      "dcat:keyword": [],
+      "ams:license": "cc-by",
+      "overheid:authority": "overheid:Amsterdam",
+      "dct:identifier": "changed-irrelevant",
+      "@id": "changed-irrelevant",
+      "dct:publisher": {
+        "foaf:name": "OIS/Datapunt",
+        "foaf:mbox": "algemeen.OIS@amsterdam.nl"
+      },
+      "dct:accrualPeriodicity": "unknown",
+      "ams:temporalUnit": "na",
+      "dct:language": "lang1:nl",
+      "ams:owner": "Gemeente Amsterdam, Onderzoek, Informatie en Statistiek",
+      "overheidds:doel": "",
+      "foaf:isPrimaryTopicOf": {
+        "dct:issued": "",
+        "dct:modified": "changed-irrelevant"
+      }
+    }
+  ]
+}
