@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 import pytest
-from attrdict import AttrDict
 from dcatsync.sync_aschema import main as sync
 from amsterdam_schema import types
 
@@ -21,7 +20,7 @@ def patcher(mocker):
         mocker.patch("dcatsync.sync_aschema.harvest_dcat_api", harvest)
         mocker.patch("dcatsync.sync_aschema.schema_defs_from_url", fetch_schemas)
 
-        funcs = AttrDict()
+        funcs = {}
         for fn in ("add_dataset", "update_dataset", "delete_dataset"):
             funcs[fn] = mocker.patch(f"dcatsync.sync_aschema.{fn}")
         return funcs
