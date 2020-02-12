@@ -1,3 +1,5 @@
+from datacatalog.plugins.dcat_ap_ams.constants import LANGUAGES
+
 from . import constants
 from .fieldtypes import *
 from .distribution import DISTRIBUTION
@@ -134,10 +136,7 @@ DATASET = dcat.Object().add(
 ).add(
     'dct:language',
     dcat.Enum(
-        [
-            ('lang1:nl', "Nederlands"),
-            ('lang1:en', "Engels")
-        ],
+        LANGUAGES,
         title="Taal",
         # description="De taal van de gegevensset",
         default='lang1:nl',

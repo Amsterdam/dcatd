@@ -84,25 +84,18 @@ RESOURCE_TYPES = [
 
 
 THEMES = [
-    ('theme:none', "Overig"),
-    ('theme:bestuur-en-organisatie', "Bestuur en organisatie"),
+    ('theme:bestuur', "Bestuur"),
     ('theme:bevolking', "Bevolking"),
-    ('theme:dienstverlening', "Dienstverlening"),
-    ('theme:economie-haven', "Economie & Haven"),
-    ('theme:educatie-jeugd-diversiteit', "Educatie, Jeugd & Diversiteit"),
-    ('theme:energie', "Energie"),
-    ('theme:geografie', "Geografie"),
-    ('theme:milieu-water', "Milieu & Water"),
-    ('theme:openbare-orde-veiligheid', "Openbare orde & veiligheid"),
-    ('theme:openbare-ruimte-groen', "Openbare ruimte & groen"),
-    ('theme:sport-recreatie', "Sport & recreatie"),
-    ('theme:stedelijke-ontwikkeling', "Stedelijke ontwikkeling"),
-    ('theme:toerisme-cultuur', "Toerisme & cultuur"),
-    ('theme:verkeer-infrastructuur', "Verkeer & Infrastructuur"),
-    ('theme:verkiezingen', "Verkiezingen"),
-    ('theme:werk-inkomen', "Werk & Inkomen"),
-    ('theme:wonen-leefomgeving', "Wonen & leefomgeving"),
-    ('theme:zorg-welzijn', "Zorg & welzijn")
+    ('theme:cultuur-en-recreatie', "Cultuur en recreatie"),
+    ('theme:duurzaamheid-en-milieu', "Duurzaamheid en milieu"),
+    ('theme:economie-en-toerisme', "Economie en toerisme"),
+    ('theme:onderwijs-en-wetenschap', "Onderwijs en wetenschap"),
+    ('theme:openbare-orde-en-veiligheid', "Openbare orde en veiligheid"),
+    ('theme:ruimte-en-topografie', "Ruimte en topografie"),
+    ('theme:verkeer', "Verkeer"),
+    ('theme:werk-en-sociale-zekerheid', "Werk en sociale zekerheid"),
+    ('theme:wonen', "Wonen"),
+    ('theme:zorg-en-welzijn', "Zorg en welzijn")
 ]
 
 
@@ -528,4 +521,9 @@ STATUSES = [
     ('niet_beschikbaar', "Niet beschikbaar"),
     ('beschikbaar', "Beschikbaar"),
     ('gepland', "Gepland")
+]
+
+LANGUAGES = [
+    ('lang1:nl', "Nederlands"),
+    ('lang1:en', "Engels")
 ]

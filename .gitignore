@@ -21,6 +21,8 @@
 /utils/dcatdata/
 /utils/dists/
 
+/venv
 .venv
 .idea
 *.iml
+.DS_Store

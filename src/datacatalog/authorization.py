@@ -1,10 +1,16 @@
 import logging
 import re
+import json
 import typing as T
 import urllib.parse
 
 from aiohttp import web
-import jwt
+
+from jwcrypto.jwt import JWT, JWTExpired, JWTMissingKey
+from jwcrypto.jws import InvalidJWSSignature
+
+from .config import get_settings
+from .jwks import get_keyset, check_update_keyset
 
 _logger = logging.getLogger(__name__)
 
@@ -12,7 +18,10 @@ LOCAL_ALWAYS_OK = False
 
 
 async def _extract_scopes(request: web.Request) -> T.Set:
-    if not (LOCAL_ALWAYS_OK and request.url.host == 'localhost'):
+    if LOCAL_ALWAYS_OK and request.url.host == 'localhost':
+        scopes = {'CAT/W', 'CAT/R'}
+        subject = 'test@test.nl'
+    else:
         authorization_header = request.headers.get('authorization')
         if authorization_header is None:
             return set()
@@ -20,42 +29,66 @@ async def _extract_scopes(request: web.Request) -> T.Set:
         if not match:
             return set()
 
-        token = match[1]
+        raw_jwt = match[1]
         try:
-            header = jwt.get_unverified_header(token)
-        except (jwt.InvalidTokenError, jwt.DecodeError):
-            raise web.HTTPBadRequest(text='JWT decode error while reading header') from None
-
-        if 'kid' not in header:
-            raise web.HTTPBadRequest(text='Did not get a valid key identifier') from None
-
-        keys = request.app['jwks'].verifiers
-
-        if header['kid'] not in keys:
-            raise web.HTTPBadRequest(text="Unknown key identifier: {}".format(header['kid'])) from None
-        key = keys[header['kid']]
-        try:
-            access_token = jwt.decode(
-                token, verify=True,
-                key=key.key,
-                algorithms=key.alg
+            jwt = decode_token(raw_jwt)
+        except JWTExpired:
+            _logger.info(
+                'Auth problem: token expired'
             )
-            if 'scopes' not in access_token or not isinstance(access_token['scopes'], list):
-                raise web.HTTPBadRequest(
-                    text='No scopes in access token'
-                )
-            scopes = set(access_token['scopes'])
-            subject = access_token.get('sub', '')
-        except jwt.ExpiredSignatureError:
             return set()
-        except jwt.InvalidTokenError:
-            raise web.HTTPBadRequest(text='Invalid Bearer token') from None
-    else:
-        scopes = {'CAT/W', 'CAT/R'}
-        subject = 'test@test.nl'
+        except JWTMissingKey:
+            check_update_keyset()
+            try:
+                jwt = decode_token(raw_jwt)
+            except JWTMissingKey as e:
+                _logger.warning('Auth problem: unknown key. {}'.format(e))
+                raise web.HTTPBadRequest(text="Invalid Bearer token")
+
+        claims = get_claims(jwt)
+        subject = claims['sub']
+        scopes = claims['scopes']
+
     request.authz_scopes = scopes
     request.authz_subject = subject
     return scopes
+
+
+def decode_token(raw_jwt):
+    settings = get_settings()
+    try:
+        jwt = JWT(jwt=raw_jwt, key=get_keyset(), algs=settings['allowed_signing_algorithms'])
+    except InvalidJWSSignature as e:
+        _logger.warning('Auth problem: invalid signature. {}'.format(e))
+        raise web.HTTPBadRequest(text='Invalid Bearer token')
+    except ValueError as e:
+        _logger.warning(
+            'Auth problem: {}'.format(e))
+        raise web.HTTPBadRequest(text='Invalid Bearer token')
+    return jwt
+
+
+def get_claims(jwt):
+    claims = json.loads(jwt.claims)
+    if 'scopes' in claims:
+        # Authz token structure
+        return {
+            'sub': claims.get('sub'),
+            'scopes': set(claims['scopes'])
+        }
+    elif claims.get('realm_access'):
+        # Keycloak token structure
+        return {
+            'sub': claims.get('sub'),
+            'scopes': {convert_scope(r) for r in claims['realm_access']['roles']}
+        }
+    raise web.HTTPBadRequest(text='No scopes in access token')
+
+
+def convert_scope(scope):
+    """ Convert Keycloak role to authz style scope
+    """
+    return scope.upper().replace("_", "/")
 
 
 async def _extract_api_key_info(request: web.Request,
@@ -128,11 +161,13 @@ async def _enforce_all_of(request: web.Request,
     openapi = request.app['openapi']
     security_definitions = openapi['components']['securitySchemes']
     all_authz_info = await _extract_authz_info(request, security_definitions)
+
     for requirement, scopes in security_requirements.items():
         authz_info = all_authz_info[requirement]
         security_type = security_definitions[requirement]['type']
         if security_type == 'oauth2':
             if len(set(scopes) - authz_info) > 0:
+                _logger.debug("Request with insufficient scopes")
                 return False
         elif security_type == 'apiKey':
             if not authz_info:
@@ -140,6 +175,7 @@ async def _enforce_all_of(request: web.Request,
         else:
             _logger.error('Unexpected security type: %s' % security_type)
             raise web.HTTPInternalServerError()
+    _logger.debug("Request with sufficient authorization")
     return True
 
 

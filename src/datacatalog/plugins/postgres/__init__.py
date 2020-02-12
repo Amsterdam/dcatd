@@ -24,11 +24,14 @@ from .languages import ISO_639_1_TO_PG_DICTIONARIES
 _hookimpl = aiopluggy.HookimplMarker('datacatalog')
 _logger = logging.getLogger(__name__)
 
+_listen_conn = None
+_listen_callback = None
+
 CONNECT_ATTEMPT_INTERVAL_SECS = 2
 CONNECT_ATTEMPT_MAX_TRIES = 5
 _DEFAULT_CONNECTION_TIMEOUT = 60
 _DEFAULT_MIN_POOL_SIZE = 0
-_DEFAULT_MAX_POOL_SIZE = 5
+_DEFAULT_MAX_POOL_SIZE = 6
 _DEFAULT_MAX_INACTIVE_CONNECTION_LIFETIME = 5.0
 
 _Q_CREATE = '''
@@ -92,11 +95,11 @@ async def initialize(app):
     if app.get('pool') is not None:
         # Not failing hard because not sure whether initializing twice is allowed
         _logger.warning("Plugin is already intialized. Deinitializing before proceeding.")
-        await deinitialize(app)
+        await deinitialize(app, False)
 
     # validate configuration
     with pkg_resources.resource_stream(__name__, 'config_schema.yml') as s:
-        schema = yaml.load(s)
+        schema = yaml.safe_load(s)
     app.config.validate(schema)
     dbconf = app.config['storage_postgres']
 
@@ -123,8 +126,7 @@ async def initialize(app):
                 timeout=conn_timeout,
                 min_size=min_pool_size,
                 max_size=max_pool_size,
-                max_inactive_connection_lifetime=max_inactive_conn_lifetime,
-                loop=app.loop
+                max_inactive_connection_lifetime=max_inactive_conn_lifetime
             )
         except ConnectionRefusedError:
             if connect_attempt_tries_left > 0:
@@ -150,13 +152,20 @@ async def initialize(app):
                 raise
         else:
             break
+
     _logger.info("Successfully connected to postgres.")
 
 
 @_hookimpl
-async def deinitialize(app):
+async def deinitialize(app, remove_listener=True):
     # language=rst
     """ Deinitialize the plugin."""
+    global _listen_conn
+    global _listen_callback
+
+    if remove_listener and _listen_conn  and not _listen_conn.is_closed():
+         await _listen_conn.remove_listener('channel', _listen_callback)
+         await _listen_conn.close()
     await app['pool'].close()
     del app['pool']
 
@@ -463,7 +472,7 @@ async def _execute_list_query(app, filterexpr: str, lang: str, sortpath: T.List[
 
 async def _execute_search_query(app, filterexpr: str, q: str):
     # Replace .,\'"|&:()*!\/ with spaces
-    q = re.sub('[\\\\/.,\'"|&:()*!<>;\[\]{}]', ' ', q)
+    q = re.sub(r'[\\/.,\'"|&:()*!<>;\[\]{}]', ' ', q)
     prefix_query = _to_pg_json_query(q)
     fullmatch_query = _to_pg_json_query_fullmatch(q)
 
@@ -645,3 +654,20 @@ async def storage_all(app: T.Mapping[str, T.Any]) -> T.AsyncGenerator[T.Tuple[st
             stmt = await con.prepare(_Q)
             async for row in stmt.cursor():
                 yield row['id'], row['etag'], json.loads(row['doc'])
+
+
+@_hookimpl
+async def notify(app: T.Mapping[str, T.Any], msg: str) -> None:
+    async with app['pool'].acquire() as conn:
+        await conn.execute(f"NOTIFY channel, '{msg}'")
+
+
+@_hookimpl
+async def listen_notifications(app, callback: T.Callable) -> None:
+    global _listen_conn
+    global _listen_callback
+
+    _listen_callback = callback
+    _listen_conn = await app['pool'].acquire()
+    await _listen_conn.add_listener('channel', _listen_callback)
+    return _listen_conn

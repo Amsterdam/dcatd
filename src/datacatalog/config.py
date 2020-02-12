@@ -41,7 +41,7 @@ from pkg_resources import resource_stream
 
 logger = logging.getLogger(__name__)
 
-
+_settings = {}
 _CONFIG_SCHEMA_RESOURCE = 'config_schema.yml'
 
 
@@ -50,6 +50,18 @@ DEFAULT_CONFIG_PATHS = [
     pathlib.Path('config.yml')
 ]
 """List of locations to look for a configuration file."""
+
+
+def init_settings():
+    global _settings
+    _settings = load()
+
+
+def get_settings():
+    global _settings
+    if not _settings:
+        init_settings()
+    return _settings
 
 
 class ConfigDict(dict):
@@ -82,7 +94,7 @@ class ConfigError(Exception):
 def _config_schema() -> T.Mapping:
     with resource_stream(__name__, _CONFIG_SCHEMA_RESOURCE) as s:
         try:
-            return yaml.load(s)
+            return yaml.safe_load(s)
         except yaml.YAMLError as e:
             error_msg = "Couldn't load bundled config_schema '{}'."
             raise ConfigError(error_msg.format(_CONFIG_SCHEMA_RESOURCE)) from e
@@ -99,7 +111,7 @@ def _load_yaml(path: pathlib.Path) -> dict:
     """
     with path.open() as f:
         try:
-            result = yaml.load(f)
+            result = yaml.safe_load(f)
         except yaml.YAMLError as e:
             error_msg = "Couldn't load yaml file '{}'.".format(path)
             raise ConfigError(error_msg.format(path)) from e
@@ -189,7 +201,7 @@ class _TemplateWithDefaults(string.Template):
                 if '-' in named:
                     var, _, default = named.partition('-')
                     return mapping.get(var, default)
-                val = mapping[named]
+                val = mapping.get(named, "")
                 return '%s' % (val,)
             if mo.group('escaped') is not None:
                 return self.delimiter

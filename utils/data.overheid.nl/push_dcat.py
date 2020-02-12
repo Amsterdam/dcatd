@@ -5,6 +5,7 @@ import urllib
 from urllib import request
 from urllib.error import HTTPError
 import pprint
+from utils.utils import dictionary_vary
 
 filetype_prefix = 'http://publications.europa.eu/resource/authority/file-type/'
 
@@ -69,25 +70,18 @@ MAP_FREQUENCY = {
 
 # Map themes to : https://standaarden.overheid.nl/owms/terms/TaxonomieBeleidsagenda.xml
 MAP_THEMES = {
-    'theme:none': 'http://standaarden.overheid.nl/owms/terms/Overige_economische_sectoren',  # ???
-    'theme:bestuur-en-organisatie': 'http://standaarden.overheid.nl/owms/terms/Bestuur',
+    'theme:bestuur': 'http://standaarden.overheid.nl/owms/terms/Bestuur',
     'theme:bevolking': 'http://standaarden.overheid.nl/owms/terms/Sociale_zekerheid',
-    'theme:dienstverlening': 'http://standaarden.overheid.nl/owms/terms/Economie',
-    'theme:economie-haven': 'http://standaarden.overheid.nl/owms/terms/Economie',
-    'theme:educatie-jeugd-diversiteit': 'http://standaarden.overheid.nl/owms/terms/Onderwijs_en_wetenschap',
-    'theme:energie': 'http://standaarden.overheid.nl/owms/terms/Energie',
-    'theme:geografie': 'http://standaarden.overheid.nl/owms/terms/Ruimte_en_infrastructuur',
-    'theme:milieu-water': 'http://standaarden.overheid.nl/owms/terms/Natuur_en_milieu',
-    'theme:openbare-orde-veiligheid': 'http://standaarden.overheid.nl/owms/terms/Openbare_orde_en_veiligheid',
-    'theme:openbare-ruimte-groen': 'http://standaarden.overheid.nl/owms/terms/Natuur-_en_landschapsbeheer',
-    'theme:sport-recreatie': 'http://standaarden.overheid.nl/owms/terms/Cultuur_en_recreatie',
-    'theme:stedelijke-ontwikkeling': 'http://standaarden.overheid.nl/owms/terms/Ruimte_en_infrastructuur',
-    'theme:toerisme-cultuur': 'http://standaarden.overheid.nl/owms/terms/Toerisme',
-    'theme:verkeer-infrastructuur': 'http://standaarden.overheid.nl/owms/terms/Verkeer_(thema)',
-    'theme:verkiezingen': 'http://standaarden.overheid.nl/owms/terms/Bestuur',
-    'theme:werk-inkomen': 'http://standaarden.overheid.nl/owms/terms/Werk_(thema)',
-    'theme:wonen-leefomgeving': 'http://standaarden.overheid.nl/owms/terms/Huisvesting_(thema)',
-    'theme:zorg-welzijn': 'http://standaarden.overheid.nl/owms/terms/Zorg_en_gezondheid'
+    'theme:cultuur-en-recreatie': 'http://standaarden.overheid.nl/owms/terms/Cultuur_en_recreatie',
+    'theme:duurzaamheid-en-milieu': 'http://standaarden.overheid.nl/owms/terms/Natuur_en_milieu',
+    'theme:economie-en-toerisme': 'http://standaarden.overheid.nl/owms/terms/Economie',
+    'theme:onderwijs-en-wetenschap': 'http://standaarden.overheid.nl/owms/terms/Onderwijs_en_wetenschap',
+    'theme:openbare-orde-en-veiligheid': 'http://standaarden.overheid.nl/owms/terms/Openbare_orde_en_veiligheid',
+    'theme:ruimte-en-topografie': 'http://standaarden.overheid.nl/owms/terms/Ruimte_en_infrastructuur',
+    'theme:verkeer': 'http://standaarden.overheid.nl/owms/terms/Verkeer_(thema)',
+    'theme:werk-en-sociale-zekerheid': 'http://standaarden.overheid.nl/owms/terms/Werk_(thema)',
+    'theme:wonen': 'http://standaarden.overheid.nl/owms/terms/Huisvesting_(thema)',
+    'theme:zorg-en-welzijn': 'http://standaarden.overheid.nl/owms/terms/Zorg_en_gezondheid'
 }
 
 MAP_SERVICE_TYPES = {
@@ -118,37 +112,6 @@ def _request_with_headers(url, data=None, method=None, authorization=None):
     for key, val in headers.items():
         req.add_header(key, val)
     return req
-
-
-def dictionary_vary(a: dict, b: dict, exclude: dict, parent_key: str = None) -> bool:
-    parent_exclude = exclude.get(parent_key, {})
-
-    if set(a.keys()) - parent_exclude != set(b.keys()) - parent_exclude:
-        return True
-
-    for key, value in a.items():
-        if key not in parent_exclude:
-            if isinstance(value, dict):
-                if not isinstance(b[key], dict) or dictionary_vary(value, b[key], exclude, key):
-                    return True
-            elif isinstance(value, list):
-                if not isinstance(b[key], list) or len(value) != len(b[key]):
-                    return True
-                for i in range(len(value)):
-                    if isinstance(value[i], dict):
-                        if not isinstance(b[key][i], dict) or dictionary_vary(value[i], b[key][i], exclude, key):
-                            return True
-                    else:  # We do not have lists of lists
-                        if value[i] != b[key][i]:
-                            return True
-            elif key in ('modified', 'modification_date', 'issued'):
-                if value[:8] != b[key][:8]:
-                    return True
-            else:
-                if value != b[key]:
-                    return True
-
-    return False
 
 
 def _convert_to_ckan(dcat: dict)->dict:

@@ -11,6 +11,12 @@ properties:
     $ref: '#/definitions/web'
   jwks:
     $ref: '#/definitions/jwks'
+  jwks_url:
+    $ref: '#/definitions/jwks_url'
+  min_interval_keyset_update:
+    $ref: '#/definitions/min_interval_keyset_update'
+  allowed_signing_algorithms:
+    $ref: '#/definitions/allowed_signing_algorithms'
   cors:
     $ref: '#/definitions/cors'
   primarySchema:
@@ -22,7 +28,6 @@ required:
 - logging
 - plugins
 - primarySchema
-- jwks
 - web
 
 
@@ -54,6 +59,17 @@ definitions:
 
   jwks:
     type: string
+
+  jwks_url:
+    type: string
+
+  min_interval_keyset_update:
+    type: integer
+
+  allowed_signing_algorithms:
+    type: array
+    items:
+      type: string
 
   cors:
     type: object
