@@ -1,0 +1,73 @@
+{
+  "id": "afvalwegingen",
+  "type": "dataset",
+  "title": "Afvalwegingen",
+  "version": "0.0.1",
+  "crs": "EPSG:28992",
+  "tables": [
+    {
+      "id": "containers",
+      "type": "table",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "schema"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Container-ID"
+          },
+          "schema": {
+            "$ref": "https://schemas.data.amsterdam.nl/schema@v1.1.0#/definitions/schema"
+          },
+          "cluster id": {
+            "type": "string",
+            "relation": "afvalwegingen:clusters",
+            "description": "Cluster-ID"
+          },
+          "serienummer": {
+            "type": "string",
+            "description": "Serienummer van container"
+          },
+          "eigenaar naam": {
+            "type": "string",
+            "description": "Naam van eigenaar"
+          },
+          "datum creatie": {
+            "type": "string",
+            "format": "date",
+            "description": "Datum aangemaakt"
+          },
+          "datum leegmaken": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Datum leeggemaakt"
+          }
+        }
+      }
+    },
+    {
+      "id": "clusters",
+      "type": "table",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "schema"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "schema": {
+            "$ref": "https://schemas.data.amsterdam.nl/schema@v1.1.0#/definitions/schema"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status"
+          }
+        }
+      }
+    }
+  ]
+}
