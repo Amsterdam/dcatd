@@ -4,6 +4,7 @@
     {
       "dct:title": "Afvalwegingen",
       "dct:description": "Description of afvalwegingen",
+      "dct:source": "https://schemas.data.amsterdam.nl/datasets/afvalwegingen/afvalwegingen",
       "ams:status": "beschikbaar",
       "dcat:distribution": [
         {

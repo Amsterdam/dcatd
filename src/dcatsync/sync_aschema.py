@@ -1,9 +1,14 @@
 import os
 import datetime
-from amsterdam_schema import utils as asutils
+from amsterdam_schema.utils import schema_defs_from_url
 from amsterdam_schema.types import DatasetSchema
-from .utils import get_access_token, add_dataset, update_dataset, delete_dataset
-from . import utils
+from .utils import (
+    get_access_token,
+    harvest_dcat_api,
+    add_dataset,
+    delete_dataset,
+    update_dataset,
+)
 
 
 DCAT_URL = os.getenv("DCAT_URL", "http://localhost:8000/")
@@ -11,11 +16,6 @@ DCAT_USER = os.getenv("DCAT_USER", "citydata.acc@amsterdam.nl")
 DCAT_PASSWORD = os.getenv("DCAT_PASSWORD", "insecure")
 SCHEMA_URL = os.getenv("SCHEMA_URL", "https://schemas.data.amsterdam.nl/datasets/")
 DSO_URL = os.getenv("DSO_URL", "https://acc.api.data.amsterdam.nl/v1/")
-
-# overnemen in utils
-# add_dataset, update_dataset
-
-# aschema types (dataservices) op pypi zetten ivm uitlezen schemas.
 
 
 def create_dataset(schema: DatasetSchema):
@@ -80,7 +80,7 @@ def create_dataset(schema: DatasetSchema):
         resources.append(
             {
                 "dct:title": table["id"],
-                "dcat:accessURL": f"{DSO_URL}{aschema.id}/{table.id}",
+                "dcat:accessURL": f"{DSO_URL}{schema.id}/{table.id}",
                 "ams:resourceType": "app",
                 "ams:distributionType": "api",
                 "ams:serviceType": "rest",
@@ -99,16 +99,16 @@ def main():
     access_token = get_access_token(
         DCAT_USER, DCAT_PASSWORD, "localhost" if "localhost" in DCAT_URL else "acc"
     )
-    harvested_all = utils.harvest_dcat_api(access_token)
+    harvested_all = harvest_dcat_api(access_token)
     harvested = list(
         filter(
             lambda ds: ds["ams:status"] != "niet_beschikbaar"
-            and ds.get("dct:source", "") == SCHEMA_URL,
+            and ds.get("dct:source", "").startswith(SCHEMA_URL),
             harvested_all["dcat:dataset"],
         )
     )
     harvested_lookup = {ds["dct:title"]: ds for ds in harvested}
-    aschemas = asutils.schema_defs_from_url(SCHEMA_URL)
+    aschemas = schema_defs_from_url(SCHEMA_URL)
     aschema_lookup = {aschema["title"]: aschema for aschema in aschemas.values()}
 
     # delete = in old set, not in new schemas
@@ -118,11 +118,9 @@ def main():
     harvested_set = set(harvested_lookup)
     aschema_set = set(aschema_lookup)
 
-    breakpoint()
-
     for title in harvested_set - aschema_set:
         ds_id = harvested_lookup[title]["dct:identifier"]
-        dcat_ds = create_dataset(aschema_lookup[title])
+        dcat_ds = harvested_lookup[title]
         delete_dataset(ds_id, dcat_ds, access_token)
 
     for title in aschema_set - harvested_set:

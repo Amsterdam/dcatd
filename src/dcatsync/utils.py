@@ -76,6 +76,7 @@ def get_access_token(username, password, environment1):
 
 
 def add_dataset(dataset: dict, access_token: str) -> int:
+    breakpoint()
     url = f"{DCAT_URL}/datasets"
     dataset.pop("dct:identifier", None)
     dataset.pop("@id", None)
@@ -88,7 +89,6 @@ def add_dataset(dataset: dict, access_token: str) -> int:
 
 
 def update_dataset(id1: str, dataset: dict, access_token: str) -> int:
-    breakpoint()
     url = f"{DCAT_URL}/datasets/{id1}"
     response = requests.get(url)
     etag = response.headers["Etag"]
