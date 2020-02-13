@@ -1,9 +1,8 @@
 from datacatalog.plugins.dcat_ap_ams.constants import LANGUAGES
 
 from . import constants
-from .fieldtypes import *
+from .fieldtypes import dcat, Markdown, CONTACT_POINT, DCT_PUBLISHER
 from .distribution import DISTRIBUTION
-from .logger import logger
 
 
 DATASET = dcat.Object().add(
@@ -12,6 +11,13 @@ DATASET = dcat.Object().add(
         title="Titel",
         # description="Geef een titel van de gegevensset.",
         required='Geen titel opgegeven'
+    )
+).add(
+    'dct:source',
+    dcat.String(
+        title="Source",
+        description="URI indicating where the dataset has its origin",
+        format="uri"
     )
 ).add(
     'dct:description',
