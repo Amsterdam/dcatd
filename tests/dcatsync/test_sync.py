@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import pytest
-from dcatsync.sync_aschema import main as sync
+from dcatsync.sync_aschema import sync
 from amsterdam_schema import types
 
 HERE = Path(__file__).parent
@@ -44,7 +44,7 @@ def patcher(mocker):
 )
 def test_syncing(patcher, dcat_fn, schema_fn, called):
     patched = patcher(dcat_fn, schema_fn)
-    sync()
+    sync(False, False)
     called_check = {}
     for fn in patched.keys():
         called_check[fn] = False

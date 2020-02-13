@@ -101,6 +101,10 @@ def create_dataset(schema: DatasetSchema):
 @click.option("--dry", is_flag=True, help="Only dry run")
 @click.option("-v", "--verbose", is_flag=True, help="Enables verbose mode")
 def main(dry, verbose):
+    sync(dry, verbose)
+
+
+def sync(dry, verbose):
     access_token = get_access_token(
         DCAT_USER, DCAT_PASSWORD, "localhost" if "localhost" in DCAT_URL else "acc"
     )
