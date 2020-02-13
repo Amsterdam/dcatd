@@ -76,7 +76,6 @@ def get_access_token(username, password, environment1):
 
 
 def add_dataset(dataset: dict, access_token: str) -> int:
-    breakpoint()
     url = f"{DCAT_URL}/datasets"
     dataset.pop("dct:identifier", None)
     dataset.pop("@id", None)
