@@ -1,5 +1,6 @@
 import os
 import datetime
+import click
 from deepdiff import DeepDiff
 from amsterdam_schema.utils import schema_defs_from_url
 from amsterdam_schema.types import DatasetSchema
@@ -96,7 +97,10 @@ def create_dataset(schema: DatasetSchema):
     return ds
 
 
-def main():
+@click.command()
+@click.option("--dry", is_flag=True, help="Only dry run")
+@click.option("-v", "--verbose", is_flag=True, help="Enables verbose mode")
+def main(dry, verbose):
     access_token = get_access_token(
         DCAT_USER, DCAT_PASSWORD, "localhost" if "localhost" in DCAT_URL else "acc"
     )
@@ -118,6 +122,16 @@ def main():
 
     harvested_set = set(harvested_lookup)
     aschema_set = set(aschema_lookup)
+
+    if verbose:
+        click.echo(f"Harvested: {harvested_set}")
+        click.echo(f"Amsterdam schema: {aschema_set}")
+        click.echo(f"Delete: {harvested_set - aschema_set}")
+        click.echo(f"Add: {aschema_set - harvested_set}")
+        click.echo(f"Udate: {aschema_set & harvested_set}")
+
+    if dry:
+        return
 
     for title in harvested_set - aschema_set:
         ds_id = harvested_lookup[title]["dct:identifier"]

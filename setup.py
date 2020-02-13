@@ -82,6 +82,7 @@ setup(
         'uvloop',    # optional fast eventloop for asyncio
         'xlrd',
         'deepdiff',
+        'click',
     ],
     extras_require={
         'docs': [
