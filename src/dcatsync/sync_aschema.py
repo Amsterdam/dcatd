@@ -25,7 +25,7 @@ def create_dataset(schema: DatasetSchema):
         "dct:title": schema["title"],
         "dct:description": schema.get("description", ""),
         "dct:source": SCHEMA_URL,
-        "ams:status": "beschikbaar",
+        "ams:status": schema.get("status", "niet_beschikbaar"),
         "dcat:distribution": [],
         "dcat:theme": schema.get("themes", []),
         "dcat:keyword": schema.get("keywords", []),
@@ -117,7 +117,7 @@ def sync(dry, verbose):
         )
     )
     harvested_lookup = {ds["dct:title"]: ds for ds in harvested}
-    aschemas = schema_defs_from_url(SCHEMA_URL)
+    aschemas = {name: aschema for name, aschema in schema_defs_from_url(SCHEMA_URL).items() if aschema.get("status") == "beschikbaar"}
     aschema_lookup = {aschema["title"]: aschema for aschema in aschemas.values()}
 
     # delete = in old set, not in new schemas
@@ -132,7 +132,7 @@ def sync(dry, verbose):
         click.echo(f"Amsterdam schema: {aschema_set}")
         click.echo(f"Delete: {harvested_set - aschema_set}")
         click.echo(f"Add: {aschema_set - harvested_set}")
-        click.echo(f"Udate: {aschema_set & harvested_set}")
+        click.echo(f"Update: {aschema_set & harvested_set}")
 
     if dry:
         return

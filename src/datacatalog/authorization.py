@@ -14,7 +14,7 @@ from .jwks import get_keyset, check_update_keyset
 
 _logger = logging.getLogger(__name__)
 
-LOCAL_ALWAYS_OK = False
+LOCAL_ALWAYS_OK = True
 
 
 async def _extract_scopes(request: web.Request) -> T.Set:

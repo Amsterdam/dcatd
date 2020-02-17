@@ -4,7 +4,7 @@ services:
   database:
     image: amsterdam/postgres11
     ports:
-      - "5433:5432"
+      - "5440:5432"
     environment:
       POSTGRES_DB: dcatd
       POSTGRES_USER: dcatd

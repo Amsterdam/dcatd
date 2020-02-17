@@ -3,6 +3,7 @@
   "type": "dataset",
   "title": "Bommen",
   "version": "0.0.1",
+  "status": "beschikbaar",
   "crs": "EPSG:28992",
   "tables": [
     {

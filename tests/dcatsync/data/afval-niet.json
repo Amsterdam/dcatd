@@ -3,7 +3,7 @@
   "type": "dataset",
   "title": "Afvalwegingen",
   "version": "0.0.1",
-  "status": "beschikbaar",
+  "status": "niet_beschikbaar",
   "crs": "EPSG:28992",
   "tables": [
     {
