@@ -152,6 +152,7 @@ def sync(dry, verbose):
                 ".*ams:purl",
             },
         )
+        # Discard incoming changes from harvesting dcat, not relevant
         if "dictionary_item_added" in ddiff:
             del ddiff["dictionary_item_added"]
         if not ddiff:
