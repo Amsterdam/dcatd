@@ -109,6 +109,7 @@ setup(
         'pytest-cov',
         'pytest-aiohttp',
         'pytest-mock',
+        'pytest-env',
         'attrdict',
     ],
 )

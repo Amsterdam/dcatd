@@ -3,7 +3,7 @@
   "dcat:dataset": [
     {
       "dct:title": "Afvalwegingen",
-      "dct:description": "",
+      "dct:description": "Geen beschrijving opgegeven",
       "dct:source": "https://schemas.data.amsterdam.nl/datasets/",
       "ams:status": "beschikbaar",
       "dcat:distribution": [
@@ -43,7 +43,7 @@
       "ams:temporalUnit": "na",
       "dct:language": "lang1:nl",
       "ams:owner": "Gemeente Amsterdam, Onderzoek, Informatie en Statistiek",
-      "overheidds:doel": "",
+      "overheidds:doel": "Geen doel gedefiniëerd",
       "foaf:isPrimaryTopicOf": {
         "dct:issued": "",
         "dct:modified": "changed-irrelevant"

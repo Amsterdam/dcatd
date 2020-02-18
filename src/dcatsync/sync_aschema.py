@@ -23,7 +23,7 @@ DSO_URL = os.getenv("DSO_URL", "https://acc.api.data.amsterdam.nl/v1/")
 def create_dataset(schema: DatasetSchema):
     ds = {
         "dct:title": schema["title"],
-        "dct:description": schema.get("description", ""),
+        "dct:description": schema.get("description", "Geen beschrijving opgegeven"),
         "dct:source": SCHEMA_URL,
         "ams:status": schema.get("status", "niet_beschikbaar"),
         "dcat:distribution": [],
@@ -41,7 +41,7 @@ def create_dataset(schema: DatasetSchema):
         "dct:language": schema.get("language", "lang1:nl"),
         "ams:owner": schema.get("owner")
         or "Gemeente Amsterdam, Onderzoek, Informatie en Statistiek",
-        "overheidds:doel": schema.get("objective", ""),
+        "overheidds:doel": schema.get("objective", "Geen doel gedefiniëerd"),
         "foaf:isPrimaryTopicOf": {
             "dct:issued": schema.get("dateCreated", ""),
             "dct:modified": schema.get(
@@ -52,10 +52,11 @@ def create_dataset(schema: DatasetSchema):
 
     contact_point = schema.get("contactPoint")
     if contact_point:
-        ds["dcat:contactPoint"] = {
+        dcat_contactpoint = {
             "vcard:fn": contact_point["name"],
             "vcard:hasEmail": contact_point["hasEmail"],
         }
+        ds["dcat:contactPoint"] = dcat_contactpoint
 
     has_end = schema.get("hasEnd")
     has_beginning = schema.get("hasBeginning")
@@ -117,7 +118,11 @@ def sync(dry, verbose):
         )
     )
     harvested_lookup = {ds["dct:title"]: ds for ds in harvested}
-    aschemas = {name: aschema for name, aschema in schema_defs_from_url(SCHEMA_URL).items() if aschema.get("status") == "beschikbaar"}
+    aschemas = {
+        name: aschema
+        for name, aschema in schema_defs_from_url(SCHEMA_URL).items()
+        if aschema.get("status") == "beschikbaar"
+    }
     aschema_lookup = {aschema["title"]: aschema for aschema in aschemas.values()}
 
     # delete = in old set, not in new schemas
@@ -127,41 +132,55 @@ def sync(dry, verbose):
     harvested_set = set(harvested_lookup)
     aschema_set = set(aschema_lookup)
 
-    if verbose:
-        click.echo(f"Harvested: {harvested_set}")
-        click.echo(f"Amsterdam schema: {aschema_set}")
-        click.echo(f"Delete: {harvested_set - aschema_set}")
-        click.echo(f"Add: {aschema_set - harvested_set}")
-        click.echo(f"Update: {aschema_set & harvested_set}")
-
-    if dry:
-        return
-
-    for title in harvested_set - aschema_set:
-        ds_id = harvested_lookup[title]["dct:identifier"]
-        dcat_ds = harvested_lookup[title]
-        delete_dataset(ds_id, dcat_ds, access_token)
-
-    for title in aschema_set - harvested_set:
-        dcat_ds = create_dataset(aschema_lookup[title])
-        add_dataset(dcat_ds, access_token)
-
-    for title in aschema_set & harvested_set:
+    delete_set = harvested_set - aschema_set
+    add_set = aschema_set - harvested_set
+    update_set = aschema_set & harvested_set
+    subtract_set = set()
+    for title in update_set:
         ds_id = harvested_lookup[title]["dct:identifier"]
         dcat_ds = create_dataset(aschema_lookup[title])
 
         # Do a deep compare, only update if needed
-        if DeepDiff(
+        ddiff = DeepDiff(
             dcat_ds,
             harvested_lookup[title],
             exclude_regex_paths={
                 r".*identif.*",
                 r".*modified.*",
+                r".*issued.*",
                 ".*@id",
                 ".*ams:purl",
             },
-        ):
-            update_dataset(ds_id, dcat_ds, access_token)
+        )
+        if "dictionary_item_added" in ddiff:
+            del ddiff["dictionary_item_added"]
+        if not ddiff:
+            subtract_set.add(title)
+    update_set -= subtract_set
+
+    if verbose:
+        click.echo(f"Harvested: {harvested_set}")
+        click.echo(f"Amsterdam schema: {aschema_set}")
+        click.echo(f"Delete: {delete_set}")
+        click.echo(f"Add: {add_set}")
+        click.echo(f"Update: {update_set}")
+
+    if dry:
+        return
+
+    for title in delete_set:
+        ds_id = harvested_lookup[title]["dct:identifier"]
+        dcat_ds = harvested_lookup[title]
+        delete_dataset(ds_id, dcat_ds, access_token)
+
+    for title in add_set:
+        dcat_ds = create_dataset(aschema_lookup[title])
+        add_dataset(dcat_ds, access_token)
+
+    for title in update_set:
+        ds_id = harvested_lookup[title]["dct:identifier"]
+        dcat_ds = create_dataset(aschema_lookup[title])
+        update_dataset(ds_id, dcat_ds, access_token)
 
 
 if __name__ == "__main__":
