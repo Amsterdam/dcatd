@@ -162,3 +162,7 @@ def sync(dry, verbose):
             },
         ):
             update_dataset(ds_id, dcat_ds, access_token)
+
+
+if __name__ == "__main__":
+    main()
