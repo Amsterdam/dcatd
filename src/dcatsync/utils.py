@@ -11,6 +11,8 @@ import jwt
 
 DCAT_URL = os.getenv("DCAT_URL", "http://localhost:8000/")
 
+_access_token = None
+
 
 def get_access_token(username, password, environment1):
     if environment1 == "localhost":
