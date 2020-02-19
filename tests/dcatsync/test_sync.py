@@ -79,4 +79,4 @@ def test_syncing_args(patcher, dcat_fn, schema_fn, called, arg_pos, checks):
     sync(False, False)
     fie = patched[f"{called}_dataset"]
     for ptr, val in checks:
-        assert val == resolve_pointer(fie.call_args.args[arg_pos], ptr, None)
+        assert val == resolve_pointer(fie.call_args[0][arg_pos], ptr, None)
