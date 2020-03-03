@@ -14,7 +14,7 @@ DCAT_URL = os.getenv("DCAT_URL", "http://localhost:8000/")
 _access_token = None
 
 
-def get_access_token(username, password, environment1):
+def get_access_token(username, password, environment1, client_id="citydata", scopes=("CAT/R", "CAT/W")):
     if environment1 == "localhost":
         return {}
 
@@ -33,13 +33,12 @@ def get_access_token(username, password, environment1):
             return "".join(random.choice(letters) for i in range(length))
 
         state = randomword(10)
-        scopes = ["CAT/R", "CAT/W"]
         acc_prefix = "acc." if environment1 == "acc" else ""
         authzUrl = f"https://{acc_prefix}api.data.amsterdam.nl/oauth2/authorize"
         params = {
             "idp_id": "datapunt",
             "response_type": "token",
-            "client_id": "citydata",
+            "client_id": client_id,
             "scope": " ".join(scopes),
             "state": state,
             "redirect_uri": f"https://{acc_prefix}data.amsterdam.nl/",

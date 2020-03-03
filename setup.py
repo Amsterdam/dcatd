@@ -29,7 +29,8 @@ setup(
     entry_points={
         'console_scripts': [
             'datacatalog-core=datacatalog.main:main',
-            'aschema-sync=dcatsync.sync_aschema:main'
+            'aschema-sync=dcatsync.sync_aschema:main',
+            'mkjwt=dcatsync.jwt:main'
         ]
     },
 
