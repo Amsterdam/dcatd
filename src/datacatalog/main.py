@@ -15,6 +15,7 @@ def main():
     if sentry_dsn:
         sentry_sdk.init(
             dsn=sentry_dsn,
+            environment="dcatd",
             integrations=[AioHttpIntegration()],
             ignore_errors=['HTTPTemporaryRedirect']
     )
