@@ -16,7 +16,7 @@ _FACET_QUERY_KEY = re.compile(
     r'(?:/properties/[^/=~<>]+(?:/items)?)+'
 )
 _FACET_QUERY_VALUE = re.compile(
-    r'(in|eq|gt|lt|ge|le)=(.*)', flags=re.S
+    r'(in|eq|gt|lt|ge|le)=(.+)', flags=re.S
 )
 
 
