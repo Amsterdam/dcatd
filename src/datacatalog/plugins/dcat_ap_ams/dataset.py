@@ -152,8 +152,9 @@ DATASET = dcat.Object().add(
     'ams:owner',
     dcat.PlainTextLine(
         title="Eigenaar",
-        description="Eigenaar en verantwoordelijke voor de betreffende registratie, ook wel bronhouder genoemd. Bij de overheid is dit het bestuursorgaan of rechtspersoon aan wie bij wettelijk voorschrift de verantwoordelijkheid voor het bijhouden van gegevens in een registratie is opgedragen."
+        description="Eigenaar en verantwoordelijke voor de betreffende registratie, ook wel bronhouder genoemd. Bij de overheid is dit het bestuursorgaan of rechtspersoon aan wie bij wettelijk voorschrift de verantwoordelijkheid voor het bijhouden van gegevens in een registratie is opgedragen.",
         # examples=constants.OWNERS
+        required=True
     )
 ).add(
     'dcat:contactPoint',

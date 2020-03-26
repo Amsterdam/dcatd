@@ -9,7 +9,7 @@ storage_postgres:
   name: ${DB_DATABASE:-dcatd}
   host: ${DB_HOST:-localhost}
   pass: ${DB_PASS:-dcatd}
-  port: ${DB_PORT:-5433}
+  port: ${DB_PORT:-5440}
   user: ${DB_USER:-dcatd}
 
 storage_swift:
