@@ -202,7 +202,7 @@ def push_dcat():
         donl_root = 'https://data.overheid.nl/data'
     else:
         dcat_root = 'https://acc.api.data.amsterdam.nl/dcatd'
-        donl_root = 'http://beta-acc.data.overheid.nl/data'
+        donl_root = 'https://data-acc.overheid.nl/data'
 
     req = _request_with_headers(f'{dcat_root}/harvest')
 
