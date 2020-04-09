@@ -282,7 +282,9 @@ def push_dcat():
                     'author_email',
                     'basis_register',
                     'changetype',
+                    'communities',
                     'creator_user_id',
+                    'dataset_quality',
                     'groups',
                     'high_value',
                     'isopen',
@@ -309,6 +311,8 @@ def push_dcat():
                     'created',
                     'datastore_active',
                     'last_modified',
+                    'link_status',
+                    'link_status_last_checked',
                     'metadata_created'
                     'metadata_modified',
                     'mimetype_inner',
