@@ -25,6 +25,7 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     entry_points={
         'console_scripts': [
@@ -54,61 +55,61 @@ setup(
     # ┏━━━━━━━━━━━━━━┓
     # ┃ Requirements ┃
     # ┗━━━━━━━━━━━━━━┛
-    python_requires='~=3.5',
+    python_requires='~=3.7',
     setup_requires=[
         'pytest-runner'
     ],
     install_requires=[
-        'aiohttp',
-        'aiohttp_cors',
-        'aiopluggy',
-        'amsterdam-schema',
-        'asyncpg',  # for postgres plugin
-        'bleach',  # Markdown to text conversion
-        'cryptography',
-        'datapunt_config_loader',
-        'jsonschema',
-        'jsonpointer',
-        'pluggy',
-        'jwcrypto',
-        'pyjwt',
-        'pyld',
-        'PyYaml',
-        'sentry-sdk',
-        'whoosh',
-        'requests',
+        'aiohttp==3.6.2',
+        'aiohttp_cors==0.7.0',
+        'aiopluggy==0.1.5rc3',
+        'amsterdam-schema==0.1.2',
+        'asyncpg==0.20.1',  # for postgres plugin
+        'bleach==3.1.5',  # Markdown to text conversion
+        'cryptography==2.9.2',
+        'datapunt_config_loader==1.1.2',
+        'jsonschema==3.2.0',
+        'jsonpointer==2.0',
+        'pluggy==0.13.1',
+        'jwcrypto==0.7',
+        'pyjwt==1.7.1',
+        'pyld==1.0.5',
+        'PyYaml==5.3.1',
+        'sentry-sdk==0.14.3',
+        'whoosh==2.7.4',
+        'requests==2.23.0',
 
         # Recommended by aiohttp docs:
-        'aiodns',    # optional asynchronous DNS client
-        'uvloop',    # optional fast eventloop for asyncio
-        'xlrd',
-        'deepdiff',
-        'click',
+        'aiodns==2.0.0',    # optional asynchronous DNS client
+        'uvloop==0.14.0',    # optional fast eventloop for asyncio
+        'xlrd==1.2.0',
+        'deepdiff==4.3.2',
+        'click==7.1.2',
     ],
     extras_require={
         'docs': [
             # 'MacFSEvents',  # Too Mac-specific?
-            'Sphinx',
-            'sphinx-autobuild',
-            'sphinx-autodoc-typehints',
-            'sphinx-rtd-theme',
+            'Sphinx==3.0.3',
+            'sphinx-autobuild==0.7.1',
+            'sphinx-autodoc-typehints==1.10.3',
+            'sphinx-rtd-theme==0.4.3',
         ],
         'dev': [
-            'aiohttp-devtools'
+            'aiohttp-devtools==0.13.1'
         ],
         'test': [
-            'mockito',
-            'pytest',
-            'pytest-cov',
-            'pytest-aiohttp',
+            'mockito==1.2.1',
+            'pytest==5.4.2',
+            'pytest-cov==2.8.1',
+            'pytest-aiohttp==0.3.0',
         ],
     },
     # To keep PyCharm from complaining about missing requirements:
     tests_require=[
-        'mockito',
-        'pytest',
-        'pytest-cov',
-        'pytest-aiohttp',
+        'mockito==1.2.1',
+        'pytest==5.4.2',
+        'pytest-cov==2.8.1',
+        'pytest-aiohttp==0.3.0',
         'pytest-mock',
         'pytest-env',
         'attrdict',
