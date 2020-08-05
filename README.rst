@@ -145,7 +145,7 @@ Load production data
 If you need to load acceptation data in development you can import this with :
 
 
-    docker-compose exec database update-db.sh dcatd <yourname>
+    docker-compose exec database update-db.sh dcatd
 
 
 Update documentation

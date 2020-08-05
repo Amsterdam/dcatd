@@ -263,10 +263,12 @@ def push_dcat():
 
             name_id_map_old = {}
             for res_old in ds_old['resources']:
-                name_id_map_old[res_old['name']] = res_old['id']
-                name_id_map_old[res_old['title']] = res_old['id']
-
-            # name_id_map_old = {res_old['name']: res_old['id'] for res_old in ds_old['resources']}
+                old_name = res_old.get('name')
+                if old_name:
+                    name_id_map_old[old_name] = res_old['id']
+                old_title = res_old.get('title')
+                if old_title:
+                    name_id_map_old[old_title] = res_old['id']
 
             for res_new in ds_new['resources']:
                 if res_new['name'] in name_id_map_old:
