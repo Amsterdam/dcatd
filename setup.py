@@ -66,7 +66,7 @@ setup(
         'amsterdam-schema==0.1.2',
         'asyncpg==0.20.1',  # for postgres plugin
         'bleach==3.1.5',  # Markdown to text conversion
-        'cryptography==2.9.2',
+        'cryptography==3.2',
         'datapunt_config_loader==1.1.2',
         'jsonschema==3.2.0',
         'jsonpointer==2.0',
