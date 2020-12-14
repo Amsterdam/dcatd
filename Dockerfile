@@ -5,3 +5,5 @@ FROM python:3.7-slim as builder
 
 FROM python:3.7-slim
     COPY --from=builder /usr/local/lib/python3.7/site-packages/. /usr/local/lib/python3.7/site-packages
+
+COPY dcatd.yml /etc/dcatd.yml

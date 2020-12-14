@@ -1,0 +1,87 @@
+plugins:
+  - datacatalog.plugins.postgres
+  - datacatalog.plugins.dcat_ap_ams
+  - datacatalog.plugins.swift
+
+primarySchema: dcat-ap-ams
+
+logging:
+  formatters:
+    default:
+      format: '%(asctime)s dcat_core %(levelname)-8s %(module)s:%(lineno)d: %(message)s'
+  handlers:
+    aiohttp.access:
+      class: logging.StreamHandler
+    console:
+      class: logging.StreamHandler
+      formatter: default
+  loggers:
+    # See also: <http://aiohttp.readthedocs.io/en/stable/logging.html>
+    aiohttp:
+      propagate: true
+    aiohttp.*:
+      propagate: true
+    aiohttp.access:
+      handlers:
+      - aiohttp.access
+      level: ${LOGLEVEL:-WARNING}
+      propagate: false
+    aiohttp_extras:
+      handlers:
+      - console
+      level: ${LOGLEVEL:-WARNING}
+      propagate: false
+
+    config_loader:
+      handlers:
+      - console
+      level: ${LOGLEVEL:-WARNING}
+      propagate: false
+    datacatalog:
+      handlers:
+      - console
+      level: ${LOGLEVEL:-WARNING}
+      propagate: false
+    plugin.storage.postgres:
+      handlers:
+      - console
+      level: ${LOGLEVEL:-WARNING}
+      propagate: false
+  root:
+    handlers:
+    - console
+    level: ${LOGLEVEL:-WARNING}
+  version: 1
+
+storage_postgres:
+  name: ${DB_DATABASE}
+  host: ${DB_HOST}
+  pass: ${DB_PASS}
+  port: ${DB_PORT}
+  user: ${DB_USER}
+
+storage_swift:
+  user: ${SWIFT_USER:-catalogus}
+  password: ${SWIFT_PASSWORD:-insecure}
+  base_url: ${SWIFT_BASE_URL}
+  container: ${SWIFT_CONTAINER:-non_existing}
+
+web:
+  port: 8000
+  baseurl: ${WEB_BASE_URL}
+  allow_cors: true
+
+jwks: ${PUB_JWKS}
+jwks_url: ${JWKS_URL}
+
+allowed_signing_algorithms:
+  - HS256
+  - HS384
+  - HS512
+  - ES256
+  - ES384
+  - ES512
+  - RS256
+  - RS384
+  - RS512
+
