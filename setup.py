@@ -74,7 +74,7 @@ setup(
         'jwcrypto==0.7',
         'pyjwt==1.7.1',
         'pyld==1.0.5',
-        'PyYaml==5.3.1',
+        'PyYaml==5.4',
         'sentry-sdk==0.14.3',
         'whoosh==2.7.4',
         'requests==2.23.0',
