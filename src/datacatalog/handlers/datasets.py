@@ -108,6 +108,7 @@ async def put(request: web.Request):
                 app=request.app, docid=doc_id, etags=None
             )
         except KeyError:
+            _logger.exception('precondition failed')
             raise web.HTTPPreconditionFailed()
         canonical_doc = await hooks.mds_before_storage(
             app=request.app, data=canonical_doc, old_data=old_doc
@@ -119,6 +120,7 @@ async def put(request: web.Request):
                 iso_639_1_code="nl"
             )
         except ValueError:
+            _logger.exception('precondition failed')
             raise web.HTTPPreconditionFailed()
         await notify_data_changed(request.app)
         retval = web.Response(status=204, headers={'Etag': new_etag})
@@ -138,6 +140,7 @@ async def put(request: web.Request):
                 searchable_text=searchable_text, iso_639_1_code="nl"
             )
         except KeyError:
+            _logger.exception('precondition failed')
             raise web.HTTPPreconditionFailed()
         await notify_data_changed(request.app)
         retval = web.Response(
