@@ -53,7 +53,14 @@ def parse_if_header(request: web.Request, header: _ConditionalHeaderType) -> REQ
     """
     if header not in request.headers:
         return None
-    header_value = ','.join(request.headers.getall(header))
+
+    # The startswith is used to remove a potentially added W/ (weak reference)
+    # to the E-tag by a load balancer like HAproxy.
+    # This prevents a 412 HTTP error when the W/ is added by the HAproxy but
+    # compaired with the identical value without the W/ addition and causes
+    # the 412 HTTP error:
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/412
+    header_value = ','.join( header[2:] if header.startswith(('W/', 'w/')) else header for header in request.headers.getall(header) )
     if header_value == '':
         return None
     if header_value == REQ_ETAG_STAR:
