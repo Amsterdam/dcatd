@@ -95,7 +95,7 @@ MAP_SERVICE_TYPES = {
     "wms": ("image/png", filetype_prefix + "WMS_SRVC"),
     "wmts": ("image/png", filetype_prefix + "WMS_SRVC"),
     "soap": ("application/xml", filetype_prefix + "XML"),
-    "gpkg": ("application/geopackage+sqlite3", filetype_prefix + "SQL"),
+    "gpkg": ("application/geopackage+sqlite3", filetype_prefix + "GPKG"),
     "other": ("application/octet-stream", filetype_prefix + "TAR_XZ"),
 }
 
