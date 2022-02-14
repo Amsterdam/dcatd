@@ -95,6 +95,7 @@ MAP_SERVICE_TYPES = {
     "wms": ("image/png", filetype_prefix + "WMS_SRVC"),
     "wmts": ("image/png", filetype_prefix + "WMS_SRVC"),
     "soap": ("application/xml", filetype_prefix + "XML"),
+    "gpkg": ("application/geopackage+sqlite3", filetype_prefix + "SQL"),
     "other": ("application/octet-stream", filetype_prefix + "TAR_XZ"),
 }
 
@@ -138,7 +139,9 @@ def _convert_to_ckan(dcat: dict) -> dict:
         format1 = MAP_MEDIATYPE_FORMAT[mimetype]
 
         if dist["ams:distributionType"] == "api":
-            types = MAP_SERVICE_TYPES[dist["ams:serviceType"]]
+            if "ams:serviceType" not in dist:
+                print("Missing service type for `distributionType:api`, default to `rest`.")
+            types = MAP_SERVICE_TYPES[dist.get("ams:serviceType", "rest")]
             mimetype = types[0]
             format1 = types[1]
         elif dist["ams:distributionType"] == "web":
