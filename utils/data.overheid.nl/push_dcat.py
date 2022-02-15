@@ -103,6 +103,11 @@ MAP_SERVICE_TYPES = {
 IDENTIFIER_PREFIX = "https://api.data.amsterdam.nl/dcatd/datasets/"
 
 
+def _to_kebab_case(instr):
+    """Used to correct keys for the MAP_LICENSES dict."""
+    return instr.replace("_", "-")
+
+
 def _request_with_headers(url, data=None, method=None, authorization=None):
     headers = {
         "accept": "application/json",
@@ -164,7 +169,7 @@ def _convert_to_ckan(dcat: dict) -> dict:
             else dist["foaf:isPrimaryTopicOf"]["dct:modified"],
             "language": [language],  # Inherit from dataset
             "metadata_language": language,  # Inherit from dataset
-            "license_id": MAP_LICENSES[dist["dct:license"]],
+            "license_id": MAP_LICENSES[_to_kebab_case(dist["dct:license"])],
         }
 
         # Remove duplicates with the same name or dct:title
@@ -192,7 +197,7 @@ def _convert_to_ckan(dcat: dict) -> dict:
         "publisher": "http://standaarden.overheid.nl/owms/terms/Amsterdam",
         "theme": themes,
         "tags": tags,
-        "license_id": MAP_LICENSES[dcat["ams:license"]],
+        "license_id": MAP_LICENSES[_to_kebab_case(dcat["ams:license"])],
         "authority": "http://standaarden.overheid.nl/owms/terms/" + dcat["overheid:authority"][9:],
         "identifier": IDENTIFIER_PREFIX + dcat["dct:identifier"],
         "name": dcat["dct:identifier"].lower(),
