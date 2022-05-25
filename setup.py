@@ -63,7 +63,7 @@ setup(
         "jsonpointer==2.0",
         "pluggy==0.13.1",
         "jwcrypto==0.7",
-        "pyjwt==1.7.1",
+        "pyjwt==2.4.0",
         "pyld==1.0.5",
         "PyYaml==5.4",
         "sentry-sdk==0.14.3",
