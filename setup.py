@@ -28,8 +28,6 @@ setup(
     entry_points={
         "console_scripts": [
             "datacatalog-core=datacatalog.main:main",
-            "aschema-sync=dcatsync.sync_aschema:main",
-            "mkjwt=dcatsync.jwt:main",
         ]
     },
     # ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -63,7 +61,6 @@ setup(
         "jsonpointer==2.0",
         "pluggy==0.13.1",
         "jwcrypto==0.7",
-        "pyjwt==1.7.1",
         "pyld==1.0.5",
         "PyYaml==5.4",
         "sentry-sdk==0.14.3",
@@ -72,8 +69,6 @@ setup(
         # Recommended by aiohttp docs:
         "aiodns==2.0.0",  # optional asynchronous DNS client
         "uvloop==0.14.0",  # optional fast eventloop for asyncio
-        "xlrd==1.2.0",
-        "deepdiff==4.3.2",
         "click==7.1.2",
     ],
     extras_require={
