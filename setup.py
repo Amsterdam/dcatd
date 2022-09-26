@@ -68,7 +68,7 @@ setup(
         "requests==2.23.0",
         # Recommended by aiohttp docs:
         "aiodns==2.0.0",  # optional asynchronous DNS client
-        "uvloop==0.14.0",  # optional fast eventloop for asyncio
+        "uvloop==0.17.0",  # optional fast eventloop for asyncio
         "click==7.1.2",
     ],
     extras_require={
