@@ -53,7 +53,7 @@ setup(
         "aiohttp_cors==0.7.0",
         "aiopluggy==0.1.5rc3",
         "amsterdam-schema==0.1.2",
-        "asyncpg==0.21.0",  # for postgres plugin
+        "asyncpg==0.26.0",  # for postgres plugin
         "bleach==3.3.0",  # Markdown to text conversion
         "cryptography==3.3.2",
         "datapunt_config_loader==1.1.2",
