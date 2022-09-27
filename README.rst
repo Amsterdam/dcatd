@@ -72,8 +72,6 @@ or
 How to run in docker
 --------------------
 
-Requires Docker (duh)
-
 Example server
 ##############
 
