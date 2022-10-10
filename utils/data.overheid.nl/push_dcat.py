@@ -126,6 +126,11 @@ def _convert_to_ckan(dcat: dict) -> dict:
 
     # Remove duplicates and sort for easy comparison
     themes = sorted(list(set([MAP_THEMES[theme] for theme in dcat["dcat:theme"]])))
+    if not themes:
+        # Having at least one theme is mandatory.
+        # Use the most generic one if we have none.
+        themes = ['http://standaarden.overheid.nl/owms/terms/Bestuur']
+
     tags = [{"name": keyword} for keyword in sorted(list(set(dcat["dcat:keyword"])))]
 
     if dcat["ams:license"] == "other-not-open":
@@ -192,7 +197,6 @@ def _convert_to_ckan(dcat: dict) -> dict:
         ),
         "language": [language],
         "contact_point_name": dcat["dcat:contactPoint"]["vcard:fn"],
-        "contact_point_email": dcat["dcat:contactPoint"]["vcard:hasEmail"],
         "publisher": "http://standaarden.overheid.nl/owms/terms/Amsterdam",
         "theme": themes,
         "tags": tags,
@@ -203,6 +207,11 @@ def _convert_to_ckan(dcat: dict) -> dict:
         "source_catalog": "https://data.amsterdam.nl/",
         "access_rights": access_rights,
     }
+
+    email = dcat["dcat:contactPoint"].get("vcard:hasEmail")
+    if email:
+        ckan["contact_point_email"] = email
+
     return ckan
 
 
