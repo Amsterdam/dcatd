@@ -63,7 +63,7 @@ setup(
         "jwcrypto==1.4",
         "pyld==1.0.5",
         "PyYaml==5.4",
-        "sentry-sdk==0.14.3",
+        "sentry-sdk==1.14.0",
         "whoosh==2.7.4",
         "requests==2.23.0",
         # Recommended by aiohttp docs:
