@@ -49,7 +49,7 @@ setup(
     python_requires="~=3.7",
     setup_requires=["pytest-runner"],
     install_requires=[
-        "aiohttp==3.7.4",
+        "aiohttp==3.8.5",
         "aiohttp_cors==0.7.0",
         "aiopluggy==0.1.5rc3",
         "amsterdam-schema==0.1.2",
