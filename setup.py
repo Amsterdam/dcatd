@@ -60,7 +60,7 @@ setup(
         "jsonschema==3.2.0",
         "jsonpointer==2.0",
         "pluggy==0.13.1",
-        "jwcrypto==1.5.1",
+        "jwcrypto==1.5.6",
         "pyld==1.0.5",
         "PyYaml==5.4",
         "sentry-sdk==1.14.0",
