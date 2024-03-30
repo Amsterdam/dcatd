@@ -24,6 +24,8 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     entry_points={
         "console_scripts": [
@@ -46,7 +48,7 @@ setup(
     # ┏━━━━━━━━━━━━━━┓
     # ┃ Requirements ┃
     # ┗━━━━━━━━━━━━━━┛
-    python_requires="~=3.7",
+    python_requires=">=3.8",
     setup_requires=["pytest-runner"],
     install_requires=[
         "aiohttp==3.9.2",
