@@ -7,6 +7,7 @@ import hashlib
 import json
 import logging
 import re
+import os
 
 import pkg_resources
 import secrets
@@ -18,6 +19,7 @@ import asyncpg.pool
 import jsonpointer
 
 from aiohttp_extras import conditional
+from pathlib import Path
 
 from .languages import ISO_639_1_TO_PG_DICTIONARIES
 
@@ -110,6 +112,10 @@ async def initialize(app):
     max_inactive_conn_lifetime = dbconf.get(
         'max_inactive_connection_lifetime', _DEFAULT_MAX_INACTIVE_CONNECTION_LIFETIME)
 
+    password = dbconf['pass']
+    if os.getenv("DATABASE_PW_LOCATION", False):
+        password = Path(os.environ["DATABASE_PW_LOCATION"]).open().read()
+
     # create asyncpg engine
     _logger.info("Connecting to database: postgres://%s:%i/%s",
                  dbconf['host'], dbconf['port'], dbconf['name'])
@@ -122,7 +128,7 @@ async def initialize(app):
                 database=dbconf['name'],
                 host=dbconf['host'],
                 port=dbconf['port'],
-                password=dbconf['pass'],
+                password=password,
                 timeout=conn_timeout,
                 min_size=min_pool_size,
                 max_size=max_pool_size,
