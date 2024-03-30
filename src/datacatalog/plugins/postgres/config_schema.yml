@@ -27,6 +27,11 @@ properties:
         type: integer
       max_inactive_connection_lifetime:
         type: number
+      mode:
+        type: string
+        enum:
+          - READONLY
+          - READWRITE
     required:
       - host
       - port

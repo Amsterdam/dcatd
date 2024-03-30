@@ -173,7 +173,8 @@ async def _on_startup(app):
         if r.exception is not None:
             raise r.exception
     await startup_actions.run_startup_actions(app)
-    await NotificationHandler(app).setup_notification_handling()
+    if app.config['storage_postgres'].get("mode", '') != "READONLY":
+        await NotificationHandler(app).setup_notification_handling()
 
 
 async def _on_cleanup(app):

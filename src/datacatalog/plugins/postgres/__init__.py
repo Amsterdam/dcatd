@@ -144,7 +144,7 @@ async def initialize(app):
                 raise
         else:
             break
-    while connect_attempt_tries_left >= 0:
+    while connect_attempt_tries_left >= 0 and dbconf.get('mode', 'READWRITE') != "READONLY":
         try:
             await app['pool'].execute(_Q_CREATE)
             await app['pool'].execute(_Q_CREATE_STARTUP_ACTIONS)

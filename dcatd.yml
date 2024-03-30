@@ -59,6 +59,7 @@ storage_postgres:
   pass: ${DB_PASS}
   port: ${DB_PORT}
   user: ${DB_USER}
+  mode: ${DB_MODE:-READWRITE}
 
 storage_swift:
   user: ${SWIFT_USER:-catalogus}
