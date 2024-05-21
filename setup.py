@@ -67,7 +67,7 @@ setup(
         "PyYaml==5.4",
         "sentry-sdk==1.14.0",
         "whoosh==2.7.4",
-        "requests==2.31.0",
+        "requests==2.32.0",
         "urllib3==1.26.18",
         # Recommended by aiohttp docs:
         "aiodns==2.0.0",  # optional asynchronous DNS client
