@@ -68,7 +68,7 @@ setup(
         "sentry-sdk==1.14.0",
         "whoosh==2.7.4",
         "requests==2.32.0",
-        "urllib3==1.26.18",
+        "urllib3==1.26.19",
         # Recommended by aiohttp docs:
         "aiodns==2.0.0",  # optional asynchronous DNS client
         "uvloop==0.17.0",  # optional fast eventloop for asyncio
